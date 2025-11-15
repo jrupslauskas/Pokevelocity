@@ -80,6 +80,11 @@ class TrainersController < ApplicationController
       redirect_to rewards_path, alert: "You don't have any Pokéballs! Complete tickets to earn some."
       return
     end
+
+    # Get catch probabilities for each ball type
+    @catch_probabilities = PokemonCatchService::CAPTURE_EFFICIENCY.transform_values do |difficulty_hash|
+      difficulty_hash[@pokemon.difficulty]
+    end
   end
 
   def attempt_catch

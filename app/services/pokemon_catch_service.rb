@@ -103,31 +103,46 @@ class PokemonCatchService
   end
 
   def catch_successful?(pokemon)
-    # Master Ball always succeeds
-    return true if @ball_type == "master_ball"
-
-    # Base catch rate by difficulty
-    base_rate = case pokemon.difficulty
-                when 1 then 90  # Very easy
-                when 2 then 70  # Easy
-                when 3 then 50  # Medium
-                when 4 then 30  # Hard
-                when 5 then 10  # Very hard (legendaries)
-                else 50
-                end
-
-    # Ball type bonus
-    ball_bonus = case @ball_type
-                 when "pokeball" then 0
-                 when "great_ball" then 15
-                 when "ultra_ball" then 25
-                 else 0
-                 end
-
-    # Calculate final catch rate (capped at 95% max, except Master Ball)
-    catch_rate = [base_rate + ball_bonus, 95].min
+    # Capture efficiency matrix: each ball type has specific effectiveness against each difficulty level
+    # Master Ball: 100% against all
+    # Ultra Ball: Very effective against low difficulty, still good against high difficulty
+    # Great Ball: Good against low difficulty, moderate against high difficulty
+    # Pokeball: Likely against difficulty 1, unlikely against 4-5
+    catch_rate = CAPTURE_EFFICIENCY[@ball_type][pokemon.difficulty]
 
     # Roll for success
     rand(1..100) <= catch_rate
   end
+
+  # Capture efficiency matrix: Ball type vs Pokemon difficulty
+  CAPTURE_EFFICIENCY = {
+    "pokeball" => {
+      1 => 85,  # Likely to catch easy Pokemon
+      2 => 65,  # Decent chance against easy-medium
+      3 => 45,  # Challenging against medium difficulty
+      4 => 25,  # Pretty unlikely against hard Pokemon
+      5 => 10   # Very unlikely against legendaries
+    },
+    "great_ball" => {
+      1 => 92,  # Very high success against easy Pokemon
+      2 => 75,  # Good against easy-medium
+      3 => 55,  # Decent against medium difficulty
+      4 => 35,  # Still challenging against hard
+      5 => 18   # Better than pokeball but still tough
+    },
+    "ultra_ball" => {
+      1 => 97,  # Very very effective against easy Pokemon
+      2 => 88,  # Very high against easy-medium
+      3 => 72,  # Good against medium difficulty
+      4 => 52,  # Decent chance against hard Pokemon
+      5 => 32   # Much better against legendaries
+    },
+    "master_ball" => {
+      1 => 100, # Guaranteed catch
+      2 => 100, # Guaranteed catch
+      3 => 100, # Guaranteed catch
+      4 => 100, # Guaranteed catch
+      5 => 100  # Guaranteed catch
+    }
+  }.freeze
 end
