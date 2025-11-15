@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  trainer: one
+  pokemon: one
+  ball_type: MyString
+  captured_at: 2025-11-15 12:55:14
+
+two:
+  trainer: two
+  pokemon: two
+  ball_type: MyString
+  captured_at: 2025-11-15 12:55:14
