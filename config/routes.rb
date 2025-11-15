@@ -9,6 +9,33 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+  # Homepage with login form
+  root "sessions#new"
+
+  # Session routes (login/logout)
+  get "/login", to: "sessions#new", as: :login
+  post "/login", to: "sessions#create"
+  delete "/logout", to: "sessions#destroy", as: :logout
+
+  # Trainer registration
+  get "/trainers/new", to: "trainers#new", as: :new_trainer
+  post "/trainers", to: "trainers#create", as: :trainers
+
+  # Dashboard
+  get "/dashboard", to: "trainers#dashboard", as: :dashboard
+
+  # Pokedex
+  get "/pokedex", to: "trainers#pokedex", as: :pokedex
+
+  # Bag (pokeball inventory)
+  get "/bag", to: "trainers#bag", as: :bag
+
+  # Redeem rewards
+  get "/rewards", to: "trainers#rewards", as: :rewards
+  post "/rewards", to: "trainers#redeem_reward"
+
+  # Catch Pokemon
+  get "/catch", to: "trainers#catch", as: :catch_pokemon
+  get "/catch/:id", to: "trainers#select_pokemon", as: :select_pokemon
+  post "/catch/:id", to: "trainers#attempt_catch"
 end

@@ -1,0 +1,75 @@
+<div class="min-h-screen bg-gradient-to-b from-blue-400 via-blue-300 to-green-300">
+  <!-- Header -->
+  <%= render "trainers/header" %>
+
+  <!-- Main Content -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Page Title -->
+    <div class="bg-white rounded-xl shadow-xl p-6 mb-8 border-4 border-yellow-400 text-center">
+      <div class="text-6xl mb-4">🎣</div>
+      <h2 class="text-3xl font-bold text-gray-800 mb-2">Catch a Pokémon!</h2>
+      <p class="text-gray-600">Choose which Pokémon you want to catch</p>
+      <div class="mt-4 text-sm text-gray-500">
+        <%= @trainer.captures.count %> / 151 Pokémon Caught · <%= @uncaught_pokemon.count %> Available to Catch
+      </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded mb-8">
+      <p class="font-semibold text-blue-800 mb-2">How to Catch Pokémon:</p>
+      <ol class="list-decimal list-inside text-blue-700 text-sm space-y-1">
+        <li>Browse the uncaught Pokémon below</li>
+        <li>Click "Catch This Pokémon" on the one you want</li>
+        <li>Select which Pokéball to use</li>
+        <li>The Pokéball will be consumed and the Pokémon added to your Pokédex!</li>
+      </ol>
+    </div>
+
+    <!-- Pokemon Grid -->
+    <% if @uncaught_pokemon.any? %>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8">
+        <% @uncaught_pokemon.each do |pokemon| %>
+          <%= link_to select_pokemon_path(pokemon), class: "bg-white rounded-lg shadow-lg border-4 border-yellow-400 overflow-hidden hover:scale-105 hover:border-yellow-500 transition-all" do %>
+            <div class="bg-gray-100 p-4 flex items-center justify-center h-32">
+              <% if pokemon.image.attached? %>
+                <%= image_tag pokemon.image, alt: pokemon.name, class: "max-h-full max-w-full object-contain" %>
+              <% else %>
+                <div class="text-gray-400 text-4xl">?</div>
+              <% end %>
+            </div>
+            <div class="p-3 text-center">
+              <div class="text-xs text-gray-500 font-semibold">#<%= pokemon.pokedex_number.to_s.rjust(3, '0') %></div>
+              <h3 class="text-lg font-bold text-gray-800 capitalize"><%= pokemon.name %></h3>
+              <div class="mt-2 bg-green-500 text-white text-sm font-semibold py-1 px-3 rounded-full">
+                Catch This Pokémon
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <!-- All Caught Message -->
+      <div class="bg-white rounded-xl shadow-xl p-12 text-center border-4 border-yellow-300 mb-8">
+        <div class="text-6xl mb-4">🎉</div>
+        <h3 class="text-2xl font-bold text-gray-800 mb-2">Congratulations!</h3>
+        <p class="text-gray-600">You've caught all 151 Pokémon!</p>
+      </div>
+    <% end %>
+
+    <!-- Total Inventory -->
+    <div class="bg-white rounded-xl shadow-xl p-4 border-4 border-green-300 text-center mb-8">
+      <p class="text-gray-600 mb-1">Total Pokéballs Available</p>
+      <p class="text-4xl font-bold text-green-600"><%= @trainer.total_pokeballs %></p>
+    </div>
+
+    <!-- Back Button -->
+    <div class="flex gap-4">
+      <%= link_to rewards_path, class: "flex-1 bg-green-500 text-white text-center font-bold py-3 px-6 rounded-lg hover:bg-green-600 transition-all shadow-lg" do %>
+        Get More Pokéballs
+      <% end %>
+      <%= link_to dashboard_path, class: "flex-1 bg-gray-500 text-white text-center font-bold py-3 px-6 rounded-lg hover:bg-gray-600 transition-all shadow-lg" do %>
+        Back to Dashboard
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -8,4 +8,6 @@ class Pokemon < ApplicationRecord
             numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: 151 }
   validates :name, presence: true
   validates :image, presence: true
+  validates :difficulty, presence: true,
+            numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 5 }
 end

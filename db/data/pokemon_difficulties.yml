@@ -1,0 +1,309 @@
+# Pokemon Capture Difficulty (1-5 scale)
+# 1 = Very Easy (Common early Pokemon)
+# 2 = Easy (Uncommon Pokemon, first evolutions)
+# 3 = Medium (Mid-tier Pokemon, second evolutions)
+# 4 = Hard (Rare Pokemon, final evolutions, strong Pokemon)
+# 5 = Very Hard (Legendary Pokemon)
+
+# Bulbasaur line
+1: 2  # Bulbasaur
+2: 3  # Ivysaur
+3: 4  # Venusaur
+
+# Charmander line
+4: 2  # Charmander
+5: 3  # Charmeleon
+6: 4  # Charizard
+
+# Squirtle line
+7: 2  # Squirtle
+8: 3  # Wartortle
+9: 4  # Blastoise
+
+# Caterpie line
+10: 1  # Caterpie
+11: 1  # Metapod
+12: 2  # Butterfree
+
+# Weedle line
+13: 1  # Weedle
+14: 1  # Kakuna
+15: 2  # Beedrill
+
+# Pidgey line
+16: 1  # Pidgey
+17: 2  # Pidgeotto
+18: 3  # Pidgeot
+
+# Rattata line
+19: 1  # Rattata
+20: 2  # Raticate
+
+# Spearow line
+21: 1  # Spearow
+22: 2  # Fearow
+
+# Ekans line
+23: 1  # Ekans
+24: 2  # Arbok
+
+# Pikachu line
+25: 2  # Pikachu
+26: 3  # Raichu
+
+# Sandshrew line
+27: 2  # Sandshrew
+28: 3  # Sandslash
+
+# Nidoran-F line
+29: 1  # Nidoran-F
+30: 2  # Nidorina
+31: 3  # Nidoqueen
+
+# Nidoran-M line
+32: 1  # Nidoran-M
+33: 2  # Nidorino
+34: 3  # Nidoking
+
+# Clefairy line
+35: 2  # Clefairy
+36: 3  # Clefable
+
+# Vulpix line
+37: 2  # Vulpix
+38: 3  # Ninetales
+
+# Jigglypuff line
+39: 2  # Jigglypuff
+40: 3  # Wigglytuff
+
+# Zubat line
+41: 1  # Zubat
+42: 2  # Golbat
+
+# Oddish line
+43: 1  # Oddish
+44: 2  # Gloom
+45: 3  # Vileplume
+
+# Paras line
+46: 1  # Paras
+47: 2  # Parasect
+
+# Venonat line
+48: 1  # Venonat
+49: 2  # Venomoth
+
+# Diglett line
+50: 1  # Diglett
+51: 2  # Dugtrio
+
+# Meowth line
+52: 1  # Meowth
+53: 2  # Persian
+
+# Psyduck line
+54: 2  # Psyduck
+55: 3  # Golduck
+
+# Mankey line
+56: 1  # Mankey
+57: 2  # Primeape
+
+# Growlithe line
+58: 2  # Growlithe
+59: 3  # Arcanine
+
+# Poliwag line
+60: 1  # Poliwag
+61: 2  # Poliwhirl
+62: 3  # Poliwrath
+
+# Abra line
+63: 3  # Abra (hard to catch, teleports)
+64: 3  # Kadabra
+65: 4  # Alakazam
+
+# Machop line
+66: 2  # Machop
+67: 3  # Machoke
+68: 4  # Machamp
+
+# Bellsprout line
+69: 1  # Bellsprout
+70: 2  # Weepinbell
+71: 3  # Victreebel
+
+# Tentacool line
+72: 1  # Tentacool
+73: 2  # Tentacruel
+
+# Geodude line
+74: 1  # Geodude
+75: 2  # Graveler
+76: 3  # Golem
+
+# Ponyta line
+77: 2  # Ponyta
+78: 3  # Rapidash
+
+# Slowpoke line
+79: 2  # Slowpoke
+80: 3  # Slowbro
+
+# Magnemite line
+81: 2  # Magnemite
+82: 3  # Magneton
+
+# Farfetch'd
+83: 2  # Farfetch'd
+
+# Doduo line
+84: 1  # Doduo
+85: 2  # Dodrio
+
+# Seel line
+86: 2  # Seel
+87: 3  # Dewgong
+
+# Grimer line
+88: 1  # Grimer
+89: 2  # Muk
+
+# Shellder line
+90: 2  # Shellder
+91: 3  # Cloyster
+
+# Gastly line
+92: 2  # Gastly
+93: 3  # Haunter
+94: 4  # Gengar
+
+# Onix
+95: 2  # Onix
+
+# Drowzee line
+96: 2  # Drowzee
+97: 3  # Hypno
+
+# Krabby line
+98: 1  # Krabby
+99: 2  # Kingler
+
+# Voltorb line
+100: 1  # Voltorb
+101: 2  # Electrode
+
+# Exeggcute line
+102: 2  # Exeggcute
+103: 3  # Exeggutor
+
+# Cubone line
+104: 2  # Cubone
+105: 3  # Marowak
+
+# Hitmonlee
+106: 3  # Hitmonlee
+
+# Hitmonchan
+107: 3  # Hitmonchan
+
+# Lickitung
+108: 3  # Lickitung
+
+# Koffing line
+109: 1  # Koffing
+110: 2  # Weezing
+
+# Rhyhorn line
+111: 2  # Rhyhorn
+112: 3  # Rhydon
+
+# Chansey
+113: 4  # Chansey (rare, hard to catch)
+
+# Tangela
+114: 2  # Tangela
+
+# Kangaskhan
+115: 3  # Kangaskhan
+
+# Horsea line
+116: 1  # Horsea
+117: 2  # Seadra
+
+# Goldeen line
+118: 1  # Goldeen
+119: 2  # Seaking
+
+# Staryu line
+120: 2  # Staryu
+121: 3  # Starmie
+
+# Mr. Mime
+122: 3  # Mr. Mime
+
+# Scyther
+123: 3  # Scyther
+
+# Jynx
+124: 3  # Jynx
+
+# Electabuzz
+125: 3  # Electabuzz
+
+# Magmar
+126: 3  # Magmar
+
+# Pinsir
+127: 3  # Pinsir
+
+# Tauros
+128: 3  # Tauros
+
+# Magikarp line
+129: 1  # Magikarp
+130: 4  # Gyarados
+
+# Lapras
+131: 4  # Lapras (rare)
+
+# Ditto
+132: 3  # Ditto
+
+# Eevee line
+133: 3  # Eevee
+134: 3  # Vaporeon
+135: 3  # Jolteon
+136: 3  # Flareon
+
+# Porygon
+137: 3  # Porygon
+
+# Omanyte line
+138: 3  # Omanyte
+139: 4  # Omastar
+
+# Kabuto line
+140: 3  # Kabuto
+141: 4  # Kabutops
+
+# Aerodactyl
+142: 4  # Aerodactyl
+
+# Snorlax
+143: 4  # Snorlax
+
+# Legendary Birds
+144: 5  # Articuno
+145: 5  # Zapdos
+146: 5  # Moltres
+
+# Dratini line
+147: 3  # Dratini
+148: 4  # Dragonair
+149: 5  # Dragonite
+
+# Mewtwo and Mew
+150: 5  # Mewtwo
+151: 5  # Mew

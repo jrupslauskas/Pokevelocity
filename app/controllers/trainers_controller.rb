@@ -1,0 +1,111 @@
+class TrainersController < ApplicationController
+  before_action :require_login, only: [:dashboard, :pokedex, :bag, :rewards, :redeem_reward, :catch, :select_pokemon, :attempt_catch]
+
+  def new
+    @trainer = Trainer.new
+  end
+
+  def create
+    @trainer = Trainer.new(trainer_params)
+
+    if @trainer.save
+      session[:trainer_id] = @trainer.id
+      redirect_to dashboard_path, notice: "Welcome to Pokevelocity, #{@trainer.username}!"
+    else
+      render :new, status: :unprocessable_entity
+    end
+  end
+
+  def dashboard
+    @trainer = current_trainer
+  end
+
+  def pokedex
+    @trainer = current_trainer
+    @captured_pokemon = @trainer.captured_pokemon.order(:pokedex_number)
+  end
+
+  def bag
+    @trainer = current_trainer
+  end
+
+  def rewards
+    @trainer = current_trainer
+  end
+
+  def redeem_reward
+    @trainer = current_trainer
+    story_points = params[:story_points].to_i
+
+    if story_points > 0
+      result = @trainer.award_pokeball_for_ticket(story_points)
+      redirect_to bag_path, notice: "Congratulations! You earned a #{result[:ball_type].humanize} for completing a #{story_points} point ticket!"
+    else
+      redirect_to rewards_path, alert: "Please enter a valid story point value"
+    end
+  end
+
+  def catch
+    @trainer = current_trainer
+
+    # Check if trainer has any pokeballs
+    if @trainer.total_pokeballs == 0
+      redirect_to rewards_path, alert: "You don't have any Pokéballs! Complete tickets to earn some."
+      return
+    end
+
+    # Get all uncaught Pokemon
+    caught_ids = @trainer.captured_pokemon.pluck(:id)
+    @uncaught_pokemon = Pokemon.where.not(id: caught_ids).order(:pokedex_number)
+
+    # Check if all Pokemon are caught
+    if @uncaught_pokemon.empty?
+      redirect_to pokedex_path, notice: "Congratulations! You've caught all 151 Pokemon!"
+      return
+    end
+  end
+
+  def select_pokemon
+    @trainer = current_trainer
+    @pokemon = Pokemon.find(params[:id])
+
+    # Check if already caught
+    if @trainer.captured_pokemon.include?(@pokemon)
+      redirect_to catch_pokemon_path, alert: "You've already caught #{@pokemon.name}!"
+      return
+    end
+
+    # Check if trainer has any pokeballs
+    if @trainer.total_pokeballs == 0
+      redirect_to rewards_path, alert: "You don't have any Pokéballs! Complete tickets to earn some."
+      return
+    end
+  end
+
+  def attempt_catch
+    @trainer = current_trainer
+    @pokemon = Pokemon.find(params[:id])
+    ball_type = params[:ball_type]
+
+    result = PokemonCatchService.new(@trainer, ball_type, @pokemon).catch!
+
+    if result[:success]
+      if result[:caught]
+        # Successfully caught the Pokemon
+        redirect_to pokedex_path, notice: "Success! You caught #{@pokemon.name} (##{@pokemon.pokedex_number}) with a #{result[:ball_type].humanize}!"
+      else
+        # Pokemon broke free
+        redirect_to catch_pokemon_path, alert: result[:message]
+      end
+    else
+      # Error occurred (no balls, already caught, etc.)
+      redirect_to select_pokemon_path(@pokemon), alert: result[:error]
+    end
+  end
+
+  private
+
+  def trainer_params
+    params.require(:trainer).permit(:username, :password)
+  end
+end

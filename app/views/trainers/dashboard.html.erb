@@ -1,0 +1,106 @@
+<div class="min-h-screen bg-gradient-to-b from-blue-400 via-blue-300 to-green-300">
+  <!-- Header -->
+  <%= render "trainers/header" %>
+
+  <!-- Main Content -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Welcome Message -->
+    <div class="bg-white rounded-xl shadow-xl p-6 mb-8 border-4 border-yellow-400">
+      <h2 class="text-3xl font-bold text-gray-800 mb-2">
+        Welcome, <%= @trainer.username %>!
+      </h2>
+      <p class="text-gray-600">Your trainer dashboard</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Pokéballs Card -->
+      <div class="bg-white rounded-xl shadow-xl p-6 border-4 border-blue-300">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">Your Pokéballs</h3>
+        <div class="space-y-3">
+          <div class="flex justify-between items-center p-3 bg-red-50 rounded-lg">
+            <span class="font-semibold text-gray-700">Pokéballs</span>
+            <span class="text-2xl font-bold text-red-600"><%= @trainer.pokeballs_count %></span>
+          </div>
+          <div class="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+            <span class="font-semibold text-gray-700">Great Balls</span>
+            <span class="text-2xl font-bold text-blue-600"><%= @trainer.great_balls_count %></span>
+          </div>
+          <div class="flex justify-between items-center p-3 bg-yellow-50 rounded-lg">
+            <span class="font-semibold text-gray-700">Ultra Balls</span>
+            <span class="text-2xl font-bold text-yellow-600"><%= @trainer.ultra_balls_count %></span>
+          </div>
+          <div class="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+            <span class="font-semibold text-gray-700">Master Balls</span>
+            <span class="text-2xl font-bold text-purple-600"><%= @trainer.master_balls_count %></span>
+          </div>
+        </div>
+        <div class="mt-4 pt-4 border-t border-gray-200">
+          <div class="flex justify-between items-center">
+            <span class="font-bold text-gray-800">Total</span>
+            <span class="text-3xl font-bold text-green-600"><%= @trainer.total_pokeballs %></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pokédex Card -->
+      <div class="bg-white rounded-xl shadow-xl p-6 border-4 border-green-300">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">Your Pokédex</h3>
+        <div class="text-center py-8">
+          <p class="text-6xl font-bold text-gray-800 mb-2"><%= @trainer.captures.count %></p>
+          <p class="text-gray-600 font-semibold">Pokémon Captured</p>
+          <div class="mt-4 text-sm text-gray-500">
+            <%= @trainer.captures.count %> / 151 Original Pokémon
+          </div>
+          <div class="mt-4">
+            <div class="w-full bg-gray-200 rounded-full h-4">
+              <% completion = (@trainer.captures.count.to_f / 151 * 100).round(1) %>
+              <div class="bg-green-500 h-4 rounded-full" style="width: <%= completion %>%"></div>
+            </div>
+            <p class="text-sm text-gray-600 mt-2"><%= completion %>% Complete</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <%= link_to pokedex_path, class: "bg-white rounded-xl shadow-xl p-8 border-4 border-red-400 hover:border-red-500 transition-all hover:scale-105 text-center" do %>
+        <div class="text-6xl mb-3">📖</div>
+        <h3 class="text-2xl font-bold text-gray-800 mb-2">Pokédex</h3>
+        <p class="text-gray-600">View your captured Pokémon</p>
+        <div class="mt-4">
+          <span class="text-3xl font-bold text-red-600"><%= @trainer.captures.count %></span>
+          <span class="text-gray-500 text-sm"> / 151</span>
+        </div>
+      <% end %>
+
+      <%= link_to catch_pokemon_path, class: "bg-white rounded-xl shadow-xl p-8 border-4 border-yellow-400 hover:border-yellow-500 transition-all hover:scale-105 text-center" do %>
+        <div class="text-6xl mb-3">🎣</div>
+        <h3 class="text-2xl font-bold text-gray-800 mb-2">Catch</h3>
+        <p class="text-gray-600">Catch a random Pokémon</p>
+        <div class="mt-4">
+          <span class="text-lg font-bold text-yellow-600">Use Pokéballs!</span>
+        </div>
+      <% end %>
+
+      <%= link_to bag_path, class: "bg-white rounded-xl shadow-xl p-8 border-4 border-blue-400 hover:border-blue-500 transition-all hover:scale-105 text-center" do %>
+        <div class="text-6xl mb-3">🎒</div>
+        <h3 class="text-2xl font-bold text-gray-800 mb-2">Bag</h3>
+        <p class="text-gray-600">Check your Pokéball inventory</p>
+        <div class="mt-4">
+          <span class="text-3xl font-bold text-blue-600"><%= @trainer.total_pokeballs %></span>
+          <span class="text-gray-500 text-sm"> Pokéballs</span>
+        </div>
+      <% end %>
+
+      <%= link_to rewards_path, class: "bg-white rounded-xl shadow-xl p-8 border-4 border-green-400 hover:border-green-500 transition-all hover:scale-105 text-center" do %>
+        <div class="text-6xl mb-3">🎁</div>
+        <h3 class="text-2xl font-bold text-gray-800 mb-2">Redeem</h3>
+        <p class="text-gray-600">Claim rewards for completed tickets</p>
+        <div class="mt-4">
+          <span class="text-lg font-bold text-green-600">Earn Pokéballs!</span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

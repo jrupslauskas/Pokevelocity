@@ -1,0 +1,157 @@
+<div class="min-h-screen bg-gradient-to-b from-blue-400 via-blue-300 to-green-300">
+  <!-- Header -->
+  <%= render "trainers/header" %>
+
+  <!-- Main Content -->
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Pokemon Display -->
+    <div class="bg-white rounded-xl shadow-xl p-8 mb-8 border-4 border-yellow-400 text-center">
+      <div class="mb-4">
+        <% if @pokemon.image.attached? %>
+          <%= image_tag @pokemon.image, alt: @pokemon.name, class: "mx-auto h-48 w-auto object-contain" %>
+        <% else %>
+          <div class="text-gray-400 text-8xl">?</div>
+        <% end %>
+      </div>
+      <div class="text-sm text-gray-500 font-semibold mb-2">#<%= @pokemon.pokedex_number.to_s.rjust(3, '0') %></div>
+      <h2 class="text-4xl font-bold text-gray-800 capitalize mb-4"><%= @pokemon.name %></h2>
+      <p class="text-gray-600">Choose a Pokéball to catch this Pokémon</p>
+    </div>
+
+    <!-- Ball Selection -->
+    <h3 class="text-2xl font-bold text-white text-center mb-4 drop-shadow-lg">Select Your Pokéball</h3>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+      <!-- Pokeball -->
+      <%= form_with url: select_pokemon_path(@pokemon), method: :post, local: true do |f| %>
+        <%= f.hidden_field :ball_type, value: "pokeball" %>
+        <button type="submit"
+                class="bg-white rounded-xl shadow-xl p-6 border-4 border-red-300 hover:border-red-500 transition-all hover:scale-105 text-center w-full <%= @trainer.pokeballs_count == 0 ? 'opacity-50 cursor-not-allowed' : '' %>"
+                <%= "disabled" if @trainer.pokeballs_count == 0 %>>
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center space-x-3">
+              <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center text-2xl">⚪</div>
+              <div class="text-left">
+                <h4 class="text-xl font-bold text-gray-800">Pokéball</h4>
+                <p class="text-sm text-gray-600">Standard Pokéball</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <p class="text-4xl font-bold text-red-600"><%= @trainer.pokeballs_count %></p>
+              <p class="text-xs text-gray-500">Available</p>
+            </div>
+          </div>
+          <% if @trainer.pokeballs_count > 0 %>
+            <div class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg">
+              Use Pokéball
+            </div>
+          <% else %>
+            <div class="bg-gray-300 text-gray-600 font-bold py-2 px-4 rounded-lg">
+              None Available
+            </div>
+          <% end %>
+        </button>
+      <% end %>
+
+      <!-- Great Ball -->
+      <%= form_with url: select_pokemon_path(@pokemon), method: :post, local: true do |f| %>
+        <%= f.hidden_field :ball_type, value: "great_ball" %>
+        <button type="submit"
+                class="bg-white rounded-xl shadow-xl p-6 border-4 border-blue-300 hover:border-blue-500 transition-all hover:scale-105 text-center w-full <%= @trainer.great_balls_count == 0 ? 'opacity-50 cursor-not-allowed' : '' %>"
+                <%= "disabled" if @trainer.great_balls_count == 0 %>>
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center space-x-3">
+              <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-2xl">🔵</div>
+              <div class="text-left">
+                <h4 class="text-xl font-bold text-gray-800">Great Ball</h4>
+                <p class="text-sm text-gray-600">Enhanced Pokéball</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <p class="text-4xl font-bold text-blue-600"><%= @trainer.great_balls_count %></p>
+              <p class="text-xs text-gray-500">Available</p>
+            </div>
+          </div>
+          <% if @trainer.great_balls_count > 0 %>
+            <div class="bg-blue-500 text-white font-bold py-2 px-4 rounded-lg">
+              Use Great Ball
+            </div>
+          <% else %>
+            <div class="bg-gray-300 text-gray-600 font-bold py-2 px-4 rounded-lg">
+              None Available
+            </div>
+          <% end %>
+        </button>
+      <% end %>
+
+      <!-- Ultra Ball -->
+      <%= form_with url: select_pokemon_path(@pokemon), method: :post, local: true do |f| %>
+        <%= f.hidden_field :ball_type, value: "ultra_ball" %>
+        <button type="submit"
+                class="bg-white rounded-xl shadow-xl p-6 border-4 border-yellow-300 hover:border-yellow-500 transition-all hover:scale-105 text-center w-full <%= @trainer.ultra_balls_count == 0 ? 'opacity-50 cursor-not-allowed' : '' %>"
+                <%= "disabled" if @trainer.ultra_balls_count == 0 %>>
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center space-x-3">
+              <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center text-2xl">🟡</div>
+              <div class="text-left">
+                <h4 class="text-xl font-bold text-gray-800">Ultra Ball</h4>
+                <p class="text-sm text-gray-600">High-performance</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <p class="text-4xl font-bold text-yellow-600"><%= @trainer.ultra_balls_count %></p>
+              <p class="text-xs text-gray-500">Available</p>
+            </div>
+          </div>
+          <% if @trainer.ultra_balls_count > 0 %>
+            <div class="bg-yellow-500 text-white font-bold py-2 px-4 rounded-lg">
+              Use Ultra Ball
+            </div>
+          <% else %>
+            <div class="bg-gray-300 text-gray-600 font-bold py-2 px-4 rounded-lg">
+              None Available
+            </div>
+          <% end %>
+        </button>
+      <% end %>
+
+      <!-- Master Ball -->
+      <%= form_with url: select_pokemon_path(@pokemon), method: :post, local: true do |f| %>
+        <%= f.hidden_field :ball_type, value: "master_ball" %>
+        <button type="submit"
+                class="bg-white rounded-xl shadow-xl p-6 border-4 border-purple-300 hover:border-purple-500 transition-all hover:scale-105 text-center w-full <%= @trainer.master_balls_count == 0 ? 'opacity-50 cursor-not-allowed' : '' %>"
+                <%= "disabled" if @trainer.master_balls_count == 0 %>>
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center space-x-3">
+              <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-2xl">🟣</div>
+              <div class="text-left">
+                <h4 class="text-xl font-bold text-gray-800">Master Ball</h4>
+                <p class="text-sm text-gray-600">Ultimate Pokéball</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <p class="text-4xl font-bold text-purple-600"><%= @trainer.master_balls_count %></p>
+              <p class="text-xs text-gray-500">Available</p>
+            </div>
+          </div>
+          <% if @trainer.master_balls_count > 0 %>
+            <div class="bg-purple-500 text-white font-bold py-2 px-4 rounded-lg">
+              Use Master Ball
+            </div>
+          <% else %>
+            <div class="bg-gray-300 text-gray-600 font-bold py-2 px-4 rounded-lg">
+              None Available
+            </div>
+          <% end %>
+        </button>
+      <% end %>
+    </div>
+
+    <!-- Back Button -->
+    <div>
+      <%= link_to catch_pokemon_path, class: "block text-center bg-gray-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-gray-600 transition-all shadow-lg" do %>
+        ← Back to Pokémon List
+      <% end %>
+    </div>
+  </div>
+</div>

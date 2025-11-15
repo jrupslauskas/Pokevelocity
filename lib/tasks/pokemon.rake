@@ -87,4 +87,33 @@ namespace :pokemon do
     Pokemon.destroy_all
     puts "Removed #{count} Pokemon from database."
   end
+
+  desc "Load difficulty values for all Pokemon from YAML file"
+  task load_difficulties: :environment do
+    puts "Loading Pokemon difficulty values..."
+
+    # Load the YAML file
+    difficulty_file = Rails.root.join("db", "data", "pokemon_difficulties.yml")
+    unless File.exist?(difficulty_file)
+      puts "Error: #{difficulty_file} not found!"
+      exit 1
+    end
+
+    difficulties = YAML.load_file(difficulty_file)
+
+    updated_count = 0
+    difficulties.each do |pokedex_number, difficulty|
+      pokemon = Pokemon.find_by(pokedex_number: pokedex_number)
+
+      if pokemon
+        pokemon.update!(difficulty: difficulty)
+        puts "  ✓ Updated #{pokemon.name} (##{pokedex_number}): difficulty = #{difficulty}"
+        updated_count += 1
+      else
+        puts "  ✗ Pokemon ##{pokedex_number} not found in database"
+      end
+    end
+
+    puts "\nDone! Updated #{updated_count} Pokemon with difficulty values."
+  end
 end
