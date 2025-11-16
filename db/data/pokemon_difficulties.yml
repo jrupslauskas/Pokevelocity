@@ -58,12 +58,12 @@
 # Nidoran-F line
 29: 1  # Nidoran-F
 30: 2  # Nidorina
-31: 3  # Nidoqueen
+31: 4  # Nidoqueen
 
 # Nidoran-M line
 32: 1  # Nidoran-M
 33: 2  # Nidorino
-34: 3  # Nidoking
+34: 4  # Nidoking
 
 # Clefairy line
 35: 2  # Clefairy
@@ -96,7 +96,7 @@
 
 # Diglett line
 50: 1  # Diglett
-51: 2  # Dugtrio
+51: 3  # Dugtrio
 
 # Meowth line
 52: 1  # Meowth
@@ -107,8 +107,8 @@
 55: 3  # Golduck
 
 # Mankey line
-56: 1  # Mankey
-57: 2  # Primeape
+56: 2  # Mankey
+57: 3  # Primeape
 
 # Growlithe line
 58: 2  # Growlithe
@@ -141,7 +141,7 @@
 # Geodude line
 74: 1  # Geodude
 75: 2  # Graveler
-76: 3  # Golem
+76: 4  # Golem
 
 # Ponyta line
 77: 2  # Ponyta
@@ -160,7 +160,7 @@
 
 # Doduo line
 84: 1  # Doduo
-85: 2  # Dodrio
+85: 3  # Dodrio
 
 # Seel line
 86: 2  # Seel
@@ -272,7 +272,7 @@
 132: 3  # Ditto
 
 # Eevee line
-133: 3  # Eevee
+133: 2  # Eevee
 134: 3  # Vaporeon
 135: 3  # Jolteon
 136: 3  # Flareon
@@ -281,12 +281,12 @@
 137: 3  # Porygon
 
 # Omanyte line
-138: 3  # Omanyte
-139: 4  # Omastar
+138: 2  # Omanyte
+139: 3  # Omastar
 
 # Kabuto line
-140: 3  # Kabuto
-141: 4  # Kabutops
+140: 2  # Kabuto
+141: 3  # Kabutops
 
 # Aerodactyl
 142: 4  # Aerodactyl
