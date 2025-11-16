@@ -17,6 +17,11 @@
       <span>Pokédex</span>
     <% end %>
 
+    <%= link_to leaderboard_path, class: "sidebar-nav-item #{current_page?(leaderboard_path) ? 'active' : ''}" do %>
+      <span class="sidebar-nav-icon">🏆</span>
+      <span>Leaderboard</span>
+    <% end %>
+
     <%= link_to catch_pokemon_path, class: "sidebar-nav-item #{current_page?(catch_pokemon_path) ? 'active' : ''}" do %>
       <span class="sidebar-nav-icon">🎣</span>
       <span>Catch</span>

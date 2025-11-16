@@ -1,5 +1,5 @@
 class TrainersController < ApplicationController
-  before_action :require_login, only: [:dashboard, :pokedex, :rewards, :redeem_reward, :catch, :select_pokemon, :attempt_catch]
+  before_action :require_login, only: [:dashboard, :pokedex, :leaderboard, :rewards, :redeem_reward, :catch, :select_pokemon, :attempt_catch]
 
   def new
     @trainer = Trainer.new
@@ -35,6 +35,24 @@ class TrainersController < ApplicationController
   def pokedex
     @trainer = current_trainer
     @captured_pokemon = @trainer.captured_pokemon.order(:pokedex_number)
+  end
+
+  def leaderboard
+    # Get all trainers with their captured Pokémon and calculate difficulty scores
+    @trainers = Trainer.includes(:captured_pokemon, :icon_pokemon).all.map do |trainer|
+      difficulty_score = trainer.captured_pokemon.sum(:difficulty)
+      {
+        trainer: trainer,
+        pokemon_count: trainer.captured_pokemon.count,
+        difficulty_score: difficulty_score
+      }
+    end
+
+    # Sort by difficulty score (descending), then by pokemon count (descending)
+    @trainers = @trainers.sort_by { |t| [-t[:difficulty_score], -t[:pokemon_count]] }
+
+    # Limit to top 20
+    @trainers = @trainers.first(20)
   end
 
   def rewards

@@ -1,0 +1,89 @@
+<div class="app-layout">
+  <%= render "trainers/sidebar" %>
+
+  <main class="main-content">
+    <header class="page-header-authenticated">
+      <h1>Leaderboard</h1>
+      <p>See who's catching the toughest Pokémon!</p>
+    </header>
+
+    <!-- Explanation Card -->
+    <div class="leaderboard-explanation">
+      <div class="explanation-icon">🏆</div>
+      <div class="explanation-content">
+        <h3 class="explanation-title">How Rankings Work</h3>
+        <p class="explanation-text">
+          Trainers are ranked by their <strong>Total Difficulty Score</strong> — the sum of difficulty ratings of all Pokémon they've caught.
+          Each Pokémon has a difficulty rating from 1 to 5 stars. For example, catching Mewtwo (5★) and Charizard (4★) gives you a score of 9,
+          which ranks higher than catching 10 common Pokémon (1★ each) with a score of 10... wait, that doesn't work out. You get the idea though!
+        </p>
+      </div>
+    </div>
+
+    <!-- Leaderboard -->
+    <% if @trainers.any? %>
+      <div class="leaderboard-container">
+        <% @trainers.each_with_index do |entry, index| %>
+          <div class="leaderboard-row <%= 'leaderboard-current-user' if entry[:trainer].id == current_trainer.id %>">
+            <div class="leaderboard-rank">
+              <% if index == 0 %>
+                <span class="rank-medal">🥇</span>
+              <% elsif index == 1 %>
+                <span class="rank-medal">🥈</span>
+              <% elsif index == 2 %>
+                <span class="rank-medal">🥉</span>
+              <% else %>
+                <span class="rank-number">#<%= index + 1 %></span>
+              <% end %>
+            </div>
+
+            <div class="leaderboard-trainer">
+              <% if entry[:trainer].icon_pokemon %>
+                <div class="leaderboard-avatar">
+                  <% if entry[:trainer].icon_pokemon.image.attached? %>
+                    <%= image_tag entry[:trainer].icon_pokemon.image, alt: entry[:trainer].icon_pokemon.name, class: "leaderboard-avatar-image" %>
+                  <% else %>
+                    <%= image_tag "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/#{entry[:trainer].icon_pokemon.pokedex_number}.png",
+                        alt: entry[:trainer].icon_pokemon.name,
+                        class: "leaderboard-avatar-image",
+                        style: "image-rendering: pixelated;" %>
+                  <% end %>
+                </div>
+              <% else %>
+                <div class="leaderboard-avatar leaderboard-avatar-empty">
+                  <span>👤</span>
+                </div>
+              <% end %>
+
+              <div class="leaderboard-trainer-info">
+                <span class="leaderboard-username">
+                  <%= entry[:trainer].username %>
+                  <% if entry[:trainer].id == current_trainer.id %>
+                    <span class="you-badge">You</span>
+                  <% end %>
+                </span>
+              </div>
+            </div>
+
+            <div class="leaderboard-stats">
+              <div class="leaderboard-stat">
+                <span class="stat-label">Pokédex</span>
+                <span class="stat-value"><%= entry[:pokemon_count] %> / 151</span>
+              </div>
+              <div class="leaderboard-stat leaderboard-stat-score">
+                <span class="stat-label">Score</span>
+                <span class="stat-value stat-score"><%= entry[:difficulty_score] %>★</span>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="empty-state">
+        <div class="empty-state-icon">🏆</div>
+        <h3 class="empty-state-title">No Trainers Yet!</h3>
+        <p class="empty-state-description">Be the first to catch some Pokémon and claim the top spot!</p>
+      </div>
+    <% end %>
+  </main>
+</div>
