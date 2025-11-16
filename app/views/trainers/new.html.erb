@@ -45,12 +45,23 @@
             class: "form-input" %>
       </div>
 
+      <div class="form-group">
+        <%= label_tag :activation_code, "Activation Code", class: "form-label" %>
+        <%= text_field_tag :activation_code, nil,
+            placeholder: "Enter 6-character code",
+            required: true,
+            maxlength: 6,
+            class: "form-input",
+            style: "text-transform: uppercase;" %>
+        <p style="font-size: 13px; color: #8B6F47; margin: 6px 0 0 0;">Contact the admin for the activation code</p>
+      </div>
+
       <div class="form-group" style="display: flex; gap: 10px; align-items: start;">
         <%= check_box_tag :honor_system_agreement, "1", false,
             required: true,
             style: "width: 20px; height: 20px; margin-top: 2px; cursor: pointer; flex-shrink: 0;" %>
         <%= label_tag :honor_system_agreement,
-            "I agree that this app operates on the honor system. No validation is done to vet the completion of tickets, however swindling, cheating, or otherwise dastardly users will ruin the fun, so I agree to not be one of those people.",
+            "I acknowledge that this app operates on the honor system. No validation is done to vet the completion of tickets, however swindling velocity inflators will ruin the fun, so I agree to not be a Team Rocket Grunt and will only claim credit for tickets I actually complete.",
             style: "font-size: 14px; color: #6B5537; line-height: 1.5; cursor: pointer; margin: 0;" %>
       </div>
 
@@ -64,4 +75,10 @@
       <%= link_to "Log In", login_path, class: "link-secondary" %>
     </p>
   </div>
+
+  <footer class="page-footer">
+    <p class="footer-text">
+      <%= link_to "View on GitHub", "https://github.com/jrupslauskas/Pokevelocity", target: "_blank", class: "footer-link" %>
+    </p>
+  </footer>
 </div>

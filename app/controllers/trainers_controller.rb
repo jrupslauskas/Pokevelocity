@@ -8,6 +8,16 @@ class TrainersController < ApplicationController
   def create
     @trainer = Trainer.new(trainer_params)
 
+    # Validate activation code
+    activation_code = params[:activation_code]
+    valid_code = ValidationCode.find_by(active: true)
+
+    if valid_code.nil? || activation_code.upcase != valid_code.code
+      @trainer.errors.add(:base, "Invalid activation code")
+      render :new, status: :unprocessable_entity
+      return
+    end
+
     if @trainer.save
       session[:trainer_id] = @trainer.id
       redirect_to dashboard_path, notice: "Welcome to Pokevelocity, #{@trainer.username}!"
