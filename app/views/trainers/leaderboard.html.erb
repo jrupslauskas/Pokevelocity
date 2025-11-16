@@ -14,8 +14,8 @@
         <h3 class="explanation-title">How Rankings Work</h3>
         <p class="explanation-text">
           Trainers are ranked by their <strong>Total Difficulty Score</strong> — the sum of difficulty ratings of all Pokémon they've caught.
-          Each Pokémon has a difficulty rating from 1 to 5 stars. For example, catching Mewtwo (5★) and Charizard (4★) gives you a score of 9,
-          which ranks higher than catching 10 common Pokémon (1★ each) with a score of 10... wait, that doesn't work out. You get the idea though!
+          Each Pokémon has a difficulty rating from 1 to 5 stars. For example, catching only Mewtwo (5★) and Charizard (4★) gives you a score of 9,
+          which ranks higher than catching 8 common Pokémon (1★ each) with a score of 8. Balance quantity and quality on your journey!
         </p>
       </div>
     </div>
@@ -71,7 +71,7 @@
                 <span class="stat-value"><%= entry[:pokemon_count] %> / 151</span>
               </div>
               <div class="leaderboard-stat leaderboard-stat-score">
-                <span class="stat-label">Score</span>
+                <span class="stat-label">Difficulty Score</span>
                 <span class="stat-value stat-score"><%= entry[:difficulty_score] %>★</span>
               </div>
             </div>
