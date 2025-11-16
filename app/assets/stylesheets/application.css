@@ -23,16 +23,23 @@ body {
   margin-bottom: 40px;
 }
 
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
 .logo-placeholder {
-  font-size: 64px;
-  margin-bottom: 16px;
+  font-size: 48px;
 }
 
 .page-title {
   font-size: 42px;
   font-weight: 700;
   color: #2C5F2D;
-  margin: 0 0 8px 0;
+  margin: 0;
 }
 
 .tagline {
@@ -52,6 +59,21 @@ body {
   max-width: 480px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.card-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2C5F2D;
+  text-align: center;
+  margin: 0 0 8px 0;
+}
+
+.card-subtitle {
+  font-size: 15px;
+  color: #6B5537;
+  text-align: center;
+  margin: 0 0 24px 0;
 }
 
 /* Button Components */
@@ -76,6 +98,11 @@ body {
 /* Form Components */
 .form-group {
   margin-bottom: 20px;
+}
+
+.form-group-center {
+  margin-bottom: 20px;
+  text-align: center;
 }
 
 .form-label {
