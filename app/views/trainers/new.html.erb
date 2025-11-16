@@ -11,15 +11,15 @@
     <p class="tagline">Complete tickets · Earn Pokéballs · Catch 'em all!</p>
   </div>
 
-  <div>
-    <h2>Create Your Account</h2>
-    <p>Choose your trainer name and set a password (Don't use sensitive credentials - this is just for fun!)</p>
+  <div class="card">
+    <h2 class="card-title">Create Your Account</h2>
+    <p class="card-subtitle">Choose your trainer name and set a password (Don't use sensitive credentials or work information)</p>
 
     <%= form_with model: @trainer, url: trainers_path, method: :post, local: true do |f| %>
       <% if @trainer.errors.any? %>
-        <div>
-          <p>Please fix the following errors:</p>
-          <ul>
+        <div style="background-color: #FFE8E8; border: 2px solid #C97A7A; border-radius: 10px; padding: 16px; margin-bottom: 20px;">
+          <p style="color: #C97A7A; font-weight: 600; margin: 0 0 8px 0;">Please fix the following errors:</p>
+          <ul style="margin: 0; padding-left: 20px; color: #8B6F47;">
             <% @trainer.errors.full_messages.each do |message| %>
               <li><%= message %></li>
             <% end %>
@@ -27,36 +27,41 @@
         </div>
       <% end %>
 
-      <div>
-        <%= f.label :username, "Trainer Name" %>
+      <div class="form-group">
+        <%= f.label :username, "Trainer Name", class: "form-label" %>
         <%= f.text_field :username,
             placeholder: "Choose your unique trainer name",
             autofocus: true,
-            required: true %>
-        <p>This will be your display name in the app</p>
+            required: true,
+            class: "form-input" %>
+        <p style="font-size: 13px; color: #8B6F47; margin: 6px 0 0 0;">This will be your display name in the app</p>
       </div>
 
-      <div>
-        <%= f.label :password, "Password" %>
+      <div class="form-group">
+        <%= f.label :password, "Password", class: "form-label" %>
         <%= f.password_field :password,
             placeholder: "Create a password",
-            required: true %>
+            required: true,
+            class: "form-input" %>
       </div>
 
-      <div>
-        <%= f.submit "Create Trainer Account" %>
+      <div class="form-group" style="display: flex; gap: 10px; align-items: start;">
+        <%= check_box_tag :honor_system_agreement, "1", false,
+            required: true,
+            style: "width: 20px; height: 20px; margin-top: 2px; cursor: pointer; flex-shrink: 0;" %>
+        <%= label_tag :honor_system_agreement,
+            "I agree that this app operates on the honor system. No validation is done to vet the completion of tickets, however swindling, cheating, or otherwise dastardly users will ruin the fun, so I agree to not be one of those people.",
+            style: "font-size: 14px; color: #6B5537; line-height: 1.5; cursor: pointer; margin: 0;" %>
+      </div>
+
+      <div class="form-group-center">
+        <%= f.submit "Create Trainer Account", class: "btn-primary" %>
       </div>
     <% end %>
 
-    <div>
-      <p>
-        Already have an account?
-        <%= link_to "Log In", login_path %>
-      </p>
-    </div>
-  </div>
-
-  <div>
-    <p>Start your journey to catch 'em all!</p>
+    <p class="text-secondary">
+      Already have an account?
+      <%= link_to "Log In", login_path, class: "link-secondary" %>
+    </p>
   </div>
 </div>
