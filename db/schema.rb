@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_16_131339) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_16_193506) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -66,6 +66,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_16_131339) do
   create_table "trainers", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "great_balls_count", default: 0, null: false
+    t.integer "icon_pokemon_id"
     t.integer "master_balls_count", default: 0, null: false
     t.string "password_digest", null: false
     t.integer "pokeballs_count", default: 0, null: false

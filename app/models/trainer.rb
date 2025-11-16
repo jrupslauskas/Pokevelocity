@@ -3,6 +3,7 @@ class Trainer < ApplicationRecord
 
   has_many :captures, dependent: :destroy
   has_many :captured_pokemon, through: :captures, source: :pokemon
+  belongs_to :icon_pokemon, class_name: "Pokemon", optional: true
 
   validates :username, presence: true, uniqueness: true
   validates :password, presence: true, length: { minimum: 1 }, if: :password_required?

@@ -46,6 +46,29 @@
       </div>
 
       <div class="form-group">
+        <%= f.label :icon_pokemon_id, "Choose Your Icon Pokémon", class: "form-label" %>
+        <p style="font-size: 13px; color: #8B6F47; margin: 0 0 12px 0;">This will represent you throughout the app</p>
+        <div class="icon-pokemon-grid">
+          <% @pokemon.each do |pokemon| %>
+            <label class="icon-pokemon-option">
+              <%= f.radio_button :icon_pokemon_id, pokemon.id, required: true, class: "icon-pokemon-radio" %>
+              <div class="icon-pokemon-card">
+                <% if pokemon.image.attached? %>
+                  <%= image_tag pokemon.image, alt: pokemon.name, class: "icon-pokemon-image" %>
+                <% else %>
+                  <%= image_tag "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/#{pokemon.pokedex_number}.png",
+                      alt: pokemon.name,
+                      class: "icon-pokemon-image",
+                      style: "image-rendering: pixelated;" %>
+                <% end %>
+                <span class="icon-pokemon-name"><%= pokemon.name %></span>
+              </div>
+            </label>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="form-group">
         <%= label_tag :activation_code, "Activation Code", class: "form-label" %>
         <%= text_field_tag :activation_code, nil,
             placeholder: "Enter 6-character code",

@@ -30,6 +30,18 @@
 
   <div class="sidebar-footer">
     <div class="sidebar-user">
+      <% if current_trainer.icon_pokemon %>
+        <div class="sidebar-user-avatar">
+          <% if current_trainer.icon_pokemon.image.attached? %>
+            <%= image_tag current_trainer.icon_pokemon.image, alt: current_trainer.icon_pokemon.name, class: "sidebar-avatar-image" %>
+          <% else %>
+            <%= image_tag "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/#{current_trainer.icon_pokemon.pokedex_number}.png",
+                alt: current_trainer.icon_pokemon.name,
+                class: "sidebar-avatar-image",
+                style: "image-rendering: pixelated;" %>
+          <% end %>
+        </div>
+      <% end %>
       <span class="sidebar-username"><%= current_trainer.username %></span>
     </div>
     <%= button_to "Logout", logout_path, method: :delete, class: "sidebar-logout" %>

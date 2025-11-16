@@ -3,10 +3,12 @@ class TrainersController < ApplicationController
 
   def new
     @trainer = Trainer.new
+    @pokemon = Pokemon.order(:pokedex_number)
   end
 
   def create
     @trainer = Trainer.new(trainer_params)
+    @pokemon = Pokemon.order(:pokedex_number)
 
     # Validate activation code
     activation_code = params[:activation_code]
@@ -123,6 +125,6 @@ class TrainersController < ApplicationController
   private
 
   def trainer_params
-    params.require(:trainer).permit(:username, :password)
+    params.require(:trainer).permit(:username, :password, :icon_pokemon_id)
   end
 end
