@@ -1,9 +1,13 @@
-<div>
-  <%= render "trainers/header" %>
+<div class="app-layout">
+  <%= render "trainers/sidebar" %>
 
-  <div>
+  <main class="main-content">
+    <header class="page-header-authenticated">
+      <h1>Catch <%= @pokemon.name.capitalize %></h1>
+      <p>Select a Pokéball to attempt catching this Pokémon.</p>
+    </header>
+
     <div>
-      <div>
         <% if @pokemon.image.attached? %>
           <%= image_tag @pokemon.image, alt: @pokemon.name %>
         <% else %>
@@ -144,5 +148,5 @@
     <div>
       <%= link_to "← Back to Pokémon List", catch_pokemon_path %>
     </div>
-  </div>
+  </main>
 </div>

@@ -13,8 +13,13 @@
 body {
   background-color: #E8F5E8;
   margin: 0;
-  padding: 20px;
+  padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Add padding only for non-sidebar pages (login/register) */
+body > div:not(.app-layout) {
+  padding: 20px;
 }
 
 /* Header/Title Components */
@@ -155,6 +160,138 @@ body {
 .link-secondary:hover {
   color: #7AC74C;
   text-decoration: underline;
+}
+
+/* Sidebar Layout */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 260px;
+  background: linear-gradient(to bottom, #2C5F2D, #1E4620);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  left: 0;
+  top: 0;
+}
+
+.sidebar-header {
+  padding: 24px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 24px;
+  font-weight: 700;
+  color: white;
+  text-decoration: none;
+}
+
+.sidebar-logo-icon {
+  font-size: 28px;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 20px 0;
+  overflow-y: auto;
+}
+
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.sidebar-nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.sidebar-nav-item.active {
+  background-color: rgba(122, 199, 76, 0.2);
+  color: #E8F5E8;
+  border-left: 3px solid #7AC74C;
+}
+
+.sidebar-nav-icon {
+  font-size: 20px;
+}
+
+.sidebar-footer {
+  padding: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.sidebar-username {
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+}
+
+.sidebar-logout {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.sidebar-logout:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.main-content {
+  flex: 1;
+  margin-left: 260px;
+  padding: 32px;
+  background-color: #E8F5E8;
+}
+
+/* Page Header */
+.page-header-authenticated {
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #D0E8D0;
+}
+
+.page-header-authenticated h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #2C5F2D;
+  margin: 0 0 4px 0;
+}
+
+.page-header-authenticated p {
+  font-size: 15px;
+  color: #6B5537;
+  margin: 0;
 }
 
 /* Footer */

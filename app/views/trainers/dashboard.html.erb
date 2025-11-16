@@ -1,14 +1,13 @@
-<div>
-  <%= render "trainers/header" %>
+<div class="app-layout">
+  <%= render "trainers/sidebar" %>
 
-  <div>
+  <main class="main-content">
+    <header class="page-header-authenticated">
+      <h1>Trainer Dashboard</h1>
+      <p>Welcome back, <%= @trainer.username %>! Here's your progress overview.</p>
+    </header>
+
     <div>
-      <div>
-        <span>👋</span>
-      </div>
-      <h2>Welcome, <%= @trainer.username %>!</h2>
-      <p>Your trainer dashboard</p>
-    </div>
 
     <div>
       <div>
@@ -78,16 +77,6 @@
         </div>
       <% end %>
 
-      <%= link_to bag_path do %>
-        <div>🎒</div>
-        <h3>Bag</h3>
-        <p>Check your Pokéball inventory</p>
-        <div>
-          <span><%= @trainer.total_pokeballs %></span>
-          <span> Pokéballs</span>
-        </div>
-      <% end %>
-
       <%= link_to rewards_path do %>
         <div>🎁</div>
         <h3>Redeem</h3>
@@ -97,5 +86,6 @@
         </div>
       <% end %>
     </div>
-  </div>
+    </div>
+  </main>
 </div>

@@ -1,5 +1,5 @@
 class TrainersController < ApplicationController
-  before_action :require_login, only: [:dashboard, :pokedex, :bag, :rewards, :redeem_reward, :catch, :select_pokemon, :attempt_catch]
+  before_action :require_login, only: [:dashboard, :pokedex, :rewards, :redeem_reward, :catch, :select_pokemon, :attempt_catch]
 
   def new
     @trainer = Trainer.new
@@ -35,10 +35,6 @@ class TrainersController < ApplicationController
     @captured_pokemon = @trainer.captured_pokemon.order(:pokedex_number)
   end
 
-  def bag
-    @trainer = current_trainer
-  end
-
   def rewards
     @trainer = current_trainer
   end
@@ -49,7 +45,7 @@ class TrainersController < ApplicationController
 
     if story_points > 0
       result = @trainer.award_pokeball_for_ticket(story_points)
-      redirect_to bag_path, notice: "Congratulations! You earned a #{result[:ball_type].humanize} for completing a #{story_points} point ticket!"
+      redirect_to dashboard_path, notice: "Congratulations! You earned a #{result[:ball_type].humanize} for completing a #{story_points} point ticket!"
     else
       redirect_to rewards_path, alert: "Please enter a valid story point value"
     end

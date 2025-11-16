@@ -1,0 +1,37 @@
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <%= link_to dashboard_path, class: "sidebar-logo" do %>
+      <span class="sidebar-logo-icon">⚡</span>
+      <span>Pokévelocity</span>
+    <% end %>
+  </div>
+
+  <nav class="sidebar-nav">
+    <%= link_to dashboard_path, class: "sidebar-nav-item #{current_page?(dashboard_path) ? 'active' : ''}" do %>
+      <span class="sidebar-nav-icon">🏠</span>
+      <span>Dashboard</span>
+    <% end %>
+
+    <%= link_to pokedex_path, class: "sidebar-nav-item #{current_page?(pokedex_path) ? 'active' : ''}" do %>
+      <span class="sidebar-nav-icon">📖</span>
+      <span>Pokédex</span>
+    <% end %>
+
+    <%= link_to catch_pokemon_path, class: "sidebar-nav-item #{current_page?(catch_pokemon_path) ? 'active' : ''}" do %>
+      <span class="sidebar-nav-icon">🎣</span>
+      <span>Catch</span>
+    <% end %>
+
+    <%= link_to rewards_path, class: "sidebar-nav-item #{current_page?(rewards_path) ? 'active' : ''}" do %>
+      <span class="sidebar-nav-icon">🎁</span>
+      <span>Redeem</span>
+    <% end %>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <span class="sidebar-username"><%= current_trainer.username %></span>
+    </div>
+    <%= button_to "Logout", logout_path, method: :delete, class: "sidebar-logout" %>
+  </div>
+</aside>

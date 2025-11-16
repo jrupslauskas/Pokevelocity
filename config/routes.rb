@@ -27,9 +27,6 @@ Rails.application.routes.draw do
   # Pokedex
   get "/pokedex", to: "trainers#pokedex", as: :pokedex
 
-  # Bag (pokeball inventory)
-  get "/bag", to: "trainers#bag", as: :bag
-
   # Redeem rewards
   get "/rewards", to: "trainers#rewards", as: :rewards
   post "/rewards", to: "trainers#redeem_reward"

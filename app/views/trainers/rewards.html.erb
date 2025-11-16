@@ -1,14 +1,11 @@
-<div>
-  <%= render "trainers/header" %>
+<div class="app-layout">
+  <%= render "trainers/sidebar" %>
 
-  <div>
-    <div>
-      <div>
-        <span>🎁</span>
-      </div>
-      <h2>Redeem Rewards</h2>
-      <p>Complete tickets to earn Pokéballs!</p>
-    </div>
+  <main class="main-content">
+    <header class="page-header-authenticated">
+      <h1>Redeem Rewards</h1>
+      <p>Claim Pokéballs for completing tickets.</p>
+    </header>
 
     <div>
       <div>
@@ -99,5 +96,5 @@
     <div>
       <%= link_to "← Back to Dashboard", dashboard_path %>
     </div>
-  </div>
+  </main>
 </div>

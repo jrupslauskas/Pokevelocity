@@ -1,7 +1,12 @@
-<div>
-  <%= render "trainers/header" %>
+<div class="app-layout">
+  <%= render "trainers/sidebar" %>
 
-  <div>
+  <main class="main-content">
+    <header class="page-header-authenticated">
+      <h1>Your Pokédex</h1>
+      <p>Track and view all the Pokémon you've captured.</p>
+    </header>
+
     <div>
       <div>
         <div>
@@ -61,5 +66,5 @@
         <%= link_to "Get Pokéballs →", rewards_path %>
       </div>
     <% end %>
-  </div>
+  </main>
 </div>
