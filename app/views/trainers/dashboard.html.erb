@@ -7,85 +7,59 @@
       <p>Welcome back, <%= @trainer.username %>! Here's your progress overview.</p>
     </header>
 
-    <div>
-
-    <div>
-      <div>
-        <h3>Your Pokéballs</h3>
-        <div>
-          <div>
-            <span>Pokéballs</span>
-            <span><%= @trainer.pokeballs_count %></span>
-          </div>
-          <div>
-            <span>Great Balls</span>
-            <span><%= @trainer.great_balls_count %></span>
-          </div>
-          <div>
-            <span>Ultra Balls</span>
-            <span><%= @trainer.ultra_balls_count %></span>
-          </div>
-          <div>
-            <span>Master Balls</span>
-            <span><%= @trainer.master_balls_count %></span>
-          </div>
+    <div class="dashboard-grid">
+      <!-- Pokéballs Inventory Card -->
+      <div class="card-dashboard">
+        <div class="card-dashboard-header">
+          <span class="card-dashboard-icon">🎒</span>
+          <h2 class="card-dashboard-title">Pokéball Inventory</h2>
         </div>
-        <div>
-          <div>
-            <span>Total</span>
-            <span><%= @trainer.total_pokeballs %></span>
-          </div>
+
+        <div class="inventory-item">
+          <span class="inventory-item-label">Pokéballs</span>
+          <span class="inventory-item-count"><%= @trainer.pokeballs_count %></span>
+        </div>
+
+        <div class="inventory-item">
+          <span class="inventory-item-label">Great Balls</span>
+          <span class="inventory-item-count"><%= @trainer.great_balls_count %></span>
+        </div>
+
+        <div class="inventory-item">
+          <span class="inventory-item-label">Ultra Balls</span>
+          <span class="inventory-item-count"><%= @trainer.ultra_balls_count %></span>
+        </div>
+
+        <div class="inventory-item">
+          <span class="inventory-item-label">Master Balls</span>
+          <span class="inventory-item-count"><%= @trainer.master_balls_count %></span>
+        </div>
+
+        <div class="inventory-total">
+          <span class="inventory-total-label">Total Pokéballs</span>
+          <span class="inventory-total-count"><%= @trainer.total_pokeballs %></span>
         </div>
       </div>
 
-      <div>
-        <h3>Your Pokédex</h3>
-        <div>
-          <p><%= @trainer.captures.count %></p>
-          <p>Pokémon Captured</p>
-          <div>
-            <%= @trainer.captures.count %> / 151 Original Pokémon
+      <!-- Pokédex Overview Card -->
+      <div class="card-dashboard">
+        <div class="card-dashboard-header">
+          <span class="card-dashboard-icon">📖</span>
+          <h2 class="card-dashboard-title">Pokédex Progress</h2>
+        </div>
+
+        <div class="pokedex-stats">
+          <p class="pokedex-count"><%= @trainer.captures.count %></p>
+          <p class="pokedex-label">Pokémon Captured</p>
+
+          <% completion = (@trainer.captures.count.to_f / 151 * 100).round(1) %>
+          <div class="progress-bar">
+            <div class="progress-bar-fill" style="width: <%= completion %>%;"></div>
           </div>
-          <div>
-            <div>
-              <% completion = (@trainer.captures.count.to_f / 151 * 100).round(1) %>
-              <div></div>
-            </div>
-            <p><%= completion %>% Complete</p>
-          </div>
+
+          <p class="progress-text"><%= @trainer.captures.count %> / 151 Pokémon (<%= completion %>%)</p>
         </div>
       </div>
-    </div>
-
-    <div>
-      <%= link_to pokedex_path do %>
-        <div>📖</div>
-        <h3>Pokédex</h3>
-        <p>View your captured Pokémon</p>
-        <div>
-          <span><%= @trainer.captures.count %></span>
-          <span> / 151</span>
-        </div>
-      <% end %>
-
-      <%= link_to catch_pokemon_path do %>
-        <div>🎣</div>
-        <h3>Catch</h3>
-        <p>Catch a Pokémon</p>
-        <div>
-          <span>Use Pokéballs!</span>
-        </div>
-      <% end %>
-
-      <%= link_to rewards_path do %>
-        <div>🎁</div>
-        <h3>Redeem</h3>
-        <p>Claim rewards for completed tickets</p>
-        <div>
-          <span>Earn Pokéballs!</span>
-        </div>
-      <% end %>
-    </div>
     </div>
   </main>
 </div>

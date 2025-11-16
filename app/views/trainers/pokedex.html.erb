@@ -7,63 +7,38 @@
       <p>Track and view all the Pokémon you've captured.</p>
     </header>
 
-    <div>
-      <div>
-        <div>
-          <div>
-            <span>📖</span>
-          </div>
-          <div>
-            <h2>Your Pokédex</h2>
-            <p>Track your captured Pokémon collection</p>
-          </div>
-        </div>
-        <div>
-          <p><%= @captured_pokemon.count %></p>
-          <p>Captured</p>
-        </div>
-      </div>
-
-      <div>
-        <div>
-          <% completion = (@captured_pokemon.count.to_f / 151 * 100).round(1) %>
-          <div></div>
-        </div>
-        <p><%= completion %>% Complete (<%= @captured_pokemon.count %> / 151 Pokémon)</p>
-      </div>
-    </div>
-
     <% if @captured_pokemon.any? %>
-      <div>
-        <% @captured_pokemon.each do |pokemon| %>
-          <% capture = @trainer.captures.find_by(pokemon: pokemon) %>
-          <div>
-            <div>
-              <% if pokemon.image.attached? %>
-                <%= image_tag pokemon.image, alt: pokemon.name %>
-              <% else %>
-                <div>?</div>
-              <% end %>
-            </div>
-            <div>
-              <div>#<%= pokemon.pokedex_number.to_s.rjust(3, '0') %></div>
-              <h3><%= pokemon.name %></h3>
-              <div>
-                <span><%= capture.ball_type.humanize %></span>
-                <span><%= capture.captured_at.strftime("%m/%d") %></span>
+      <div class="pokedex-container">
+        <div class="pokedex-grid">
+          <% @captured_pokemon.each do |pokemon| %>
+            <% capture = @trainer.captures.find_by(pokemon: pokemon) %>
+            <div class="pokemon-card">
+              <div class="pokemon-image-container">
+                <% if pokemon.image.attached? %>
+                  <%= image_tag pokemon.image, alt: pokemon.name, class: "pokemon-image" %>
+                <% else %>
+                  <span style="font-size: 48px;">?</span>
+                <% end %>
+              </div>
+              <p class="pokemon-number">#<%= pokemon.pokedex_number.to_s.rjust(3, '0') %></p>
+              <h3 class="pokemon-name"><%= pokemon.name %></h3>
+              <div class="pokemon-meta">
+                <span class="pokemon-ball-type"><%= capture.ball_type.humanize %></span>
+                <span class="pokemon-date"><%= capture.captured_at.strftime("%m/%d") %></span>
               </div>
             </div>
-          </div>
-        <% end %>
+          <% end %>
+        </div>
       </div>
     <% else %>
-      <div>
-        <div>
-          <span>🎣</span>
+      <div class="empty-state">
+        <div class="empty-state-icon">📖</div>
+        <h3 class="empty-state-title">No Pokémon Yet!</h3>
+        <p class="empty-state-description">You haven't caught any Pokémon yet. Complete tickets to earn Pokéballs and start your collection!</p>
+        <div style="display: flex; gap: 12px; justify-content: center; margin-top: 24px;">
+          <%= link_to "Get Pokéballs", rewards_path, class: "btn-primary" %>
+          <%= link_to "Go Catchin' →", catch_pokemon_path, class: "btn-primary" %>
         </div>
-        <h3>No Pokémon Yet!</h3>
-        <p>You haven't caught any Pokémon yet.<br/>Complete tickets to earn Pokéballs!</p>
-        <%= link_to "Get Pokéballs →", rewards_path %>
       </div>
     <% end %>
   </main>

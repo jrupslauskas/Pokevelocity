@@ -7,94 +7,105 @@
       <p>Claim Pokéballs for completing tickets.</p>
     </header>
 
-    <div>
-      <div>
-        <div>
-          <span>✅</span>
-        </div>
-        <h3>Completed a Ticket?</h3>
-        <p>Enter the story points from your completed ticket to receive a Pokéball reward!</p>
+    <!-- Claim Reward Card -->
+    <div class="card-dashboard" style="max-width: 800px; margin: 0 auto 32px;">
+      <div class="card-dashboard-header">
+        <span class="card-dashboard-icon">✅</span>
+        <h2 class="card-dashboard-title">Claim Your Reward</h2>
       </div>
 
-      <%= form_with url: rewards_path, method: :post, local: true do |f| %>
-        <div>
-          <%= label_tag :story_points, "Story Points" %>
-          <%= number_field_tag :story_points, nil,
-              min: 1,
-              max: 13,
-              placeholder: "Enter points (1, 2, 3, 5, 8, 13)",
-              autofocus: true,
-              required: true %>
-          <p>💡 Common values: 1, 2, 3, 5, 8, 13</p>
-        </div>
+      <p style="text-align: center; color: #6B5537; margin-bottom: 24px;">
+        Select the story points from your completed ticket to receive a Pokéball reward!
+      </p>
 
-        <div>
-          <%= submit_tag "Claim Reward!" %>
-        </div>
-      <% end %>
-    </div>
+      <div class="story-points-grid">
+        <%= form_with url: rewards_path, method: :post, local: true do |f| %>
+          <%= hidden_field_tag :story_points, 1 %>
+          <%= submit_tag "1 Point", class: "story-point-button" %>
+        <% end %>
 
-    <div>
-      <div>
-        <div>
-          <span>📊</span>
-        </div>
-        <h3>Reward Probabilities</h3>
-      </div>
-      <p>Different story points have different chances of earning various Pokéballs:</p>
+        <%= form_with url: rewards_path, method: :post, local: true do |f| %>
+          <%= hidden_field_tag :story_points, 2 %>
+          <%= submit_tag "2 Points", class: "story-point-button" %>
+        <% end %>
 
-      <div>
-        <div>
-          <div>
-            <div>
-              <div>1-2 Point Tickets</div>
-              <div>Mostly Pokéballs, small chance of Great Balls</div>
-            </div>
-            <span>⚪</span>
-          </div>
-        </div>
+        <%= form_with url: rewards_path, method: :post, local: true do |f| %>
+          <%= hidden_field_tag :story_points, 3 %>
+          <%= submit_tag "3 Points", class: "story-point-button" %>
+        <% end %>
 
-        <div>
-          <div>
-            <div>
-              <div>3 Point Tickets</div>
-              <div>Mix of Pokéballs and Great Balls</div>
-            </div>
-            <span>🔵</span>
-          </div>
-        </div>
+        <%= form_with url: rewards_path, method: :post, local: true do |f| %>
+          <%= hidden_field_tag :story_points, 5 %>
+          <%= submit_tag "5 Points", class: "story-point-button" %>
+        <% end %>
 
-        <div>
-          <div>
-            <div>
-              <div>5 Point Tickets</div>
-              <div>Mostly Great Balls, chance of Ultra Balls</div>
-            </div>
-            <span>🟡</span>
-          </div>
-        </div>
+        <%= form_with url: rewards_path, method: :post, local: true do |f| %>
+          <%= hidden_field_tag :story_points, 8 %>
+          <%= submit_tag "8 Points", class: "story-point-button" %>
+        <% end %>
 
-        <div>
-          <div>
-            <div>
-              <div>8+ Point Tickets</div>
-              <div>Mostly Ultra Balls, chance of Master Balls!</div>
-            </div>
-            <span>🟣</span>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <div>
-          <span>💡</span>
-          <p>Tip: Bigger tickets = Better rewards!</p>
+        <div class="story-point-other">
+          <%= form_with url: rewards_path, method: :post, local: true, style: "display: flex; align-items: center; gap: 8px;" do |f| %>
+            <%= number_field_tag :story_points, nil,
+                min: 1,
+                max: 100,
+                placeholder: "Other",
+                class: "story-point-input" %>
+            <%= submit_tag "Claim", class: "story-point-button-small" %>
+          <% end %>
         </div>
       </div>
     </div>
 
-    <div>
-      <%= link_to "← Back to Dashboard", dashboard_path %>
+    <!-- Reward Probabilities Card -->
+    <div class="card-dashboard" style="max-width: 800px; margin: 0 auto;">
+      <div class="card-dashboard-header">
+        <span class="card-dashboard-icon">📊</span>
+        <h2 class="card-dashboard-title">Reward Probabilities</h2>
+      </div>
+
+      <p style="color: #6B5537; margin-bottom: 20px;">
+        Different story points have different chances of earning various Pokéballs:
+      </p>
+
+      <div style="display: grid; gap: 12px;">
+        <div class="reward-probability-item">
+          <div>
+            <div style="font-weight: 600; color: #2C5F2D;">1-2 Point Tickets</div>
+            <div style="font-size: 14px; color: #6B5537;">Mostly Pokéballs, small chance of Great Balls</div>
+          </div>
+          <span style="font-size: 24px;">⚪</span>
+        </div>
+
+        <div class="reward-probability-item">
+          <div>
+            <div style="font-weight: 600; color: #2C5F2D;">3 Point Tickets</div>
+            <div style="font-size: 14px; color: #6B5537;">Mix of Pokéballs and Great Balls</div>
+          </div>
+          <span style="font-size: 24px;">🔵</span>
+        </div>
+
+        <div class="reward-probability-item">
+          <div>
+            <div style="font-weight: 600; color: #2C5F2D;">5 Point Tickets</div>
+            <div style="font-size: 14px; color: #6B5537;">Mostly Great Balls, chance of Ultra Balls</div>
+          </div>
+          <span style="font-size: 24px;">🟡</span>
+        </div>
+
+        <div class="reward-probability-item">
+          <div>
+            <div style="font-weight: 600; color: #2C5F2D;">8+ Point Tickets</div>
+            <div style="font-size: 14px; color: #6B5537;">Mostly Ultra Balls, chance of Master Balls!</div>
+          </div>
+          <span style="font-size: 24px;">🟣</span>
+        </div>
+      </div>
+
+      <div style="background-color: rgba(122, 199, 76, 0.1); border-left: 3px solid #7AC74C; padding: 12px 16px; margin-top: 20px; border-radius: 8px;">
+        <span style="margin-right: 8px;">💡</span>
+        <span style="color: #2C5F2D; font-weight: 500;">Tip: Bigger tickets = Better rewards!</span>
+      </div>
     </div>
   </main>
 </div>
