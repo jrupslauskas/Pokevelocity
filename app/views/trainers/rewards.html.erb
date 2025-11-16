@@ -1,77 +1,103 @@
-<div class="min-h-screen bg-gradient-to-b from-blue-400 via-blue-300 to-green-300">
-  <!-- Header -->
+<div>
   <%= render "trainers/header" %>
 
-  <!-- Main Content -->
-  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Page Title -->
-    <div class="bg-white rounded-xl shadow-xl p-6 mb-8 border-4 border-yellow-400">
-      <h2 class="text-3xl font-bold text-gray-800 mb-2">Redeem Rewards</h2>
-      <p class="text-gray-600">Complete tickets to earn Pokéballs!</p>
+  <div>
+    <div>
+      <div>
+        <span>🎁</span>
+      </div>
+      <h2>Redeem Rewards</h2>
+      <p>Complete tickets to earn Pokéballs!</p>
     </div>
 
-    <!-- Reward Form -->
-    <div class="bg-white rounded-xl shadow-xl p-8 border-4 border-green-300 mb-8">
-      <h3 class="text-2xl font-bold text-gray-800 mb-4">Completed a Ticket?</h3>
-      <p class="text-gray-600 mb-6">Enter the story points from your completed ticket to receive a Pokéball reward!</p>
-
-      <%= form_with url: rewards_path, method: :post, local: true, class: "space-y-6" do |f| %>
+    <div>
+      <div>
         <div>
-          <%= label_tag :story_points, "Story Points", class: "block text-lg font-semibold text-gray-700 mb-2" %>
+          <span>✅</span>
+        </div>
+        <h3>Completed a Ticket?</h3>
+        <p>Enter the story points from your completed ticket to receive a Pokéball reward!</p>
+      </div>
+
+      <%= form_with url: rewards_path, method: :post, local: true do |f| %>
+        <div>
+          <%= label_tag :story_points, "Story Points" %>
           <%= number_field_tag :story_points, nil,
               min: 1,
               max: 13,
-              placeholder: "Enter story points (1, 2, 3, 5, 8, 13)",
-              class: "w-full px-4 py-3 text-2xl font-bold border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-500 transition-colors text-center",
+              placeholder: "Enter points (1, 2, 3, 5, 8, 13)",
               autofocus: true,
               required: true %>
-          <p class="mt-2 text-sm text-gray-500">Common values: 1, 2, 3, 5, 8, 13</p>
+          <p>💡 Common values: 1, 2, 3, 5, 8, 13</p>
         </div>
 
         <div>
-          <%= submit_tag "Claim Reward!",
-              class: "w-full bg-gradient-to-r from-green-500 to-green-600 text-white font-bold text-xl py-4 px-6 rounded-lg hover:from-green-600 hover:to-green-700 transition-all transform hover:scale-105 shadow-lg cursor-pointer" %>
+          <%= submit_tag "Claim Reward!" %>
         </div>
       <% end %>
     </div>
 
-    <!-- Reward Probabilities Info -->
-    <div class="bg-white rounded-xl shadow-xl p-6 border-4 border-blue-300">
-      <h3 class="text-xl font-bold text-gray-800 mb-4">Reward Probabilities</h3>
-      <p class="text-sm text-gray-600 mb-4">Different story points have different chances of earning various Pokéballs:</p>
+    <div>
+      <div>
+        <div>
+          <span>📊</span>
+        </div>
+        <h3>Reward Probabilities</h3>
+      </div>
+      <p>Different story points have different chances of earning various Pokéballs:</p>
 
-      <div class="space-y-3">
-        <div class="p-3 bg-red-50 rounded-lg">
-          <div class="font-semibold text-gray-800 mb-1">1-2 Point Tickets</div>
-          <div class="text-sm text-gray-600">Mostly Pokéballs, small chance of Great Balls</div>
+      <div>
+        <div>
+          <div>
+            <div>
+              <div>1-2 Point Tickets</div>
+              <div>Mostly Pokéballs, small chance of Great Balls</div>
+            </div>
+            <span>⚪</span>
+          </div>
         </div>
 
-        <div class="p-3 bg-blue-50 rounded-lg">
-          <div class="font-semibold text-gray-800 mb-1">3 Point Tickets</div>
-          <div class="text-sm text-gray-600">Mix of Pokéballs and Great Balls</div>
+        <div>
+          <div>
+            <div>
+              <div>3 Point Tickets</div>
+              <div>Mix of Pokéballs and Great Balls</div>
+            </div>
+            <span>🔵</span>
+          </div>
         </div>
 
-        <div class="p-3 bg-yellow-50 rounded-lg">
-          <div class="font-semibold text-gray-800 mb-1">5 Point Tickets</div>
-          <div class="text-sm text-gray-600">Mostly Great Balls, chance of Ultra Balls</div>
+        <div>
+          <div>
+            <div>
+              <div>5 Point Tickets</div>
+              <div>Mostly Great Balls, chance of Ultra Balls</div>
+            </div>
+            <span>🟡</span>
+          </div>
         </div>
 
-        <div class="p-3 bg-purple-50 rounded-lg">
-          <div class="font-semibold text-gray-800 mb-1">8+ Point Tickets</div>
-          <div class="text-sm text-gray-600">Mostly Ultra Balls, chance of Master Balls!</div>
+        <div>
+          <div>
+            <div>
+              <div>8+ Point Tickets</div>
+              <div>Mostly Ultra Balls, chance of Master Balls!</div>
+            </div>
+            <span>🟣</span>
+          </div>
         </div>
       </div>
 
-      <div class="mt-4 p-4 bg-green-50 border-l-4 border-green-500 rounded">
-        <p class="text-sm font-semibold text-green-800">💡 Tip: Bigger tickets = Better rewards!</p>
+      <div>
+        <div>
+          <span>💡</span>
+          <p>Tip: Bigger tickets = Better rewards!</p>
+        </div>
       </div>
     </div>
 
-    <!-- Back Button -->
-    <div class="mt-8">
-      <%= link_to dashboard_path, class: "block text-center bg-gray-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-gray-600 transition-all shadow-lg" do %>
-        Back to Dashboard
-      <% end %>
+    <div>
+      <%= link_to "← Back to Dashboard", dashboard_path %>
     </div>
   </div>
 </div>

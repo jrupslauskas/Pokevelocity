@@ -1,65 +1,64 @@
-<div class="min-h-screen bg-gradient-to-b from-blue-400 via-blue-300 to-green-300">
-  <!-- Header -->
+<div>
   <%= render "trainers/header" %>
 
-  <!-- Main Content -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Page Title -->
-    <div class="bg-white rounded-xl shadow-xl p-6 mb-8 border-4 border-red-400">
-      <div class="flex items-center justify-between">
+  <div>
+    <div>
+      <div>
         <div>
-          <h2 class="text-3xl font-bold text-gray-800 mb-2">Your Pokédex</h2>
-          <p class="text-gray-600">Track your captured Pokémon collection</p>
+          <div>
+            <span>📖</span>
+          </div>
+          <div>
+            <h2>Your Pokédex</h2>
+            <p>Track your captured Pokémon collection</p>
+          </div>
         </div>
-        <div class="text-center">
-          <p class="text-5xl font-bold text-gray-800"><%= @captured_pokemon.count %></p>
-          <p class="text-sm text-gray-600">Captured</p>
+        <div>
+          <p><%= @captured_pokemon.count %></p>
+          <p>Captured</p>
         </div>
       </div>
 
-      <!-- Progress Bar -->
-      <div class="mt-4">
-        <div class="w-full bg-gray-200 rounded-full h-4">
+      <div>
+        <div>
           <% completion = (@captured_pokemon.count.to_f / 151 * 100).round(1) %>
-          <div class="bg-green-500 h-4 rounded-full transition-all" style="width: <%= completion %>%"></div>
+          <div></div>
         </div>
-        <p class="text-sm text-gray-600 mt-2 text-center"><%= completion %>% Complete (<%= @captured_pokemon.count %>/151)</p>
+        <p><%= completion %>% Complete (<%= @captured_pokemon.count %> / 151 Pokémon)</p>
       </div>
     </div>
 
     <% if @captured_pokemon.any? %>
-      <!-- Pokemon Grid -->
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      <div>
         <% @captured_pokemon.each do |pokemon| %>
           <% capture = @trainer.captures.find_by(pokemon: pokemon) %>
-          <div class="bg-white rounded-lg shadow-lg border-4 border-yellow-400 overflow-hidden hover:scale-105 transition-transform">
-            <div class="bg-gray-100 p-4 flex items-center justify-center h-32">
+          <div>
+            <div>
               <% if pokemon.image.attached? %>
-                <%= image_tag pokemon.image, alt: pokemon.name, class: "max-h-full max-w-full object-contain" %>
+                <%= image_tag pokemon.image, alt: pokemon.name %>
               <% else %>
-                <div class="text-gray-400 text-4xl">?</div>
+                <div>?</div>
               <% end %>
             </div>
-            <div class="p-3">
-              <div class="text-xs text-gray-500 font-semibold">#<%= pokemon.pokedex_number.to_s.rjust(3, '0') %></div>
-              <h3 class="text-lg font-bold text-gray-800 capitalize"><%= pokemon.name %></h3>
-              <div class="flex items-center justify-between mt-2">
-                <span class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800 font-semibold">
-                  <%= capture.ball_type.humanize %>
-                </span>
-                <span class="text-xs text-gray-500"><%= capture.captured_at.strftime("%m/%d/%y") %></span>
+            <div>
+              <div>#<%= pokemon.pokedex_number.to_s.rjust(3, '0') %></div>
+              <h3><%= pokemon.name %></h3>
+              <div>
+                <span><%= capture.ball_type.humanize %></span>
+                <span><%= capture.captured_at.strftime("%m/%d") %></span>
               </div>
             </div>
           </div>
         <% end %>
       </div>
     <% else %>
-      <!-- Empty State -->
-      <div class="bg-white rounded-xl shadow-xl p-12 text-center border-4 border-yellow-300">
-        <div class="text-6xl mb-4">🎣</div>
-        <h3 class="text-2xl font-bold text-gray-800 mb-2">No Pokémon Yet!</h3>
-        <p class="text-gray-600 mb-6">You haven't caught any Pokémon yet. Complete tickets to earn Pokéballs!</p>
-        <%= link_to "Get Pokéballs", rewards_path, class: "inline-block bg-green-500 text-white px-6 py-3 rounded-lg font-bold hover:bg-green-600 transition-colors" %>
+      <div>
+        <div>
+          <span>🎣</span>
+        </div>
+        <h3>No Pokémon Yet!</h3>
+        <p>You haven't caught any Pokémon yet.<br/>Complete tickets to earn Pokéballs!</p>
+        <%= link_to "Get Pokéballs →", rewards_path %>
       </div>
     <% end %>
   </div>

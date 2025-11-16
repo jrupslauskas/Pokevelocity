@@ -1,115 +1,101 @@
-<div class="min-h-screen bg-gradient-to-b from-blue-400 via-blue-300 to-green-300">
-  <!-- Header -->
+<div>
   <%= render "trainers/header" %>
 
-  <!-- Main Content -->
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Page Title -->
-    <div class="bg-white rounded-xl shadow-xl p-6 mb-8 border-4 border-yellow-400">
-      <h2 class="text-3xl font-bold text-gray-800 mb-2">Your Bag</h2>
-      <p class="text-gray-600">View your Pokéball inventory</p>
+  <div>
+    <div>
+      <div>
+        <span>🎒</span>
+      </div>
+      <h2>Your Bag</h2>
+      <p>View your Pokéball inventory</p>
     </div>
 
-    <!-- Pokeball Inventory -->
-    <div class="space-y-4">
-      <!-- Pokeball -->
-      <div class="bg-white rounded-xl shadow-xl p-6 border-4 border-red-300 hover:border-red-400 transition-colors">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-4">
-            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
-              <div class="text-3xl">⚪</div>
-            </div>
-            <div>
-              <h3 class="text-2xl font-bold text-gray-800">Pokéball</h3>
-              <p class="text-sm text-gray-600">Standard Pokéball for catching Pokémon</p>
-            </div>
-          </div>
-          <div class="text-right">
-            <p class="text-5xl font-bold text-red-600"><%= @trainer.pokeballs_count %></p>
-            <p class="text-sm text-gray-500">Available</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Great Ball -->
-      <div class="bg-white rounded-xl shadow-xl p-6 border-4 border-blue-300 hover:border-blue-400 transition-colors">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-4">
-            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-              <div class="text-3xl">🔵</div>
-            </div>
-            <div>
-              <h3 class="text-2xl font-bold text-gray-800">Great Ball</h3>
-              <p class="text-sm text-gray-600">Enhanced Pokéball with better catch rate</p>
-            </div>
-          </div>
-          <div class="text-right">
-            <p class="text-5xl font-bold text-blue-600"><%= @trainer.great_balls_count %></p>
-            <p class="text-sm text-gray-500">Available</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Ultra Ball -->
-      <div class="bg-white rounded-xl shadow-xl p-6 border-4 border-yellow-300 hover:border-yellow-400 transition-colors">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-4">
-            <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center">
-              <div class="text-3xl">🟡</div>
-            </div>
-            <div>
-              <h3 class="text-2xl font-bold text-gray-800">Ultra Ball</h3>
-              <p class="text-sm text-gray-600">High-performance Pokéball for tough catches</p>
-            </div>
-          </div>
-          <div class="text-right">
-            <p class="text-5xl font-bold text-yellow-600"><%= @trainer.ultra_balls_count %></p>
-            <p class="text-sm text-gray-500">Available</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Master Ball -->
-      <div class="bg-white rounded-xl shadow-xl p-6 border-4 border-purple-300 hover:border-purple-400 transition-colors">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-4">
-            <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center">
-              <div class="text-3xl">🟣</div>
-            </div>
-            <div>
-              <h3 class="text-2xl font-bold text-gray-800">Master Ball</h3>
-              <p class="text-sm text-gray-600">Ultimate Pokéball with guaranteed catch!</p>
-            </div>
-          </div>
-          <div class="text-right">
-            <p class="text-5xl font-bold text-purple-600"><%= @trainer.master_balls_count %></p>
-            <p class="text-sm text-gray-500">Available</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Total Summary -->
-    <div class="mt-8 bg-white rounded-xl shadow-xl p-6 border-4 border-green-400">
-      <div class="flex items-center justify-between">
+    <div>
+      <div>
         <div>
-          <h3 class="text-2xl font-bold text-gray-800">Total Pokéballs</h3>
-          <p class="text-gray-600">Combined inventory</p>
+          <div>
+            <div>⚪</div>
+          </div>
+          <div>
+            <h3>Pokéball</h3>
+            <p>Standard Pokéball for catching Pokémon</p>
+          </div>
         </div>
-        <div class="text-right">
-          <p class="text-6xl font-bold text-green-600"><%= @trainer.total_pokeballs %></p>
+        <div>
+          <p><%= @trainer.pokeballs_count %></p>
+          <p>Available</p>
+        </div>
+      </div>
+
+      <div>
+        <div>
+          <div>
+            <div>🔵</div>
+          </div>
+          <div>
+            <h3>Great Ball</h3>
+            <p>Enhanced Pokéball with better catch rate</p>
+          </div>
+        </div>
+        <div>
+          <p><%= @trainer.great_balls_count %></p>
+          <p>Available</p>
+        </div>
+      </div>
+
+      <div>
+        <div>
+          <div>
+            <div>🟡</div>
+          </div>
+          <div>
+            <h3>Ultra Ball</h3>
+            <p>High-performance Pokéball for tough catches</p>
+          </div>
+        </div>
+        <div>
+          <p><%= @trainer.ultra_balls_count %></p>
+          <p>Available</p>
+        </div>
+      </div>
+
+      <div>
+        <div>
+          <div>
+            <div>🟣</div>
+          </div>
+          <div>
+            <h3>Master Ball</h3>
+            <p>Ultimate Pokéball with guaranteed catch!</p>
+          </div>
+        </div>
+        <div>
+          <p><%= @trainer.master_balls_count %></p>
+          <p>Available</p>
         </div>
       </div>
     </div>
 
-    <!-- Action Buttons -->
-    <div class="mt-8 flex gap-4">
-      <%= link_to rewards_path, class: "flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white text-center font-bold py-4 px-6 rounded-lg hover:from-green-600 hover:to-green-700 transition-all transform hover:scale-105 shadow-lg" do %>
-        Get More Pokéballs
-      <% end %>
-      <%= link_to dashboard_path, class: "flex-1 bg-gray-500 text-white text-center font-bold py-4 px-6 rounded-lg hover:bg-gray-600 transition-all shadow-lg" do %>
-        Back to Dashboard
-      <% end %>
+    <div>
+      <div>
+        <div>
+          <div>
+            <span>✨</span>
+          </div>
+          <div>
+            <h3>Total Pokéballs</h3>
+            <p>Combined inventory</p>
+          </div>
+        </div>
+        <div>
+          <p><%= @trainer.total_pokeballs %></p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <%= link_to "🎁 Get More Pokéballs", rewards_path %>
+      <%= link_to "← Back to Dashboard", dashboard_path %>
     </div>
   </div>
 </div>

@@ -1,33 +1,29 @@
-<div class="min-h-screen bg-gradient-to-b from-green-200 via-lime-100 to-emerald-200" style="background-color: #E8F5E8;">
-  <!-- Header -->
+<div>
   <%= render "trainers/header" %>
 
-  <!-- Main Content -->
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Pokemon Display -->
-    <div class="rounded-lg shadow-xl p-8 mb-8 border-4 text-center" style="background: linear-gradient(to bottom, #FFF8DC, #F5F0E8); border-color: #8B6F47;">
-      <div class="mb-4">
+  <div>
+    <div>
+      <div>
         <% if @pokemon.image.attached? %>
-          <%= image_tag @pokemon.image, alt: @pokemon.name, class: "mx-auto h-48 w-auto object-contain" %>
+          <%= image_tag @pokemon.image, alt: @pokemon.name %>
         <% else %>
-          <div class="text-gray-400 text-8xl">?</div>
+          <div>?</div>
         <% end %>
       </div>
-      <div class="text-sm text-gray-600 font-semibold mb-2">#<%= @pokemon.pokedex_number.to_s.rjust(3, '0') %></div>
-      <h2 class="text-4xl font-bold capitalize mb-4" style="color: #2C5F2D;"><%= @pokemon.name %></h2>
+      <div>#<%= @pokemon.pokedex_number.to_s.rjust(3, '0') %></div>
+      <h2><%= @pokemon.name %></h2>
 
-      <!-- Difficulty Display -->
-      <div class="mb-4">
-        <p class="text-sm text-gray-700 mb-2 font-semibold">Capture Difficulty</p>
-        <div class="flex justify-center items-center space-x-1">
+      <div>
+        <p>Capture Difficulty</p>
+        <div>
           <% @pokemon.difficulty.times do %>
-            <span class="text-2xl" style="color: #C97A7A;">★</span>
+            <span>★</span>
           <% end %>
           <% (5 - @pokemon.difficulty).times do %>
-            <span class="text-2xl text-gray-400">★</span>
+            <span>★</span>
           <% end %>
         </div>
-        <p class="text-xs text-gray-600 mt-1 font-semibold">
+        <p>
           <%= case @pokemon.difficulty
               when 1 then "Very Easy"
               when 2 then "Easy"
@@ -38,151 +34,115 @@
         </p>
       </div>
 
-      <p class="text-gray-700 font-semibold">Choose a Pokéball to catch this Pokémon</p>
+      <p>Choose a Pokéball to catch this Pokémon</p>
     </div>
 
-    <!-- Ball Selection -->
-    <h3 class="text-2xl font-bold text-center mb-4" style="color: #2C5F2D; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">Select Your Pokéball</h3>
+    <h3>Select Your Pokéball</h3>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-      <!-- Pokeball -->
+    <div>
       <%= form_with url: select_pokemon_path(@pokemon), method: :post, local: true do |f| %>
         <%= f.hidden_field :ball_type, value: "pokeball" %>
-        <button type="submit"
-                class="rounded-lg shadow-xl p-6 border-4 transition-all hover:scale-105 text-center w-full <%= @trainer.pokeballs_count == 0 ? 'opacity-50 cursor-not-allowed' : '' %>"
-                style="background: linear-gradient(to bottom, #FFE8E8, #FFF0DC); border-color: #C97A7A;"
-                <%= "disabled" if @trainer.pokeballs_count == 0 %>>
-          <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center space-x-3">
-              <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl border-2" style="background-color: #FFD0D0; border-color: #C97A7A;">⚪</div>
-              <div class="text-left">
-                <h4 class="text-xl font-bold" style="color: #2C5F2D;">Pokéball</h4>
-                <p class="text-sm text-gray-700">Standard Pokéball</p>
-                <p class="text-lg font-bold text-red-700 mt-1"><%= @catch_probabilities["pokeball"] %>% catch rate</p>
+        <button type="submit" <%= "disabled" if @trainer.pokeballs_count == 0 %>>
+          <div>
+            <div>
+              <div>⚪</div>
+              <div>
+                <h4>Pokéball</h4>
+                <p>Standard Pokéball</p>
+                <p><%= @catch_probabilities["pokeball"] %>% catch rate</p>
               </div>
             </div>
-            <div class="text-right">
-              <p class="text-4xl font-bold text-red-700"><%= @trainer.pokeballs_count %></p>
-              <p class="text-xs text-gray-600">Available</p>
+            <div>
+              <p><%= @trainer.pokeballs_count %></p>
+              <p>Available</p>
             </div>
           </div>
           <% if @trainer.pokeballs_count > 0 %>
-            <div class="text-white font-bold py-2 px-4 rounded-lg" style="background: linear-gradient(to right, #E05555, #C94444);">
-              Use Pokéball
-            </div>
+            <div>Use Pokéball</div>
           <% else %>
-            <div class="text-gray-700 font-bold py-2 px-4 rounded-lg" style="background-color: #D0C4B8;">
-              None Available
-            </div>
+            <div>None Available</div>
           <% end %>
         </button>
       <% end %>
 
-      <!-- Great Ball -->
       <%= form_with url: select_pokemon_path(@pokemon), method: :post, local: true do |f| %>
         <%= f.hidden_field :ball_type, value: "great_ball" %>
-        <button type="submit"
-                class="rounded-lg shadow-xl p-6 border-4 transition-all hover:scale-105 text-center w-full <%= @trainer.great_balls_count == 0 ? 'opacity-50 cursor-not-allowed' : '' %>"
-                style="background: linear-gradient(to bottom, #E8F0FF, #F0F8FF); border-color: #7A9AC9;"
-                <%= "disabled" if @trainer.great_balls_count == 0 %>>
-          <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center space-x-3">
-              <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl border-2" style="background-color: #D0E0FF; border-color: #7A9AC9;">🔵</div>
-              <div class="text-left">
-                <h4 class="text-xl font-bold" style="color: #2C5F2D;">Great Ball</h4>
-                <p class="text-sm text-gray-700">Enhanced Pokéball</p>
-                <p class="text-lg font-bold text-blue-700 mt-1"><%= @catch_probabilities["great_ball"] %>% catch rate</p>
+        <button type="submit" <%= "disabled" if @trainer.great_balls_count == 0 %>>
+          <div>
+            <div>
+              <div>🔵</div>
+              <div>
+                <h4>Great Ball</h4>
+                <p>Enhanced Pokéball</p>
+                <p><%= @catch_probabilities["great_ball"] %>% catch rate</p>
               </div>
             </div>
-            <div class="text-right">
-              <p class="text-4xl font-bold text-blue-700"><%= @trainer.great_balls_count %></p>
-              <p class="text-xs text-gray-600">Available</p>
+            <div>
+              <p><%= @trainer.great_balls_count %></p>
+              <p>Available</p>
             </div>
           </div>
           <% if @trainer.great_balls_count > 0 %>
-            <div class="text-white font-bold py-2 px-4 rounded-lg" style="background: linear-gradient(to right, #5588DD, #4477CC);">
-              Use Great Ball
-            </div>
+            <div>Use Great Ball</div>
           <% else %>
-            <div class="text-gray-700 font-bold py-2 px-4 rounded-lg" style="background-color: #D0C4B8;">
-              None Available
-            </div>
+            <div>None Available</div>
           <% end %>
         </button>
       <% end %>
 
-      <!-- Ultra Ball -->
       <%= form_with url: select_pokemon_path(@pokemon), method: :post, local: true do |f| %>
         <%= f.hidden_field :ball_type, value: "ultra_ball" %>
-        <button type="submit"
-                class="rounded-lg shadow-xl p-6 border-4 transition-all hover:scale-105 text-center w-full <%= @trainer.ultra_balls_count == 0 ? 'opacity-50 cursor-not-allowed' : '' %>"
-                style="background: linear-gradient(to bottom, #FFF9E8, #FFFDDC); border-color: #C9B77A;"
-                <%= "disabled" if @trainer.ultra_balls_count == 0 %>>
-          <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center space-x-3">
-              <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl border-2" style="background-color: #FFED99; border-color: #C9B77A;">🟡</div>
-              <div class="text-left">
-                <h4 class="text-xl font-bold" style="color: #2C5F2D;">Ultra Ball</h4>
-                <p class="text-sm text-gray-700">High-performance</p>
-                <p class="text-lg font-bold text-yellow-700 mt-1"><%= @catch_probabilities["ultra_ball"] %>% catch rate</p>
+        <button type="submit" <%= "disabled" if @trainer.ultra_balls_count == 0 %>>
+          <div>
+            <div>
+              <div>🟡</div>
+              <div>
+                <h4>Ultra Ball</h4>
+                <p>High-performance</p>
+                <p><%= @catch_probabilities["ultra_ball"] %>% catch rate</p>
               </div>
             </div>
-            <div class="text-right">
-              <p class="text-4xl font-bold text-yellow-700"><%= @trainer.ultra_balls_count %></p>
-              <p class="text-xs text-gray-600">Available</p>
+            <div>
+              <p><%= @trainer.ultra_balls_count %></p>
+              <p>Available</p>
             </div>
           </div>
           <% if @trainer.ultra_balls_count > 0 %>
-            <div class="text-white font-bold py-2 px-4 rounded-lg" style="background: linear-gradient(to right, #E0BB44, #C9A733);">
-              Use Ultra Ball
-            </div>
+            <div>Use Ultra Ball</div>
           <% else %>
-            <div class="text-gray-700 font-bold py-2 px-4 rounded-lg" style="background-color: #D0C4B8;">
-              None Available
-            </div>
+            <div>None Available</div>
           <% end %>
         </button>
       <% end %>
 
-      <!-- Master Ball -->
       <%= form_with url: select_pokemon_path(@pokemon), method: :post, local: true do |f| %>
         <%= f.hidden_field :ball_type, value: "master_ball" %>
-        <button type="submit"
-                class="rounded-lg shadow-xl p-6 border-4 transition-all hover:scale-105 text-center w-full <%= @trainer.master_balls_count == 0 ? 'opacity-50 cursor-not-allowed' : '' %>"
-                style="background: linear-gradient(to bottom, #F0E8FF, #F8F0FF); border-color: #9C7AC9;"
-                <%= "disabled" if @trainer.master_balls_count == 0 %>>
-          <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center space-x-3">
-              <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl border-2" style="background-color: #E0D0FF; border-color: #9C7AC9;">🟣</div>
-              <div class="text-left">
-                <h4 class="text-xl font-bold" style="color: #2C5F2D;">Master Ball</h4>
-                <p class="text-sm text-gray-700">Ultimate Pokéball</p>
-                <p class="text-lg font-bold text-purple-700 mt-1"><%= @catch_probabilities["master_ball"] %>% catch rate</p>
+        <button type="submit" <%= "disabled" if @trainer.master_balls_count == 0 %>>
+          <div>
+            <div>
+              <div>🟣</div>
+              <div>
+                <h4>Master Ball</h4>
+                <p>Ultimate Pokéball</p>
+                <p><%= @catch_probabilities["master_ball"] %>% catch rate</p>
               </div>
             </div>
-            <div class="text-right">
-              <p class="text-4xl font-bold text-purple-700"><%= @trainer.master_balls_count %></p>
-              <p class="text-xs text-gray-600">Available</p>
+            <div>
+              <p><%= @trainer.master_balls_count %></p>
+              <p>Available</p>
             </div>
           </div>
           <% if @trainer.master_balls_count > 0 %>
-            <div class="text-white font-bold py-2 px-4 rounded-lg" style="background: linear-gradient(to right, #8855DD, #7744CC);">
-              Use Master Ball
-            </div>
+            <div>Use Master Ball</div>
           <% else %>
-            <div class="text-gray-700 font-bold py-2 px-4 rounded-lg" style="background-color: #D0C4B8;">
-              None Available
-            </div>
+            <div>None Available</div>
           <% end %>
         </button>
       <% end %>
     </div>
 
-    <!-- Back Button -->
     <div>
-      <%= link_to catch_pokemon_path, class: "block text-center text-white font-bold py-3 px-6 rounded-lg transition-all shadow-lg", style: "background: linear-gradient(to bottom, #A67C52, #8B6F47);" do %>
-        ← Back to Pokémon List
-      <% end %>
+      <%= link_to "← Back to Pokémon List", catch_pokemon_path %>
     </div>
   </div>
 </div>
