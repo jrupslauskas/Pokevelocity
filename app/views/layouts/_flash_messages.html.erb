@@ -1,15 +1,21 @@
-<div class="fixed top-0 left-0 right-0 z-50 p-4">
+<div id="toast-container">
   <% if flash[:notice] %>
-    <div class="max-w-md mx-auto bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-lg mb-4" role="alert">
-      <p class="font-bold">Success!</p>
-      <p><%= flash[:notice] %></p>
+    <div class="toast toast-success" data-auto-dismiss="true">
+      <div class="toast-icon">✓</div>
+      <div class="toast-content">
+        <p class="toast-message"><%= flash[:notice] %></p>
+      </div>
+      <button class="toast-close" onclick="closeToast(this)">×</button>
     </div>
   <% end %>
 
   <% if flash[:alert] %>
-    <div class="max-w-md mx-auto bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded shadow-lg mb-4" role="alert">
-      <p class="font-bold">Error</p>
-      <p><%= flash[:alert] %></p>
+    <div class="toast toast-error" data-auto-dismiss="true">
+      <div class="toast-icon">!</div>
+      <div class="toast-content">
+        <p class="toast-message"><%= flash[:alert] %></p>
+      </div>
+      <button class="toast-close" onclick="closeToast(this)">×</button>
     </div>
   <% end %>
 </div>

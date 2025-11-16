@@ -45,7 +45,7 @@ class TrainersController < ApplicationController
 
     if story_points > 0
       result = @trainer.award_pokeball_for_ticket(story_points)
-      redirect_to dashboard_path, notice: "Congratulations! You earned a #{result[:ball_type].humanize} for completing a #{story_points} point ticket!"
+      redirect_to rewards_path, notice: "Congratulations! You earned a #{result[:ball_type].humanize} for completing a #{story_points} point ticket!"
     else
       redirect_to rewards_path, alert: "Please enter a valid story point value"
     end
@@ -53,6 +53,12 @@ class TrainersController < ApplicationController
 
   def catch
     @trainer = current_trainer
+
+    # Check if there are any Pokemon in the database
+    if Pokemon.count == 0
+      redirect_to dashboard_path, alert: "No Pokémon available yet! Please contact an administrator."
+      return
+    end
 
     # Check if trainer has any pokeballs
     if @trainer.total_pokeballs == 0

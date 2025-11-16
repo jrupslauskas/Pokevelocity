@@ -7,57 +7,64 @@
       <p>Choose a Pokémon to attempt to catch.</p>
     </header>
 
-    <div>
-      <div>
-        <%= @trainer.captures.count %> / 151 Pokémon Caught · <%= @uncaught_pokemon.count %> Available to Catch
+    <!-- Stats Bar -->
+    <div class="catch-stats-bar">
+      <div class="catch-stat">
+        <span class="catch-stat-label">Caught</span>
+        <span class="catch-stat-value"><%= @trainer.captures.count %> / 151</span>
       </div>
-    </div>
-
-    <div>
-      <p>How to Catch Pokémon:</p>
-      <ol>
-        <li>Browse the uncaught Pokémon below</li>
-        <li>Click "Catch This Pokémon" on the one you want</li>
-        <li>Select which Pokéball to use based on difficulty</li>
-        <li>The Pokéball will be consumed whether you succeed or fail!</li>
-      </ol>
+      <div class="catch-stat">
+        <span class="catch-stat-label">Available</span>
+        <span class="catch-stat-value"><%= @uncaught_pokemon.count %></span>
+      </div>
+      <div class="catch-stat">
+        <span class="catch-stat-label">Pokéballs</span>
+        <span class="catch-stat-value"><%= @trainer.total_pokeballs %></span>
+      </div>
     </div>
 
     <% if @uncaught_pokemon.any? %>
-      <div>
+      <div class="pokemon-catch-grid">
         <% @uncaught_pokemon.each do |pokemon| %>
-          <%= link_to select_pokemon_path(pokemon) do %>
-            <div>
+          <div class="pokemon-catch-card">
+            <div class="pokemon-catch-image">
               <% if pokemon.image.attached? %>
                 <%= image_tag pokemon.image, alt: pokemon.name %>
               <% else %>
-                <div>?</div>
+                <%= image_tag "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/#{pokemon.pokedex_number}.png",
+                    alt: pokemon.name,
+                    style: "image-rendering: pixelated;" %>
               <% end %>
             </div>
-            <div>
-              <div>#<%= pokemon.pokedex_number.to_s.rjust(3, '0') %></div>
-              <h3><%= pokemon.name %></h3>
-              <div>Catch This Pokémon</div>
+
+            <div class="pokemon-catch-info">
+              <p class="pokemon-catch-number">#<%= pokemon.pokedex_number.to_s.rjust(3, '0') %></p>
+              <h3 class="pokemon-catch-name"><%= pokemon.name %></h3>
+
+              <div class="pokemon-catch-difficulty">
+                <span class="difficulty-label">Difficulty:</span>
+                <div class="difficulty-stars">
+                  <% pokemon.difficulty.times do %>
+                    <span class="star-filled">★</span>
+                  <% end %>
+                  <% (5 - pokemon.difficulty).times do %>
+                    <span class="star-empty">★</span>
+                  <% end %>
+                </div>
+              </div>
             </div>
-          <% end %>
+
+            <%= link_to "Catch", select_pokemon_path(pokemon), class: "btn-catch" %>
+          </div>
         <% end %>
       </div>
     <% else %>
-      <div>
-        <div>🎉</div>
-        <h3>Congratulations!</h3>
-        <p>You've caught all 151 Pokémon!</p>
+      <div class="empty-state">
+        <div class="empty-state-icon">🎉</div>
+        <h3 class="empty-state-title">Congratulations!</h3>
+        <p class="empty-state-description">You've caught all 151 Pokémon!</p>
+        <%= link_to "View Pokédex", pokedex_path, class: "btn-primary" %>
       </div>
     <% end %>
-
-    <div>
-      <p>Total Pokéballs Available</p>
-      <p><%= @trainer.total_pokeballs %></p>
-    </div>
-
-    <div>
-      <%= link_to "Get More Pokéballs", rewards_path %>
-      <%= link_to "Back to Dashboard", dashboard_path %>
-    </div>
   </main>
 </div>

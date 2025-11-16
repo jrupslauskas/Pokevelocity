@@ -7,146 +7,116 @@
       <p>Select a Pokéball to attempt catching this Pokémon.</p>
     </header>
 
-    <div>
+    <!-- Pokemon Info Card -->
+    <div class="select-pokemon-card">
+      <div class="select-pokemon-image">
         <% if @pokemon.image.attached? %>
           <%= image_tag @pokemon.image, alt: @pokemon.name %>
         <% else %>
-          <div>?</div>
+          <%= image_tag "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/#{@pokemon.pokedex_number}.png",
+              alt: @pokemon.name,
+              style: "image-rendering: pixelated;" %>
         <% end %>
       </div>
-      <div>#<%= @pokemon.pokedex_number.to_s.rjust(3, '0') %></div>
-      <h2><%= @pokemon.name %></h2>
 
-      <div>
-        <p>Capture Difficulty</p>
-        <div>
-          <% @pokemon.difficulty.times do %>
-            <span>★</span>
-          <% end %>
-          <% (5 - @pokemon.difficulty).times do %>
-            <span>★</span>
-          <% end %>
+      <div class="select-pokemon-info">
+        <p class="select-pokemon-number">#<%= @pokemon.pokedex_number.to_s.rjust(3, '0') %></p>
+        <h2 class="select-pokemon-name"><%= @pokemon.name.capitalize %></h2>
+
+        <div class="select-pokemon-difficulty">
+          <span class="difficulty-label">Capture Difficulty:</span>
+          <div class="difficulty-stars">
+            <% @pokemon.difficulty.times do %>
+              <span class="star-filled">★</span>
+            <% end %>
+            <% (5 - @pokemon.difficulty).times do %>
+              <span class="star-empty">★</span>
+            <% end %>
+          </div>
+          <span class="difficulty-text">
+            <%= case @pokemon.difficulty
+                when 1 then "Very Easy"
+                when 2 then "Easy"
+                when 3 then "Medium"
+                when 4 then "Hard"
+                when 5 then "Very Hard"
+                end %>
+          </span>
         </div>
-        <p>
-          <%= case @pokemon.difficulty
-              when 1 then "Very Easy"
-              when 2 then "Easy"
-              when 3 then "Medium"
-              when 4 then "Hard"
-              when 5 then "Very Hard"
-              end %>
-        </p>
       </div>
-
-      <p>Choose a Pokéball to catch this Pokémon</p>
     </div>
 
-    <h3>Select Your Pokéball</h3>
+    <!-- Pokeball Selection -->
+    <h3 class="pokeball-selection-title">Select Your Pokéball</h3>
 
-    <div>
+    <div class="pokeball-grid">
       <%= form_with url: select_pokemon_path(@pokemon), method: :post, local: true do |f| %>
         <%= f.hidden_field :ball_type, value: "pokeball" %>
-        <button type="submit" <%= "disabled" if @trainer.pokeballs_count == 0 %>>
-          <div>
-            <div>
-              <div>⚪</div>
-              <div>
-                <h4>Pokéball</h4>
-                <p>Standard Pokéball</p>
-                <p><%= @catch_probabilities["pokeball"] %>% catch rate</p>
-              </div>
-            </div>
-            <div>
-              <p><%= @trainer.pokeballs_count %></p>
-              <p>Available</p>
-            </div>
+        <button type="submit" class="pokeball-card <%= 'pokeball-disabled' if @trainer.pokeballs_count == 0 %>" <%= "disabled" if @trainer.pokeballs_count == 0 %>>
+          <div class="pokeball-card-icon">⚪</div>
+          <div class="pokeball-card-content">
+            <h4 class="pokeball-card-name">Pokéball</h4>
+            <p class="pokeball-card-description">Standard Pokéball</p>
+            <p class="pokeball-card-rate"><%= @catch_probabilities["pokeball"] %>% catch rate</p>
           </div>
-          <% if @trainer.pokeballs_count > 0 %>
-            <div>Use Pokéball</div>
-          <% else %>
-            <div>None Available</div>
-          <% end %>
+          <div class="pokeball-card-count">
+            <span class="pokeball-count-number"><%= @trainer.pokeballs_count %></span>
+            <span class="pokeball-count-label">Available</span>
+          </div>
         </button>
       <% end %>
 
       <%= form_with url: select_pokemon_path(@pokemon), method: :post, local: true do |f| %>
         <%= f.hidden_field :ball_type, value: "great_ball" %>
-        <button type="submit" <%= "disabled" if @trainer.great_balls_count == 0 %>>
-          <div>
-            <div>
-              <div>🔵</div>
-              <div>
-                <h4>Great Ball</h4>
-                <p>Enhanced Pokéball</p>
-                <p><%= @catch_probabilities["great_ball"] %>% catch rate</p>
-              </div>
-            </div>
-            <div>
-              <p><%= @trainer.great_balls_count %></p>
-              <p>Available</p>
-            </div>
+        <button type="submit" class="pokeball-card <%= 'pokeball-disabled' if @trainer.great_balls_count == 0 %>" <%= "disabled" if @trainer.great_balls_count == 0 %>>
+          <div class="pokeball-card-icon">🔵</div>
+          <div class="pokeball-card-content">
+            <h4 class="pokeball-card-name">Great Ball</h4>
+            <p class="pokeball-card-description">Enhanced Pokéball</p>
+            <p class="pokeball-card-rate"><%= @catch_probabilities["great_ball"] %>% catch rate</p>
           </div>
-          <% if @trainer.great_balls_count > 0 %>
-            <div>Use Great Ball</div>
-          <% else %>
-            <div>None Available</div>
-          <% end %>
+          <div class="pokeball-card-count">
+            <span class="pokeball-count-number"><%= @trainer.great_balls_count %></span>
+            <span class="pokeball-count-label">Available</span>
+          </div>
         </button>
       <% end %>
 
       <%= form_with url: select_pokemon_path(@pokemon), method: :post, local: true do |f| %>
         <%= f.hidden_field :ball_type, value: "ultra_ball" %>
-        <button type="submit" <%= "disabled" if @trainer.ultra_balls_count == 0 %>>
-          <div>
-            <div>
-              <div>🟡</div>
-              <div>
-                <h4>Ultra Ball</h4>
-                <p>High-performance</p>
-                <p><%= @catch_probabilities["ultra_ball"] %>% catch rate</p>
-              </div>
-            </div>
-            <div>
-              <p><%= @trainer.ultra_balls_count %></p>
-              <p>Available</p>
-            </div>
+        <button type="submit" class="pokeball-card <%= 'pokeball-disabled' if @trainer.ultra_balls_count == 0 %>" <%= "disabled" if @trainer.ultra_balls_count == 0 %>>
+          <div class="pokeball-card-icon">🟡</div>
+          <div class="pokeball-card-content">
+            <h4 class="pokeball-card-name">Ultra Ball</h4>
+            <p class="pokeball-card-description">High-performance</p>
+            <p class="pokeball-card-rate"><%= @catch_probabilities["ultra_ball"] %>% catch rate</p>
           </div>
-          <% if @trainer.ultra_balls_count > 0 %>
-            <div>Use Ultra Ball</div>
-          <% else %>
-            <div>None Available</div>
-          <% end %>
+          <div class="pokeball-card-count">
+            <span class="pokeball-count-number"><%= @trainer.ultra_balls_count %></span>
+            <span class="pokeball-count-label">Available</span>
+          </div>
         </button>
       <% end %>
 
       <%= form_with url: select_pokemon_path(@pokemon), method: :post, local: true do |f| %>
         <%= f.hidden_field :ball_type, value: "master_ball" %>
-        <button type="submit" <%= "disabled" if @trainer.master_balls_count == 0 %>>
-          <div>
-            <div>
-              <div>🟣</div>
-              <div>
-                <h4>Master Ball</h4>
-                <p>Ultimate Pokéball</p>
-                <p><%= @catch_probabilities["master_ball"] %>% catch rate</p>
-              </div>
-            </div>
-            <div>
-              <p><%= @trainer.master_balls_count %></p>
-              <p>Available</p>
-            </div>
+        <button type="submit" class="pokeball-card <%= 'pokeball-disabled' if @trainer.master_balls_count == 0 %>" <%= "disabled" if @trainer.master_balls_count == 0 %>>
+          <div class="pokeball-card-icon">🟣</div>
+          <div class="pokeball-card-content">
+            <h4 class="pokeball-card-name">Master Ball</h4>
+            <p class="pokeball-card-description">Ultimate Pokéball</p>
+            <p class="pokeball-card-rate"><%= @catch_probabilities["master_ball"] %>% catch rate</p>
           </div>
-          <% if @trainer.master_balls_count > 0 %>
-            <div>Use Master Ball</div>
-          <% else %>
-            <div>None Available</div>
-          <% end %>
+          <div class="pokeball-card-count">
+            <span class="pokeball-count-number"><%= @trainer.master_balls_count %></span>
+            <span class="pokeball-count-label">Available</span>
+          </div>
         </button>
       <% end %>
     </div>
 
-    <div>
-      <%= link_to "← Back to Pokémon List", catch_pokemon_path %>
+    <div style="text-align: center; margin-top: 32px;">
+      <%= link_to "← Back to Pokémon List", catch_pokemon_path, class: "link-secondary" %>
     </div>
   </main>
 </div>
