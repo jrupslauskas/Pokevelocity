@@ -80,12 +80,6 @@ class TrainersController < ApplicationController
       return
     end
 
-    # Check if trainer has any pokeballs
-    if @trainer.total_pokeballs == 0
-      redirect_to rewards_path, alert: "You don't have any Pokéballs! Complete tickets to earn some."
-      return
-    end
-
     # Get all uncaught Pokemon
     caught_ids = @trainer.captured_pokemon.pluck(:id)
     @uncaught_pokemon = Pokemon.where.not(id: caught_ids).order(:pokedex_number)
@@ -94,6 +88,11 @@ class TrainersController < ApplicationController
     if @uncaught_pokemon.empty?
       redirect_to pokedex_path, notice: "Congratulations! You've caught all 151 Pokemon!"
       return
+    end
+
+    # Check if trainer has any pokeballs (show message but don't redirect)
+    if @trainer.total_pokeballs == 0
+      flash.now[:alert] = "You don't have any Pokéballs! Complete tickets to earn some."
     end
   end
 
@@ -107,15 +106,14 @@ class TrainersController < ApplicationController
       return
     end
 
-    # Check if trainer has any pokeballs
-    if @trainer.total_pokeballs == 0
-      redirect_to rewards_path, alert: "You don't have any Pokéballs! Complete tickets to earn some."
-      return
-    end
-
     # Get catch probabilities for each ball type
     @catch_probabilities = PokemonCatchService::CAPTURE_EFFICIENCY.transform_values do |difficulty_hash|
       difficulty_hash[@pokemon.difficulty]
+    end
+
+    # Check if trainer has any pokeballs (show message but don't redirect)
+    if @trainer.total_pokeballs == 0
+      flash.now[:alert] = "You don't have any Pokéballs! Complete tickets to earn some."
     end
   end
 

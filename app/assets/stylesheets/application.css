@@ -40,6 +40,13 @@ body > div:not(.app-layout) {
   font-size: 48px;
 }
 
+.logo-image {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  display: block;
+}
+
 .page-title {
   font-size: 42px;
   font-weight: 700;
@@ -440,6 +447,13 @@ body > div:not(.app-layout) {
 
 .sidebar-logo-icon {
   font-size: 28px;
+}
+
+.sidebar-logo-image {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  display: block;
 }
 
 .sidebar-nav {
