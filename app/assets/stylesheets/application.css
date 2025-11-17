@@ -123,6 +123,15 @@ body > div:not(.app-layout) {
   font-size: 15px;
   font-weight: 500;
   color: #2C5F2D;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.inventory-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
 }
 
 .inventory-item-count {
