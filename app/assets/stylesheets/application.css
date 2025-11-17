@@ -1061,6 +1061,13 @@ body > div:not(.app-layout) {
   font-size: 48px;
 }
 
+.pokeball-icon-image {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  display: block;
+}
+
 .pokeball-card-content {
   text-align: center;
   width: 100%;
