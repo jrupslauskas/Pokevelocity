@@ -660,6 +660,14 @@ body > div:not(.app-layout) {
   border: 1px solid #E8DCC8;
 }
 
+.reward-icon {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
 /* Toast Notifications */
 #toast-container {
   position: fixed;
