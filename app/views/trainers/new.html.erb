@@ -73,6 +73,7 @@
         <%= text_field_tag :activation_code, nil,
             placeholder: "Enter 6-character code",
             required: true,
+            minlength: 6,
             maxlength: 6,
             class: "form-input",
             style: "text-transform: uppercase;" %>
