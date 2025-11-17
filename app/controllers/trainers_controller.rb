@@ -91,7 +91,8 @@ class TrainersController < ApplicationController
     end
 
     # Check if trainer has any pokeballs (show message but don't redirect)
-    if @trainer.total_pokeballs == 0
+    # Only show this message if there isn't already a flash message (e.g., from a failed catch)
+    if @trainer.total_pokeballs == 0 && flash[:alert].nil?
       flash.now[:alert] = "You don't have any Pokéballs! Complete tickets to earn some."
     end
   end
@@ -112,7 +113,8 @@ class TrainersController < ApplicationController
     end
 
     # Check if trainer has any pokeballs (show message but don't redirect)
-    if @trainer.total_pokeballs == 0
+    # Only show this message if there isn't already a flash message
+    if @trainer.total_pokeballs == 0 && flash[:alert].nil?
       flash.now[:alert] = "You don't have any Pokéballs! Complete tickets to earn some."
     end
   end
