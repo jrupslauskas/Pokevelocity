@@ -857,8 +857,8 @@ body > div:not(.app-layout) {
 }
 
 .pokemon-catch-image {
-  width: 120px;
-  height: 120px;
+  width: 150px;
+  height: 150px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -868,8 +868,8 @@ body > div:not(.app-layout) {
 }
 
 .pokemon-catch-image img {
-  width: 100px;
-  height: 100px;
+  width: 250px;
+  height: 250px;
   object-fit: contain;
 }
 
