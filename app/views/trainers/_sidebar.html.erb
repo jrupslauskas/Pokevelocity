@@ -8,22 +8,22 @@
 
   <nav class="sidebar-nav">
     <%= link_to dashboard_path, class: "sidebar-nav-item #{current_page?(dashboard_path) ? 'active' : ''}" do %>
-      <span class="sidebar-nav-icon">🏠</span>
+      <span class="sidebar-nav-icon"><%= image_tag "icons/house.png", alt: "House", class: "sidebar-icon-image" %></span>
       <span>Dashboard</span>
     <% end %>
 
     <%= link_to pokedex_path, class: "sidebar-nav-item #{current_page?(pokedex_path) ? 'active' : ''}" do %>
-      <span class="sidebar-nav-icon">📖</span>
+      <span class="sidebar-nav-icon"><%= image_tag "icons/pokedex.png", alt: "Pokedex", class: "sidebar-icon-image" %></span>
       <span>Pokédex</span>
     <% end %>
 
     <%= link_to catch_pokemon_path, class: "sidebar-nav-item #{current_page?(catch_pokemon_path) ? 'active' : ''}" do %>
-      <span class="sidebar-nav-icon">🎣</span>
+      <span class="sidebar-nav-icon"><%= image_tag "icons/pokeball.png", alt: "Pokeball", class: "sidebar-icon-image" %></span>
       <span>Catch</span>
     <% end %>
 
     <%= link_to rewards_path, class: "sidebar-nav-item #{current_page?(rewards_path) ? 'active' : ''}" do %>
-      <span class="sidebar-nav-icon">🎁</span>
+      <span class="sidebar-nav-icon"><%= image_tag "icons/shop.png", alt: "Shop", class: "sidebar-icon-image" %></span>
       <span>Redeem</span>
     <% end %>
 

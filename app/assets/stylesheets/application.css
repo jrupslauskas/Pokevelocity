@@ -94,6 +94,13 @@ body > div:not(.app-layout) {
   font-size: 28px;
 }
 
+.card-dashboard-icon-image {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  display: block;
+}
+
 .card-dashboard-title {
   font-size: 22px;
   font-weight: 700;
@@ -456,7 +463,14 @@ body > div:not(.app-layout) {
 }
 
 .sidebar-nav-icon {
-  font-size: 20px;
+  font-size: 36px;
+}
+
+.sidebar-icon-image {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  display: block;
 }
 
 .sidebar-footer {
