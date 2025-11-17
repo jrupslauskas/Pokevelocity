@@ -509,8 +509,8 @@ body > div:not(.app-layout) {
 }
 
 .sidebar-user-avatar {
-  width: 40px;
-  height: 40px;
+  width: 64px;
+  height: 64px;
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 50%;
   display: flex;
@@ -520,13 +520,13 @@ body > div:not(.app-layout) {
 }
 
 .sidebar-avatar-image {
-  width: 36px;
-  height: 36px;
+  width: 60px;
+  height: 60px;
   object-fit: contain;
 }
 
 .sidebar-username {
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 600;
   color: white;
   flex: 1;
