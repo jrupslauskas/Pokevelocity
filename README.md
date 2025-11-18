@@ -9,4 +9,39 @@ This project is roughly 90% vibe coded garbage, but I hope it's at least fun
 
 Upon spin up, the user activation code will be PALLET but you're encouraged to change that to a different 6 character string immediately
 
-Run the app locally with `rails server` to give it a try
+## Running the App
+
+### Option 1: Docker Compose (Recommended for Easy Setup)
+
+The easiest way to get started is with Docker Compose, which will set up everything for you (make sure you have Docker Desktop running):
+
+```bash
+docker compose up
+```
+
+This will:
+- Start a PostgreSQL database
+- Build and start the Rails application
+- Create the database and run migrations
+- Seed the database with all 151 Pokémon and the PALLET activation code
+- Make the app available at http://localhost:3000
+
+To stop the app, press `Ctrl+C` or run:
+```bash
+docker compose down
+```
+
+To completely remove all data and start fresh:
+```bash
+docker compose down -v
+```
+
+### Option 2: Local Development
+
+If you prefer to run the app locally without Docker:
+
+1. Install PostgreSQL
+2. Install Ruby 3.3.6
+3. Install dependencies: `bundle install`
+4. Set up the database: `rails db:setup`
+5. Run the server: `rails server`
