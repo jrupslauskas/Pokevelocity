@@ -39,7 +39,7 @@ class TrainersController < ApplicationController
 
   def leaderboard
     # Get all trainers with their captured Pokémon and calculate difficulty scores
-    @trainers = Trainer.includes(:captured_pokemon, :icon_pokemon).all.map do |trainer|
+    trainers = Trainer.includes(:captured_pokemon, :icon_pokemon).all.map do |trainer|
       difficulty_score = trainer.captured_pokemon.sum(:difficulty)
       {
         trainer: trainer,
@@ -49,10 +49,35 @@ class TrainersController < ApplicationController
     end
 
     # Sort by difficulty score (descending), then by pokemon count (descending)
-    @trainers = @trainers.sort_by { |t| [-t[:difficulty_score], -t[:pokemon_count]] }
+    trainers = trainers.sort_by { |t| [-t[:difficulty_score], -t[:pokemon_count]] }
 
-    # Limit to top 20
-    @trainers = @trainers.first(20)
+    # Create 14 static slots for legendary trainers
+    slot_names = [
+      "Red",
+      "Blue",
+      "Lance",
+      "Agatha",
+      "Bruno",
+      "Lorelei",
+      "Giovanni",
+      "Blaine",
+      "Sabrina",
+      "Koga",
+      "Erika",
+      "Lt. Surge",
+      "Misty",
+      "Brock"
+    ]
+
+    @leaderboard_slots = (1..14).map do |position|
+      trainer_data = trainers[position - 1] # Get trainer at this position (0-indexed)
+
+      {
+        position: position,
+        title: slot_names[position - 1],
+        trainer_data: trainer_data # Will be nil if no trainer holds this position
+      }
+    end
   end
 
   def rewards

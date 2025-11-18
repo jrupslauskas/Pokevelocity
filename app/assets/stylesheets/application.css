@@ -1325,6 +1325,15 @@ body > div:not(.app-layout) {
   box-shadow: 0 4px 12px rgba(122, 199, 76, 0.2);
 }
 
+.leaderboard-empty-slot {
+  opacity: 0.6;
+}
+
+.leaderboard-empty-slot:hover {
+  transform: none;
+  box-shadow: none;
+}
+
 .leaderboard-rank {
   width: 60px;
   display: flex;
@@ -1340,6 +1349,26 @@ body > div:not(.app-layout) {
   font-size: 24px;
   font-weight: 700;
   color: #8B6F47;
+}
+
+.leaderboard-title {
+  display: flex;
+  align-items: center;
+  width: 100px;
+  flex-shrink: 0;
+}
+
+.title-badge {
+  font-size: 14px;
+  font-weight: 700;
+  color: #2C5F2D;
+  background-color: rgba(122, 199, 76, 0.15);
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #7AC74C;
+  white-space: nowrap;
+  width: 100%;
+  text-align: center;
 }
 
 .leaderboard-trainer {
@@ -1397,10 +1426,21 @@ body > div:not(.app-layout) {
   border-radius: 12px;
 }
 
+.leaderboard-empty-text {
+  color: #8B6F47;
+  font-style: italic;
+  font-weight: 500;
+}
+
 .leaderboard-stats {
   display: flex;
   gap: 32px;
   flex-shrink: 0;
+}
+
+.stat-empty {
+  color: #A89F8F;
+  font-size: 18px;
 }
 
 .leaderboard-stat {

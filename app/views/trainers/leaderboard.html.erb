@@ -21,23 +21,28 @@
     </div>
 
     <!-- Leaderboard -->
-    <% if @trainers.any? %>
-      <div class="leaderboard-container">
-        <% @trainers.each_with_index do |entry, index| %>
-          <div class="leaderboard-row <%= 'leaderboard-current-user' if entry[:trainer].id == current_trainer.id %>">
-            <div class="leaderboard-rank">
-              <% if index == 0 %>
-                <span class="rank-medal">🥇</span>
-              <% elsif index == 1 %>
-                <span class="rank-medal">🥈</span>
-              <% elsif index == 2 %>
-                <span class="rank-medal">🥉</span>
-              <% else %>
-                <span class="rank-number">#<%= index + 1 %></span>
-              <% end %>
-            </div>
+    <div class="leaderboard-container">
+      <% @leaderboard_slots.each do |slot| %>
+        <% entry = slot[:trainer_data] %>
+        <div class="leaderboard-row <%= 'leaderboard-current-user' if entry && entry[:trainer].id == current_trainer.id %> <%= 'leaderboard-empty-slot' unless entry %>">
+          <div class="leaderboard-rank">
+            <% if slot[:position] == 1 %>
+              <span class="rank-medal">🔴</span>
+            <% elsif slot[:position] == 2 %>
+              <span class="rank-medal">👑</span>
+            <% elsif slot[:position] <= 6 %>
+              <span class="rank-medal">⭐</span>
+            <% else %>
+              <span class="rank-medal">🎖️</span>
+            <% end %>
+          </div>
 
-            <div class="leaderboard-trainer">
+          <div class="leaderboard-title">
+            <span class="title-badge"><%= slot[:title] %></span>
+          </div>
+
+          <div class="leaderboard-trainer">
+            <% if entry %>
               <% if entry[:trainer].icon_pokemon %>
                 <div class="leaderboard-avatar">
                   <% if entry[:trainer].icon_pokemon.image.attached? %>
@@ -63,8 +68,17 @@
                   <% end %>
                 </span>
               </div>
-            </div>
+            <% else %>
+              <div class="leaderboard-avatar leaderboard-avatar-empty">
+                <span>❓</span>
+              </div>
+              <div class="leaderboard-trainer-info">
+                <span class="leaderboard-username leaderboard-empty-text">Unclaimed</span>
+              </div>
+            <% end %>
+          </div>
 
+          <% if entry %>
             <div class="leaderboard-stats">
               <div class="leaderboard-stat">
                 <span class="stat-label">Pokédex</span>
@@ -75,15 +89,15 @@
                 <span class="stat-value stat-score"><%= entry[:difficulty_score] %>★</span>
               </div>
             </div>
-          </div>
-        <% end %>
-      </div>
-    <% else %>
-      <div class="empty-state">
-        <div class="empty-state-icon">🏆</div>
-        <h3 class="empty-state-title">No Trainers Yet!</h3>
-        <p class="empty-state-description">Be the first to catch some Pokémon and claim the top spot!</p>
-      </div>
-    <% end %>
+          <% else %>
+            <div class="leaderboard-stats">
+              <div class="leaderboard-stat">
+                <span class="stat-label stat-empty">—</span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
   </main>
 </div>
