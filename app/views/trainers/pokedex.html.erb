@@ -27,7 +27,7 @@
               <h3 class="pokemon-name"><%= pokemon.name %></h3>
               <div class="pokemon-meta">
                 <span class="pokemon-ball-type"><%= capture.ball_type.humanize %></span>
-                <span class="pokemon-date"><%= capture.captured_at.strftime("%m/%d") %></span>
+                <span class="pokemon-date"><%= capture.captured_at.strftime("%m/%d/%y") %></span>
               </div>
             </div>
           <% end %>

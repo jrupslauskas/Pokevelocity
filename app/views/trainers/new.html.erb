@@ -47,9 +47,18 @@
       </div>
 
       <div class="form-group">
-        <%= f.label :icon_pokemon_id, "Choose Your Icon Pokémon", class: "form-label" %>
-        <p style="font-size: 13px; color: #8B6F47; margin: 0 0 12px 0;">This will represent you throughout the app</p>
-        <div class="icon-pokemon-grid">
+        <div style="display: flex; align-items: center;">
+          <%= f.label :icon_pokemon_id, class: "form-label", style: "margin-bottom: 0;" do %>
+            Choose Your Icon Pokémon <span style="color: #E85D75;">*</span>
+          <% end %>
+          <div class="info-icon-wrapper">
+            <div class="info-icon">i</div>
+            <div class="info-tooltip">
+              This will represent you throughout the app. Your choice won't have any functional impact on your experience.
+            </div>
+          </div>
+        </div>
+        <div class="icon-pokemon-grid" style="margin-top: 12px;">
           <% @pokemon.each do |pokemon| %>
             <label class="icon-pokemon-option">
               <%= f.radio_button :icon_pokemon_id, pokemon.id, required: true, class: "icon-pokemon-radio" %>
