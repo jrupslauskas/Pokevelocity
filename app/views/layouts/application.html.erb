@@ -26,5 +26,11 @@
   <body>
     <%= render "layouts/flash_messages" if flash.any? %>
     <%= yield %>
+    <canvas id="animation-overlay" class="hidden" />
+    <script>
+      window.assetPaths = {
+        horizontalStripes: "<%= asset_path 'horizontal-stripes.png' %>",
+      };
+    </script>
   </body>
 </html>
