@@ -1345,6 +1345,12 @@ body > div:not(.app-layout) {
   font-size: 32px;
 }
 
+.rank-icon {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
 .rank-number {
   font-size: 24px;
   font-weight: 700;

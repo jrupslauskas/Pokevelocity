@@ -67,7 +67,7 @@ class TrainersController < ApplicationController
       "Sabrina",
       "Koga",
       "Erika",
-      "Lt. Surge",
+      "Lt Surge",
       "Misty",
       "Brock"
     ]
