@@ -735,12 +735,12 @@ body > div:not(.app-layout) {
 
 .toast-success {
   border-left-color: #7AC74C;
-  background: linear-gradient(to right, rgba(122, 199, 76, 0.1), white);
+  background: linear-gradient(to right, rgba(122, 199, 76, 0.3), white);
 }
 
 .toast-error {
   border-left-color: #E85D75;
-  background: linear-gradient(to right, rgba(232, 93, 117, 0.1), white);
+  background: linear-gradient(to right, rgba(232, 93, 117, 0.3), white);
 }
 
 .toast-icon {
@@ -1335,7 +1335,7 @@ body > div:not(.app-layout) {
 }
 
 .leaderboard-rank {
-  width: 60px;
+  width: 80px;
   display: flex;
   justify-content: center;
   flex-shrink: 0;
@@ -1346,8 +1346,8 @@ body > div:not(.app-layout) {
 }
 
 .rank-icon {
-  width: 50px;
-  height: 50px;
+  width: 70px;
+  height: 70px;
   object-fit: contain;
 }
 
