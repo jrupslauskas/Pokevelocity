@@ -1371,17 +1371,83 @@ body > div:not(.app-layout) {
   text-align: center;
 }
 
+.leaderboard-carousel-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.carousel-item {
+  display: none !important;
+  align-items: center;
+  gap: 48px;
+  flex: 1;
+  min-width: 0;
+}
+
+.carousel-item.carousel-active {
+  display: flex !important;
+}
+
+.carousel-arrow {
+  background: linear-gradient(135deg, #7AC74C 0%, #5FA777 100%);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 24px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  line-height: 1;
+  padding: 0;
+}
+
+.carousel-arrow:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(95, 167, 119, 0.3);
+}
+
+.carousel-arrow:active {
+  transform: scale(0.95);
+}
+
+.carousel-counter {
+  position: absolute;
+  bottom: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(122, 199, 76, 0.15);
+  border: 1px solid #7AC74C;
+  border-radius: 12px;
+  padding: 4px 12px;
+}
+
+.carousel-counter-text {
+  font-size: 11px;
+  font-weight: 600;
+  color: #2C5F2D;
+  white-space: nowrap;
+}
+
 .leaderboard-trainer {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 48px;
   flex: 1;
   min-width: 0;
 }
 
 .leaderboard-avatar {
-  width: 56px;
-  height: 56px;
+  width: 80px;
+  height: 80px;
   background-color: rgba(232, 245, 232, 0.3);
   border-radius: 50%;
   display: flex;
@@ -1389,6 +1455,7 @@ body > div:not(.app-layout) {
   justify-content: center;
   flex-shrink: 0;
   border: 2px solid #E8DCC8;
+  margin-left: 5%;
 }
 
 .leaderboard-avatar-empty {
@@ -1397,8 +1464,8 @@ body > div:not(.app-layout) {
 }
 
 .leaderboard-avatar-image {
-  width: 48px;
-  height: 48px;
+  width: 60px;
+  height: 60px;
   object-fit: contain;
 }
 
@@ -1447,6 +1514,7 @@ body > div:not(.app-layout) {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   min-width: 80px;
 }
 

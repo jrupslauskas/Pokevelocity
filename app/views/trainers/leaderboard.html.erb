@@ -23,8 +23,9 @@
     <!-- Leaderboard -->
     <div class="leaderboard-container">
       <% @leaderboard_slots.each do |slot| %>
-        <% entry = slot[:trainer_data] %>
-        <div class="leaderboard-row <%= 'leaderboard-current-user' if entry && entry[:trainer].id == current_trainer.id %> <%= 'leaderboard-empty-slot' unless entry %>">
+        <% trainers = slot[:trainer_data] %>
+        <% has_current_user = trainers && trainers.any? { |t| t[:trainer].id == current_trainer.id } %>
+        <div class="leaderboard-row <%= 'leaderboard-current-user' if has_current_user %> <%= 'leaderboard-empty-slot' unless trainers %>" data-slot-position="<%= slot[:position] %>">
           <div class="leaderboard-rank">
             <% if slot[:position] == 1 %>
               <span class="rank-medal">🔴</span>
@@ -41,63 +42,114 @@
             <span class="title-badge"><%= slot[:title] %></span>
           </div>
 
-          <div class="leaderboard-trainer">
-            <% if entry %>
-              <% if entry[:trainer].icon_pokemon %>
-                <div class="leaderboard-avatar">
-                  <% if entry[:trainer].icon_pokemon.image.attached? %>
-                    <%= image_tag entry[:trainer].icon_pokemon.image, alt: entry[:trainer].icon_pokemon.name, class: "leaderboard-avatar-image" %>
+          <% if trainers && trainers.length > 1 %>
+            <button class="carousel-arrow carousel-arrow-left" onclick="rotateCarousel(<%= slot[:position] %>, -1)">‹</button>
+          <% end %>
+
+          <div class="leaderboard-carousel-wrapper">
+            <% if trainers %>
+              <% trainers.each_with_index do |entry, index| %>
+                <div class="leaderboard-trainer carousel-item <%= 'carousel-active' if index == 0 %>" data-carousel-index="<%= index %>">
+                  <% if entry[:trainer].icon_pokemon %>
+                    <div class="leaderboard-avatar">
+                      <% if entry[:trainer].icon_pokemon.image.attached? %>
+                        <%= image_tag entry[:trainer].icon_pokemon.image, alt: entry[:trainer].icon_pokemon.name, class: "leaderboard-avatar-image" %>
+                      <% else %>
+                        <%= image_tag "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/#{entry[:trainer].icon_pokemon.pokedex_number}.png",
+                            alt: entry[:trainer].icon_pokemon.name,
+                            class: "leaderboard-avatar-image",
+                            style: "image-rendering: pixelated;" %>
+                      <% end %>
+                    </div>
                   <% else %>
-                    <%= image_tag "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/#{entry[:trainer].icon_pokemon.pokedex_number}.png",
-                        alt: entry[:trainer].icon_pokemon.name,
-                        class: "leaderboard-avatar-image",
-                        style: "image-rendering: pixelated;" %>
+                    <div class="leaderboard-avatar leaderboard-avatar-empty">
+                      <span>👤</span>
+                    </div>
                   <% end %>
-                </div>
-              <% else %>
-                <div class="leaderboard-avatar leaderboard-avatar-empty">
-                  <span>👤</span>
+
+                  <div class="leaderboard-trainer-info">
+                    <span class="leaderboard-username">
+                      <%= entry[:trainer].username %>
+                      <% if entry[:trainer].id == current_trainer.id %>
+                        <span class="you-badge">You</span>
+                      <% end %>
+                    </span>
+                  </div>
+
+                  <div class="leaderboard-stats">
+                    <div class="leaderboard-stat">
+                      <span class="stat-label">Pokédex</span>
+                      <span class="stat-value"><%= entry[:pokemon_count] %> / 151</span>
+                    </div>
+                    <div class="leaderboard-stat leaderboard-stat-score">
+                      <span class="stat-label">Difficulty Score</span>
+                      <span class="stat-value stat-score"><%= entry[:difficulty_score] %>★</span>
+                    </div>
+                  </div>
                 </div>
               <% end %>
 
-              <div class="leaderboard-trainer-info">
-                <span class="leaderboard-username">
-                  <%= entry[:trainer].username %>
-                  <% if entry[:trainer].id == current_trainer.id %>
-                    <span class="you-badge">You</span>
-                  <% end %>
-                </span>
-              </div>
+              <% if trainers.length > 1 %>
+                <div class="carousel-counter">
+                  <span class="carousel-counter-text">1 of <%= trainers.length %></span>
+                </div>
+              <% end %>
             <% else %>
-              <div class="leaderboard-avatar leaderboard-avatar-empty">
-                <span>❓</span>
-              </div>
-              <div class="leaderboard-trainer-info">
-                <span class="leaderboard-username leaderboard-empty-text">Unclaimed</span>
+              <div class="leaderboard-trainer carousel-item carousel-active">
+                <div class="leaderboard-avatar leaderboard-avatar-empty">
+                  <span>❓</span>
+                </div>
+                <div class="leaderboard-trainer-info">
+                  <span class="leaderboard-username leaderboard-empty-text">Unclaimed</span>
+                </div>
+
+                <div class="leaderboard-stats">
+                  <div class="leaderboard-stat">
+                    <span class="stat-label stat-empty">—</span>
+                  </div>
+                </div>
               </div>
             <% end %>
           </div>
 
-          <% if entry %>
-            <div class="leaderboard-stats">
-              <div class="leaderboard-stat">
-                <span class="stat-label">Pokédex</span>
-                <span class="stat-value"><%= entry[:pokemon_count] %> / 151</span>
-              </div>
-              <div class="leaderboard-stat leaderboard-stat-score">
-                <span class="stat-label">Difficulty Score</span>
-                <span class="stat-value stat-score"><%= entry[:difficulty_score] %>★</span>
-              </div>
-            </div>
-          <% else %>
-            <div class="leaderboard-stats">
-              <div class="leaderboard-stat">
-                <span class="stat-label stat-empty">—</span>
-              </div>
-            </div>
+          <% if trainers && trainers.length > 1 %>
+            <button class="carousel-arrow carousel-arrow-right" onclick="rotateCarousel(<%= slot[:position] %>, 1)">›</button>
           <% end %>
         </div>
       <% end %>
     </div>
+
+    <script>
+      function rotateCarousel(position, direction) {
+        const row = document.querySelector(`[data-slot-position="${position}"]`);
+        const items = row.querySelectorAll('.carousel-item');
+        const counter = row.querySelector('.carousel-counter-text');
+
+        let currentIndex = -1;
+        items.forEach((item, index) => {
+          if (item.classList.contains('carousel-active')) {
+            currentIndex = index;
+          }
+        });
+
+        if (currentIndex === -1) return;
+
+        // Remove active class from current item
+        items[currentIndex].classList.remove('carousel-active');
+
+        // Calculate new index with wrapping
+        let newIndex = currentIndex + direction;
+        if (newIndex < 0) newIndex = items.length - 1;
+        if (newIndex >= items.length) newIndex = 0;
+
+        // Add active class to new item
+        items[newIndex].classList.add('carousel-active');
+
+        // Update counter
+        if (counter) {
+          counter.textContent = `${newIndex + 1} of ${items.length}`;
+        }
+      }
+    </script>
   </main>
 </div>

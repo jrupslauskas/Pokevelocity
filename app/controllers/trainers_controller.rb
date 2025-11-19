@@ -38,6 +38,9 @@ class TrainersController < ApplicationController
   end
 
   def leaderboard
+    # Get the current logged-in trainer's ID
+    current_user_id = current_trainer.id
+
     # Get all trainers with their captured Pokémon and calculate difficulty scores
     trainers = Trainer.includes(:captured_pokemon, :icon_pokemon).all.map do |trainer|
       difficulty_score = trainer.captured_pokemon.sum(:difficulty)
@@ -69,14 +72,45 @@ class TrainersController < ApplicationController
       "Brock"
     ]
 
-    @leaderboard_slots = (1..14).map do |position|
-      trainer_data = trainers[position - 1] # Get trainer at this position (0-indexed)
+    # Assign trainers to slots, allowing ties
+    @leaderboard_slots = []
+    current_slot = 1
+    i = 0
 
-      {
-        position: position,
-        title: slot_names[position - 1],
-        trainer_data: trainer_data # Will be nil if no trainer holds this position
+    while current_slot <= 14 && i < trainers.length
+      current_entry = trainers[i]
+      tied_trainers = [current_entry]
+
+      # Find all trainers with the same score
+      j = i + 1
+      while j < trainers.length &&
+            trainers[j][:difficulty_score] == current_entry[:difficulty_score] &&
+            trainers[j][:pokemon_count] == current_entry[:pokemon_count]
+        tied_trainers << trainers[j]
+        j += 1
+      end
+
+      # Sort tied trainers to put current user first if they're in the tie
+      tied_trainers.sort_by! { |t| t[:trainer].id == current_user_id ? 0 : 1 }
+
+      @leaderboard_slots << {
+        position: current_slot,
+        title: slot_names[current_slot - 1],
+        trainer_data: tied_trainers # Array of tied trainers
       }
+
+      i = j
+      current_slot += 1
+    end
+
+    # Fill remaining empty slots
+    while current_slot <= 14
+      @leaderboard_slots << {
+        position: current_slot,
+        title: slot_names[current_slot - 1],
+        trainer_data: nil
+      }
+      current_slot += 1
     end
   end
 
