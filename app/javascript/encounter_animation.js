@@ -95,21 +95,32 @@ document.addEventListener('turbo:load', function () {
   }
 
   function startAnimation(timestamp) {
+    if (poke.animationStartTime === undefined) {
+      poke.animationStartTime = timestamp;
+    }
+
     let gl = poke.gl;
-    gl.clearColor(1.0, 1.0, 1.0, 0.0);
+    gl.clearColor(1.0, 1.0, 1.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     gl.useProgram(poke.program);
+
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ZERO);
+
     let dt = (timestamp - poke.animationStartTime) / ANIMATION_LENGTH;
     gl.uniform1f(gl.getUniformLocation(poke.program, 'uTime'), dt);
 
     gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE2D, poke.texture);
+    gl.bindTexture(gl.TEXTURE_2D, poke.texture);
     gl.uniform1i(gl.getUniformLocation(poke.program, 'uSampler'), 0);
 
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 6);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-    requestAnimationFrame(startAnimation);
+    if (dt < ANIMATION_LENGTH) {
+      // Stop redrawing animation when finished
+      requestAnimationFrame(startAnimation);
+    }
   }
 
   document.querySelectorAll('button.pokeball-card').forEach(function (button) {
