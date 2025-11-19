@@ -129,7 +129,6 @@ document.addEventListener('turbo:load', function () {
       event.preventDefault();
 
       document.getElementById("animation-overlay").classList.remove('hidden');
-      poke.animationStartTime = document.timeline.currentTime;
       requestAnimationFrame(startAnimation);
 
       setTimeout(function () {
