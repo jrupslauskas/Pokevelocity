@@ -1421,9 +1421,8 @@ body > div:not(.app-layout) {
 
 .carousel-counter {
   position: absolute;
-  bottom: -24px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: -13px;
+  right: -65px;
   background-color: rgba(122, 199, 76, 0.15);
   border: 1px solid #7AC74C;
   border-radius: 12px;
