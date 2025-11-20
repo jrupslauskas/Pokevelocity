@@ -11,10 +11,10 @@ class TrainersController < ApplicationController
     @pokemon = Pokemon.order(:pokedex_number)
 
     # Validate activation code
-    activation_code = params[:activation_code]
+    activation_code = params[:activation_code]&.strip&.upcase
     valid_code = ValidationCode.find_by(active: true)
 
-    if valid_code.nil? || activation_code.upcase != valid_code.code
+    if valid_code.nil? || activation_code.blank? || activation_code != valid_code.code
       @trainer.errors.add(:base, "Invalid activation code")
       render :new, status: :unprocessable_entity
       return

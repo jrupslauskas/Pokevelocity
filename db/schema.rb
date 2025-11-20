@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_17_025951) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_20_030200) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -77,7 +77,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_17_025951) do
   end
 
   create_table "validation_codes", force: :cascade do |t|
-    t.boolean "active"
+    t.boolean "active", default: true
     t.string "code"
     t.check_constraint "length(code::text) = 6", name: "validation_code_length_check"
   end
