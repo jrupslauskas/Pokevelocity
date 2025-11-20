@@ -28,14 +28,14 @@ Rails.application.routes.draw do
   get "/pokedex", to: "trainers#pokedex", as: :pokedex
 
   # Leaderboard
-  get "/leaderboard", to: "trainers#leaderboard", as: :leaderboard
+  get "/leaderboard", to: "leaderboard#index", as: :leaderboard
 
   # Redeem rewards
-  get "/rewards", to: "trainers#rewards", as: :rewards
-  post "/rewards", to: "trainers#redeem_reward"
+  get "/rewards", to: "rewards#index", as: :rewards
+  post "/rewards", to: "rewards#create"
 
   # Catch Pokemon
-  get "/catch", to: "trainers#catch", as: :catch_pokemon
-  get "/catch/:id", to: "trainers#select_pokemon", as: :select_pokemon
-  post "/catch/:id", to: "trainers#attempt_catch"
+  get "/catch", to: "catches#new", as: :catches
+  get "/catch/:id", to: "catches#show", as: :catch
+  post "/catch/:id", to: "catches#create"
 end

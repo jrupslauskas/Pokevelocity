@@ -50,7 +50,7 @@
     <h3 class="pokeball-selection-title">Select Your Pokéball</h3>
 
     <div class="pokeball-grid">
-      <%= form_with url: select_pokemon_path(@pokemon), method: :post, local: true do |f| %>
+      <%= form_with url: catch_path(@pokemon), method: :post, local: true do |f| %>
         <%= f.hidden_field :ball_type, value: "pokeball" %>
         <button type="submit" class="pokeball-card <%= 'pokeball-disabled' if @trainer.pokeballs_count == 0 %>" <%= "disabled" if @trainer.pokeballs_count == 0 %>>
           <div class="pokeball-card-icon"><%= image_tag "icons/pokeball_shop.png", alt: "Pokeball", class: "pokeball-icon-image" %></div>
@@ -66,7 +66,7 @@
         </button>
       <% end %>
 
-      <%= form_with url: select_pokemon_path(@pokemon), method: :post, local: true do |f| %>
+      <%= form_with url: catch_path(@pokemon), method: :post, local: true do |f| %>
         <%= f.hidden_field :ball_type, value: "great_ball" %>
         <button type="submit" class="pokeball-card <%= 'pokeball-disabled' if @trainer.great_balls_count == 0 %>" <%= "disabled" if @trainer.great_balls_count == 0 %>>
           <div class="pokeball-card-icon"><%= image_tag "icons/greatball.png", alt: "Great Ball", class: "pokeball-icon-image" %></div>
@@ -82,7 +82,7 @@
         </button>
       <% end %>
 
-      <%= form_with url: select_pokemon_path(@pokemon), method: :post, local: true do |f| %>
+      <%= form_with url: catch_path(@pokemon), method: :post, local: true do |f| %>
         <%= f.hidden_field :ball_type, value: "ultra_ball" %>
         <button type="submit" class="pokeball-card <%= 'pokeball-disabled' if @trainer.ultra_balls_count == 0 %>" <%= "disabled" if @trainer.ultra_balls_count == 0 %>>
           <div class="pokeball-card-icon"><%= image_tag "icons/ultraball.jpg", alt: "Ultra Ball", class: "pokeball-icon-image" %></div>
@@ -98,7 +98,7 @@
         </button>
       <% end %>
 
-      <%= form_with url: select_pokemon_path(@pokemon), method: :post, local: true do |f| %>
+      <%= form_with url: catch_path(@pokemon), method: :post, local: true do |f| %>
         <%= f.hidden_field :ball_type, value: "master_ball" %>
         <button type="submit" class="pokeball-card <%= 'pokeball-disabled' if @trainer.master_balls_count == 0 %>" <%= "disabled" if @trainer.master_balls_count == 0 %>>
           <div class="pokeball-card-icon"><%= image_tag "icons/masterball.png", alt: "Master Ball", class: "pokeball-icon-image" %></div>
@@ -116,7 +116,7 @@
     </div>
 
     <div style="text-align: center; margin-top: 32px;">
-      <%= link_to "← Back to Pokémon List", catch_pokemon_path, class: "link-secondary" %>
+      <%= link_to "← Back to Pokémon List", catches_path, class: "link-secondary" %>
     </div>
   </main>
 </div>

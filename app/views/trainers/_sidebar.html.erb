@@ -17,7 +17,7 @@
       <span>Pokédex</span>
     <% end %>
 
-    <%= link_to catch_pokemon_path, class: "sidebar-nav-item #{current_page?(catch_pokemon_path) ? 'active' : ''}" do %>
+    <%= link_to catches_path, class: "sidebar-nav-item #{current_page?(catches_path) ? 'active' : ''}" do %>
       <span class="sidebar-nav-icon"><%= image_tag "icons/pokeball.png", alt: "Pokeball", class: "sidebar-icon-image" %></span>
       <span>Catch</span>
     <% end %>

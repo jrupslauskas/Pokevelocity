@@ -1,13 +1,14 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  trainer: one
-  pokemon: one
-  ball_type: MyString
+# Gary already caught Charmander and Squirtle
+gary_charmander:
+  trainer: gary
+  pokemon: charmander
+  ball_type: pokeball
   captured_at: 2025-11-15 12:55:14
 
-two:
-  trainer: two
-  pokemon: two
-  ball_type: MyString
-  captured_at: 2025-11-15 12:55:14
+gary_squirtle:
+  trainer: gary
+  pokemon: squirtle
+  ball_type: great_ball
+  captured_at: 2025-11-16 14:30:00

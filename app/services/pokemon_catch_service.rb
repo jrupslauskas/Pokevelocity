@@ -65,33 +65,11 @@ class PokemonCatchService
   private
 
   def has_ball?
-    case @ball_type
-    when "pokeball"
-      @trainer.pokeballs_count > 0
-    when "great_ball"
-      @trainer.great_balls_count > 0
-    when "ultra_ball"
-      @trainer.ultra_balls_count > 0
-    when "master_ball"
-      @trainer.master_balls_count > 0
-    else
-      false
-    end
+    @trainer.has_ball?(@ball_type)
   end
 
   def deduct_ball!
-    case @ball_type
-    when "pokeball"
-      @trainer.pokeballs_count -= 1
-    when "great_ball"
-      @trainer.great_balls_count -= 1
-    when "ultra_ball"
-      @trainer.ultra_balls_count -= 1
-    when "master_ball"
-      @trainer.master_balls_count -= 1
-    end
-
-    @trainer.save!
+    @trainer.deduct_ball!(@ball_type)
   end
 
   def find_uncaught_pokemon

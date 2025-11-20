@@ -1,9 +1,31 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
+bulbasaur:
   pokedex_number: 1
-  name: MyString
+  name: Bulbasaur
+  difficulty: 1
 
-two:
-  pokedex_number: 1
-  name: MyString
+charmander:
+  pokedex_number: 4
+  name: Charmander
+  difficulty: 1
+
+squirtle:
+  pokedex_number: 7
+  name: Squirtle
+  difficulty: 1
+
+pikachu:
+  pokedex_number: 25
+  name: Pikachu
+  difficulty: 2
+
+mewtwo:
+  pokedex_number: 150
+  name: Mewtwo
+  difficulty: 5
+
+mew:
+  pokedex_number: 151
+  name: Mew
+  difficulty: 5

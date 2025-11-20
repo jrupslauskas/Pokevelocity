@@ -1,17 +1,31 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  username: MyString
-  password_digest: MyString
-  pokeballs_count: 1
-  great_balls_count: 1
-  ultra_balls_count: 1
+# Trainer with plenty of pokeballs for testing
+ash:
+  username: ash
+  password_digest: <%= BCrypt::Password.create('password', cost: 4) %>
+  pokeballs_count: 5
+  great_balls_count: 3
+  ultra_balls_count: 2
   master_balls_count: 1
+  icon_pokemon: pikachu
 
-two:
-  username: MyString
-  password_digest: MyString
-  pokeballs_count: 1
-  great_balls_count: 1
-  ultra_balls_count: 1
+# Trainer with no pokeballs
+broke_trainer:
+  username: broke_trainer
+  password_digest: <%= BCrypt::Password.create('password', cost: 4) %>
+  pokeballs_count: 0
+  great_balls_count: 0
+  ultra_balls_count: 0
+  master_balls_count: 0
+  icon_pokemon: bulbasaur
+
+# Trainer who has already caught some pokemon
+gary:
+  username: gary
+  password_digest: <%= BCrypt::Password.create('password', cost: 4) %>
+  pokeballs_count: 10
+  great_balls_count: 5
+  ultra_balls_count: 3
   master_balls_count: 1
+  icon_pokemon: charmander

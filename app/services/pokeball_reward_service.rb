@@ -31,13 +31,12 @@ class PokeballRewardService
 
   def award!
     ball_type = select_ball_type
-    increment_ball_count(ball_type)
-    @trainer.save!
+    @trainer.add_ball!(ball_type)
 
     {
       ball_type: ball_type,
       story_points: @story_points,
-      new_count: ball_count_for(ball_type)
+      new_count: @trainer.ball_count(ball_type)
     }
   end
 
@@ -70,32 +69,6 @@ class PokeballRewardService
       REWARD_WEIGHTS[5]
     else
       REWARD_WEIGHTS[8]
-    end
-  end
-
-  def increment_ball_count(ball_type)
-    case ball_type
-    when "pokeball"
-      @trainer.pokeballs_count += 1
-    when "great_ball"
-      @trainer.great_balls_count += 1
-    when "ultra_ball"
-      @trainer.ultra_balls_count += 1
-    when "master_ball"
-      @trainer.master_balls_count += 1
-    end
-  end
-
-  def ball_count_for(ball_type)
-    case ball_type
-    when "pokeball"
-      @trainer.pokeballs_count
-    when "great_ball"
-      @trainer.great_balls_count
-    when "ultra_ball"
-      @trainer.ultra_balls_count
-    when "master_ball"
-      @trainer.master_balls_count
     end
   end
 end

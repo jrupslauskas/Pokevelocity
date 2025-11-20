@@ -1,9 +1,9 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  code: MyString
-  active: false
+active_code:
+  code: TEST01
+  active: true
 
-two:
-  code: MyString
+inactive_code:
+  code: TEST02
   active: false
