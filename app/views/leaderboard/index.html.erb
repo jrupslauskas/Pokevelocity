@@ -30,7 +30,7 @@
             <%
               # Map slot titles to their corresponding image filenames (lowercase)
               image_filename = slot[:title].downcase.gsub(' ', '')
-              image_path = "icons/gymLeaders/#{image_filename}.png"
+              image_path = "trainerSprites/gymLeaders/#{image_filename}.png"
             %>
             <%= image_tag image_path, alt: slot[:title], class: "rank-icon" %>
           </div>

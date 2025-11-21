@@ -27,14 +27,14 @@
       <span>Shop</span>
     <% end %>
 
+    <%= link_to trainer_plaza_path, class: "sidebar-nav-item #{current_page?(trainer_plaza_path) ? 'active' : ''}" do %>
+       <span class="sidebar-nav-icon"><%= image_tag "icons/trainerSprites/young-couple.png", alt: "Trainer Plaza", class: "sidebar-icon-image" %></span>
+       <span>Trainer Plaza</span>
+    <% end %>
+
     <%= link_to leaderboard_path, class: "sidebar-nav-item #{current_page?(leaderboard_path) ? 'active' : ''}" do %>
       <span class="sidebar-nav-icon">🏆</span>
       <span>Indigo Plateau</span>
-    <% end %>
-
-    <%= link_to trainer_plaza_path, class: "sidebar-nav-item #{current_page?(trainer_plaza_path) ? 'active' : ''}" do %>
-      <span class="sidebar-nav-icon">👥</span>
-      <span>Trainer Plaza</span>
     <% end %>
   </nav>
 
