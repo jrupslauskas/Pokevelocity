@@ -15,7 +15,7 @@
     <h2 class="card-title">Trainer Login</h2>
     <p class="card-subtitle">Enter your credentials to continue your journey</p>
 
-    <%= form_with url: login_path, method: :post, local: true do |f| %>
+    <%= form_with url: login_path, method: :post, local: true, data: { turbo: false } do |f| %>
       <div class="form-group">
         <%= label_tag :username, "Username", class: "form-label" %>
         <%= text_field_tag :username, nil,
