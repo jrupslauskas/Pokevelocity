@@ -30,6 +30,10 @@ Rails.application.routes.draw do
   # Leaderboard
   get "/leaderboard", to: "leaderboard#index", as: :leaderboard
 
+  # Trainer Plaza
+  get "/trainer-plaza", to: "trainer_plaza#index", as: :trainer_plaza
+  get "/trainer-plaza/:id", to: "trainer_plaza#show", as: :trainer
+
   # Redeem rewards
   get "/rewards", to: "rewards#index", as: :rewards
   post "/rewards", to: "rewards#create"

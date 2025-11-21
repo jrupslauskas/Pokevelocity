@@ -1,0 +1,65 @@
+<div class="app-layout">
+  <%= render "trainers/sidebar" %>
+
+  <main class="main-content">
+    <header class="page-header-authenticated">
+      <h1>Trainer Plaza</h1>
+      <p>View other trainers and their Pokédex collections.</p>
+    </header>
+
+    <% if @trainers.any? %>
+      <div class="trainer-plaza-container">
+        <div class="trainer-plaza-grid">
+          <% @trainers.each do |trainer| %>
+            <div class="trainer-plaza-card <%= 'trainer-plaza-current' if trainer.id == current_trainer.id %>">
+              <div class="trainer-plaza-avatar">
+                <% if trainer.icon_pokemon %>
+                  <% if trainer.icon_pokemon.image.attached? %>
+                    <%= image_tag trainer.icon_pokemon.image, alt: trainer.icon_pokemon.name, class: "trainer-plaza-avatar-image" %>
+                  <% else %>
+                    <%= image_tag "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/#{trainer.icon_pokemon.pokedex_number}.png",
+                        alt: trainer.icon_pokemon.name,
+                        class: "trainer-plaza-avatar-image",
+                        style: "image-rendering: pixelated;" %>
+                  <% end %>
+                <% else %>
+                  <div class="trainer-plaza-avatar-empty">
+                    <span>👤</span>
+                  </div>
+                <% end %>
+              </div>
+
+              <div class="trainer-plaza-info">
+                <h3 class="trainer-plaza-username">
+                  <%= trainer.username %>
+                  <% if trainer.id == current_trainer.id %>
+                    <span class="you-badge">You</span>
+                  <% end %>
+                </h3>
+
+                <div class="trainer-plaza-stats">
+                  <div class="trainer-plaza-stat">
+                    <span class="stat-label">Pokédex</span>
+                    <span class="stat-value"><%= trainer.captured_pokemon.count %> / 151</span>
+                  </div>
+                  <div class="trainer-plaza-stat">
+                    <span class="stat-label">Difficulty Score</span>
+                    <span class="stat-value"><%= trainer.difficulty_score %>★</span>
+                  </div>
+                </div>
+
+                <%= link_to "View Pokédex →", trainer_path(trainer), class: "btn-primary" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% else %>
+      <div class="empty-state">
+        <div class="empty-state-icon">👥</div>
+        <h3 class="empty-state-title">No Trainers Yet!</h3>
+        <p class="empty-state-description">Be the first to join the Trainer Plaza!</p>
+      </div>
+    <% end %>
+  </main>
+</div>

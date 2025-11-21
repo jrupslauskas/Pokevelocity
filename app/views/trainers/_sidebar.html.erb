@@ -31,6 +31,11 @@
       <span class="sidebar-nav-icon">🏆</span>
       <span>Indigo Plateau</span>
     <% end %>
+
+    <%= link_to trainer_plaza_path, class: "sidebar-nav-item #{current_page?(trainer_plaza_path) ? 'active' : ''}" do %>
+      <span class="sidebar-nav-icon">👥</span>
+      <span>Trainer Plaza</span>
+    <% end %>
   </nav>
 
   <div class="sidebar-footer">

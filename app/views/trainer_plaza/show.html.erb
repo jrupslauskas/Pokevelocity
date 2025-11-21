@@ -1,0 +1,78 @@
+<div class="app-layout">
+  <%= render "trainers/sidebar" %>
+
+  <main class="main-content">
+    <header class="page-header-authenticated">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <% if @trainer.icon_pokemon %>
+          <div style="width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;">
+            <% if @trainer.icon_pokemon.image.attached? %>
+              <%= image_tag @trainer.icon_pokemon.image, alt: @trainer.icon_pokemon.name, style: "width: 64px; height: 64px; object-fit: contain;" %>
+            <% else %>
+              <%= image_tag "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/#{@trainer.icon_pokemon.pokedex_number}.png",
+                  alt: @trainer.icon_pokemon.name,
+                  style: "width: 64px; height: 64px; object-fit: contain; image-rendering: pixelated;" %>
+            <% end %>
+          </div>
+        <% end %>
+        <div>
+          <h1>
+            <%= @trainer.username %>'s Pokédex
+            <% if @trainer.id == current_trainer.id %>
+              <span class="you-badge">You</span>
+            <% end %>
+          </h1>
+          <p><%= @captured_pokemon.count %> Pokémon caught • <%= @trainer.difficulty_score %>★ Difficulty Score</p>
+        </div>
+      </div>
+      <div style="margin-top: 16px;">
+        <%= link_to "← Back to Trainer Plaza", trainer_plaza_path, class: "btn-secondary" %>
+      </div>
+    </header>
+
+    <% if @captured_pokemon.any? %>
+      <div class="pokedex-container">
+        <div class="pokedex-grid">
+          <% @captured_pokemon.each do |pokemon| %>
+            <% capture = @trainer.captures.find_by(pokemon: pokemon) %>
+            <div class="pokemon-card">
+              <div class="pokemon-image-container">
+                <% if pokemon.image.attached? %>
+                  <%= image_tag pokemon.image, alt: pokemon.name, class: "pokemon-image" %>
+                <% else %>
+                  <%= image_tag "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/#{pokemon.pokedex_number}.png",
+                      alt: pokemon.name,
+                      class: "pokemon-image",
+                      style: "image-rendering: pixelated;" %>
+                <% end %>
+              </div>
+              <p class="pokemon-number">#<%= pokemon.pokedex_number.to_s.rjust(3, '0') %></p>
+              <h3 class="pokemon-name"><%= pokemon.name %></h3>
+              <div class="pokemon-meta">
+                <span class="pokemon-capture-info">Caught with a <%= capture.ball_type.humanize %> on <%= capture.captured_at.strftime("%m/%d/%y") %></span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% else %>
+      <div class="empty-state">
+        <div class="empty-state-icon">📖</div>
+        <h3 class="empty-state-title">No Pokémon Yet!</h3>
+        <p class="empty-state-description">
+          <% if @trainer.id == current_trainer.id %>
+            You haven't caught any Pokémon yet. Complete tickets to earn Pokéballs and start your collection!
+          <% else %>
+            <%= @trainer.username %> hasn't caught any Pokémon yet.
+          <% end %>
+        </p>
+        <% if @trainer.id == current_trainer.id %>
+          <div style="display: flex; gap: 12px; justify-content: center; margin-top: 24px;">
+            <%= link_to "Get Pokéballs", rewards_path, class: "btn-primary" %>
+            <%= link_to "Go Catchin' →", catches_path, class: "btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </main>
+</div>

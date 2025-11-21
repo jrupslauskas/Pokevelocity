@@ -1588,3 +1588,125 @@ body > div:not(.app-layout) {
   display: none;
 }
 
+/* Trainer Plaza Styles */
+.trainer-plaza-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.trainer-plaza-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+  padding: 20px 0;
+}
+
+.trainer-plaza-card {
+  background: linear-gradient(to bottom, #FFF8DC, #F5F0E8);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 2px solid #E8DCC8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.trainer-plaza-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.trainer-plaza-current {
+  border: 2px solid #4CAF50;
+  background: linear-gradient(to bottom, #E8F5E9, #F1F8F4);
+}
+
+.trainer-plaza-avatar {
+  width: 96px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border-radius: 50%;
+  padding: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.trainer-plaza-avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.trainer-plaza-avatar-empty {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  background: #f5f5f5;
+  border-radius: 50%;
+}
+
+.trainer-plaza-info {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.trainer-plaza-username {
+  font-size: 20px;
+  font-weight: 600;
+  color: #2C5F2D;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.trainer-plaza-stats {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  width: 100%;
+  padding: 12px 0;
+  border-top: 1px solid #E8DCC8;
+  border-bottom: 1px solid #E8DCC8;
+}
+
+.trainer-plaza-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.trainer-plaza-stat .stat-label {
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.trainer-plaza-stat .stat-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2C5F2D;
+}
+
+@media (max-width: 768px) {
+  .trainer-plaza-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
