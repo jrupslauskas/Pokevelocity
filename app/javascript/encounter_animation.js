@@ -123,18 +123,21 @@ document.addEventListener('turbo:load', function () {
     }
   }
 
-  document.querySelectorAll('button.pokeball-card').forEach(function (button) {
-    button.addEventListener('click', function(event) {
-      // Stops the button from posting the form
+  // Trigger animation when clicking "Catch" button on Pokemon selection
+  document.querySelectorAll('a.btn-catch').forEach(function (link) {
+    link.addEventListener('click', function(event) {
+      // Prevent default navigation
       event.preventDefault();
+
+      const targetUrl = link.href;
 
       document.getElementById("animation-overlay").classList.remove('hidden');
       requestAnimationFrame(startAnimation);
 
       setTimeout(function () {
         document.getElementById("animation-overlay").classList.add('hidden');
-        // Finally posts the form once the animation and blackout period are complete
-        button.form.submit();
+        // Navigate to the Pokemon encounter page after animation
+        window.location.href = targetUrl;
       }, ANIMATION_LENGTH + BLACKOUT_LENGTH);
     });
   });

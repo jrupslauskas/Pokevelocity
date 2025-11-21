@@ -20,6 +20,15 @@ class CatchesController < ApplicationController
       return
     end
 
+    # Get total trainer count
+    @total_trainers = Trainer.count
+
+    # Get count of trainers who have caught each Pokemon (to avoid N+1 queries)
+    @pokemon_trainer_counts = Capture
+      .where(pokemon_id: @uncaught_pokemon.pluck(:id))
+      .group(:pokemon_id)
+      .count
+
     # Check if trainer has any pokeballs (show message but don't redirect)
     # Only show this message if there isn't already a flash message (e.g., from a failed catch)
     if @trainer.total_pokeballs == 0 && flash[:alert].nil?

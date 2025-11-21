@@ -99,6 +99,16 @@ class PokeballRewardServiceTest < ActiveSupport::TestCase
     assert_not_nil result[:ball_type]
   end
 
+  test "should use 1 point weights for 0 story points" do
+    trainer = trainers(:ash)
+
+    # Test 0 points (should use 1 point weights via default_weights)
+    result = PokeballRewardService.new(trainer, 0).award!
+    assert_not_nil result[:ball_type]
+    # Should only get pokeball or great_ball (same as 1 point)
+    assert_includes %w[pokeball great_ball], result[:ball_type]
+  end
+
   # ================================================================================
   # AWARD RESULT TESTS
   # ================================================================================

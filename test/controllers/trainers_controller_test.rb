@@ -1200,6 +1200,247 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
   end
 
   # ================================================================================
+  # CATCH PAGE (NEW) - TRAINER COUNT DISPLAY TESTS
+  # ================================================================================
+
+  test "should display trainer count for each pokemon" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+    get catches_path
+    assert_match /Caught by \d+\/\d+ trainers/, response.body
+  end
+
+  test "should display correct total trainer count" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+    get catches_path
+    total_trainers = Trainer.count
+    assert_match "#{total_trainers} trainers", response.body
+  end
+
+  test "should display 0 trainers for pokemon nobody has caught" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+    # Find a pokemon that nobody has caught
+    uncaught_by_all = Pokemon.left_joins(:captures).where(captures: { id: nil }).first
+    if uncaught_by_all
+      get catches_path
+      # The response should contain "Caught by 0/X trainers" somewhere
+      assert_match /Caught by 0\/\d+ trainers/, response.body
+    end
+  end
+
+  test "should display accurate count for pokemon caught by multiple trainers" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Find a pokemon and count how many trainers have caught it
+    pokemon = pokemons(:bulbasaur)
+    capture_count = Capture.where(pokemon: pokemon).count
+    total_trainers = Trainer.count
+
+    get catches_path
+    # Should display the count if this pokemon is in the uncaught list
+    # (only if ash hasn't caught it)
+    unless trainer.captured_pokemon.include?(pokemon)
+      assert_match "Caught by #{capture_count}/#{total_trainers} trainers", response.body
+    end
+  end
+
+  test "should not cause N+1 queries when loading trainer counts" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # First request to warm up
+    get catches_path
+
+    # Count queries on second request
+    queries_count = 0
+    ActiveSupport::Notifications.subscribe('sql.active_record') do |*args|
+      queries_count += 1 unless args[4][:sql] =~ /^(BEGIN|COMMIT|SAVEPOINT|RELEASE)/
+    end
+
+    get catches_path
+
+    # Should not have one query per Pokemon (N+1)
+    # Expect a reasonable number of queries regardless of Pokemon count
+    assert queries_count < 20, "Expected fewer than 20 queries, got #{queries_count}"
+  end
+
+  test "should display trainer count when only one trainer exists" do
+    # Remove all trainers except one
+    Trainer.where.not(id: trainers(:ash).id).destroy_all
+
+    log_in_as(trainers(:ash))
+    get catches_path
+
+    # Should show "Caught by 0/1 trainers" for uncaught Pokemon
+    assert_match "Caught by 0/1 trainers", response.body
+  end
+
+  test "should show correct count when all trainers have caught a pokemon" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Create a Pokemon that all trainers except ash have caught
+    pokemon = pokemons(:pikachu)
+    Trainer.where.not(id: trainer.id).each do |other_trainer|
+      Capture.find_or_create_by(trainer: other_trainer, pokemon: pokemon) do |capture|
+        capture.ball_type = "pokeball"
+      end
+    end
+
+    get catches_path
+
+    total_trainers = Trainer.count
+    caught_count = Capture.where(pokemon: pokemon).count
+
+    # Should show the count if this pokemon is still uncaught by ash
+    unless trainer.captured_pokemon.include?(pokemon)
+      assert_match "Caught by #{caught_count}/#{total_trainers} trainers", response.body
+    end
+  end
+
+  test "should display trainer count label for all visible pokemon cards" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+    get catches_path
+
+    # Count how many uncaught Pokemon are displayed
+    uncaught_count = trainer.captured_pokemon.count < 151 ?
+      Pokemon.where.not(id: trainer.captured_pokemon.pluck(:id)).count : 0
+
+    if uncaught_count > 0
+      # Should have trainer count labels for each Pokemon card
+      assert_select ".trainers-label", minimum: uncaught_count
+    end
+  end
+
+  test "should display trainer count with correct CSS classes" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+    get catches_path
+
+    # Verify the CSS structure is present
+    assert_select ".pokemon-catch-trainers" do
+      assert_select ".trainers-label"
+    end
+  end
+
+  test "should show trainer count for multiple different pokemon" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Ensure we have at least 2 uncaught Pokemon
+    uncaught = Pokemon.where.not(id: trainer.captured_pokemon.pluck(:id)).limit(2)
+
+    if uncaught.count >= 2
+      get catches_path
+
+      # Should display trainer count format multiple times (once per Pokemon)
+      matches = response.body.scan(/Caught by \d+\/\d+ trainers/).length
+      assert matches >= 2, "Expected at least 2 trainer count displays, got #{matches}"
+    end
+  end
+
+  test "should update trainer count when new captures are made" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    pokemon = Pokemon.where.not(id: trainer.captured_pokemon.pluck(:id)).first
+    return unless pokemon
+
+    # Get initial count
+    get catches_path
+    initial_total = Trainer.count
+    initial_count = Capture.where(pokemon: pokemon).count
+
+    # Have another trainer catch this Pokemon
+    other_trainer = Trainer.where.not(id: trainer.id).first
+    if other_trainer && !other_trainer.captured_pokemon.include?(pokemon)
+      Capture.create!(trainer: other_trainer, pokemon: pokemon, ball_type: "pokeball")
+
+      # Refresh the page
+      get catches_path
+
+      # Count should have increased by 1
+      new_count = initial_count + 1
+      if trainer.captured_pokemon.reload.exclude?(pokemon)
+        assert_match "Caught by #{new_count}/#{initial_total} trainers", response.body
+      end
+    end
+  end
+
+  test "should display trainer count even when zero trainers have caught pokemon" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Find a Pokemon that definitely hasn't been caught
+    uncaught_pokemon = Pokemon.left_joins(:captures)
+                              .where(captures: { id: nil })
+                              .where.not(id: trainer.captured_pokemon.pluck(:id))
+                              .first
+
+    if uncaught_pokemon
+      get catches_path
+      total_trainers = Trainer.count
+      # Should explicitly show "Caught by 0/X trainers"
+      assert_match "Caught by 0/#{total_trainers} trainers", response.body
+    end
+  end
+
+  test "should handle trainer count for pokemon with single digit and double digit counts" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    get catches_path
+    total_trainers = Trainer.count
+
+    # Should match the pattern for any number of trainers
+    assert_match /Caught by \d+\/#{total_trainers} trainers/, response.body
+  end
+
+  test "should display trainer count with correct total when multiple trainers exist" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Get the actual total trainer count
+    total_trainers = Trainer.count
+
+    get catches_path
+
+    # Verify that the trainer count denominator matches total trainers
+    assert_match /Caught by \d+\/#{total_trainers} trainers/, response.body,
+                 "Expected trainer count to show total of #{total_trainers} trainers"
+  end
+
+  test "should only count each trainer once per pokemon" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    pokemon = Pokemon.where.not(id: trainer.captured_pokemon.pluck(:id)).first
+    return unless pokemon
+
+    other_trainer = Trainer.where.not(id: trainer.id).first
+    return unless other_trainer
+
+    # Ensure other trainer has caught this Pokemon (should only count once)
+    capture = Capture.find_or_create_by(trainer: other_trainer, pokemon: pokemon) do |c|
+      c.ball_type = "pokeball"
+    end
+
+    get catches_path
+
+    # Count should be 1, not more even if there are multiple capture records somehow
+    expected_count = Capture.where(pokemon: pokemon).distinct.count(:trainer_id)
+    total_trainers = Trainer.count
+
+    if trainer.captured_pokemon.reload.exclude?(pokemon)
+      assert_match "Caught by #{expected_count}/#{total_trainers} trainers", response.body
+    end
+  end
+
+  # ================================================================================
   # CATCH PAGE (NEW) - EMPTY STATE TESTS
   # ================================================================================
 

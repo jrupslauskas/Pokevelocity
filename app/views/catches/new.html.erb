@@ -52,6 +52,10 @@
                   <% end %>
                 </div>
               </div>
+
+              <div class="pokemon-catch-trainers">
+                <span class="trainers-label">Caught by <%= @pokemon_trainer_counts[pokemon.id] || 0 %>/<%= @total_trainers %> trainers</span>
+              </div>
             </div>
 
             <%= link_to "Catch", catch_path(pokemon), class: "btn-catch" %>
