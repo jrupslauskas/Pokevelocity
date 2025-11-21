@@ -52,7 +52,7 @@
                       <% if entry[:trainer].icon_pokemon.image.attached? %>
                         <%= image_tag entry[:trainer].icon_pokemon.image, alt: entry[:trainer].icon_pokemon.name, class: "leaderboard-avatar-image" %>
                       <% else %>
-                        <%= image_tag "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/#{entry[:trainer].icon_pokemon.pokedex_number}.png",
+                        <%= image_tag "pokemonSprites/#{entry[:trainer].icon_pokemon.pokedex_number.to_s.rjust(3, '0')}.png",
                             alt: entry[:trainer].icon_pokemon.name,
                             class: "leaderboard-avatar-image",
                             style: "image-rendering: pixelated;" %>

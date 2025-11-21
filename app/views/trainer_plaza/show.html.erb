@@ -9,7 +9,7 @@
             <% if @trainer.icon_pokemon.image.attached? %>
               <%= image_tag @trainer.icon_pokemon.image, alt: @trainer.icon_pokemon.name, style: "width: 64px; height: 64px; object-fit: contain;" %>
             <% else %>
-              <%= image_tag "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/#{@trainer.icon_pokemon.pokedex_number}.png",
+              <%= image_tag "pokemonSprites/#{@trainer.icon_pokemon.pokedex_number.to_s.rjust(3, '0')}.png",
                   alt: @trainer.icon_pokemon.name,
                   style: "width: 64px; height: 64px; object-fit: contain; image-rendering: pixelated;" %>
             <% end %>
@@ -40,7 +40,7 @@
                 <% if pokemon.image.attached? %>
                   <%= image_tag pokemon.image, alt: pokemon.name, class: "pokemon-image" %>
                 <% else %>
-                  <%= image_tag "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/#{pokemon.pokedex_number}.png",
+                  <%= image_tag "pokemonSprites/#{pokemon.pokedex_number.to_s.rjust(3, '0')}.png",
                       alt: pokemon.name,
                       class: "pokemon-image",
                       style: "image-rendering: pixelated;" %>

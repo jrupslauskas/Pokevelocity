@@ -31,7 +31,7 @@
               <% if pokemon.image.attached? %>
                 <%= image_tag pokemon.image, alt: pokemon.name %>
               <% else %>
-                <%= image_tag "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/#{pokemon.pokedex_number}.png",
+                <%= image_tag "pokemonSprites/#{pokemon.pokedex_number.to_s.rjust(3, '0')}.png",
                     alt: pokemon.name,
                     style: "image-rendering: pixelated;" %>
               <% end %>
