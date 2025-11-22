@@ -3,8 +3,8 @@
 
   <main class="main-content">
     <header class="page-header-authenticated">
-      <h1>Catch Pokémon</h1>
-      <p>Choose a Pokémon to attempt to catch.</p>
+      <h1>Adventure</h1>
+      <p>Choose a route to explore and encounter wild Pokémon!</p>
     </header>
 
     <!-- Stats Bar -->
@@ -14,60 +14,54 @@
         <span class="catch-stat-value"><%= @trainer.captures.count %> / 151</span>
       </div>
       <div class="catch-stat">
-        <span class="catch-stat-label">Available</span>
-        <span class="catch-stat-value"><%= @uncaught_pokemon.count %></span>
-      </div>
-      <div class="catch-stat">
         <span class="catch-stat-label">Pokéballs</span>
         <span class="catch-stat-value"><%= @trainer.total_pokeballs %></span>
       </div>
     </div>
 
-    <% if @uncaught_pokemon.any? %>
-      <div class="pokemon-catch-grid">
-        <% @uncaught_pokemon.each do |pokemon| %>
-          <div class="pokemon-catch-card">
-            <div class="pokemon-catch-image">
-              <% if pokemon.image.attached? %>
-                <%= image_tag pokemon.image, alt: pokemon.name %>
-              <% else %>
-                <%= image_tag "pokemonSprites/#{pokemon.pokedex_number.to_s.rjust(3, '0')}.png",
-                    alt: pokemon.name,
-                    style: "image-rendering: pixelated;" %>
+    <% if @routes.any? %>
+      <div class="routes-grid">
+        <% @routes.each do |route| %>
+          <% available_pokemon = @route_available_pokemon[route.id] %>
+          <div class="route-card">
+            <div class="route-header">
+              <h2 class="route-name"><%= route.name %></h2>
+              <% if route.description.present? %>
+                <p class="route-description"><%= route.description %></p>
               <% end %>
             </div>
 
-            <div class="pokemon-catch-info">
-              <p class="pokemon-catch-number">#<%= pokemon.pokedex_number.to_s.rjust(3, '0') %></p>
-              <h3 class="pokemon-catch-name"><%= pokemon.name %></h3>
-
-              <div class="pokemon-catch-difficulty">
-                <span class="difficulty-label">Difficulty:</span>
-                <div class="difficulty-stars">
-                  <% pokemon.difficulty.times do %>
-                    <span class="star-filled">★</span>
-                  <% end %>
-                  <% (5 - pokemon.difficulty).times do %>
-                    <span class="star-empty">★</span>
-                  <% end %>
-                </div>
-              </div>
-
-              <div class="pokemon-catch-trainers">
-                <span class="trainers-label">Caught by <%= @pokemon_trainer_counts[pokemon.id] || 0 %>/<%= @total_trainers %> trainers</span>
+            <div class="route-pokemon">
+              <h3 class="route-pokemon-title">Wild Pokémon:</h3>
+              <div class="route-pokemon-list">
+                <% route.pokemon.order(:pokedex_number).each do |pokemon| %>
+                  <div class="route-pokemon-item <%= @trainer.captured_pokemon.include?(pokemon) ? 'caught' : '' %>">
+                    <%= image_tag "pokemonSprites/#{pokemon.pokedex_number.to_s.rjust(3, '0')}.png",
+                        alt: pokemon.name,
+                        class: "route-pokemon-sprite",
+                        style: "image-rendering: pixelated;" %>
+                    <span class="route-pokemon-name"><%= pokemon.name %></span>
+                  </div>
+                <% end %>
               </div>
             </div>
 
-            <%= link_to "Catch", catch_path(pokemon), class: "btn-catch" %>
+            <div class="route-actions">
+              <% if available_pokemon.any? %>
+                <%= button_to "Adventure", adventure_path(route), class: "btn-adventure" %>
+                <span class="route-available-count"><%= available_pokemon.count %> Pokémon available</span>
+              <% else %>
+                <button class="btn-adventure-disabled" disabled>All caught!</button>
+              <% end %>
+            </div>
           </div>
         <% end %>
       </div>
     <% else %>
       <div class="empty-state">
-        <div class="empty-state-icon">🎉</div>
-        <h3 class="empty-state-title">Congratulations!</h3>
-        <p class="empty-state-description">You've caught all 151 Pokémon!</p>
-        <%= link_to "View Pokédex", pokedex_path, class: "btn-primary" %>
+        <div class="empty-state-icon">🗺️</div>
+        <h3 class="empty-state-title">No Routes Available</h3>
+        <p class="empty-state-description">There are no routes to explore yet. Check back later!</p>
       </div>
     <% end %>
   </main>

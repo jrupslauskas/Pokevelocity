@@ -1,0 +1,134 @@
+# Route definitions with wild Pokemon encounters
+#
+# Structure:
+#   - name: Route name (must be unique)
+#     description: Route description text
+#     encounters:
+#       - pokemon: Pokemon name (must match exactly from pokemon.yml)
+#         spawn_rate: Weight for random selection (higher = more common)
+#
+# To add a new route, just add another entry to this list and run: bin/rails db:seed
+
+- name: Pallet Town
+  description: MAKE SURE TO NOTE THAT ONLY ONE CAN BE CAUGHT
+  encounters:
+    - pokemon: Bulbasaur
+      spawn_rate: 33
+    - pokemon: Squirtle
+      spawn_rate: 33
+    - pokemon: Charmander
+      spawn_rate: 33
+
+- name: Route 1
+  description: A peaceful route connecting Pallet Town and Viridian City. Common Pokémon can be found in the tall grass.
+  encounters:
+    - pokemon: Pidgey
+      spawn_rate: 50
+    - pokemon: Rattata
+      spawn_rate: 50
+
+- name: Route 22
+  description: Fill in
+  encounters:
+    - pokemon: Rattata
+      spawn_rate: 45
+    - pokemon: Mankey
+      spawn_rate: 45
+    - pokemon: Spearow
+      spawn_rate: 10
+
+- name: Route 2
+  description: Fill in
+  encounters:
+    - pokemon: Rattata
+      spawn_rate: 45
+    - pokemon: Pidgey
+      spawn_rate: 45
+    - pokemon: Caterpie
+      spawn_rate: 10
+
+- name: Viridian Forest
+  description: Fill in
+  encounters:
+    - pokemon: Caterpie
+      spawn_rate: 35
+    - pokemon: Weedle
+      spawn_rate: 35
+    - pokemon: Kakuna
+      spawn_rate: 10
+    - pokemon: Metapod
+      spawn_rate: 10
+    - pokemon: Pikachu
+      spawn_rate: 10
+
+## Pewter City Badge
+
+- name: Route 3
+  description: Fill in
+  encounters:
+    - pokemon: Spearow
+      spawn_rate: 25
+    - pokemon: Pidgey
+      spawn_rate: 25
+    - pokemon: Nidoran♀
+      spawn_rate: 15
+    - pokemon: Nidoran♂
+      spawn_rate: 15
+    - pokemon: Jigglypuff
+      spawn_rate: 10
+    - pokemon: Mankey
+      spawn_rate: 10
+
+- name: Route 4
+  description: Fill in
+  encounters:
+    - pokemon: Ratatta
+      spawn_rate: 35
+    - pokemon: Spearow
+      spawn_rate: 30
+    - pokemon: Ekans
+      spawn_rate: 25
+    - pokemon: Sandshrew
+      spawn_rate: 25
+    - pokemon: Mankey
+      spawn_rate: 5
+    - pokemon: Magikarp
+      spawn_rate: 5
+
+- name: Mt. Moon
+  description: Fill in
+  encounters:
+    - pokemon: Zubat
+      spawn_rate: 60
+    - pokemon: Geodude
+      spawn_rate: 20
+    - pokemon: Paras
+      spawn_rate: 10
+    - pokemon: Clefairy
+      spawn_rate: 10
+
+# Example of how to add more routes (uncomment and modify):
+#
+# - name: Route 2
+#   description: A forest path with Bug-type Pokémon.
+#   encounters:
+#     - pokemon: Caterpie
+#       spawn_rate: 40
+#     - pokemon: Weedle
+#       spawn_rate: 40
+#     - pokemon: Pikachu
+#       spawn_rate: 20
+#
+# - name: Viridian Forest
+#   description: A dark forest teeming with Bug Pokémon and the occasional Pikachu.
+#   encounters:
+#     - pokemon: Caterpie
+#       spawn_rate: 30
+#     - pokemon: Metapod
+#       spawn_rate: 20
+#     - pokemon: Weedle
+#       spawn_rate: 25
+#     - pokemon: Kakuna
+#       spawn_rate: 15
+#     - pokemon: Pikachu
+#       spawn_rate: 10

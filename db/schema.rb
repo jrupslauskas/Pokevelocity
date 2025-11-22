@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_20_030200) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_22_020849) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -63,6 +63,23 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_20_030200) do
     t.index ["pokedex_number"], name: "index_pokemons_on_pokedex_number", unique: true
   end
 
+  create_table "route_encounters", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "pokemon_id", null: false
+    t.bigint "route_id", null: false
+    t.integer "spawn_rate"
+    t.datetime "updated_at", null: false
+    t.index ["pokemon_id"], name: "index_route_encounters_on_pokemon_id"
+    t.index ["route_id"], name: "index_route_encounters_on_route_id"
+  end
+
+  create_table "routes", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "name"
+    t.datetime "updated_at", null: false
+  end
+
   create_table "trainers", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "great_balls_count", default: 0, null: false
@@ -86,4 +103,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_20_030200) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "captures", "pokemons"
   add_foreign_key "captures", "trainers"
+  add_foreign_key "route_encounters", "pokemons"
+  add_foreign_key "route_encounters", "routes"
 end

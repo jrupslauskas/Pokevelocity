@@ -6,167 +6,43 @@ end
 
 puts "Creating Pokémon..."
 
-# First 151 Pokémon with difficulty ratings (1-5 based on rarity/power)
-pokemon_data = [
-  # Starter line and early game (difficulty 1-2)
-  { name: "Bulbasaur", pokedex_number: 1, difficulty: 2 },
-  { name: "Ivysaur", pokedex_number: 2, difficulty: 3 },
-  { name: "Venusaur", pokedex_number: 3, difficulty: 4 },
-  { name: "Charmander", pokedex_number: 4, difficulty: 2 },
-  { name: "Charmeleon", pokedex_number: 5, difficulty: 3 },
-  { name: "Charizard", pokedex_number: 6, difficulty: 4 },
-  { name: "Squirtle", pokedex_number: 7, difficulty: 2 },
-  { name: "Wartortle", pokedex_number: 8, difficulty: 3 },
-  { name: "Blastoise", pokedex_number: 9, difficulty: 4 },
-  { name: "Caterpie", pokedex_number: 10, difficulty: 1 },
-  { name: "Metapod", pokedex_number: 11, difficulty: 1 },
-  { name: "Butterfree", pokedex_number: 12, difficulty: 2 },
-  { name: "Weedle", pokedex_number: 13, difficulty: 1 },
-  { name: "Kakuna", pokedex_number: 14, difficulty: 1 },
-  { name: "Beedrill", pokedex_number: 15, difficulty: 2 },
-  { name: "Pidgey", pokedex_number: 16, difficulty: 1 },
-  { name: "Pidgeotto", pokedex_number: 17, difficulty: 2 },
-  { name: "Pidgeot", pokedex_number: 18, difficulty: 3 },
-  { name: "Rattata", pokedex_number: 19, difficulty: 1 },
-  { name: "Raticate", pokedex_number: 20, difficulty: 2 },
-  { name: "Spearow", pokedex_number: 21, difficulty: 1 },
-  { name: "Fearow", pokedex_number: 22, difficulty: 2 },
-  { name: "Ekans", pokedex_number: 23, difficulty: 1 },
-  { name: "Arbok", pokedex_number: 24, difficulty: 2 },
-  { name: "Pikachu", pokedex_number: 25, difficulty: 2 },
-  { name: "Raichu", pokedex_number: 26, difficulty: 3 },
-  { name: "Sandshrew", pokedex_number: 27, difficulty: 2 },
-  { name: "Sandslash", pokedex_number: 28, difficulty: 3 },
-  { name: "Nidoran♀", pokedex_number: 29, difficulty: 1 },
-  { name: "Nidorina", pokedex_number: 30, difficulty: 2 },
-  { name: "Nidoqueen", pokedex_number: 31, difficulty: 4 },
-  { name: "Nidoran♂", pokedex_number: 32, difficulty: 1 },
-  { name: "Nidorino", pokedex_number: 33, difficulty: 2 },
-  { name: "Nidoking", pokedex_number: 34, difficulty: 4 },
-  { name: "Clefairy", pokedex_number: 35, difficulty: 2 },
-  { name: "Clefable", pokedex_number: 36, difficulty: 3 },
-  { name: "Vulpix", pokedex_number: 37, difficulty: 2 },
-  { name: "Ninetales", pokedex_number: 38, difficulty: 3 },
-  { name: "Jigglypuff", pokedex_number: 39, difficulty: 2 },
-  { name: "Wigglytuff", pokedex_number: 40, difficulty: 3 },
-  { name: "Zubat", pokedex_number: 41, difficulty: 1 },
-  { name: "Golbat", pokedex_number: 42, difficulty: 2 },
-  { name: "Oddish", pokedex_number: 43, difficulty: 1 },
-  { name: "Gloom", pokedex_number: 44, difficulty: 2 },
-  { name: "Vileplume", pokedex_number: 45, difficulty: 3 },
-  { name: "Paras", pokedex_number: 46, difficulty: 1 },
-  { name: "Parasect", pokedex_number: 47, difficulty: 2 },
-  { name: "Venonat", pokedex_number: 48, difficulty: 1 },
-  { name: "Venomoth", pokedex_number: 49, difficulty: 2 },
-  { name: "Diglett", pokedex_number: 50, difficulty: 1 },
-  { name: "Dugtrio", pokedex_number: 51, difficulty: 3 },
-  { name: "Meowth", pokedex_number: 52, difficulty: 1 },
-  { name: "Persian", pokedex_number: 53, difficulty: 2 },
-  { name: "Psyduck", pokedex_number: 54, difficulty: 2 },
-  { name: "Golduck", pokedex_number: 55, difficulty: 3 },
-  { name: "Mankey", pokedex_number: 56, difficulty: 2 },
-  { name: "Primeape", pokedex_number: 57, difficulty: 3 },
-  { name: "Growlithe", pokedex_number: 58, difficulty: 2 },
-  { name: "Arcanine", pokedex_number: 59, difficulty: 3 },
-  { name: "Poliwag", pokedex_number: 60, difficulty: 1 },
-  { name: "Poliwhirl", pokedex_number: 61, difficulty: 2 },
-  { name: "Poliwrath", pokedex_number: 62, difficulty: 3 },
-  { name: "Abra", pokedex_number: 63, difficulty: 3 },
-  { name: "Kadabra", pokedex_number: 64, difficulty: 3 },
-  { name: "Alakazam", pokedex_number: 65, difficulty: 4 },
-  { name: "Machop", pokedex_number: 66, difficulty: 2 },
-  { name: "Machoke", pokedex_number: 67, difficulty: 3 },
-  { name: "Machamp", pokedex_number: 68, difficulty: 4 },
-  { name: "Bellsprout", pokedex_number: 69, difficulty: 1 },
-  { name: "Weepinbell", pokedex_number: 70, difficulty: 2 },
-  { name: "Victreebel", pokedex_number: 71, difficulty: 3 },
-  { name: "Tentacool", pokedex_number: 72, difficulty: 1 },
-  { name: "Tentacruel", pokedex_number: 73, difficulty: 2 },
-  { name: "Geodude", pokedex_number: 74, difficulty: 1 },
-  { name: "Graveler", pokedex_number: 75, difficulty: 2 },
-  { name: "Golem", pokedex_number: 76, difficulty: 4 },
-  { name: "Ponyta", pokedex_number: 77, difficulty: 2 },
-  { name: "Rapidash", pokedex_number: 78, difficulty: 3 },
-  { name: "Slowpoke", pokedex_number: 79, difficulty: 2 },
-  { name: "Slowbro", pokedex_number: 80, difficulty: 3 },
-  { name: "Magnemite", pokedex_number: 81, difficulty: 2 },
-  { name: "Magneton", pokedex_number: 82, difficulty: 3 },
-  { name: "Farfetch'd", pokedex_number: 83, difficulty: 2 },
-  { name: "Doduo", pokedex_number: 84, difficulty: 1 },
-  { name: "Dodrio", pokedex_number: 85, difficulty: 3 },
-  { name: "Seel", pokedex_number: 86, difficulty: 2 },
-  { name: "Dewgong", pokedex_number: 87, difficulty: 3 },
-  { name: "Grimer", pokedex_number: 88, difficulty: 1 },
-  { name: "Muk", pokedex_number: 89, difficulty: 2 },
-  { name: "Shellder", pokedex_number: 90, difficulty: 2 },
-  { name: "Cloyster", pokedex_number: 91, difficulty: 3 },
-  { name: "Gastly", pokedex_number: 92, difficulty: 2 },
-  { name: "Haunter", pokedex_number: 93, difficulty: 3 },
-  { name: "Gengar", pokedex_number: 94, difficulty: 4 },
-  { name: "Onix", pokedex_number: 95, difficulty: 2 },
-  { name: "Drowzee", pokedex_number: 96, difficulty: 2 },
-  { name: "Hypno", pokedex_number: 97, difficulty: 3 },
-  { name: "Krabby", pokedex_number: 98, difficulty: 1 },
-  { name: "Kingler", pokedex_number: 99, difficulty: 2 },
-  { name: "Voltorb", pokedex_number: 100, difficulty: 1 },
-  { name: "Electrode", pokedex_number: 101, difficulty: 2 },
-  { name: "Exeggcute", pokedex_number: 102, difficulty: 2 },
-  { name: "Exeggutor", pokedex_number: 103, difficulty: 3 },
-  { name: "Cubone", pokedex_number: 104, difficulty: 2 },
-  { name: "Marowak", pokedex_number: 105, difficulty: 3 },
-  { name: "Hitmonlee", pokedex_number: 106, difficulty: 3 },
-  { name: "Hitmonchan", pokedex_number: 107, difficulty: 3 },
-  { name: "Lickitung", pokedex_number: 108, difficulty: 3 },
-  { name: "Koffing", pokedex_number: 109, difficulty: 1 },
-  { name: "Weezing", pokedex_number: 110, difficulty: 2 },
-  { name: "Rhyhorn", pokedex_number: 111, difficulty: 2 },
-  { name: "Rhydon", pokedex_number: 112, difficulty: 3 },
-  { name: "Chansey", pokedex_number: 113, difficulty: 4 },
-  { name: "Tangela", pokedex_number: 114, difficulty: 2 },
-  { name: "Kangaskhan", pokedex_number: 115, difficulty: 3 },
-  { name: "Horsea", pokedex_number: 116, difficulty: 1 },
-  { name: "Seadra", pokedex_number: 117, difficulty: 2 },
-  { name: "Goldeen", pokedex_number: 118, difficulty: 1 },
-  { name: "Seaking", pokedex_number: 119, difficulty: 2 },
-  { name: "Staryu", pokedex_number: 120, difficulty: 2 },
-  { name: "Starmie", pokedex_number: 121, difficulty: 3 },
-  { name: "Mr. Mime", pokedex_number: 122, difficulty: 3 },
-  { name: "Scyther", pokedex_number: 123, difficulty: 3 },
-  { name: "Jynx", pokedex_number: 124, difficulty: 3 },
-  { name: "Electabuzz", pokedex_number: 125, difficulty: 3 },
-  { name: "Magmar", pokedex_number: 126, difficulty: 3 },
-  { name: "Pinsir", pokedex_number: 127, difficulty: 3 },
-  { name: "Tauros", pokedex_number: 128, difficulty: 3 },
-  { name: "Magikarp", pokedex_number: 129, difficulty: 1 },
-  { name: "Gyarados", pokedex_number: 130, difficulty: 4 },
-  { name: "Lapras", pokedex_number: 131, difficulty: 4 },
-  { name: "Ditto", pokedex_number: 132, difficulty: 3 },
-  { name: "Eevee", pokedex_number: 133, difficulty: 2 },
-  { name: "Vaporeon", pokedex_number: 134, difficulty: 3 },
-  { name: "Jolteon", pokedex_number: 135, difficulty: 3 },
-  { name: "Flareon", pokedex_number: 136, difficulty: 3 },
-  { name: "Porygon", pokedex_number: 137, difficulty: 3 },
-  { name: "Omanyte", pokedex_number: 138, difficulty: 2 },
-  { name: "Omastar", pokedex_number: 139, difficulty: 3 },
-  { name: "Kabuto", pokedex_number: 140, difficulty: 2 },
-  { name: "Kabutops", pokedex_number: 141, difficulty: 3 },
-  { name: "Aerodactyl", pokedex_number: 142, difficulty: 4 },
-  { name: "Snorlax", pokedex_number: 143, difficulty: 4 },
-  { name: "Articuno", pokedex_number: 144, difficulty: 5 },
-  { name: "Zapdos", pokedex_number: 145, difficulty: 5 },
-  { name: "Moltres", pokedex_number: 146, difficulty: 5 },
-  { name: "Dratini", pokedex_number: 147, difficulty: 3 },
-  { name: "Dragonair", pokedex_number: 148, difficulty: 4 },
-  { name: "Dragonite", pokedex_number: 149, difficulty: 5 },
-  { name: "Mewtwo", pokedex_number: 150, difficulty: 5 },
-  { name: "Mew", pokedex_number: 151, difficulty: 5 }
-]
+# Load Pokemon data from YAML file
+pokemon_data = YAML.load_file(Rails.root.join("db", "data", "pokemon.yml"))
 
 pokemon_data.each do |data|
-  Pokemon.find_or_create_by!(pokedex_number: data[:pokedex_number]) do |pokemon|
-    pokemon.name = data[:name]
-    pokemon.difficulty = data[:difficulty]
+  Pokemon.find_or_create_by!(pokedex_number: data["pokedex_number"]) do |pokemon|
+    pokemon.name = data["name"]
+    pokemon.difficulty = data["difficulty"]
   end
 end
 
 puts "Created #{Pokemon.count} Pokémon!"
+
+puts "Creating routes..."
+
+# Load routes data from YAML file
+routes_data = YAML.load_file(Rails.root.join("db", "data", "routes.yml"))
+
+routes_data.each do |route_data|
+  route = Route.find_or_create_by!(name: route_data["name"]) do |r|
+    r.description = route_data["description"]
+  end
+
+  # Create encounters for this route
+  route_data["encounters"].each do |encounter_data|
+    pokemon = Pokemon.find_by(name: encounter_data["pokemon"])
+
+    if pokemon.nil?
+      puts "  WARNING: Pokemon '#{encounter_data["pokemon"]}' not found, skipping encounter"
+      next
+    end
+
+    RouteEncounter.find_or_create_by!(route: route, pokemon: pokemon) do |encounter|
+      encounter.spawn_rate = encounter_data["spawn_rate"]
+    end
+  end
+
+  puts "  #{route.name}: #{route.route_encounters.count} Pokémon"
+end
+
+puts "Created #{Route.count} route(s)!"

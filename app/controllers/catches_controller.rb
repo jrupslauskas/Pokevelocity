@@ -4,36 +4,60 @@ class CatchesController < ApplicationController
   def new
     @trainer = current_trainer
 
-    # Check if there are any Pokemon in the database
-    if Pokemon.count == 0
-      redirect_to dashboard_path, alert: "No Pokémon available yet! Please contact an administrator."
+    # Check if there are any routes in the database
+    if Route.count == 0
+      redirect_to dashboard_path, alert: "No routes available yet! Please contact an administrator."
       return
     end
 
-    # Get all uncaught Pokemon
+    # Get all routes with their available Pokemon (excluding already caught ones)
+    @routes = Route.includes(route_encounters: :pokemon).all
+
+    # For each route, filter out Pokemon the trainer has already caught
+    @route_available_pokemon = {}
     caught_ids = @trainer.captured_pokemon.pluck(:id)
-    @uncaught_pokemon = Pokemon.where.not(id: caught_ids).order(:pokedex_number)
-
-    # Check if all Pokemon are caught
-    if @uncaught_pokemon.empty?
-      redirect_to pokedex_path, notice: "Congratulations! You've caught all 151 Pokemon!"
-      return
+    @routes.each do |route|
+      available_pokemon = route.pokemon.where.not(id: caught_ids)
+      @route_available_pokemon[route.id] = available_pokemon
     end
-
-    # Get total trainer count
-    @total_trainers = Trainer.count
-
-    # Get count of trainers who have caught each Pokemon (to avoid N+1 queries)
-    @pokemon_trainer_counts = Capture
-      .where(pokemon_id: @uncaught_pokemon.pluck(:id))
-      .group(:pokemon_id)
-      .count
 
     # Check if trainer has any pokeballs (show message but don't redirect)
-    # Only show this message if there isn't already a flash message (e.g., from a failed catch)
+    # Only show this message if there isn't already a flash message
     if @trainer.total_pokeballs == 0 && flash[:alert].nil?
       flash.now[:alert] = "You don't have any Pokéballs! Complete tickets to earn some."
     end
+  end
+
+  def adventure
+    @trainer = current_trainer
+    route = Route.find(params[:id])
+
+    # Get uncaught Pokemon on this route
+    caught_ids = @trainer.captured_pokemon.pluck(:id)
+    available_encounters = route.route_encounters.where.not(pokemon_id: caught_ids)
+
+    if available_encounters.empty?
+      redirect_to catches_path, notice: "You've caught all the Pokémon on this route!"
+      return
+    end
+
+    # Calculate total weight from available encounters only
+    total_weight = available_encounters.sum(:spawn_rate)
+    random_value = rand(1..total_weight)
+
+    # Find which Pokemon was encountered
+    cumulative_weight = 0
+    encountered_pokemon = nil
+    available_encounters.includes(:pokemon).each do |encounter|
+      cumulative_weight += encounter.spawn_rate
+      if random_value <= cumulative_weight
+        encountered_pokemon = encounter.pokemon
+        break
+      end
+    end
+
+    # Redirect to the encounter page for this Pokemon
+    redirect_to catch_path(encountered_pokemon)
   end
 
   def show
