@@ -43,4 +43,5 @@ Rails.application.routes.draw do
   post "/catch/adventure/:id", to: "catches#adventure", as: :adventure
   get "/catch/:id", to: "catches#show", as: :catch
   post "/catch/:id", to: "catches#create"
+  post "/catch/:id/run", to: "catches#run", as: :run_from_catch
 end

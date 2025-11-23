@@ -222,13 +222,13 @@
   order: 16
   encounters:
     - pokemon: Spearow
-      spawn_rate: 35
+      spawn_rate: 30
     - pokemon: Ekans
-      spawn_rate: 30
-    - pokemon: Sandshrew
-      spawn_rate: 30
-    - pokemon: Drowzee
       spawn_rate: 25
+    - pokemon: Sandshrew
+      spawn_rate: 25
+    - pokemon: Drowzee
+      spawn_rate: 20
 
 - name: Vermillion City
   description: Add in requirement for Spearow
@@ -246,13 +246,13 @@
   order: 18
   encounters:
     - pokemon: Spearow
-      spawn_rate: 35
+      spawn_rate: 30
     - pokemon: Ekans
-      spawn_rate: 30
-    - pokemon: Sandshrew
       spawn_rate: 25
+    - pokemon: Sandshrew
+      spawn_rate: 20
     - pokemon: Rattata
-      spawn_rate: 30
+      spawn_rate: 25
 
 - name: Route 10
   description: A desolate area surrounding the entrance to Rock Tunnel. Power Plant lies hidden nearby.

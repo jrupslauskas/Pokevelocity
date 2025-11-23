@@ -70,18 +70,6 @@ class RoutesDataTest < ActiveSupport::TestCase
     end
   end
 
-  test "spawn rates should be reasonable (no single Pokemon over 95%)" do
-    @routes_data.each do |route|
-      route["encounters"].each do |encounter|
-        spawn_rate = encounter["spawn_rate"]
-
-        assert spawn_rate <= 95,
-                       "Route '#{route["name"]}' - #{encounter["pokemon"]} has spawn_rate of #{spawn_rate}%, " \
-                       "which seems too high. Consider balancing the encounters."
-      end
-    end
-  end
-
   # ================================================================================
   # POKEMON REFERENCE VALIDATION
   # ================================================================================

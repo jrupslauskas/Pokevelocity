@@ -248,6 +248,40 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
   end
 
   # ================================================================================
+  # RUN ACTION TESTS
+  # ================================================================================
+
+  test "should allow trainer to run from pokemon encounter" do
+    trainer = trainers(:ash)
+    pokemon = pokemons(:bulbasaur)
+
+    log_in_as(trainer)
+    post run_from_catch_path(pokemon)
+
+    assert_redirected_to catches_path
+    follow_redirect!
+    assert_match "Got Away Safely", response.body
+  end
+
+  test "should require login to run from encounter" do
+    pokemon = pokemons(:bulbasaur)
+    post run_from_catch_path(pokemon)
+    assert_redirected_to login_path
+  end
+
+  test "run button should be displayed on encounter page" do
+    trainer = trainers(:ash)
+    pokemon = pokemons(:bulbasaur)
+
+    log_in_as(trainer)
+    get catch_path(pokemon)
+
+    assert_response :success
+    assert_match "Run", response.body
+    assert_match "Get away safely", response.body
+  end
+
+  # ================================================================================
   # GATE SYSTEM TESTS
   # ================================================================================
 

@@ -13,7 +13,13 @@ class CatchesController < ApplicationController
     # Auto-unlock gates based on difficulty score
     newly_unlocked = @trainer.auto_unlock_gates!
     if newly_unlocked.any?
-      flash.now[:notice] = "You unlocked #{newly_unlocked.map(&:name).join(', ')}!"
+      unlock_message = "You unlocked #{newly_unlocked.map(&:name).join(', ')}!"
+      # Preserve existing flash message if present
+      if flash[:notice].present?
+        flash.now[:notice] = "#{flash[:notice]} #{unlock_message}"
+      else
+        flash.now[:notice] = unlock_message
+      end
     end
 
     # Get all gates ordered by gate number
@@ -137,5 +143,9 @@ class CatchesController < ApplicationController
       # Error occurred (no balls, already caught, etc.)
       redirect_to catch_path(@pokemon), alert: result[:error]
     end
+  end
+
+  def run
+    redirect_to catches_path, notice: "Got Away Safely"
   end
 end

@@ -1330,9 +1330,9 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     log_in_as(trainer)
     pokemon = pokemons(:bulbasaur)
     get catch_path(pokemon)
-    # Check specifically in the pokeball grid (not sidebar logout button)
+    # Check specifically in the pokeball grid (4 pokeballs + 1 run button)
     assert_select "div.pokeball-grid" do
-      assert_select "button[type='submit']", count: 4
+      assert_select "button[type='submit']", count: 5
     end
   end
 
@@ -1344,13 +1344,14 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     assert_match "Available", response.body
   end
 
-  test "should display back to pokemon list link" do
+  test "should display run button" do
     trainer = trainers(:ash)
     log_in_as(trainer)
     pokemon = pokemons(:bulbasaur)
     get catch_path(pokemon)
-    assert_match "Back to Pokémon List", response.body
-    assert_select "a[href=?]", catches_path
+    assert_match "Run", response.body
+    assert_match "Get away safely", response.body
+    assert_select "form[action=?]", run_from_catch_path(pokemon)
   end
 
   test "should show pokeball selection title" do
