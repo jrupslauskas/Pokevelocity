@@ -18,6 +18,23 @@ end
 
 puts "Created #{Pokemon.count} Pokémon!"
 
+puts "Creating gates..."
+
+# Load gates data from YAML file
+gates_data = YAML.load_file(Rails.root.join("db", "data", "gates.yml"))
+
+gates_data.each do |data|
+  gate = Gate.find_or_initialize_by(gate_number: data["gate_number"])
+  gate.name = data["name"]
+  gate.description = data["description"]
+  gate.required_difficulty_score = data["required_difficulty_score"]
+  gate.sprite_type = data["sprite_type"]
+  gate.sprite_value = data["sprite_value"]
+  gate.save!
+end
+
+puts "Created #{Gate.count} gate(s)!"
+
 puts "Creating routes..."
 
 # Load routes data from YAML file
@@ -26,6 +43,16 @@ routes_data = YAML.load_file(Rails.root.join("db", "data", "routes.yml"))
 routes_data.each do |route_data|
   route = Route.find_or_create_by!(name: route_data["name"]) do |r|
     r.description = route_data["description"]
+    r.gate_requirement = route_data["gate_requirement"]
+    r.order = route_data["order"]
+  end
+
+  # Update existing routes with new fields if they've changed
+  if route.persisted? && (route.gate_requirement != route_data["gate_requirement"] || route.order != route_data["order"])
+    route.update!(
+      gate_requirement: route_data["gate_requirement"],
+      order: route_data["order"]
+    )
   end
 
   # Create encounters for this route

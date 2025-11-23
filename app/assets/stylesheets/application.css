@@ -1743,3 +1743,221 @@ body > div:not(.app-layout) {
   }
 }
 
+/* Gates Display */
+.adventure-container {
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.gate-card {
+  background: linear-gradient(to bottom, #FFF8DC, #F5F0E8);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  border: 3px solid #E8DCC8;
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.gate-card.unlocked {
+  border-color: #4CAF50;
+  background: linear-gradient(to bottom, #E8F5E9, #F1F8F2);
+}
+
+.gate-card.locked {
+  opacity: 0.75;
+  border-color: #C8C8C8;
+  background: linear-gradient(to bottom, #F5F5F5, #E8E8E8);
+}
+
+.gate-sprite {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 120px;
+  background: white;
+  border-radius: 16px;
+  border: 3px solid #E8DCC8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.gate-card.unlocked .gate-sprite {
+  border-color: #4CAF50;
+}
+
+.gate-card.locked .gate-sprite {
+  border-color: #C8C8C8;
+  filter: grayscale(50%);
+}
+
+.gate-emoji {
+  font-size: 64px;
+}
+
+.gate-gym-leader-sprite {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.gate-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.gate-name {
+  font-size: 32px;
+  font-weight: 700;
+  color: #2C5F2D;
+  margin: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.gate-status {
+  font-size: 16px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.gate-status.unlocked {
+  background: #4CAF50;
+  color: white;
+}
+
+.gate-status.locked {
+  background: #C8C8C8;
+  color: white;
+}
+
+.gate-status.ready {
+  background: #FFA726;
+  color: white;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.gate-description {
+  font-size: 16px;
+  color: #6B5537;
+  margin: 0 0 20px 0;
+  line-height: 1.5;
+}
+
+.gate-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gate-progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.gate-progress-label {
+  color: #6B5537;
+}
+
+.gate-progress-value {
+  color: #2C5F2D;
+}
+
+.gate-progress-bar {
+  height: 24px;
+  background: #E8E8E8;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid #D8D8D8;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.gate-progress-fill {
+  height: 100%;
+  background: linear-gradient(to right, #FFA726, #FF9800);
+  border-radius: 10px;
+  transition: width 0.5s ease;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 8px;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3);
+}
+
+.gate-progress-fill.complete {
+  background: linear-gradient(to right, #66BB6A, #4CAF50);
+}
+
+.gate-routes {
+  margin-left: 60px;
+  margin-top: -8px;
+  position: relative;
+}
+
+.gate-routes::before {
+  content: '';
+  position: absolute;
+  left: -30px;
+  top: 0;
+  bottom: 24px;
+  width: 3px;
+  background: linear-gradient(to bottom, #4CAF50, transparent);
+}
+
+@media (max-width: 768px) {
+  .gate-card {
+    flex-direction: column;
+    padding: 24px;
+  }
+
+  .gate-sprite {
+    width: 100px;
+    height: 100px;
+  }
+
+  .gate-emoji {
+    font-size: 56px;
+  }
+
+  .gate-gym-leader-sprite {
+    width: 80px;
+    height: 80px;
+  }
+
+  .gate-name {
+    font-size: 24px;
+  }
+
+  .gate-routes {
+    margin-left: 0;
+  }
+
+  .gate-routes::before {
+    display: none;
+  }
+}
+

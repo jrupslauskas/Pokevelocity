@@ -1,6 +1,52 @@
 require "test_helper"
 
 class TrainersControllerTest < ActionDispatch::IntegrationTest
+  def setup
+    # Create test gates
+    @gate_0 = Gate.create!(
+      gate_number: 0,
+      name: "Starting Gate",
+      required_difficulty_score: 1,
+      sprite_type: "emoji",
+      sprite_value: "🎓"
+    )
+
+    @gate_1 = Gate.create!(
+      gate_number: 1,
+      name: "Test Gym",
+      required_difficulty_score: 5,
+      sprite_type: "emoji",
+      sprite_value: "🏆"
+    )
+
+    # Create always-accessible route (no gate requirement)
+    @starter_route = Route.create!(
+      name: "Starter Town",
+      description: "Always accessible route",
+      gate_requirement: nil,
+      order: 1
+    )
+
+    # Add Pokemon to starter route
+    RouteEncounter.create!(route: @starter_route, pokemon: pokemons(:bulbasaur), spawn_rate: 30)
+    RouteEncounter.create!(route: @starter_route, pokemon: pokemons(:charmander), spawn_rate: 30)
+    RouteEncounter.create!(route: @starter_route, pokemon: pokemons(:squirtle), spawn_rate: 20)
+    RouteEncounter.create!(route: @starter_route, pokemon: pokemons(:pikachu), spawn_rate: 10)
+    RouteEncounter.create!(route: @starter_route, pokemon: pokemons(:mewtwo), spawn_rate: 10)
+
+    # Create gated route (requires gate 0)
+    @test_route = Route.create!(
+      name: "Test Route",
+      description: "A test route for catching Pokemon",
+      gate_requirement: 0,
+      order: 2
+    )
+
+    # Add some Pokemon to the gated test route
+    RouteEncounter.create!(route: @test_route, pokemon: pokemons(:pikachu), spawn_rate: 50)
+    RouteEncounter.create!(route: @test_route, pokemon: pokemons(:mewtwo), spawn_rate: 50)
+  end
+
   # ================================================================================
   # REGISTRATION FORM DISPLAY TESTS
   # ================================================================================
@@ -877,9 +923,14 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
 
   test "should show alert when trainer has no pokeballs on catch page" do
     log_in_as(trainers(:broke_trainer))
+    # First request to clear login flash
     get catches_path
     assert_response :success
-    assert_equal "You don't have any Pokéballs! Complete tickets to earn some.", flash[:alert]
+    # Second request should show pokeballs alert (no other flash messages)
+    get catches_path
+    assert_response :success
+    # Message appears HTML-encoded in the toast
+    assert_match /You (don't|don&#39;t) have any Pokéballs! Complete tickets to earn some\./, response.body
   end
 
   test "should get select pokemon page when logged in" do

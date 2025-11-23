@@ -14,55 +14,163 @@
         <span class="catch-stat-value"><%= @trainer.captures.count %> / 151</span>
       </div>
       <div class="catch-stat">
+        <span class="catch-stat-label">Difficulty Score</span>
+        <span class="catch-stat-value"><%= @trainer.difficulty_score %></span>
+      </div>
+      <div class="catch-stat">
         <span class="catch-stat-label">Pokéballs</span>
         <span class="catch-stat-value"><%= @trainer.total_pokeballs %></span>
       </div>
     </div>
 
-    <% if @routes.any? %>
-      <div class="routes-grid">
-        <% @routes.each do |route| %>
-          <% available_pokemon = @route_available_pokemon[route.id] %>
-          <div class="route-card">
-            <div class="route-header">
-              <h2 class="route-name"><%= route.name %></h2>
-              <% if route.description.present? %>
-                <p class="route-description"><%= route.description %></p>
-              <% end %>
-            </div>
+    <!-- Gates and Routes -->
+    <div class="adventure-container">
+      <!-- Always Accessible Routes (Pallet Town) -->
+      <% if @always_accessible_routes.any? %>
+        <div class="gate-routes">
+          <div class="routes-grid">
+            <% @always_accessible_routes.each do |route| %>
+              <% available_pokemon = @route_available_pokemon[route.id] %>
+              <div class="route-card">
+                <div class="route-header">
+                  <h2 class="route-name"><%= route.name %></h2>
+                  <% if route.description.present? %>
+                    <p class="route-description"><%= route.description %></p>
+                  <% end %>
+                </div>
 
-            <div class="route-pokemon">
-              <h3 class="route-pokemon-title">Wild Pokémon:</h3>
-              <div class="route-pokemon-list">
-                <% route.pokemon.order(:pokedex_number).each do |pokemon| %>
-                  <div class="route-pokemon-item <%= @trainer.captured_pokemon.include?(pokemon) ? 'caught' : '' %>">
-                    <%= image_tag "pokemonSprites/#{pokemon.pokedex_number.to_s.rjust(3, '0')}.png",
-                        alt: pokemon.name,
-                        class: "route-pokemon-sprite",
-                        style: "image-rendering: pixelated;" %>
-                    <span class="route-pokemon-name"><%= pokemon.name %></span>
+                <div class="route-pokemon">
+                  <h3 class="route-pokemon-title">Wild Pokémon:</h3>
+                  <div class="route-pokemon-list">
+                    <% route.pokemon.order(:pokedex_number).each do |pokemon| %>
+                      <div class="route-pokemon-item <%= @trainer.captured_pokemon.include?(pokemon) ? 'caught' : '' %>">
+                        <%= image_tag "pokemonSprites/#{pokemon.pokedex_number.to_s.rjust(3, '0')}.png",
+                            alt: pokemon.name,
+                            class: "route-pokemon-sprite",
+                            style: "image-rendering: pixelated;" %>
+                        <span class="route-pokemon-name"><%= pokemon.name %></span>
+                      </div>
+                    <% end %>
                   </div>
-                <% end %>
+                </div>
+
+                <div class="route-actions">
+                  <% if available_pokemon.any? %>
+                    <%= button_to "Adventure", adventure_path(route), class: "btn-adventure" %>
+                    <span class="route-available-count"><%= available_pokemon.count %> Pokémon available</span>
+                  <% else %>
+                    <button class="btn-adventure-disabled" disabled>All caught!</button>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Gates and their routes -->
+      <% @gates.each do |gate| %>
+        <% is_unlocked = @trainer.has_unlocked_gate?(gate) %>
+        <% meets_requirement = gate.requirement_met_for?(@trainer) %>
+        <% gate_routes = @gated_routes.select { |r| r.gate_requirement == gate.gate_number } %>
+
+        <!-- Gate Card -->
+        <div class="gate-card <%= meets_requirement ? 'unlocked' : 'locked' %>">
+          <div class="gate-sprite">
+            <% if gate.sprite_type == "emoji" %>
+              <span class="gate-emoji"><%= gate.sprite_value %></span>
+            <% elsif gate.sprite_type == "gym_leader" %>
+              <%= image_tag "trainerSprites/gymLeaders/#{gate.sprite_value}.png",
+                  alt: gate.name,
+                  class: "gate-gym-leader-sprite" %>
+            <% end %>
+          </div>
+
+          <div class="gate-info">
+            <h2 class="gate-name">
+              <%= gate.name %>
+              <% if meets_requirement %>
+                <span class="gate-status unlocked">✓ Unlocked</span>
+              <% else %>
+                <span class="gate-status locked">🔒 Locked</span>
+              <% end %>
+            </h2>
+            <p class="gate-description"><%= gate.description %></p>
+
+            <!-- Progress Bar -->
+            <div class="gate-progress">
+              <div class="gate-progress-info">
+                <span class="gate-progress-label">
+                  <% if is_unlocked %>
+                    Unlocked at score <%= gate.required_difficulty_score %>
+                  <% else %>
+                    Score required: <%= gate.required_difficulty_score %>
+                  <% end %>
+                </span>
+                <span class="gate-progress-value">
+                  <%= [@trainer.difficulty_score, gate.required_difficulty_score].min %> / <%= gate.required_difficulty_score %>
+                </span>
+              </div>
+              <div class="gate-progress-bar">
+                <%
+                  if gate.required_difficulty_score == 0
+                    progress_percentage = 100
+                  else
+                    progress_percentage = [(@trainer.difficulty_score.to_f / gate.required_difficulty_score * 100).round, 100].min
+                  end
+                %>
+                <div class="gate-progress-fill <%= meets_requirement ? 'complete' : '' %>" style="width: <%= progress_percentage %>%"></div>
               </div>
             </div>
+          </div>
+        </div>
 
-            <div class="route-actions">
-              <% if available_pokemon.any? %>
-                <%= button_to "Adventure", adventure_path(route), class: "btn-adventure" %>
-                <span class="route-available-count"><%= available_pokemon.count %> Pokémon available</span>
-              <% else %>
-                <button class="btn-adventure-disabled" disabled>All caught!</button>
+        <!-- Routes for this gate (only show if gate requirement is met) -->
+        <% if meets_requirement && gate_routes.any? %>
+          <div class="gate-routes">
+            <div class="routes-grid">
+              <% gate_routes.each do |route| %>
+                <% available_pokemon = @route_available_pokemon[route.id] %>
+                <div class="route-card">
+                  <div class="route-header">
+                    <h2 class="route-name"><%= route.name %></h2>
+                    <% if route.description.present? %>
+                      <p class="route-description"><%= route.description %></p>
+                    <% end %>
+                  </div>
+
+                  <div class="route-pokemon">
+                    <h3 class="route-pokemon-title">Wild Pokémon:</h3>
+                    <div class="route-pokemon-list">
+                      <% route.pokemon.order(:pokedex_number).each do |pokemon| %>
+                        <div class="route-pokemon-item <%= @trainer.captured_pokemon.include?(pokemon) ? 'caught' : '' %>">
+                          <%= image_tag "pokemonSprites/#{pokemon.pokedex_number.to_s.rjust(3, '0')}.png",
+                              alt: pokemon.name,
+                              class: "route-pokemon-sprite",
+                              style: "image-rendering: pixelated;" %>
+                          <span class="route-pokemon-name"><%= pokemon.name %></span>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+
+                  <div class="route-actions">
+                    <% if available_pokemon.any? %>
+                      <%= button_to "Adventure", adventure_path(route), class: "btn-adventure" %>
+                      <span class="route-available-count"><%= available_pokemon.count %> Pokémon available</span>
+                    <% else %>
+                      <button class="btn-adventure-disabled" disabled>All caught!</button>
+                    <% end %>
+                  </div>
+                </div>
               <% end %>
             </div>
           </div>
         <% end %>
-      </div>
-    <% else %>
-      <div class="empty-state">
-        <div class="empty-state-icon">🗺️</div>
-        <h3 class="empty-state-title">No Routes Available</h3>
-        <p class="empty-state-description">There are no routes to explore yet. Check back later!</p>
-      </div>
-    <% end %>
+
+        <!-- Stop showing gates after the next locked gate -->
+        <% break if gate == @next_locked_gate %>
+      <% end %>
+    </div>
   </main>
 </div>

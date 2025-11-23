@@ -3,24 +3,32 @@
 # Structure:
 #   - name: Route name (must be unique)
 #     description: Route description text
+#     gate_requirement: Gate number (0-8) that must be unlocked to access this route
+#     order: Display order (unique, determines route sequence)
 #     encounters:
 #       - pokemon: Pokemon name (must match exactly from pokemon.yml)
 #         spawn_rate: Weight for random selection (higher = more common)
 #
-# To add a new route, just add another entry to this list and run: bin/rails db:seed
+# To see updates, run: bin/rails db:seed
 
 - name: Pallet Town
   description: MAKE SURE TO NOTE THAT ONLY ONE CAN BE CAUGHT
+  gate_requirement: null
+  order: 1
   encounters:
     - pokemon: Bulbasaur
-      spawn_rate: 33
+      spawn_rate: 34
     - pokemon: Squirtle
       spawn_rate: 33
     - pokemon: Charmander
       spawn_rate: 33
 
+## Professor Oak Requirement
+
 - name: Route 1
   description: A peaceful route connecting Pallet Town and Viridian City. Common Pokémon can be found in the tall grass.
+  gate_requirement: 0
+  order: 2
   encounters:
     - pokemon: Pidgey
       spawn_rate: 50
@@ -28,7 +36,9 @@
       spawn_rate: 50
 
 - name: Route 22
-  description: Fill in
+  description: A grassy path west of Viridian City. Ambitious Trainers test their strength before heading toward the Pokémon League.
+  gate_requirement: 0
+  order: 3
   encounters:
     - pokemon: Rattata
       spawn_rate: 45
@@ -38,7 +48,9 @@
       spawn_rate: 10
 
 - name: Route 2
-  description: Fill in
+  description: A forest-lined path linking Viridian City to Pewter City. Viridian Forest lies just to the north.
+  gate_requirement: 0
+  order: 4
   encounters:
     - pokemon: Rattata
       spawn_rate: 45
@@ -48,7 +60,9 @@
       spawn_rate: 10
 
 - name: Viridian Forest
-  description: Fill in
+  description: A dense, shadowy woodland filled with tall trees and vibrant bug Pokémon. Trainers navigate its winding paths as sunlight filters softly through the canopy.
+  gate_requirement: 0
+  order: 5
   encounters:
     - pokemon: Caterpie
       spawn_rate: 35
@@ -64,7 +78,9 @@
 ## Pewter City Badge
 
 - name: Route 3
-  description: Fill in
+  description: A sunny route stretching from Pewter City to Mt. Moon. Young Trainers gather here for early battles.
+  gate_requirement: 1
+  order: 6
   encounters:
     - pokemon: Spearow
       spawn_rate: 25
@@ -80,23 +96,27 @@
       spawn_rate: 10
 
 - name: Route 4
-  description: Fill in
+  description: A rugged trail leading from Mt. Moon to Cerulean City. Wild Pokémon hide among scattered rocky outcrops.
+  gate_requirement: 1
+  order: 7
   encounters:
-    - pokemon: Ratatta
-      spawn_rate: 35
-    - pokemon: Spearow
+    - pokemon: Rattata
       spawn_rate: 30
+    - pokemon: Spearow
+      spawn_rate: 25
     - pokemon: Ekans
-      spawn_rate: 25
+      spawn_rate: 20
     - pokemon: Sandshrew
-      spawn_rate: 25
+      spawn_rate: 20
     - pokemon: Mankey
-      spawn_rate: 5
+      spawn_rate: 3
     - pokemon: Magikarp
-      spawn_rate: 5
+      spawn_rate: 2
 
 - name: Mt. Moon
-  description: Fill in
+  description: A mysterious mountain filled with winding caverns and sparkling moonlit minerals. Clefairy are said to gather here during the full moon.
+  gate_requirement: 1
+  order: 8
   encounters:
     - pokemon: Zubat
       spawn_rate: 60
@@ -107,28 +127,87 @@
     - pokemon: Clefairy
       spawn_rate: 10
 
-# Example of how to add more routes (uncomment and modify):
-#
-# - name: Route 2
-#   description: A forest path with Bug-type Pokémon.
-#   encounters:
-#     - pokemon: Caterpie
-#       spawn_rate: 40
-#     - pokemon: Weedle
-#       spawn_rate: 40
-#     - pokemon: Pikachu
-#       spawn_rate: 20
-#
-# - name: Viridian Forest
-#   description: A dark forest teeming with Bug Pokémon and the occasional Pikachu.
-#   encounters:
-#     - pokemon: Caterpie
-#       spawn_rate: 30
-#     - pokemon: Metapod
-#       spawn_rate: 20
-#     - pokemon: Weedle
-#       spawn_rate: 25
-#     - pokemon: Kakuna
-#       spawn_rate: 15
-#     - pokemon: Pikachu
-#       spawn_rate: 10
+- name: Cerulean City
+  description: A vibrant riverside city known for its love of Water-type Pokémon. The Cerulean Gym and the scenic waterways make it a favorite stop for travelers.
+  gate_requirement: 1
+  order: 10
+  encounters:
+    - pokemon: Jynx
+      spawn_rate: 100
+## Add blocker requirement of Poliwhirl in pokedex
+
+- name: Route 24
+  description: A bridge north of Cerulean City known for the Nugget Bridge challenge. Trainers line up for battles.
+  gate_requirement: 1
+  order: 11
+  encounters:
+    - pokemon: Oddish
+      spawn_rate: 25
+    - pokemon: Bellsprout
+      spawn_rate: 25
+    - pokemon: Abra
+      spawn_rate: 15
+    - pokemon: Weedle
+      spawn_rate: 10
+    - pokemon: Caterpie
+      spawn_rate: 10
+    - pokemon: Pidgey
+      spawn_rate: 15
+
+- name: Route 25
+  description: A cliffside path overlooking the sea. Bill’s Cottage lies at the far end, welcoming curious visitors.
+  gate_requirement: 1
+  order: 12
+  encounters:
+    - pokemon: Oddish
+      spawn_rate: 25
+    - pokemon: Bellsprout
+      spawn_rate: 25
+    - pokemon: Abra
+      spawn_rate: 15
+    - pokemon: Weedle
+      spawn_rate: 10
+    - pokemon: Caterpie
+      spawn_rate: 10
+    - pokemon: Pidgey
+      spawn_rate: 15
+
+## Water Badge Gate
+
+- name: Route 5
+  description: A gentle hillside path south of Cerulean City. The Pokémon Day Care lies along this peaceful route.
+  gate_requirement: 2
+  order: 13
+  encounters:
+    - pokemon: Bellsprout
+      spawn_rate: 25
+    - pokemon: Meowth
+      spawn_rate: 35
+    - pokemon: Pidgey
+      spawn_rate: 40
+
+- name: Route 6
+  description: A quiet, tree-shaded road connecting Saffron City and Vermilion City. A small pond attracts water-loving Pokémon.
+  gate_requirement: 2
+  order: 14
+  encounters:
+    - pokemon: Oddish
+      spawn_rate: 25
+    - pokemon: Meowth
+      spawn_rate: 35
+    - pokemon: Pidgey
+      spawn_rate: 40
+
+- name: Diglett's Cave
+  description: A long, narrow tunnel carved entirely by Diglett and Dugtrio. Its twisting passages provide a quick underground shortcut between Routes 11 and 2.
+  gate_requirement: 2
+  order: 15
+  encounters:
+    - pokemon: Diglett
+      spawn_rate: 90
+    - pokemon: Dugtrio
+      spawn_rate: 10
+
+## Route east of Vermillion
+
+## Lt Surge Badge
