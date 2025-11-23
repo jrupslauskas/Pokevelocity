@@ -913,6 +913,21 @@ body > div:not(.app-layout) {
   gap: 8px;
 }
 
+.difficulty-stars {
+  display: flex;
+  gap: 4px;
+}
+
+.star-filled {
+  color: #FFD700;
+  font-size: 18px;
+}
+
+.star-empty {
+  color: #D3D3D3;
+  font-size: 18px;
+}
+
 .difficulty-text {
   font-size: 14px;
   color: #2C5F2D;

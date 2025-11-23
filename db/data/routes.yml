@@ -47,7 +47,7 @@
     - pokemon: Spearow
       spawn_rate: 10
 
-- name: Route 2 (West)
+- name: Route 2
   description: A forest-lined path linking Viridian City to Pewter City. Viridian Forest lies just to the north.
   gate_requirement: 0
   order: 4
@@ -209,7 +209,7 @@
       spawn_rate: 10
 
 - name: Route 2 (East)
-  description: Fill in
+  description: A quiet stretch of road running along the eastern edge of Route 2. It lies at the far end of Diglett's Tunnel and is home to a trader possessing a mysterious Pokemon.
   gate_requirement: 2
   order: 15
   encounters:
