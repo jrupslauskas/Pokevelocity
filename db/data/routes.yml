@@ -47,7 +47,7 @@
     - pokemon: Spearow
       spawn_rate: 10
 
-- name: Route 2
+- name: Route 2 (West)
   description: A forest-lined path linking Viridian City to Pewter City. Viridian Forest lies just to the north.
   gate_requirement: 0
   order: 4
@@ -75,7 +75,7 @@
     - pokemon: Pikachu
       spawn_rate: 10
 
-## Pewter City Badge
+## Pewter City Badge - Gate 1
 
 - name: Route 3
   description: A sunny route stretching from Pewter City to Mt. Moon. Young Trainers gather here for early battles.
@@ -95,10 +95,24 @@
     - pokemon: Mankey
       spawn_rate: 10
 
+- name: Mt. Moon
+  description: A mysterious mountain filled with winding caverns and sparkling moonlit minerals. Clefairy are said to gather here during the full moon.
+  gate_requirement: 1
+  order: 7
+  encounters:
+    - pokemon: Zubat
+      spawn_rate: 60
+    - pokemon: Geodude
+      spawn_rate: 20
+    - pokemon: Paras
+      spawn_rate: 10
+    - pokemon: Clefairy
+      spawn_rate: 10
+
 - name: Route 4
   description: A rugged trail leading from Mt. Moon to Cerulean City. Wild Pokémon hide among scattered rocky outcrops.
   gate_requirement: 1
-  order: 7
+  order: 8
   encounters:
     - pokemon: Rattata
       spawn_rate: 30
@@ -113,24 +127,10 @@
     - pokemon: Magikarp
       spawn_rate: 2
 
-- name: Mt. Moon
-  description: A mysterious mountain filled with winding caverns and sparkling moonlit minerals. Clefairy are said to gather here during the full moon.
-  gate_requirement: 1
-  order: 8
-  encounters:
-    - pokemon: Zubat
-      spawn_rate: 60
-    - pokemon: Geodude
-      spawn_rate: 20
-    - pokemon: Paras
-      spawn_rate: 10
-    - pokemon: Clefairy
-      spawn_rate: 10
-
 - name: Cerulean City
   description: A vibrant riverside city known for its love of Water-type Pokémon. The Cerulean Gym and the scenic waterways make it a favorite stop for travelers.
   gate_requirement: 1
-  order: 10
+  order: 9
   encounters:
     - pokemon: Jynx
       spawn_rate: 100
@@ -139,7 +139,7 @@
 - name: Route 24
   description: A bridge north of Cerulean City known for the Nugget Bridge challenge. Trainers line up for battles.
   gate_requirement: 1
-  order: 11
+  order: 10
   encounters:
     - pokemon: Oddish
       spawn_rate: 25
@@ -157,7 +157,7 @@
 - name: Route 25
   description: A cliffside path overlooking the sea. Bill’s Cottage lies at the far end, welcoming curious visitors.
   gate_requirement: 1
-  order: 12
+  order: 11
   encounters:
     - pokemon: Oddish
       spawn_rate: 25
@@ -172,12 +172,12 @@
     - pokemon: Pidgey
       spawn_rate: 15
 
-## Water Badge Gate
+## Water Badge Gate - Gate 2
 
 - name: Route 5
   description: A gentle hillside path south of Cerulean City. The Pokémon Day Care lies along this peaceful route.
   gate_requirement: 2
-  order: 13
+  order: 12
   encounters:
     - pokemon: Bellsprout
       spawn_rate: 25
@@ -189,7 +189,7 @@
 - name: Route 6
   description: A quiet, tree-shaded road connecting Saffron City and Vermilion City. A small pond attracts water-loving Pokémon.
   gate_requirement: 2
-  order: 14
+  order: 13
   encounters:
     - pokemon: Oddish
       spawn_rate: 25
@@ -201,13 +201,186 @@
 - name: Diglett's Cave
   description: A long, narrow tunnel carved entirely by Diglett and Dugtrio. Its twisting passages provide a quick underground shortcut between Routes 11 and 2.
   gate_requirement: 2
-  order: 15
+  order: 14
   encounters:
     - pokemon: Diglett
       spawn_rate: 90
     - pokemon: Dugtrio
       spawn_rate: 10
 
-## Route east of Vermillion
+- name: Route 2 (East)
+  description: Fill in
+  gate_requirement: 2
+  order: 15
+  encounters:
+    - pokemon: Mr. Mime
+      spawn_rate: 100
 
-## Lt Surge Badge
+- name: Route 11
+  description: A coastal route near Vermilion City. The SS Anne can be seen in the distance.
+  gate_requirement: 2
+  order: 16
+  encounters:
+    - pokemon: Spearow
+      spawn_rate: 35
+    - pokemon: Ekans
+      spawn_rate: 30
+    - pokemon: Sandshrew
+      spawn_rate: 30
+    - pokemon: Drowzee
+      spawn_rate: 25
+
+- name: Vermillion City
+  description: Add in requirement for Spearow
+  gate_requirement: 2
+  order: 17
+  encounters:
+    - pokemon: Farfetch'd
+      spawn_rate: 100
+
+## Lt Surge Badge - Gate 3
+
+- name: Route 9
+  description: A winding, rocky route leading from Cerulean City toward Rock Tunnel. The terrain is favored by hardy Pokémon.
+  gate_requirement: 3
+  order: 18
+  encounters:
+    - pokemon: Spearow
+      spawn_rate: 35
+    - pokemon: Ekans
+      spawn_rate: 30
+    - pokemon: Sandshrew
+      spawn_rate: 25
+    - pokemon: Rattata
+      spawn_rate: 30
+
+- name: Route 10
+  description: A desolate area surrounding the entrance to Rock Tunnel. Power Plant lies hidden nearby.
+  gate_requirement: 3
+  order: 19
+  encounters:
+    - pokemon: Spearow
+      spawn_rate: 20
+    - pokemon: Ekans
+      spawn_rate: 20
+    - pokemon: Sandshrew
+      spawn_rate: 20
+    - pokemon: Voltorb
+      spawn_rate: 40
+
+- name: Rock Tunnel
+  description: A dark, rugged cave network where visibility is low and the path twists unpredictably. Strong Rock- and Ground-type Pokémon make this a challenging passage for travelers.
+  gate_requirement: 3
+  order: 20
+  encounters:
+    - pokemon: Geodude
+      spawn_rate: 30
+    - pokemon: Zubat
+      spawn_rate: 30
+    - pokemon: Machop
+      spawn_rate: 15
+    - pokemon: Mankey
+      spawn_rate: 15
+    - pokemon: Onix
+      spawn_rate: 5
+    - pokemon: Graveler
+      spawn_rate: 5
+
+- name: Route 8
+  description: A trainer-filled road to the west of Lavender Town. Frequent battles make it a popular training spot.
+  gate_requirement: 3
+  order: 21
+  encounters:
+    - pokemon: Pidgey
+      spawn_rate: 20
+    - pokemon: Ekans
+      spawn_rate: 15
+    - pokemon: Sandshrew
+      spawn_rate: 15
+    - pokemon: Meowth
+      spawn_rate: 20
+    - pokemon: Vulpix
+      spawn_rate: 15
+    - pokemon: Growlithe
+      spawn_rate: 15
+
+- name: Route 7
+  description: A short route between Celadon City and Saffron City. The few grassy patches still hide a handful of wild Pokémon.
+  gate_requirement: 3
+  order: 22
+  encounters:
+    - pokemon: Pidgey
+      spawn_rate: 20
+    - pokemon: Oddish
+      spawn_rate: 15
+    - pokemon: Bellsprout
+      spawn_rate: 15
+    - pokemon: Meowth
+      spawn_rate: 20
+    - pokemon: Vulpix
+      spawn_rate: 15
+    - pokemon: Growlithe
+      spawn_rate: 15
+
+## Celadon Gym - Gate 4
+
+## Pokemon Tower
+
+## Route 12,
+
+## Route 13,
+
+## Route 14
+
+## Route 15
+
+## Fuchsia Gym  - Gate 5
+
+## Safari Zone (Surf) Add notification that surf is unlocked
+
+## Route 18 Lickitung trade for either Golduck or Slowbro
+
+## Route 17
+
+## Route 16
+
+## Fighting Dojo
+
+## Power Plant
+
+## Saffron Gym  - Gate 6
+
+## Route 19
+
+## Route 20
+
+## Seafoam Islands
+
+## Cinnabar Island - Pokemon Lab
+  ## Trades
+    ## Electrode requires Raichu
+    ## Tangela requires Venonat
+    ## Seel requires Ponyta
+    ## Kabuto
+    ## Omanyte
+    ## Aerodactyl
+
+## Pokémon Mansion
+
+## Cinnabar Gym - Gate 7
+
+## Sevii Islands? Island 1, 2, 3?
+
+## Route 21
+
+## Viridian Gym - Gate 8
+
+## Route 23
+
+## Victory Road
+
+## Indigo Plateau Gate?
+
+## Sevii Island - Islands 4 5 6 7?
+
+## Cerulean Cave
