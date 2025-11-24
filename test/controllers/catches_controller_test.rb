@@ -2,34 +2,24 @@ require "test_helper"
 
 class CatchesControllerTest < ActionDispatch::IntegrationTest
   def setup
-    # Create test gates
+    # Create test gates (display data loaded from YAML)
     @gate_0 = Gate.create!(
       gate_number: 0,
-      name: "Starting Gate",
-      required_difficulty_score: 0,
-      sprite_type: "emoji",
-      sprite_value: "🎓"
+      required_difficulty_score: 0
     )
 
     @gate_1 = Gate.create!(
       gate_number: 1,
-      name: "Test Gym",
-      required_difficulty_score: 5,
-      sprite_type: "emoji",
-      sprite_value: "🏆"
+      required_difficulty_score: 5
     )
 
-    # Create test route with encounters (using data from fixtures for Pokemon)
+    # Create test route with encounters (display data loaded from YAML)
     @test_route = Route.create!(
-      name: "Test Route",
-      description: "A test route for catching Pokemon",
       gate_requirement: 0,
       order: 1
     )
 
     @locked_route = Route.create!(
-      name: "Locked Route",
-      description: "A locked route requiring gate 1",
       gate_requirement: 1,
       order: 2
     )
@@ -64,7 +54,8 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
     get catches_path
-    assert_match "Test Route", response.body
+    # Route names are loaded from YAML based on order
+    assert_match "Pallet Town", response.body  # order: 1
   end
 
   test "should display route descriptions" do

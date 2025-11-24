@@ -2,27 +2,19 @@ require "test_helper"
 
 class TrainersControllerTest < ActionDispatch::IntegrationTest
   def setup
-    # Create test gates
+    # Create test gates (display data loaded from YAML)
     @gate_0 = Gate.create!(
       gate_number: 0,
-      name: "Starting Gate",
-      required_difficulty_score: 1,
-      sprite_type: "emoji",
-      sprite_value: "🎓"
+      required_difficulty_score: 1
     )
 
     @gate_1 = Gate.create!(
       gate_number: 1,
-      name: "Test Gym",
-      required_difficulty_score: 5,
-      sprite_type: "emoji",
-      sprite_value: "🏆"
+      required_difficulty_score: 5
     )
 
-    # Create always-accessible route (no gate requirement)
+    # Create always-accessible route (display data loaded from YAML)
     @starter_route = Route.create!(
-      name: "Starter Town",
-      description: "Always accessible route",
       gate_requirement: nil,
       order: 1
     )
@@ -34,10 +26,8 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     RouteEncounter.create!(route: @starter_route, pokemon: pokemons(:pikachu), spawn_rate: 10)
     RouteEncounter.create!(route: @starter_route, pokemon: pokemons(:mewtwo), spawn_rate: 10)
 
-    # Create gated route (requires gate 0)
+    # Create gated route (display data loaded from YAML)
     @test_route = Route.create!(
-      name: "Test Route",
-      description: "A test route for catching Pokemon",
       gate_requirement: 0,
       order: 2
     )

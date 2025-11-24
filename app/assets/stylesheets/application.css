@@ -1721,11 +1721,32 @@ body > div:not(.app-layout) {
   object-fit: contain;
 }
 
+.route-pokemon-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
 .route-pokemon-name {
   font-size: 12px;
   font-weight: 600;
   color: #2C5F2D;
   text-align: center;
+}
+
+.route-pokemon-difficulty {
+  display: flex;
+  gap: 2px;
+  font-size: 11px;
+}
+
+.route-pokemon-difficulty .difficulty-star.filled {
+  color: #FFD700;
+}
+
+.route-pokemon-difficulty .difficulty-star.empty {
+  color: #D3D3D3;
 }
 
 .route-actions {

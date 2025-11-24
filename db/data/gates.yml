@@ -12,10 +12,10 @@
 
 # Gate 0: Professor Oak (requires catching starter)
 - gate_number: 0
-  name: "Professor Oak"
+  name: "Professor Oak - Let Your Adventure Begin!"
   description: "Catch your starter Pokémon from Professor Oak before venturing out!"
   required_difficulty_score: 2
-  sprite_type: "emoji"
+  sprite_type: "gym_leader"
   sprite_value: "oak"
 
 # Gate 1: Pewter City Gym - Brock
@@ -40,7 +40,7 @@
   description: "Lt. Surge - Amping Up the Action!"
   required_difficulty_score: 20
   sprite_type: "gym_leader"
-  sprite_value: "surge"
+  sprite_value: "ltsurge"
 
 # Gate 4: Celadon City Gym - Erika
 - gate_number: 4

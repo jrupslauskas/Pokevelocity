@@ -88,11 +88,13 @@ class GatesDataTest < ActiveSupport::TestCase
                  "Gates with invalid sprite_type: #{invalid_sprites.map { |g| "#{g["name"]} (#{g["sprite_type"]})" }.join(', ')}"
   end
 
-  test "gate 0 should use emoji sprite type" do
+  test "gate 0 should use gym_leader sprite type for Professor Oak" do
     gate_0 = @gates_data.find { |g| g["gate_number"] == 0 }
 
-    assert_equal "emoji", gate_0["sprite_type"],
-                 "Gate 0 (#{gate_0["name"]}) should use emoji sprite type"
+    assert_equal "gym_leader", gate_0["sprite_type"],
+                 "Gate 0 (#{gate_0["name"]}) should use gym_leader sprite type"
+    assert_equal "oak", gate_0["sprite_value"],
+                 "Gate 0 should have sprite_value 'oak'"
   end
 
   test "gates 1-8 should use gym_leader sprite type" do

@@ -4,11 +4,7 @@ class GateTest < ActiveSupport::TestCase
   def setup
     @gate = Gate.new(
       gate_number: 5,
-      name: "Test Gate",
-      description: "A test gate description",
-      required_difficulty_score: 100,
-      sprite_type: "gym_leader",
-      sprite_value: "test_leader"
+      required_difficulty_score: 100
     )
     @trainer = trainers(:ash)
   end
@@ -28,7 +24,6 @@ class GateTest < ActiveSupport::TestCase
     @gate.save!
     duplicate_gate = Gate.new(
       gate_number: 5,
-      name: "Different Name",
       required_difficulty_score: 50
     )
     assert_not duplicate_gate.valid?
@@ -55,11 +50,7 @@ class GateTest < ActiveSupport::TestCase
     assert @gate.valid?
   end
 
-  test "should require name" do
-    @gate.name = nil
-    assert_not @gate.valid?
-    assert_includes @gate.errors[:name], "can't be blank"
-  end
+  # Name is now loaded from YAML, not stored in database
 
   test "should require required_difficulty_score" do
     @gate.required_difficulty_score = nil
@@ -139,10 +130,10 @@ class GateTest < ActiveSupport::TestCase
   end
 
   # Class Method Tests
-  test "GATES_DATA constant should be loaded from YAML" do
-    assert_not_nil Gate::GATES_DATA
-    assert_instance_of Array, Gate::GATES_DATA
-    assert_equal 9, Gate::GATES_DATA.count
+  test "gates_data should be loaded from YAML" do
+    assert_not_nil Gate.gates_data
+    assert_instance_of Array, Gate.gates_data
+    assert_equal 9, Gate.gates_data.count
   end
 
   test "data_for should return gate data for given gate_number" do

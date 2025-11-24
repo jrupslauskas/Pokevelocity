@@ -2,19 +2,14 @@ require "test_helper"
 
 class ApplicationControllerTest < ActionDispatch::IntegrationTest
   def setup
-    # Create test gates
+    # Create test gates (display data loaded from YAML)
     @gate_0 = Gate.create!(
       gate_number: 0,
-      name: "Starting Gate",
-      required_difficulty_score: 0,
-      sprite_type: "emoji",
-      sprite_value: "🎓"
+      required_difficulty_score: 0
     )
 
-    # Create test route with encounters
+    # Create test route with encounters (display data loaded from YAML)
     @test_route = Route.create!(
-      name: "Test Route",
-      description: "A test route for catching Pokemon",
       gate_requirement: 0,
       order: 1
     )

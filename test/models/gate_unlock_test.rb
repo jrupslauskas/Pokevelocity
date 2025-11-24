@@ -5,10 +5,7 @@ class GateUnlockTest < ActiveSupport::TestCase
     @trainer = trainers(:ash)
     @gate = Gate.create!(
       gate_number: 5,
-      name: "Test Gate",
-      required_difficulty_score: 100,
-      sprite_type: "gym_leader",
-      sprite_value: "test"
+      required_difficulty_score: 100
     )
     @gate_unlock = GateUnlock.new(trainer: @trainer, gate: @gate)
   end
@@ -58,10 +55,7 @@ class GateUnlockTest < ActiveSupport::TestCase
 
     other_gate = Gate.create!(
       gate_number: 6,
-      name: "Another Test Gate",
-      required_difficulty_score: 150,
-      sprite_type: "gym_leader",
-      sprite_value: "test2"
+      required_difficulty_score: 150
     )
     other_unlock = GateUnlock.new(trainer: @trainer, gate: other_gate, unlocked_at: Time.current)
     assert other_unlock.valid?

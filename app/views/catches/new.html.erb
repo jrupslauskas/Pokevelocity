@@ -148,7 +148,17 @@
                               alt: pokemon.name,
                               class: "route-pokemon-sprite",
                               style: "image-rendering: pixelated;" %>
-                          <span class="route-pokemon-name"><%= pokemon.name %></span>
+                          <div class="route-pokemon-info">
+                            <span class="route-pokemon-name"><%= pokemon.name %></span>
+                            <div class="route-pokemon-difficulty">
+                              <% pokemon.difficulty.times do %>
+                                <span class="difficulty-star filled">★</span>
+                              <% end %>
+                              <% (5 - pokemon.difficulty).times do %>
+                                <span class="difficulty-star empty">★</span>
+                              <% end %>
+                            </div>
+                          </div>
                         </div>
                       <% end %>
                     </div>

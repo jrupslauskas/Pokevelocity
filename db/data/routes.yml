@@ -209,7 +209,7 @@
       spawn_rate: 10
 
 - name: Route 2 (East)
-  description: A quiet stretch of road running along the eastern edge of Route 2. It lies at the far end of Diglett's Tunnel and is home to a trader possessing a mysterious Pokemon.
+  description: A quiet stretch of road running along the eastern edge of Route 2. It lies at the far end of Diglett's CaveOn t and is home to a trader possessing a mysterious Pokemon.
   gate_requirement: 2
   order: 15
   encounters:
@@ -322,21 +322,148 @@
     - pokemon: Growlithe
       spawn_rate: 15
 
+- name: Celadon City - Game Corner and Mansion
+  description: A bustling city. Home to the Celadon City Game Corner as well as the Celadon Mansion
+  gate_requirement: 3
+  order: 23
+  encounters:
+    - pokemon: Abra
+      spawn_rate: 15
+    - pokemon: Clefairy
+      spawn_rate: 15
+    - pokemon: Dratini
+      spawn_rate: 15
+    - pokemon: Pincir
+      spawn_rate: 15
+    - pokemon: Scyther
+      spawn_rate: 15
+    - pokemon: Porygon
+      spawn_rate: 15
+    - pokemon: Eevee
+      spawn_rate: 10
+
 ## Celadon Gym - Gate 4
 
-## Pokemon Tower
+- name: Pokemon Tower
+  description: Fill in
+  gate_requirement: 4
+  order: 24
+  encounters:
+    - pokemon: Gastly
+      spawn_rate: 70
+    - pokemon: Haunter
+      spawn_rate: 10
+    - pokemon: Cubone
+      spawn_rate: 20
 
-## Route 12,
+- name: Route 12
+  description: Fill in
+  gate_requirement: 4
+  order: 25
+  encounters:
+    - pokemon: Pidgey
+      spawn_rate: 20
+    - pokemon: Oddish
+      spawn_rate: 25
+    - pokemon: Gloom
+      spawn_rate: 10
+    - pokemon: Venonat
+      spawn_rate: 10
+    - pokemon: Bellsprout
+      spawn_rate: 25
+    - pokemon: Weepinbell
+      spawn_rate: 10
 
-## Route 13,
+- name: Route 13
+  description: Fill in
+  gate_requirement: 4
+  order: 26
+  encounters:
+    - pokemon: Pidgey
+      spawn_rate: 30
+    - pokemon: Pidgeotto
+      spawn_rate: 20
+    - pokemon: Oddish
+      spawn_rate: 20
+    - pokemon: Gloom
+      spawn_rate: 15
+    - pokemon: Ditto
+      spawn_rate: 15
 
-## Route 14
+- name: Route 14
+  description: Fill in
+  gate_requirement: 4
+  order: 27
+  encounters:
+    - pokemon: Pidgey
+      spawn_rate: 30
+    - pokemon: Pidgeotto
+      spawn_rate: 10
+    - pokemon: Venonat
+      spawn_rate: 20
+    - pokemon: Bellsprout
+      spawn_rate: 20
+    - pokemon: Weepinbell
+      spawn_rate: 20
 
-## Route 15
+- name: Route 15
+  description: Fill in
+  gate_requirement: 4
+  order: 28
+  encounters:
+    - pokemon: Oddish
+      spawn_rate: 20
+    - pokemon: Gloom
+      spawn_rate: 15
+    - pokemon: Venonat
+      spawn_rate: 20
+    - pokemon: Bellsprout
+      spawn_rate: 20
+    - pokemon: Weepinbell
+      spawn_rate: 15
+    - pokemon: Ditto
+      spawn_rate: 10
 
-## Fuchsia Gym  - Gate 5
+## Fuchsia Gym  - Gate 5 (Unlocks surf)
 
-## Safari Zone (Surf) Add notification that surf is unlocked
+- name: Safari Zone
+  description: Fill in
+  gate_requirement: 5
+  order: 29
+  encounters:
+    - pokemon: Nidoran♀
+      spawn_rate: 10
+    - pokemon: Nidoran♂
+      spawn_rate: 10
+    - pokemon: Nidorino
+      spawn_rate: 10
+    - pokemon: Nidorina
+      spawn_rate: 10
+    - pokemon: Venonat
+      spawn_rate: 10
+    - pokemon: Venomoth
+      spawn_rate: 10
+    - pokemon: Paras
+      spawn_rate: 10
+    - pokemon: Parasect
+      spawn_rate: 10
+    - pokemon: Doduo
+      spawn_rate: 5
+    - pokemon: Exeggcute
+      spawn_rate: 5
+    - pokemon: Rhyhorn
+      spawn_rate: 5
+    - pokemon: Chansey
+      spawn_rate: 1
+    - pokemon: Scyther
+      spawn_rate: 1
+    - pokemon: Pinsir
+      spawn_rate: 1
+    - pokemon: Kangaskhan
+      spawn_rate: 1
+    - pokemon: Tauros
+      spawn_rate: 1
+
 
 ## Route 18 Lickitung trade for either Golduck or Slowbro
 

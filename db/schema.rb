@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_22_161804) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_24_003041) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -67,12 +67,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_22_161804) do
 
   create_table "gates", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.text "description"
     t.integer "gate_number", null: false
-    t.string "name", null: false
     t.integer "required_difficulty_score", null: false
-    t.string "sprite_type"
-    t.string "sprite_value"
     t.datetime "updated_at", null: false
     t.index ["gate_number"], name: "index_gates_on_gate_number", unique: true
   end
@@ -98,9 +94,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_22_161804) do
 
   create_table "routes", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.text "description"
     t.integer "gate_requirement"
-    t.string "name"
     t.integer "order", null: false
     t.datetime "updated_at", null: false
     t.index ["order"], name: "index_routes_on_order", unique: true
