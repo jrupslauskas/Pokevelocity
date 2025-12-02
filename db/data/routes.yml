@@ -426,54 +426,119 @@
 
 ## Fuchsia Gym  - Gate 5 (Unlocks surf)
 
-- name: Safari Zone
+- name: Safari Zone - Area 1
   description: Fill in
   gate_requirement: 5
   order: 29
   encounters:
     - pokemon: Nidoran♀
-      spawn_rate: 10
-    - pokemon: Nidoran♂
-      spawn_rate: 10
-    - pokemon: Nidorino
-      spawn_rate: 10
+      spawn_rate: 30
     - pokemon: Nidorina
-      spawn_rate: 10
+      spawn_rate: 20
     - pokemon: Venonat
-      spawn_rate: 10
+      spawn_rate: 15
     - pokemon: Venomoth
       spawn_rate: 10
-    - pokemon: Paras
+    - pokemon: Exeggcute
       spawn_rate: 10
+    - pokemon: Pinsir
+      spawn_rate: 5
+    - pokemon: Kangaskhan
+      spawn_rate: 5
+    - pokemon: Tauros
+      spawn_rate: 5
+
+- name: Safari Zone - Area 2
+  description: Fill in
+  gate_requirement: 5
+  order: 30
+  encounters:
+    - pokemon: Nidoran♂
+      spawn_rate: 30
+    - pokemon: Nidorino
+      spawn_rate: 20
+    - pokemon: Paras
+      spawn_rate: 15
     - pokemon: Parasect
       spawn_rate: 10
     - pokemon: Doduo
-      spawn_rate: 5
-    - pokemon: Exeggcute
-      spawn_rate: 5
+      spawn_rate: 10
     - pokemon: Rhyhorn
       spawn_rate: 5
     - pokemon: Chansey
-      spawn_rate: 1
+      spawn_rate: 5
     - pokemon: Scyther
-      spawn_rate: 1
-    - pokemon: Pinsir
-      spawn_rate: 1
-    - pokemon: Kangaskhan
-      spawn_rate: 1
-    - pokemon: Tauros
-      spawn_rate: 1
+      spawn_rate: 5
 
-
-## Route 18 Lickitung trade for either Golduck or Slowbro
+- name: Route 16
+  description: Fill in
+  gate_requirement: 5
+  order: 31
+  encounters:
+    - pokemon: Rattata
+      spawn_rate: 20
+    - pokemon: Raticate
+      spawn_rate: 15
+    - pokemon: Spearow
+      spawn_rate: 15
+    - pokemon: Doduo
+      spawn_rate: 15
+    - pokemon: Snorlax
+      spawn_rate: 25
 
 ## Route 17
+- name: Route 17
+  description: Fill in
+  gate_requirement: 5
+  order: 32
+  encounters:
+    - pokemon: Rattata
+      spawn_rate: 5
+    - pokemon: Raticate
+      spawn_rate: 25
+    - pokemon: Spearow
+      spawn_rate: 30
+    - pokemon: Doduo
+      spawn_rate: 35
+    - pokemon: Fearow
+      spawn_rate: 5
 
-## Route 16
+- name: Route 18
+  description: Fill in
+  gate_requirement: 5
+  order: 33
+  encounters:
+    - pokemon: Lickitung
+      spawn_rate: 100
+      ## Requires Golduck or Slowbrow
 
-## Fighting Dojo
+- name: Fighting Dojo
+  description: Fill in
+  gate_requirement: 5
+  order: 34
+  encounters:
+    - pokemon: Hitmonchan
+      spawn_rate: 50
+    - pokemon: Hitmonlee
+      spawn_rate: 50
 
-## Power Plant
+- name: Power Plant
+  description: Fill in
+  gate_requirement: 5
+  order: 35
+  encounters:
+    - pokemon: Magnemite
+      spawn_rate: 25
+    - pokemon: Voltorb
+      spawn_rate: 25
+    - pokemon: Pikachu
+      spawn_rate: 25
+    - pokemon: Magneton
+      spawn_rate: 10
+    - pokemon: Electabuzz
+      spawn_rate: 10
+    - pokemon: Zapdos
+      spawn_rate: 5
 
 ## Saffron Gym  - Gate 6
 
