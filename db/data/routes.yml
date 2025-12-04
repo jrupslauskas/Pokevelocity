@@ -635,18 +635,135 @@
 
 ## Cinnabar Gym - Gate 7
 
-## Sevii Islands? Island 1, 2, 3?
+- name: Sevii Islands - One Island, Treasure Beach
+  description: Fill in
+  gate_requirement: 7
+  order: 42
+  encounters:
+    - pokemon: Spearow
+      spawn_rate: 25
+    - pokemon: Fearow
+      spawn_rate: 20
+    - pokemon: Meowoth
+      spawn_rate: 10
+    - pokemon: Persian
+      spawn_rate: 5
+    - pokemon: Tangela
+      spawn_rate: 30
+    - pokemon: Psyduck
+      spawn_rate: 5
+    - pokemon: Slowpoke
+      spawn_rate: 5
 
-## Route 21
+- name: Sevii Islands - One Island, Kindle Road
+  description: Fill in
+  gate_requirement: 7
+  order: 43
+  encounters:
+    - pokemon: Ponyta
+      spawn_rate: 30
+    - pokemon: Rapidash
+      spawn_rate: 5
+    - pokemon: Meowoth
+      spawn_rate: 10
+    - pokemon: Persian
+      spawn_rate: 5
+    - pokemon: Psyduck
+      spawn_rate: 10
+    - pokemon: Slowpoke
+      spawn_rate: 10
+    - pokemon: Geodude
+      spawn_rate: 30
+
+- name: Sevii Islands - One Island, Mount Ember
+  description: Fill in
+  gate_requirement: 7
+  order: 44
+  encounters:
+    - pokemon: Ponyta
+      spawn_rate: 20
+    - pokemon: Rapidash
+      spawn_rate: 10
+    - pokemon: Machop
+      spawn_rate: 20
+    - pokemon: Magmar
+      spawn_rate: 10
+    - pokemon: Geodude
+      spawn_rate: 20
+    - pokemon: Graveler
+      spawn_rate: 10
+    - pokemon: Moltres
+      spawn_rate: 10
+
+- name: Route 21
+  description: Fill in
+  gate_requirement: 7
+  order: 45
+  encounters:
+    - pokemon: Tangela
+      spawn_rate: 100
 
 ## Viridian Gym - Gate 8
 
-## Route 23
+- name: Route 23
+  description: Fill in
+  gate_requirement: 8
+  order: 46
+  encounters:
+    - pokemon: Sandshrew
+      spawn_rate: 30
+    - pokemon: Sandslash
+      spawn_rate: 10
+    - pokemon: Mankey
+      spawn_rate: 20
+    - pokemon: Primeape
+      spawn_rate: 10
+    - pokemon: Ekans
+      spawn_rate: 20
+    - pokemon: Arbok
+      spawn_rate: 10
 
-## Victory Road
+- name: Victory Road
+  description: Fill in
+  gate_requirement: 8
+  order: 47
+  encounters:
+    - pokemon: Onix
+      spawn_rate: 20
+    - pokemon: Machop
+      spawn_rate: 20
+    - pokemon: Machoke
+      spawn_rate: 10
+    - pokemon: Primeape
+      spawn_rate: 10
+    - pokemon: Arbok
+      spawn_rate: 10
+    - pokemon: Golbat
+      spawn_rate: 20
+    - pokemon: Marowak
+      spawn_rate: 10
 
-## Indigo Plateau Gate?
-
-## Sevii Island - Islands 4 5 6 7?
+## Add another gate
 
 ## Cerulean Cave
+- name: Cerulean Cave
+  description: Fill in
+  gate_requirement: 9
+  order: 48
+  encounters:
+    - pokemon: Parasect
+      spawn_rate: 20
+    - pokemon: Magneton
+      spawn_rate: 20
+    - pokemon: Ditto
+      spawn_rate: 10
+    - pokemon: Rhydon
+      spawn_rate: 10
+    - pokemon: Electrode
+      spawn_rate: 20
+    - pokemon: Kadabra
+      spawn_rate: 10
+    - pokemon: Mewtwo
+      spawn_rate: 10
+
+      ## Where to add mew?
