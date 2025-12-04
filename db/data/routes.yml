@@ -12,7 +12,7 @@
 # To see updates, run: bin/rails db:seed
 
 - name: Pallet Town
-  description: MAKE SURE TO NOTE THAT ONLY ONE CAN BE CAUGHT
+  description: Note to developer - Make sure to update so only one can be caught
   gate_requirement: null
   order: 1
   encounters:
@@ -532,32 +532,106 @@
     - pokemon: Voltorb
       spawn_rate: 25
     - pokemon: Pikachu
-      spawn_rate: 25
+      spawn_rate: 20
     - pokemon: Magneton
       spawn_rate: 10
     - pokemon: Electabuzz
       spawn_rate: 10
     - pokemon: Zapdos
-      spawn_rate: 5
+      spawn_rate: 10
 
 ## Saffron Gym  - Gate 6
 
-## Route 19
+- name: Route 19
+  description: Fill in
+  gate_requirement: 6
+  order: 36
+  encounters:
+    - pokemon: Ratatta
+      spawn_rate: 100
+    ## ^^^ is inaccurate, surf and fish only
+    # Surf
+    # Fishing
 
-## Route 20
+- name: Route 20
+  description: Fill in
+  gate_requirement: 6
+  order: 37
+  encounters:
+    - pokemon: Ratatta
+      spawn_rate: 100
+    ## ^^^ is inaccurate, surf and fish only
+    # Surf
+    # Fishing
 
-## Seafoam Islands
+- name: Seafoam Islands - Floor 1
+  description: Fill in
+  gate_requirement: 6
+  order: 38
+  encounters:
+    - pokemon: Psyduck
+      spawn_rate: 35
+    - pokemon: Golduck
+      spawn_rate: 20
+    - pokemon: Zubat
+      spawn_rate: 35
+    - pokemon: Golbat
+      spawn_rate: 10
 
-## Cinnabar Island - Pokemon Lab
-  ## Trades
-    ## Electrode requires Raichu
-    ## Tangela requires Venonat
-    ## Seel requires Ponyta
-    ## Kabuto
-    ## Omanyte
-    ## Aerodactyl
+- name: Seafoam Islands - Floor 2
+  description: Fill in
+  gate_requirement: 6
+  order: 39
+  encounters:
+    - pokemon: Slowpoke
+      spawn_rate: 30
+    - pokemon: Slowbro
+      spawn_rate: 15
+    - pokemon: Seel
+      spawn_rate: 30
+    - pokemon: Dewgong
+      spawn_rate: 15
+    - pokemon: Articuno
+      spawn_rate: 10
 
-## Pokémon Mansion
+- name: Cinnabar Island - Pokemon Lab
+  description: Fill in
+  gate_requirement: 6
+  order: 40
+  encounters:
+    - pokemon: Electrode
+      spawn_rate: 20
+      ## Requires Raichu
+    - pokemon: Tangela
+      spawn_rate: 20
+      ## Requires Venonat
+    - pokemon: Seel
+      spawn_rate: 20
+      ## Requires Ponyta
+    - pokemon: Kabuto
+      spawn_rate: 15
+    - pokemon: Omanyte
+      spawn_rate: 15
+    - pokemon: Aerodactyl
+      spawn_rate: 10
+
+- name: Pokemon Mansion
+  description: Fill in
+  gate_requirement: 6
+  order: 41
+  encounters:
+    - pokemon: Growlithe
+      spawn_rate: 15
+    - pokemon: Vulpix
+      spawn_rate: 15
+    - pokemon: Grimer
+      spawn_rate: 25
+    - pokemon: Muck
+      spawn_rate: 10
+    - pokemon: Koffing
+      spawn_rate: 25
+    - pokemon: Wheezing
+      spawn_rate: 10
 
 ## Cinnabar Gym - Gate 7
 
