@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_20_030200) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_24_003041) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -54,6 +54,25 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_20_030200) do
     t.index ["trainer_id"], name: "index_captures_on_trainer_id"
   end
 
+  create_table "gate_unlocks", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "gate_id", null: false
+    t.bigint "trainer_id", null: false
+    t.datetime "unlocked_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["gate_id"], name: "index_gate_unlocks_on_gate_id"
+    t.index ["trainer_id", "gate_id"], name: "index_gate_unlocks_on_trainer_id_and_gate_id", unique: true
+    t.index ["trainer_id"], name: "index_gate_unlocks_on_trainer_id"
+  end
+
+  create_table "gates", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "gate_number", null: false
+    t.integer "required_difficulty_score", null: false
+    t.datetime "updated_at", null: false
+    t.index ["gate_number"], name: "index_gates_on_gate_number", unique: true
+  end
+
   create_table "pokemons", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "difficulty", default: 3, null: false
@@ -61,6 +80,24 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_20_030200) do
     t.integer "pokedex_number", null: false
     t.datetime "updated_at", null: false
     t.index ["pokedex_number"], name: "index_pokemons_on_pokedex_number", unique: true
+  end
+
+  create_table "route_encounters", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "pokemon_id", null: false
+    t.bigint "route_id", null: false
+    t.integer "spawn_rate"
+    t.datetime "updated_at", null: false
+    t.index ["pokemon_id"], name: "index_route_encounters_on_pokemon_id"
+    t.index ["route_id"], name: "index_route_encounters_on_route_id"
+  end
+
+  create_table "routes", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "gate_requirement"
+    t.integer "order", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order"], name: "index_routes_on_order", unique: true
   end
 
   create_table "trainers", force: :cascade do |t|
@@ -86,4 +123,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_20_030200) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "captures", "pokemons"
   add_foreign_key "captures", "trainers"
+  add_foreign_key "gate_unlocks", "gates"
+  add_foreign_key "gate_unlocks", "trainers"
+  add_foreign_key "route_encounters", "pokemons"
+  add_foreign_key "route_encounters", "routes"
 end

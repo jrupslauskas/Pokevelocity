@@ -1,0 +1,91 @@
+# Gate definitions for route progression system
+#
+# gate_number: Sequential order (0-8)
+# name: Display name of the gate
+# description: Flavor text
+# required_difficulty_score: Cumulative difficulty points needed to unlock
+# sprite_type: "emoji" or "gym_leader"
+# sprite_value: emoji character or gym leader sprite filename
+#
+# Difficulty scores are cumulative - catching more difficult Pokemon
+# (higher difficulty rating) earns more points toward unlocking gates.
+
+# Gate 0: Professor Oak (requires catching starter)
+- gate_number: 0
+  name: "Professor Oak - Let Your Adventure Begin!"
+  description: "Catch your starter Pokémon from Professor Oak before venturing out!"
+  required_difficulty_score: 2
+  sprite_type: "gym_leader"
+  sprite_value: "oak"
+
+# Gate 1: Pewter City Gym - Brock
+- gate_number: 1
+  name: "Pewter City Gym - Boulder Badge"
+  description: "Brock - The Rock-Solid Pokémon Trainer!"
+  required_difficulty_score: 8
+  sprite_type: "gym_leader"
+  sprite_value: "brock"
+
+# Gate 2: Cerulean City Gym - Misty
+- gate_number: 2
+  name: "Cerulean City Gym - Cascade Badge"
+  description: "Misty - Making Waves in Every Battle!"
+  required_difficulty_score: 17
+  sprite_type: "gym_leader"
+  sprite_value: "misty"
+
+# Gate 3: Vermillion City Gym - Lt. Surge
+- gate_number: 3
+  name: "Vermillion City Gym - Thunder Badge"
+  description: "Lt. Surge - Amping Up the Action!"
+  required_difficulty_score: 25
+  sprite_type: "gym_leader"
+  sprite_value: "ltsurge"
+
+# Gate 4: Celadon City Gym - Erika
+- gate_number: 4
+  name: "Celadon City Gym - Rainbow Badge"
+  description: "Erika - The Blooming Beauty of Battle!"
+  required_difficulty_score: 32
+  sprite_type: "gym_leader"
+  sprite_value: "erika"
+
+# Gate 5: Fuchsia City Gym - Koga
+- gate_number: 5
+  name: "Fuchsia City Gym - Soul Badge"
+  description: "Koga - The Toxic Ninja Master!"
+  required_difficulty_score: 40
+  sprite_type: "gym_leader"
+  sprite_value: "koga"
+
+# Gate 6: Saffron City Gym - Sabrina
+- gate_number: 6
+  name: "Saffron City Gym - Marsh Badge"
+  description: "Sabrina - The Mind-Bending Master!"
+  required_difficulty_score: 48
+  sprite_type: "gym_leader"
+  sprite_value: "sabrina"
+
+# Gate 7: Cinnabar Island Gym - Blaine
+- gate_number: 7
+  name: "Cinnabar Island Gym - Volcano Badge"
+  description: "Blaine - The Hotheaded Quiz Master"
+  required_difficulty_score: 55
+  sprite_type: "gym_leader"
+  sprite_value: "blaine"
+
+# Gate 8: Viridian City Gym - Giovanni
+- gate_number: 8
+  name: "Viridian City Gym - Earth Badge"
+  description: "Giovanni - The Earth-Shaking Boss of Power!"
+  required_difficulty_score: 62
+  sprite_type: "gym_leader"
+  sprite_value: "giovanni"
+
+# Gate 9: Elite 4 - The Final Challenge
+- gate_number: 9
+  name: "Elite 4 - The Final Challenge"
+  description: "The Elite Four - The Final Challenge Awaits"
+  required_difficulty_score: 75
+  sprite_type: "gym_leader"
+  sprite_value: "lance"

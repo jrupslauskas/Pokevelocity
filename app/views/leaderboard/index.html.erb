@@ -3,7 +3,7 @@
 
   <main class="main-content">
     <header class="page-header-authenticated">
-      <h1>Indigo Plateau</h1>
+      <h1>Indigo Plateau Leaderboard</h1>
       <p>Who is the very best?</p>
     </header>
 
@@ -33,10 +33,6 @@
               image_path = "trainerSprites/gymLeaders/#{image_filename}.png"
             %>
             <%= image_tag image_path, alt: slot[:title], class: "rank-icon" %>
-          </div>
-
-          <div class="leaderboard-title">
-            <span class="title-badge"><%= slot[:title] %></span>
           </div>
 
           <% if trainers && trainers.length > 1 %>

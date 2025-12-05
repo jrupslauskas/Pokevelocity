@@ -15,7 +15,7 @@ class LeaderboardControllerTest < ActionDispatch::IntegrationTest
     log_in_as(trainers(:ash))
     get leaderboard_path
     assert_response :success
-    assert_select "h1", "Indigo Plateau"
+    assert_select "h1", "Indigo Plateau Leaderboard"
   end
 
   # ================================================================================

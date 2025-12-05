@@ -4,6 +4,8 @@ class Trainer < ApplicationRecord
   has_many :captures, dependent: :destroy
   has_many :captured_pokemon, through: :captures, source: :pokemon
   belongs_to :icon_pokemon, class_name: "Pokemon", optional: true
+  has_many :gate_unlocks, dependent: :destroy
+  has_many :unlocked_gates, through: :gate_unlocks, source: :gate
 
   validates :username, presence: true, uniqueness: true
   validates :password, presence: true, length: { minimum: 1 }, if: :password_required?
@@ -61,6 +63,50 @@ class Trainer < ApplicationRecord
       pokemon_count: captured_pokemon.count,
       difficulty_score: difficulty_score
     }
+  end
+
+  # Check if trainer has unlocked a specific gate
+  # @param gate [Gate] the gate to check
+  # @return [Boolean] true if unlocked
+  def has_unlocked_gate?(gate)
+    unlocked_gates.exists?(id: gate.id)
+  end
+
+  # Unlock a gate for this trainer if they meet the requirement
+  # @param gate [Gate] the gate to unlock
+  # @return [GateUnlock, nil] the unlock record or nil if requirement not met
+  def unlock_gate!(gate)
+    return nil if has_unlocked_gate?(gate)
+    return nil unless gate.requirement_met_for?(self)
+
+    gate_unlocks.create!(gate: gate, unlocked_at: Time.current)
+  end
+
+  # Get the next locked gate that meets or doesn't meet the requirement
+  # @return [Gate, nil] the next gate or nil if all unlocked
+  def next_locked_gate
+    Gate.order(:gate_number).find do |gate|
+      !has_unlocked_gate?(gate)
+    end
+  end
+
+  # Auto-unlock all gates that meet the difficulty score requirement
+  # @return [Array<Gate>] array of newly unlocked gates
+  def auto_unlock_gates!
+    newly_unlocked = []
+    Gate.order(:gate_number).each do |gate|
+      next if has_unlocked_gate?(gate)
+      unlock = unlock_gate!(gate)
+      newly_unlocked << gate if unlock
+    end
+    newly_unlocked
+  end
+
+  # Get all routes that are accessible to this trainer (based on unlocked gates)
+  # @return [ActiveRecord::Relation<Route>] accessible routes
+  def accessible_routes
+    unlocked_gate_numbers = unlocked_gates.pluck(:gate_number)
+    Route.where(gate_requirement: unlocked_gate_numbers).order(:order)
   end
 
   private

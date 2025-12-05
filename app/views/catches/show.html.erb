@@ -3,7 +3,7 @@
 
   <main class="main-content">
     <header class="page-header-authenticated">
-      <h1>Catch <%= @pokemon.name.capitalize %></h1>
+      <h1>Wild <%= @pokemon.name.capitalize %> appeared!</h1>
       <p>Select a Pokéball to attempt catching this Pokémon.</p>
     </header>
 
@@ -113,10 +113,20 @@
           </div>
         </button>
       <% end %>
-    </div>
 
-    <div style="text-align: center; margin-top: 32px;">
-      <%= link_to "← Back to Pokémon List", catches_path, class: "link-secondary" %>
+      <%= form_with url: run_from_catch_path(@pokemon), method: :post, local: true do |f| %>
+        <button type="submit" class="pokeball-card run-card">
+          <div class="pokeball-card-icon run-icon">🏃</div>
+          <div class="pokeball-card-content">
+            <h4 class="pokeball-card-name">Run</h4>
+            <p class="pokeball-card-description">Flee from battle</p>
+            <p class="pokeball-card-rate">&nbsp;</p>
+          </div>
+          <div class="pokeball-card-count run-card-footer">
+            <span class="pokeball-count-label">Run</span>
+          </div>
+        </button>
+      <% end %>
     </div>
   </main>
 </div>

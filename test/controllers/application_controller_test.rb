@@ -1,6 +1,24 @@
 require "test_helper"
 
 class ApplicationControllerTest < ActionDispatch::IntegrationTest
+  def setup
+    # Create test gates (display data loaded from YAML)
+    @gate_0 = Gate.create!(
+      gate_number: 0,
+      required_difficulty_score: 0
+    )
+
+    # Create test route with encounters (display data loaded from YAML)
+    @test_route = Route.create!(
+      gate_requirement: 0,
+      order: 1
+    )
+
+    # Add some Pokemon to the test route
+    RouteEncounter.create!(route: @test_route, pokemon: pokemons(:bulbasaur), spawn_rate: 50)
+    RouteEncounter.create!(route: @test_route, pokemon: pokemons(:charmander), spawn_rate: 50)
+  end
+
   # ================================================================================
   # CURRENT_TRAINER HELPER TESTS
   # ================================================================================

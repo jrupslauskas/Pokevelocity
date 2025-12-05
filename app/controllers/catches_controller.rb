@@ -4,36 +4,94 @@ class CatchesController < ApplicationController
   def new
     @trainer = current_trainer
 
-    # Check if there are any Pokemon in the database
-    if Pokemon.count == 0
-      redirect_to dashboard_path, alert: "No Pokémon available yet! Please contact an administrator."
+    # Check if there are any routes in the database
+    if Route.count == 0
+      redirect_to dashboard_path, alert: "No routes available yet! Please contact an administrator."
       return
     end
 
-    # Get all uncaught Pokemon
+    # Auto-unlock gates based on difficulty score
+    newly_unlocked = @trainer.auto_unlock_gates!
+    if newly_unlocked.any?
+      unlock_message = "You unlocked #{newly_unlocked.map(&:name).join(', ')}!"
+      # Preserve existing flash message if present
+      if flash[:notice].present?
+        flash.now[:notice] = "#{flash[:notice]} #{unlock_message}"
+      else
+        flash.now[:notice] = unlock_message
+      end
+    end
+
+    # Get all gates ordered by gate number
+    @gates = Gate.order(:gate_number).includes(:routes)
+
+    # Get next locked gate to show only routes up to that gate
+    @next_locked_gate = @trainer.next_locked_gate
+
+    # Get routes that don't require any gate (null gate_requirement) - always accessible
+    @always_accessible_routes = Route.where(gate_requirement: nil)
+                                     .order(:order)
+                                     .includes(route_encounters: :pokemon)
+
+    # Get accessible routes based on unlocked gates (only up to next locked gate)
+    if @next_locked_gate
+      # Show routes up to (but not including) the next locked gate
+      accessible_gate_numbers = @trainer.unlocked_gates.pluck(:gate_number)
+      @gated_routes = Route.where(gate_requirement: accessible_gate_numbers)
+                           .order(:order)
+                           .includes(route_encounters: :pokemon)
+    else
+      # All gates unlocked, show all gated routes
+      @gated_routes = Route.where.not(gate_requirement: nil)
+                           .order(:order)
+                           .includes(route_encounters: :pokemon)
+    end
+
+    # For each route, filter out Pokemon the trainer has already caught
+    @route_available_pokemon = {}
     caught_ids = @trainer.captured_pokemon.pluck(:id)
-    @uncaught_pokemon = Pokemon.where.not(id: caught_ids).order(:pokedex_number)
-
-    # Check if all Pokemon are caught
-    if @uncaught_pokemon.empty?
-      redirect_to pokedex_path, notice: "Congratulations! You've caught all 151 Pokemon!"
-      return
+    (@always_accessible_routes + @gated_routes).each do |route|
+      available_pokemon = route.pokemon.where.not(id: caught_ids)
+      @route_available_pokemon[route.id] = available_pokemon
     end
-
-    # Get total trainer count
-    @total_trainers = Trainer.count
-
-    # Get count of trainers who have caught each Pokemon (to avoid N+1 queries)
-    @pokemon_trainer_counts = Capture
-      .where(pokemon_id: @uncaught_pokemon.pluck(:id))
-      .group(:pokemon_id)
-      .count
 
     # Check if trainer has any pokeballs (show message but don't redirect)
-    # Only show this message if there isn't already a flash message (e.g., from a failed catch)
-    if @trainer.total_pokeballs == 0 && flash[:alert].nil?
+    # Only show this message if there isn't already a flash message
+    if @trainer.total_pokeballs == 0 && flash[:alert].nil? && flash[:notice].nil?
       flash.now[:alert] = "You don't have any Pokéballs! Complete tickets to earn some."
     end
+  end
+
+  def adventure
+    @trainer = current_trainer
+    route = Route.find(params[:id])
+
+    # Get uncaught Pokemon on this route
+    caught_ids = @trainer.captured_pokemon.pluck(:id)
+    available_encounters = route.route_encounters.where.not(pokemon_id: caught_ids)
+
+    if available_encounters.empty?
+      redirect_to catches_path, notice: "You've caught all the Pokémon on this route!"
+      return
+    end
+
+    # Calculate total weight from available encounters only
+    total_weight = available_encounters.sum(:spawn_rate)
+    random_value = rand(1..total_weight)
+
+    # Find which Pokemon was encountered
+    cumulative_weight = 0
+    encountered_pokemon = nil
+    available_encounters.includes(:pokemon).each do |encounter|
+      cumulative_weight += encounter.spawn_rate
+      if random_value <= cumulative_weight
+        encountered_pokemon = encounter.pokemon
+        break
+      end
+    end
+
+    # Redirect to the encounter page for this Pokemon
+    redirect_to catch_path(encountered_pokemon)
   end
 
   def show
@@ -67,8 +125,16 @@ class CatchesController < ApplicationController
 
     if result[:success]
       if result[:caught]
-        # Successfully caught the Pokemon
-        redirect_to pokedex_path, notice: "Success! You caught #{@pokemon.name} (##{@pokemon.pokedex_number}) with a #{result[:ball_type].humanize}!"
+        # Auto-unlock gates after catching (difficulty score increased)
+        newly_unlocked = @trainer.auto_unlock_gates!
+
+        # Build success message
+        message = "Success! You caught #{@pokemon.name} (##{@pokemon.pokedex_number}) with a #{result[:ball_type].humanize}!"
+        if newly_unlocked.any?
+          message += " You unlocked #{newly_unlocked.map(&:name).join(', ')}!"
+        end
+
+        redirect_to pokedex_path, notice: message
       else
         # Pokemon broke free
         redirect_to catches_path, alert: result[:message]
@@ -77,5 +143,9 @@ class CatchesController < ApplicationController
       # Error occurred (no balls, already caught, etc.)
       redirect_to catch_path(@pokemon), alert: result[:error]
     end
+  end
+
+  def run
+    redirect_to catches_path, notice: "Got Away Safely"
   end
 end
