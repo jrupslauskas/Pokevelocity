@@ -333,7 +333,7 @@
       spawn_rate: 15
     - pokemon: Dratini
       spawn_rate: 15
-    - pokemon: Pincir
+    - pokemon: Pinsir
       spawn_rate: 15
     - pokemon: Scyther
       spawn_rate: 15
@@ -547,7 +547,7 @@
   gate_requirement: 6
   order: 36
   encounters:
-    - pokemon: Ratatta
+    - pokemon: Rattata
       spawn_rate: 100
     ## ^^^ is inaccurate, surf and fish only
     # Surf
@@ -558,7 +558,7 @@
   gate_requirement: 6
   order: 37
   encounters:
-    - pokemon: Ratatta
+    - pokemon: Rattata
       spawn_rate: 100
     ## ^^^ is inaccurate, surf and fish only
     # Surf
@@ -626,11 +626,11 @@
       spawn_rate: 15
     - pokemon: Grimer
       spawn_rate: 25
-    - pokemon: Muck
+    - pokemon: Muk
       spawn_rate: 10
     - pokemon: Koffing
       spawn_rate: 25
-    - pokemon: Wheezing
+    - pokemon: Weezing
       spawn_rate: 10
 
 ## Cinnabar Gym - Gate 7
@@ -644,7 +644,7 @@
       spawn_rate: 25
     - pokemon: Fearow
       spawn_rate: 20
-    - pokemon: Meowoth
+    - pokemon: Meowth
       spawn_rate: 10
     - pokemon: Persian
       spawn_rate: 5
@@ -664,7 +664,7 @@
       spawn_rate: 30
     - pokemon: Rapidash
       spawn_rate: 5
-    - pokemon: Meowoth
+    - pokemon: Meowth
       spawn_rate: 10
     - pokemon: Persian
       spawn_rate: 5
