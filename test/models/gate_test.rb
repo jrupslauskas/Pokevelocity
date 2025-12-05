@@ -36,17 +36,17 @@ class GateTest < ActiveSupport::TestCase
     assert_includes @gate.errors[:gate_number], "must be an integer"
   end
 
-  test "gate_number should be between 0 and 8" do
+  test "gate_number should be between 0 and 9" do
     @gate.gate_number = -1
     assert_not @gate.valid?
 
-    @gate.gate_number = 9
+    @gate.gate_number = 10
     assert_not @gate.valid?
 
     @gate.gate_number = 0
     assert @gate.valid?
 
-    @gate.gate_number = 8
+    @gate.gate_number = 9
     assert @gate.valid?
   end
 
@@ -133,13 +133,13 @@ class GateTest < ActiveSupport::TestCase
   test "gates_data should be loaded from YAML" do
     assert_not_nil Gate.gates_data
     assert_instance_of Array, Gate.gates_data
-    assert_equal 9, Gate.gates_data.count
+    assert_equal 10, Gate.gates_data.count
   end
 
   test "data_for should return gate data for given gate_number" do
     data = Gate.data_for(0)
     assert_not_nil data
-    assert_equal "Professor Oak", data["name"]
+    assert_equal "Professor Oak - Let Your Adventure Begin!", data["name"]
     assert_equal 2, data["required_difficulty_score"]
   end
 

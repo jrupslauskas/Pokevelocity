@@ -484,7 +484,7 @@
     - pokemon: Doduo
       spawn_rate: 15
     - pokemon: Snorlax
-      spawn_rate: 25
+      spawn_rate: 35
 
 ## Route 17
 - name: Route 17

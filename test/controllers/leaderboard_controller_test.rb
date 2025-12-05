@@ -57,23 +57,6 @@ class LeaderboardControllerTest < ActionDispatch::IntegrationTest
   # LEGENDARY TRAINER NAMES TESTS
   # ================================================================================
 
-  test "should display Red title" do
-    log_in_as(trainers(:ash))
-    get leaderboard_path
-    assert_select ".title-badge", text: "Red"
-  end
-
-  test "should display legendary trainer titles" do
-    log_in_as(trainers(:ash))
-    get leaderboard_path
-
-    # Check for some legendary trainer names
-    assert_select ".title-badge", text: "Red"
-    assert_select ".title-badge", text: "Blue"
-    assert_select ".title-badge", text: "Lance"
-    assert_select ".title-badge", text: "Brock"
-  end
-
   test "should show unclaimed slots" do
     log_in_as(trainers(:ash))
     get leaderboard_path

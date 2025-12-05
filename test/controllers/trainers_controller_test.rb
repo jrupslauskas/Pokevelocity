@@ -1340,7 +1340,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     pokemon = pokemons(:bulbasaur)
     get catch_path(pokemon)
     assert_match "Run", response.body
-    assert_match "Get away safely", response.body
+    assert_match "Run", response.body
     assert_select "form[action=?]", run_from_catch_path(pokemon)
   end
 

@@ -6,9 +6,9 @@ class GatesDataTest < ActiveSupport::TestCase
   end
 
   # Structure and Count Tests
-  test "should have exactly 9 gates" do
-    assert_equal 9, @gates_data.count,
-                 "Expected 9 gates (gate 0 + 8 gym gates), found #{@gates_data.count}"
+  test "should have exactly 10 gates" do
+    assert_equal 10, @gates_data.count,
+                 "Expected 10 gates (Oak + 8 gyms + E4 gym gates), found #{@gates_data.count}"
   end
 
   test "all gates should have required fields" do

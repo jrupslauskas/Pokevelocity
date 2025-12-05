@@ -20,7 +20,7 @@ docker compose up
 This will:
 - Start a PostgreSQL database
 - Build and start the Rails application
-- Create the database and run migrations
+- Create the database and load the schema
 - Seed the database with all 151 Pokémon, routes, and the PALLET activation code
 - Make the app available at http://localhost:3000
 
@@ -43,3 +43,36 @@ If you prefer to run the app locally without Docker:
 3. Install dependencies: `bundle install`
 4. Set up the database: `rails db:setup`
 5. Run the server: `rails server`
+
+## Development
+
+### Database Changes
+
+This project uses **direct schema editing** instead of migrations (since there's no production environment yet).
+
+**To modify the database:**
+
+1. Edit `db/schema.rb` directly
+2. Run `rails db:reset` to apply changes (drops DB, loads schema, runs seeds)
+
+**Example: Adding a new column**
+
+```ruby
+# In db/schema.rb, find the table and add your column:
+create_table "trainers" do |t|
+  t.string "username", null: false
+  t.boolean "has_surf", default: false  # New column
+  # ... rest of columns
+end
+```
+
+Then apply:
+```bash
+rails db:reset
+```
+
+**Alternative commands:**
+- `rails db:schema:load` - Reload schema without dropping data (faster but risky)
+- `rails db:seed` - Re-run seeds without touching schema
+
+**Note:** When this app is eventually deployed to production, we'll switch to using migrations for incremental database changes.

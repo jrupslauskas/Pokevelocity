@@ -1,16 +1,20 @@
-# This file is auto-generated from the current state of the database. Instead
-# of editing this file, please use the migrations feature of Active Record to
-# incrementally modify your database, and then regenerate this schema definition.
+# DATABASE SCHEMA
 #
-# This file is the source Rails uses to define your schema when running `bin/rails
-# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
-# be faster and is potentially less error prone than running all of your
-# migrations from scratch. Old migrations may fail to apply correctly if those
-# migrations use external dependencies or application code.
+# This project uses direct schema editing instead of migrations (no production environment).
 #
-# It's strongly recommended that you check this file into your version control system.
+# WORKFLOW:
+# 1. Edit this file directly to modify the database structure
+# 2. Run `rails db:reset` to apply changes (drops DB, loads schema, runs seeds)
+# 3. Alternative: `rails db:schema:load` to reload schema without dropping data
+#
+# ADDING/MODIFYING TABLES:
+# - Just edit the create_table blocks below
+# - Add/remove/modify columns as needed
+# - Rails will handle the rest when you run db:reset
+#
+# FUTURE: When deploying to production, start using migrations for incremental changes.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_24_003041) do
+ActiveRecord::Schema[8.1].define(version: 0) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
