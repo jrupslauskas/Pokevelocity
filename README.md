@@ -11,7 +11,7 @@ Upon spin up, the user activation code will be PALLET but you're encouraged to c
 
 ### Option 1: Docker Compose (Recommended for Easy Setup)
 
-The easiest way to get started is with Docker Compose, which will set up everything for you (make sure you have Docker Desktop running):
+The easiest way to get started is with Docker Compose, which will set up everything for you (make sure you have Docker daemon running):
 
 ```bash
 docker compose up
@@ -44,35 +44,6 @@ If you prefer to run the app locally without Docker:
 4. Set up the database: `rails db:setup`
 5. Run the server: `rails server`
 
-## Development
-
-### Database Changes
-
-This project uses **direct schema editing** instead of migrations (since there's no production environment yet).
-
-**To modify the database:**
-
-1. Edit `db/schema.rb` directly
-2. Run `rails db:reset` to apply changes (drops DB, loads schema, runs seeds)
-
-**Example: Adding a new column**
-
-```ruby
-# In db/schema.rb, find the table and add your column:
-create_table "trainers" do |t|
-  t.string "username", null: false
-  t.boolean "has_surf", default: false  # New column
-  # ... rest of columns
-end
-```
-
-Then apply:
-```bash
-rails db:reset
-```
-
-**Alternative commands:**
-- `rails db:schema:load` - Reload schema without dropping data (faster but risky)
-- `rails db:seed` - Re-run seeds without touching schema
-
-**Note:** When this app is eventually deployed to production, we'll switch to using migrations for incremental database changes.
+**Note:** This is an unofficial fan project and isn’t associated with Nintendo or The Pokémon Company in any way. 
+It’s simply my way of celebrating the nostalgia I have for the original Pokemon games and sharing something fun with the developer community. 
+This project is strictly and entirely non-commercial — I haven’t, can’t, and won’t accept any form of payment for it.

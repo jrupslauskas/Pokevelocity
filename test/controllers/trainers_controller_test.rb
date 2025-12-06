@@ -1483,6 +1483,14 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     assert_equal "You must be logged in to access this page", flash[:alert]
   end
 
+  test "should handle POST to dashboard by redirecting to GET dashboard" do
+    log_in_as(trainers(:ash))
+    post dashboard_path
+    assert_redirected_to dashboard_path
+    follow_redirect!
+    assert_response :success
+  end
+
   test "should display trainer username on dashboard" do
     trainer = trainers(:ash)
     log_in_as(trainer)
@@ -1516,13 +1524,6 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     log_in_as(trainer)
     get dashboard_path
     assert_match trainer.ball_count(:master_ball).to_s, response.body
-  end
-
-  test "should display total pokeballs on dashboard" do
-    trainer = trainers(:ash)
-    log_in_as(trainer)
-    get dashboard_path
-    assert_match trainer.total_pokeballs.to_s, response.body
   end
 
   test "should display capture count on dashboard" do
@@ -1595,7 +1596,8 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
   test "should display pokeball inventory section" do
     log_in_as(trainers(:ash))
     get dashboard_path
-    assert_match "Pokéball Inventory", response.body
+    assert_match "Inventory", response.body
+    assert_match "Pokéballs", response.body  # Subsection title
   end
 
   test "should display pokedex progress section" do

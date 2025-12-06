@@ -27,3 +27,7 @@ water_stone:
 thunder_stone:
   key: thunder_stone
   item_type: evolution_stone
+
+evolution_stone:
+  key: evolution_stone
+  item_type: evolution_stone

@@ -147,6 +147,30 @@ body > div:not(.app-layout) {
   color: #2C5F2D;
 }
 
+.inventory-subsection-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #5FA777;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 16px;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #E8DCC8;
+}
+
+.inventory-subsection-title:first-of-type {
+  margin-top: 0;
+}
+
+.inventory-empty {
+  text-align: center;
+  padding: 24px;
+  color: #888;
+  font-style: italic;
+  font-size: 14px;
+}
+
 .inventory-total {
   margin-top: 16px;
   padding-top: 16px;

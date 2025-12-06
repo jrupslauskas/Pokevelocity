@@ -8,49 +8,59 @@
     </header>
 
     <div class="dashboard-grid">
-      <!-- Pokéballs Inventory Card -->
+      <!-- Inventory Card -->
       <div class="card-dashboard">
         <div class="card-dashboard-header">
           <span class="card-dashboard-icon">🎒</span>
-          <h2 class="card-dashboard-title">Pokéball Inventory</h2>
+          <h2 class="card-dashboard-title">Inventory</h2>
         </div>
 
-        <div class="inventory-item">
-          <span class="inventory-item-label">
-            <%= image_tag "icons/pokeball_shop.png", alt: "Pokeball", class: "inventory-icon" %>
-            Pokéballs
-          </span>
-          <span class="inventory-item-count"><%= @trainer.ball_count(:pokeball) %></span>
-        </div>
+        <!-- Pokéballs Section -->
+        <% if @pokeball_items.any? %>
+          <h3 class="inventory-subsection-title">Pokéballs</h3>
+          <% @pokeball_items.each do |item_data| %>
+            <div class="inventory-item">
+              <span class="inventory-item-label">
+                <%= image_tag "icons/#{item_data[:item].sprite}", alt: item_data[:item].name, class: "inventory-icon" %>
+                <%= item_data[:item].name %>
+              </span>
+              <span class="inventory-item-count"><%= item_data[:quantity] %></span>
+            </div>
+          <% end %>
+        <% end %>
 
-        <div class="inventory-item">
-          <span class="inventory-item-label">
-            <%= image_tag "icons/greatball.png", alt: "Great Ball", class: "inventory-icon" %>
-            Great Balls
-          </span>
-          <span class="inventory-item-count"><%= @trainer.ball_count(:great_ball) %></span>
-        </div>
+        <!-- Evolution Items Section -->
+        <% if @evolution_items.any? %>
+          <h3 class="inventory-subsection-title">Evolution Items</h3>
+          <% @evolution_items.each do |item_data| %>
+            <div class="inventory-item">
+              <span class="inventory-item-label">
+                <%= image_tag "icons/#{item_data[:item].sprite}", alt: item_data[:item].name, class: "inventory-icon" %>
+                <%= item_data[:item].name %>
+              </span>
+              <span class="inventory-item-count"><%= item_data[:quantity] %></span>
+            </div>
+          <% end %>
+        <% end %>
 
-        <div class="inventory-item">
-          <span class="inventory-item-label">
-            <%= image_tag "icons/ultraball.jpg", alt: "Ultra Ball", class: "inventory-icon" %>
-            Ultra Balls
-          </span>
-          <span class="inventory-item-count"><%= @trainer.ball_count(:ultra_ball) %></span>
-        </div>
+        <!-- Adventure Items Section -->
+        <% if @adventure_items.any? %>
+          <h3 class="inventory-subsection-title">Adventure Items</h3>
+          <% @adventure_items.each do |item_data| %>
+            <div class="inventory-item">
+              <span class="inventory-item-label">
+                <%= image_tag "icons/#{item_data[:item].sprite}", alt: item_data[:item].name, class: "inventory-icon" %>
+                <%= item_data[:item].name %>
+              </span>
+              <span class="inventory-item-count"><%= item_data[:quantity] %></span>
+            </div>
+          <% end %>
+        <% end %>
 
-        <div class="inventory-item">
-          <span class="inventory-item-label">
-            <%= image_tag "icons/masterball.png", alt: "Master Ball", class: "inventory-icon" %>
-            Master Balls
-          </span>
-          <span class="inventory-item-count"><%= @trainer.ball_count(:master_ball) %></span>
-        </div>
-
-        <div class="inventory-total">
-          <span class="inventory-total-label">Total Pokéballs</span>
-          <span class="inventory-total-count"><%= @trainer.total_pokeballs %></span>
-        </div>
+        <!-- Empty Inventory Message -->
+        <% if @pokeball_items.empty? && @evolution_items.empty? && @adventure_items.empty? %>
+          <p class="inventory-empty">Your inventory is empty. Complete tickets to earn Pokéballs!</p>
+        <% end %>
       </div>
 
       <!-- Pokédex Overview Card -->

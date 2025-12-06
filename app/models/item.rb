@@ -20,28 +20,28 @@ class Item < ApplicationRecord
       name: 'Poké Ball',
       description: 'A device for catching wild Pokémon. It is designed as a capsule system.',
       item_type: TYPES[:pokeball],
-      sprite: 'pokeball.png'
+      sprite: 'pokeball_shop.png'
     },
     great_ball: {
       key: 'great_ball',
       name: 'Great Ball',
       description: 'A good, high-performance Poké Ball that provides a higher Pokémon catch rate than a standard Poké Ball.',
       item_type: TYPES[:pokeball],
-      sprite: 'great_ball.png'
+      sprite: 'greatball.png'
     },
     ultra_ball: {
       key: 'ultra_ball',
       name: 'Ultra Ball',
       description: 'An ultra-high performance Poké Ball that provides a higher success rate for catching Pokémon than a Great Ball.',
       item_type: TYPES[:pokeball],
-      sprite: 'ultra_ball.png'
+      sprite: 'ultraball.jpg'
     },
     master_ball: {
       key: 'master_ball',
       name: 'Master Ball',
       description: 'The best Poké Ball with the ultimate level of performance. It will catch any wild Pokémon without fail.',
       item_type: TYPES[:pokeball],
-      sprite: 'master_ball.png'
+      sprite: 'masterball.png'
     },
     fire_stone: {
       key: 'fire_stone',
@@ -63,6 +63,13 @@ class Item < ApplicationRecord
       description: 'A peculiar stone that makes certain species of Pokémon evolve. It has a thunderbolt pattern.',
       item_type: TYPES[:evolution_stone],
       sprite: 'thunder_stone.png'
+    },
+    evolution_stone: {
+      key: 'evolution_stone',
+      name: 'Evolution Stone',
+      description: 'A mysterious stone used to evolve most Pokémon',
+      item_type: TYPES[:evolution_stone],
+      sprite: 'evolution_stone.png'
     }
   }.freeze
 
