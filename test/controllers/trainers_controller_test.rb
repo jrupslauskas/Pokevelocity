@@ -969,7 +969,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     log_in_as(trainer)
     pokemon = pokemons(:bulbasaur)
 
-    initial_master_balls = trainer.master_balls_count
+    initial_master_balls = trainer.ball_count(:master_ball)
 
     # Master ball has 100% catch rate
     post catch_path(pokemon), params: { ball_type: "master_ball" }
@@ -979,7 +979,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
 
     trainer.reload
     assert_includes trainer.captured_pokemon, pokemon
-    assert_equal initial_master_balls - 1, trainer.master_balls_count
+    assert_equal initial_master_balls - 1, trainer.ball_count(:master_ball)
   end
 
   test "should use pokeball when attempting catch" do
@@ -987,13 +987,13 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     log_in_as(trainer)
     pokemon = pokemons(:bulbasaur)
 
-    initial_pokeballs = trainer.pokeballs_count
+    initial_pokeballs = trainer.ball_count(:pokeball)
 
     post catch_path(pokemon), params: { ball_type: "pokeball" }
 
     trainer.reload
     # Ball should be used regardless of success
-    assert_equal initial_pokeballs - 1, trainer.pokeballs_count
+    assert_equal initial_pokeballs - 1, trainer.ball_count(:pokeball)
   end
 
   test "should use great ball when attempting catch" do
@@ -1001,12 +1001,12 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     log_in_as(trainer)
     pokemon = pokemons(:bulbasaur)
 
-    initial_great_balls = trainer.great_balls_count
+    initial_great_balls = trainer.ball_count(:great_ball)
 
     post catch_path(pokemon), params: { ball_type: "great_ball" }
 
     trainer.reload
-    assert_equal initial_great_balls - 1, trainer.great_balls_count
+    assert_equal initial_great_balls - 1, trainer.ball_count(:great_ball)
   end
 
   test "should use ultra ball when attempting catch" do
@@ -1014,12 +1014,12 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     log_in_as(trainer)
     pokemon = pokemons(:bulbasaur)
 
-    initial_ultra_balls = trainer.ultra_balls_count
+    initial_ultra_balls = trainer.ball_count(:ultra_ball)
 
     post catch_path(pokemon), params: { ball_type: "ultra_ball" }
 
     trainer.reload
-    assert_equal initial_ultra_balls - 1, trainer.ultra_balls_count
+    assert_equal initial_ultra_balls - 1, trainer.ball_count(:ultra_ball)
   end
 
   test "should not catch pokemon when trainer has no balls" do
@@ -1041,7 +1041,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     log_in_as(trainer)
     pokemon = pokemons(:charmander) # Gary already caught this
 
-    initial_pokeballs = trainer.pokeballs_count
+    initial_pokeballs = trainer.ball_count(:pokeball)
 
     post catch_path(pokemon), params: { ball_type: "pokeball" }
 
@@ -1050,7 +1050,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
 
     trainer.reload
     # Ball should not be used
-    assert_equal initial_pokeballs, trainer.pokeballs_count
+    assert_equal initial_pokeballs, trainer.ball_count(:pokeball)
   end
 
   test "should redirect to login when attempting catch without login" do
@@ -1274,10 +1274,10 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     log_in_as(trainer)
     pokemon = pokemons(:bulbasaur)
     get catch_path(pokemon)
-    assert_match trainer.pokeballs_count.to_s, response.body
-    assert_match trainer.great_balls_count.to_s, response.body
-    assert_match trainer.ultra_balls_count.to_s, response.body
-    assert_match trainer.master_balls_count.to_s, response.body
+    assert_match trainer.ball_count(:pokeball).to_s, response.body
+    assert_match trainer.ball_count(:great_ball).to_s, response.body
+    assert_match trainer.ball_count(:ultra_ball).to_s, response.body
+    assert_match trainer.ball_count(:master_ball).to_s, response.body
   end
 
   test "should display catch rate percentages" do
@@ -1494,28 +1494,28 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
     get dashboard_path
-    assert_match trainer.pokeballs_count.to_s, response.body
+    assert_match trainer.ball_count(:pokeball).to_s, response.body
   end
 
   test "should display great ball count on dashboard" do
     trainer = trainers(:ash)
     log_in_as(trainer)
     get dashboard_path
-    assert_match trainer.great_balls_count.to_s, response.body
+    assert_match trainer.ball_count(:great_ball).to_s, response.body
   end
 
   test "should display ultra ball count on dashboard" do
     trainer = trainers(:ash)
     log_in_as(trainer)
     get dashboard_path
-    assert_match trainer.ultra_balls_count.to_s, response.body
+    assert_match trainer.ball_count(:ultra_ball).to_s, response.body
   end
 
   test "should display master ball count on dashboard" do
     trainer = trainers(:ash)
     log_in_as(trainer)
     get dashboard_path
-    assert_match trainer.master_balls_count.to_s, response.body
+    assert_match trainer.ball_count(:master_ball).to_s, response.body
   end
 
   test "should display total pokeballs on dashboard" do

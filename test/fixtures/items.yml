@@ -1,0 +1,29 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+pokeball:
+  key: pokeball
+  item_type: pokeball
+
+great_ball:
+  key: great_ball
+  item_type: pokeball
+
+ultra_ball:
+  key: ultra_ball
+  item_type: pokeball
+
+master_ball:
+  key: master_ball
+  item_type: pokeball
+
+fire_stone:
+  key: fire_stone
+  item_type: evolution_stone
+
+water_stone:
+  key: water_stone
+  item_type: evolution_stone
+
+thunder_stone:
+  key: thunder_stone
+  item_type: evolution_stone

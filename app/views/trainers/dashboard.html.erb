@@ -20,7 +20,7 @@
             <%= image_tag "icons/pokeball_shop.png", alt: "Pokeball", class: "inventory-icon" %>
             Pokéballs
           </span>
-          <span class="inventory-item-count"><%= @trainer.pokeballs_count %></span>
+          <span class="inventory-item-count"><%= @trainer.ball_count(:pokeball) %></span>
         </div>
 
         <div class="inventory-item">
@@ -28,7 +28,7 @@
             <%= image_tag "icons/greatball.png", alt: "Great Ball", class: "inventory-icon" %>
             Great Balls
           </span>
-          <span class="inventory-item-count"><%= @trainer.great_balls_count %></span>
+          <span class="inventory-item-count"><%= @trainer.ball_count(:great_ball) %></span>
         </div>
 
         <div class="inventory-item">
@@ -36,7 +36,7 @@
             <%= image_tag "icons/ultraball.jpg", alt: "Ultra Ball", class: "inventory-icon" %>
             Ultra Balls
           </span>
-          <span class="inventory-item-count"><%= @trainer.ultra_balls_count %></span>
+          <span class="inventory-item-count"><%= @trainer.ball_count(:ultra_ball) %></span>
         </div>
 
         <div class="inventory-item">
@@ -44,7 +44,7 @@
             <%= image_tag "icons/masterball.png", alt: "Master Ball", class: "inventory-icon" %>
             Master Balls
           </span>
-          <span class="inventory-item-count"><%= @trainer.master_balls_count %></span>
+          <span class="inventory-item-count"><%= @trainer.ball_count(:master_ball) %></span>
         </div>
 
         <div class="inventory-total">

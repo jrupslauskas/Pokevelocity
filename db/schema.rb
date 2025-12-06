@@ -104,14 +104,29 @@ ActiveRecord::Schema[8.1].define(version: 0) do
     t.index ["order"], name: "index_routes_on_order", unique: true
   end
 
+  create_table "items", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "item_type", null: false
+    t.string "key", null: false
+    t.datetime "updated_at", null: false
+    t.index ["key"], name: "index_items_on_key", unique: true
+  end
+
+  create_table "trainer_items", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "item_id", null: false
+    t.integer "quantity", default: 0, null: false
+    t.bigint "trainer_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_trainer_items_on_item_id"
+    t.index ["trainer_id", "item_id"], name: "index_trainer_items_on_trainer_id_and_item_id", unique: true
+    t.index ["trainer_id"], name: "index_trainer_items_on_trainer_id"
+  end
+
   create_table "trainers", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.integer "great_balls_count", default: 0, null: false
     t.integer "icon_pokemon_id"
-    t.integer "master_balls_count", default: 0, null: false
     t.string "password_digest", null: false
-    t.integer "pokeballs_count", default: 0, null: false
-    t.integer "ultra_balls_count", default: 0, null: false
     t.datetime "updated_at", null: false
     t.string "username", null: false
     t.index ["username"], name: "index_trainers_on_username", unique: true
@@ -131,4 +146,6 @@ ActiveRecord::Schema[8.1].define(version: 0) do
   add_foreign_key "gate_unlocks", "trainers"
   add_foreign_key "route_encounters", "pokemons"
   add_foreign_key "route_encounters", "routes"
+  add_foreign_key "trainer_items", "items"
+  add_foreign_key "trainer_items", "trainers"
 end

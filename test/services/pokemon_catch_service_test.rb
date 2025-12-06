@@ -66,57 +66,60 @@ class PokemonCatchServiceTest < ActiveSupport::TestCase
   test "should deduct pokeball after catch attempt" do
     trainer = trainers(:ash)
     pokemon = pokemons(:bulbasaur)
-    initial_count = trainer.pokeballs_count
+    initial_count = trainer.ball_count(:pokeball)
 
     PokemonCatchService.new(trainer, "pokeball", pokemon).catch!
 
     trainer.reload
-    assert_equal initial_count - 1, trainer.pokeballs_count
+    assert_equal initial_count - 1, trainer.ball_count(:pokeball)
   end
 
   test "should deduct great ball after catch attempt" do
     trainer = trainers(:ash)
     pokemon = pokemons(:bulbasaur)
-    initial_count = trainer.great_balls_count
+    initial_count = trainer.ball_count(:great_ball)
 
     PokemonCatchService.new(trainer, "great_ball", pokemon).catch!
 
     trainer.reload
-    assert_equal initial_count - 1, trainer.great_balls_count
+    assert_equal initial_count - 1, trainer.ball_count(:great_ball)
   end
 
   test "should deduct ultra ball after catch attempt" do
     trainer = trainers(:ash)
     pokemon = pokemons(:bulbasaur)
-    initial_count = trainer.ultra_balls_count
+    initial_count = trainer.ball_count(:ultra_ball)
 
     PokemonCatchService.new(trainer, "ultra_ball", pokemon).catch!
 
     trainer.reload
-    assert_equal initial_count - 1, trainer.ultra_balls_count
+    assert_equal initial_count - 1, trainer.ball_count(:ultra_ball)
   end
 
   test "should deduct master ball after catch attempt" do
     trainer = trainers(:ash)
     pokemon = pokemons(:bulbasaur)
-    initial_count = trainer.master_balls_count
+    initial_count = trainer.ball_count(:master_ball)
 
     PokemonCatchService.new(trainer, "master_ball", pokemon).catch!
 
     trainer.reload
-    assert_equal initial_count - 1, trainer.master_balls_count
+    assert_equal initial_count - 1, trainer.ball_count(:master_ball)
   end
 
   test "should deduct ball even if catch fails" do
     trainer = trainers(:ash)
     pokemon = pokemons(:mewtwo) # Difficulty 5, low catch rate with pokeball
-    initial_count = trainer.pokeballs_count
+    initial_count = trainer.ball_count(:pokeball)
 
     # Run multiple attempts, at least one should fail
     results = 10.times.map do
       trainer.reload
-      trainer.pokeballs_count = initial_count # Reset for each attempt
-      trainer.save!
+      # Reset pokeball count for each attempt
+      current_count = trainer.ball_count(:pokeball)
+      if current_count < initial_count
+        trainer.add_item(:pokeball, initial_count - current_count)
+      end
       PokemonCatchService.new(trainer, "pokeball", pokemon).catch!
     end
 

@@ -6,46 +6,51 @@ class Trainer < ApplicationRecord
   belongs_to :icon_pokemon, class_name: "Pokemon", optional: true
   has_many :gate_unlocks, dependent: :destroy
   has_many :unlocked_gates, through: :gate_unlocks, source: :gate
+  has_many :trainer_items, dependent: :destroy
+  has_many :items, through: :trainer_items
 
   validates :username, presence: true, uniqueness: true
   validates :password, presence: true, length: { minimum: 1 }, if: :password_required?
-  validates :pokeballs_count, :great_balls_count, :ultra_balls_count, :master_balls_count,
-            numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
   # Award a pokeball based on story points completed
   def award_pokeball_for_ticket(story_points)
     PokeballRewardService.new(self, story_points).award!
   end
 
+  # ================================================================================
+  # POKEBALL MANAGEMENT (via items system)
+  # ================================================================================
+
   # Get total number of all pokeballs
   def total_pokeballs
-    pokeballs_count + great_balls_count + ultra_balls_count + master_balls_count
+    item_quantity(:pokeball) + item_quantity(:great_ball) +
+    item_quantity(:ultra_ball) + item_quantity(:master_ball)
   end
 
   # Get the count for a specific ball type
-  # @param ball_type [String] "pokeball", "great_ball", "ultra_ball", or "master_ball"
+  # @param ball_type [String, Symbol] :pokeball, :great_ball, :ultra_ball, or :master_ball
   # @return [Integer] the count of that ball type
   def ball_count(ball_type)
-    send("#{ball_type}s_count")
+    item_quantity(ball_type)
   end
 
   # Check if trainer has at least one ball of the given type
-  # @param ball_type [String] "pokeball", "great_ball", "ultra_ball", or "master_ball"
+  # @param ball_type [String, Symbol] :pokeball, :great_ball, :ultra_ball, or :master_ball
   # @return [Boolean] true if count > 0
   def has_ball?(ball_type)
-    ball_count(ball_type) > 0
+    has_item?(ball_type, 1)
   end
 
   # Deduct one ball of the given type and save
-  # @param ball_type [String] "pokeball", "great_ball", "ultra_ball", or "master_ball"
+  # @param ball_type [String, Symbol] :pokeball, :great_ball, :ultra_ball, or :master_ball
   def deduct_ball!(ball_type)
-    decrement!("#{ball_type}s_count", 1)
+    remove_item(ball_type, 1)
   end
 
   # Add one ball of the given type and save
-  # @param ball_type [String] "pokeball", "great_ball", "ultra_ball", or "master_ball"
+  # @param ball_type [String, Symbol] :pokeball, :great_ball, :ultra_ball, or :master_ball
   def add_ball!(ball_type)
-    increment!("#{ball_type}s_count", 1)
+    add_item(ball_type, 1)
   end
 
   # Calculate the difficulty score for leaderboard ranking
@@ -107,6 +112,56 @@ class Trainer < ApplicationRecord
   def accessible_routes
     unlocked_gate_numbers = unlocked_gates.pluck(:gate_number)
     Route.where(gate_requirement: unlocked_gate_numbers).order(:order)
+  end
+
+  # ================================================================================
+  # ITEM MANAGEMENT
+  # ================================================================================
+
+  # Get quantity of a specific item by key
+  # @param item_key [String, Symbol] the item key (e.g., :fire_stone)
+  # @return [Integer] quantity of the item
+  def item_quantity(item_key)
+    item = Item.find_by(key: item_key.to_s)
+    return 0 unless item
+
+    trainer_item = trainer_items.find_by(item: item)
+    trainer_item&.quantity || 0
+  end
+
+  # Add an item to the trainer's inventory
+  # @param item_key [String, Symbol] the item key
+  # @param quantity [Integer] amount to add (default: 1)
+  def add_item(item_key, quantity = 1)
+    item = Item.find_by(key: item_key.to_s)
+    return false unless item
+
+    trainer_item = trainer_items.find_or_initialize_by(item: item)
+    trainer_item.quantity ||= 0
+    trainer_item.quantity += quantity
+    trainer_item.save
+  end
+
+  # Remove an item from the trainer's inventory
+  # @param item_key [String, Symbol] the item key
+  # @param quantity [Integer] amount to remove (default: 1)
+  # @return [Boolean] true if successful, false if not enough items
+  def remove_item(item_key, quantity = 1)
+    item = Item.find_by(key: item_key.to_s)
+    return false unless item
+
+    trainer_item = trainer_items.find_by(item: item)
+    return false unless trainer_item && trainer_item.quantity >= quantity
+
+    trainer_item.remove(quantity)
+  end
+
+  # Check if trainer has at least a certain quantity of an item
+  # @param item_key [String, Symbol] the item key
+  # @param quantity [Integer] minimum quantity to check (default: 1)
+  # @return [Boolean] true if trainer has enough
+  def has_item?(item_key, quantity = 1)
+    item_quantity(item_key) >= quantity
   end
 
   private

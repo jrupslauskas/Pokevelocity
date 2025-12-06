@@ -8,11 +8,7 @@ class TrainerTest < ActiveSupport::TestCase
   test "should be valid with valid attributes" do
     trainer = Trainer.new(
       username: "test_trainer",
-      password: "password",
-      pokeballs_count: 0,
-      great_balls_count: 0,
-      ultra_balls_count: 0,
-      master_balls_count: 0
+      password: "password"
     )
     assert trainer.valid?
   end
@@ -34,25 +30,6 @@ class TrainerTest < ActiveSupport::TestCase
     trainer = Trainer.new(username: "new_trainer")
     assert_not trainer.valid?
     assert_includes trainer.errors[:password], "can't be blank"
-  end
-
-  test "should require non-negative ball counts" do
-    trainer = trainers(:ash)
-
-    trainer.pokeballs_count = -1
-    assert_not trainer.valid?
-
-    trainer.pokeballs_count = 0
-    trainer.great_balls_count = -1
-    assert_not trainer.valid?
-
-    trainer.great_balls_count = 0
-    trainer.ultra_balls_count = -1
-    assert_not trainer.valid?
-
-    trainer.ultra_balls_count = 0
-    trainer.master_balls_count = -1
-    assert_not trainer.valid?
   end
 
   # ================================================================================
@@ -88,9 +65,8 @@ class TrainerTest < ActiveSupport::TestCase
 
   test "should calculate total pokeballs correctly" do
     trainer = trainers(:ash)
-    expected_total = trainer.pokeballs_count + trainer.great_balls_count +
-                     trainer.ultra_balls_count + trainer.master_balls_count
-    assert_equal expected_total, trainer.total_pokeballs
+    # ash has 5 pokeballs + 3 great balls + 2 ultra balls + 1 master ball = 11 total
+    assert_equal 11, trainer.total_pokeballs
   end
 
   test "should return zero total pokeballs when trainer has no balls" do
@@ -102,6 +78,44 @@ class TrainerTest < ActiveSupport::TestCase
     trainer = trainers(:ash)
     # ash has 5 pokeballs, 3 great balls, 2 ultra balls, 1 master ball
     assert_equal 11, trainer.total_pokeballs
+  end
+
+  test "ball_count should return correct count for each ball type" do
+    trainer = trainers(:ash)
+    assert_equal 5, trainer.ball_count(:pokeball)
+    assert_equal 3, trainer.ball_count(:great_ball)
+    assert_equal 2, trainer.ball_count(:ultra_ball)
+    assert_equal 1, trainer.ball_count(:master_ball)
+  end
+
+  test "has_ball? should return true when trainer has balls" do
+    trainer = trainers(:ash)
+    assert trainer.has_ball?(:pokeball)
+    assert trainer.has_ball?(:great_ball)
+    assert trainer.has_ball?(:ultra_ball)
+    assert trainer.has_ball?(:master_ball)
+  end
+
+  test "has_ball? should return false when trainer has no balls" do
+    trainer = trainers(:broke_trainer)
+    assert_not trainer.has_ball?(:pokeball)
+    assert_not trainer.has_ball?(:great_ball)
+    assert_not trainer.has_ball?(:ultra_ball)
+    assert_not trainer.has_ball?(:master_ball)
+  end
+
+  test "deduct_ball! should decrease ball count" do
+    trainer = trainers(:ash)
+    initial_count = trainer.ball_count(:pokeball)
+    trainer.deduct_ball!(:pokeball)
+    assert_equal initial_count - 1, trainer.ball_count(:pokeball)
+  end
+
+  test "add_ball! should increase ball count" do
+    trainer = trainers(:ash)
+    initial_count = trainer.ball_count(:pokeball)
+    trainer.add_ball!(:pokeball)
+    assert_equal initial_count + 1, trainer.ball_count(:pokeball)
   end
 
   # ================================================================================
@@ -186,5 +200,138 @@ class TrainerTest < ActiveSupport::TestCase
     assert_equal trainer, score[:trainer]
     assert_equal 2, score[:pokemon_count]
     assert_equal 2, score[:difficulty_score]
+  end
+
+  # ================================================================================
+  # ITEM MANAGEMENT TESTS
+  # ================================================================================
+
+  test "should have many trainer_items" do
+    association = Trainer.reflect_on_association(:trainer_items)
+    assert_equal :has_many, association.macro
+  end
+
+  test "should have many items through trainer_items" do
+    association = Trainer.reflect_on_association(:items)
+    assert_equal :has_many, association.macro
+    assert_equal :trainer_items, association.options[:through]
+  end
+
+  test "item_quantity should return 0 for item trainer doesn't have" do
+    trainer = trainers(:broke_trainer) # broke_trainer has no items
+    assert_equal 0, trainer.item_quantity(:fire_stone)
+  end
+
+  test "item_quantity should return correct quantity for owned item" do
+    trainer = trainers(:ash)
+    # ash already has pokeballs from fixtures, let's add a stone
+    item = items(:fire_stone)
+    TrainerItem.create!(trainer: trainer, item: item, quantity: 5)
+
+    assert_equal 5, trainer.item_quantity(:fire_stone)
+  end
+
+  test "add_item should create new trainer_item if not exists" do
+    trainer = trainers(:broke_trainer) # broke_trainer has no items
+
+    result = trainer.add_item(:water_stone, 3)
+
+    assert result
+    assert_equal 3, trainer.item_quantity(:water_stone)
+  end
+
+  test "add_item should increment existing trainer_item quantity" do
+    trainer = trainers(:broke_trainer)
+    # First add some thunder stones
+    trainer.add_item(:thunder_stone, 2)
+
+    # Then add more
+    trainer.add_item(:thunder_stone, 3)
+
+    assert_equal 5, trainer.item_quantity(:thunder_stone)
+  end
+
+  test "add_item should default to adding 1" do
+    trainer = trainers(:broke_trainer)
+
+    trainer.add_item(:water_stone)
+
+    assert_equal 1, trainer.item_quantity(:water_stone)
+  end
+
+  test "add_item should return false for non-existent item" do
+    trainer = trainers(:ash)
+    result = trainer.add_item(:nonexistent_item)
+
+    assert_not result
+  end
+
+  test "remove_item should decrement item quantity" do
+    trainer = trainers(:broke_trainer)
+    # First add some fire stones
+    trainer.add_item(:fire_stone, 5)
+
+    result = trainer.remove_item(:fire_stone, 2)
+
+    assert result
+    assert_equal 3, trainer.item_quantity(:fire_stone)
+  end
+
+  test "remove_item should default to removing 1" do
+    trainer = trainers(:broke_trainer)
+    # First add some fire stones
+    trainer.add_item(:fire_stone, 3)
+
+    trainer.remove_item(:fire_stone)
+
+    assert_equal 2, trainer.item_quantity(:fire_stone)
+  end
+
+  test "remove_item should return false if not enough items" do
+    trainer = trainers(:broke_trainer)
+    # First add some water stones
+    trainer.add_item(:water_stone, 2)
+
+    result = trainer.remove_item(:water_stone, 5)
+
+    assert_not result
+    assert_equal 2, trainer.item_quantity(:water_stone)
+  end
+
+  test "remove_item should return false if item doesn't exist" do
+    trainer = trainers(:broke_trainer)
+    result = trainer.remove_item(:nonexistent_item)
+
+    assert_not result
+  end
+
+  test "has_item? should return true if trainer has enough quantity" do
+    trainer = trainers(:broke_trainer)
+    # First add some thunder stones
+    trainer.add_item(:thunder_stone, 5)
+
+    assert trainer.has_item?(:thunder_stone, 3)
+    assert trainer.has_item?(:thunder_stone, 5)
+  end
+
+  test "has_item? should return false if trainer doesn't have enough quantity" do
+    trainer = trainers(:broke_trainer)
+    # First add some water stones
+    trainer.add_item(:water_stone, 2)
+
+    assert_not trainer.has_item?(:water_stone, 5)
+  end
+
+  test "has_item? should default to checking for quantity of 1" do
+    trainer = trainers(:broke_trainer)
+    # First add a fire stone
+    trainer.add_item(:fire_stone, 1)
+
+    assert trainer.has_item?(:fire_stone)
+  end
+
+  test "has_item? should return false if trainer doesn't have item at all" do
+    trainer = trainers(:broke_trainer)
+    assert_not trainer.has_item?(:fire_stone)
   end
 end

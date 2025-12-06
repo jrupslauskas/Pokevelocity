@@ -1,0 +1,43 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# Ash's pokeball inventory (5 pokeballs, 3 great balls, 2 ultra balls, 1 master ball)
+ash_pokeballs:
+  trainer: ash
+  item: pokeball
+  quantity: 5
+
+ash_great_balls:
+  trainer: ash
+  item: great_ball
+  quantity: 3
+
+ash_ultra_balls:
+  trainer: ash
+  item: ultra_ball
+  quantity: 2
+
+ash_master_balls:
+  trainer: ash
+  item: master_ball
+  quantity: 1
+
+# Gary's pokeball inventory (10 pokeballs, 5 great balls, 3 ultra balls, 1 master ball)
+gary_pokeballs:
+  trainer: gary
+  item: pokeball
+  quantity: 10
+
+gary_great_balls:
+  trainer: gary
+  item: great_ball
+  quantity: 5
+
+gary_ultra_balls:
+  trainer: gary
+  item: ultra_ball
+  quantity: 3
+
+gary_master_balls:
+  trainer: gary
+  item: master_ball
+  quantity: 1

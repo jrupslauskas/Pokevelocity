@@ -198,15 +198,6 @@ class PokeballRewardServiceTest < ActiveSupport::TestCase
 
     # The new_count should match the trainer's current count for that ball type
     trainer.reload
-    case result[:ball_type]
-    when "pokeball"
-      assert_equal trainer.pokeballs_count, result[:new_count]
-    when "great_ball"
-      assert_equal trainer.great_balls_count, result[:new_count]
-    when "ultra_ball"
-      assert_equal trainer.ultra_balls_count, result[:new_count]
-    when "master_ball"
-      assert_equal trainer.master_balls_count, result[:new_count]
-    end
+    assert_equal trainer.ball_count(result[:ball_type]), result[:new_count]
   end
 end

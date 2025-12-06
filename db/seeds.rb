@@ -64,3 +64,14 @@ routes_data.each do |route_data|
 end
 
 puts "Created #{Route.count} route(s)!"
+
+puts "Creating items..."
+
+# Create items from the Item model constants
+Item::ITEMS.each do |item_key, item_data|
+  Item.find_or_create_by!(key: item_data[:key]) do |item|
+    item.item_type = item_data[:item_type]
+  end
+end
+
+puts "Created #{Item.count} item(s)!"

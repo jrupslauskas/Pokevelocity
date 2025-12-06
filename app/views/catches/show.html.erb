@@ -52,7 +52,7 @@
     <div class="pokeball-grid">
       <%= form_with url: catch_path(@pokemon), method: :post, local: true do |f| %>
         <%= f.hidden_field :ball_type, value: "pokeball" %>
-        <button type="submit" class="pokeball-card <%= 'pokeball-disabled' if @trainer.pokeballs_count == 0 %>" <%= "disabled" if @trainer.pokeballs_count == 0 %>>
+        <button type="submit" class="pokeball-card <%= 'pokeball-disabled' if @trainer.ball_count(:pokeball) == 0 %>" <%= "disabled" if @trainer.ball_count(:pokeball) == 0 %>>
           <div class="pokeball-card-icon"><%= image_tag "icons/pokeball_shop.png", alt: "Pokeball", class: "pokeball-icon-image" %></div>
           <div class="pokeball-card-content">
             <h4 class="pokeball-card-name">Pokéball</h4>
@@ -60,7 +60,7 @@
             <p class="pokeball-card-rate"><%= @catch_probabilities["pokeball"] %>% catch rate</p>
           </div>
           <div class="pokeball-card-count">
-            <span class="pokeball-count-number"><%= @trainer.pokeballs_count %></span>
+            <span class="pokeball-count-number"><%= @trainer.ball_count(:pokeball) %></span>
             <span class="pokeball-count-label">Available</span>
           </div>
         </button>
@@ -68,7 +68,7 @@
 
       <%= form_with url: catch_path(@pokemon), method: :post, local: true do |f| %>
         <%= f.hidden_field :ball_type, value: "great_ball" %>
-        <button type="submit" class="pokeball-card <%= 'pokeball-disabled' if @trainer.great_balls_count == 0 %>" <%= "disabled" if @trainer.great_balls_count == 0 %>>
+        <button type="submit" class="pokeball-card <%= 'pokeball-disabled' if @trainer.ball_count(:great_ball) == 0 %>" <%= "disabled" if @trainer.ball_count(:great_ball) == 0 %>>
           <div class="pokeball-card-icon"><%= image_tag "icons/greatball.png", alt: "Great Ball", class: "pokeball-icon-image" %></div>
           <div class="pokeball-card-content">
             <h4 class="pokeball-card-name">Great Ball</h4>
@@ -76,7 +76,7 @@
             <p class="pokeball-card-rate"><%= @catch_probabilities["great_ball"] %>% catch rate</p>
           </div>
           <div class="pokeball-card-count">
-            <span class="pokeball-count-number"><%= @trainer.great_balls_count %></span>
+            <span class="pokeball-count-number"><%= @trainer.ball_count(:great_ball) %></span>
             <span class="pokeball-count-label">Available</span>
           </div>
         </button>
@@ -84,7 +84,7 @@
 
       <%= form_with url: catch_path(@pokemon), method: :post, local: true do |f| %>
         <%= f.hidden_field :ball_type, value: "ultra_ball" %>
-        <button type="submit" class="pokeball-card <%= 'pokeball-disabled' if @trainer.ultra_balls_count == 0 %>" <%= "disabled" if @trainer.ultra_balls_count == 0 %>>
+        <button type="submit" class="pokeball-card <%= 'pokeball-disabled' if @trainer.ball_count(:ultra_ball) == 0 %>" <%= "disabled" if @trainer.ball_count(:ultra_ball) == 0 %>>
           <div class="pokeball-card-icon"><%= image_tag "icons/ultraball.jpg", alt: "Ultra Ball", class: "pokeball-icon-image" %></div>
           <div class="pokeball-card-content">
             <h4 class="pokeball-card-name">Ultra Ball</h4>
@@ -92,7 +92,7 @@
             <p class="pokeball-card-rate"><%= @catch_probabilities["ultra_ball"] %>% catch rate</p>
           </div>
           <div class="pokeball-card-count">
-            <span class="pokeball-count-number"><%= @trainer.ultra_balls_count %></span>
+            <span class="pokeball-count-number"><%= @trainer.ball_count(:ultra_ball) %></span>
             <span class="pokeball-count-label">Available</span>
           </div>
         </button>
@@ -100,7 +100,7 @@
 
       <%= form_with url: catch_path(@pokemon), method: :post, local: true do |f| %>
         <%= f.hidden_field :ball_type, value: "master_ball" %>
-        <button type="submit" class="pokeball-card <%= 'pokeball-disabled' if @trainer.master_balls_count == 0 %>" <%= "disabled" if @trainer.master_balls_count == 0 %>>
+        <button type="submit" class="pokeball-card <%= 'pokeball-disabled' if @trainer.ball_count(:master_ball) == 0 %>" <%= "disabled" if @trainer.ball_count(:master_ball) == 0 %>>
           <div class="pokeball-card-icon"><%= image_tag "icons/masterball.png", alt: "Master Ball", class: "pokeball-icon-image" %></div>
           <div class="pokeball-card-content">
             <h4 class="pokeball-card-name">Master Ball</h4>
@@ -108,7 +108,7 @@
             <p class="pokeball-card-rate"><%= @catch_probabilities["master_ball"] %>% catch rate</p>
           </div>
           <div class="pokeball-card-count">
-            <span class="pokeball-count-number"><%= @trainer.master_balls_count %></span>
+            <span class="pokeball-count-number"><%= @trainer.ball_count(:master_ball) %></span>
             <span class="pokeball-count-label">Available</span>
           </div>
         </button>
