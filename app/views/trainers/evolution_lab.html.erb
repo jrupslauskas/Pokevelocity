@@ -57,7 +57,7 @@
 
               <!-- Evolve Button -->
               <% if evo_data[:trainer_has_items] %>
-                <%= button_to "Evolve", "#", method: :post, class: "btn-primary evolution-btn" %>
+                <%= button_to "Evolve", evolve_path(evo_data[:evolution].id), method: :post, class: "btn-primary evolution-btn" %>
               <% else %>
                 <button class="btn-primary evolution-btn" disabled>Need Items</button>
               <% end %>

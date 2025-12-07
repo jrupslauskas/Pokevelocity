@@ -30,6 +30,7 @@ Rails.application.routes.draw do
 
   # Evolution Lab
   get "/evolution-lab", to: "trainers#evolution_lab", as: :evolution_lab
+  post "/evolution-lab/evolve/:id", to: "trainers#evolve", as: :evolve
 
   # Leaderboard
   get "/leaderboard", to: "leaderboard#index", as: :leaderboard

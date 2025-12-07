@@ -1,5 +1,5 @@
 class TrainersController < ApplicationController
-  before_action :require_login, only: [:dashboard, :pokedex, :evolution_lab]
+  before_action :require_login, only: [:dashboard, :pokedex, :evolution_lab, :evolve]
 
   def new
     @trainer = Trainer.new
@@ -73,6 +73,44 @@ class TrainersController < ApplicationController
         end
       end
     end
+  end
+
+  def evolve
+    @trainer = current_trainer
+    evolution = Evolution.find(params[:id])
+
+    # Verify trainer has the pre-evolution pokemon
+    unless @trainer.captured_pokemon.exists?(id: evolution.from_pokemon_id)
+      redirect_to evolution_lab_path, alert: "You don't have #{evolution.from_pokemon.name} in your Pokédex!"
+      return
+    end
+
+    # Verify trainer doesn't already have the evolved form
+    if @trainer.captured_pokemon.exists?(id: evolution.to_pokemon_id)
+      redirect_to evolution_lab_path, alert: "You already have #{evolution.to_pokemon.name} in your Pokédex!"
+      return
+    end
+
+    # Verify trainer has required items
+    unless evolution.can_trainer_evolve?(@trainer)
+      redirect_to evolution_lab_path, alert: "You don't have enough #{evolution.required_item.name} to evolve!"
+      return
+    end
+
+    # Deduct the required items
+    @trainer.remove_item(evolution.required_item_key, evolution.required_item_quantity)
+
+    # Add the evolved Pokemon to the trainer's Pokedex
+    # We'll use the same ball type as the original Pokemon was caught with
+    original_capture = @trainer.captures.find_by(pokemon_id: evolution.from_pokemon_id)
+    @trainer.captures.create!(
+      pokemon_id: evolution.to_pokemon_id,
+      ball_type: original_capture&.ball_type || 'pokeball',
+      captured_at: Time.current
+    )
+
+    # Redirect to pokedex with success message
+    redirect_to pokedex_path, notice: "Congratulations! Your #{evolution.from_pokemon.name} evolved into #{evolution.to_pokemon.name}!"
   end
 
   private
