@@ -75,3 +75,36 @@ Item::ITEMS.each do |item_key, item_data|
 end
 
 puts "Created #{Item.count} item(s)!"
+
+puts "Creating evolutions..."
+
+# Load evolution data from YAML file
+evolutions_data = YAML.load_file(Rails.root.join("db", "data", "evolutions.yml"))
+
+evolutions_data.each do |evo_data|
+  from_pokemon = Pokemon.find_by(pokedex_number: evo_data["from"])
+  to_pokemon = Pokemon.find_by(pokedex_number: evo_data["to"])
+
+  if from_pokemon && to_pokemon
+    # Calculate required quantity
+    # Elemental stones (fire, water, thunder, moon, leaf) and transfer cable always require 1
+    # Generic evolution stones use difficulty formula: max(1, to_pokemon.difficulty - 1)
+    if ['fire_stone', 'water_stone', 'thunder_stone', 'moon_stone', 'leaf_stone', 'transfer_cable'].include?(evo_data["item"])
+      required_quantity = 1
+    else
+      required_quantity = [to_pokemon.difficulty - 1, 1].max
+    end
+
+    evolution = Evolution.find_or_initialize_by(
+      from_pokemon_id: from_pokemon.id,
+      to_pokemon_id: to_pokemon.id,
+      required_item_key: evo_data["item"]
+    )
+    evolution.required_item_quantity = required_quantity
+    evolution.save!
+  else
+    puts "  WARNING: Could not find Pokemon for evolution #{evo_data["from"]} -> #{evo_data["to"]}"
+  end
+end
+
+puts "Created #{Evolution.count} evolution(s)!"

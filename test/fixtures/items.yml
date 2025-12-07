@@ -28,6 +28,18 @@ thunder_stone:
   key: thunder_stone
   item_type: evolution_stone
 
+moon_stone:
+  key: moon_stone
+  item_type: evolution_stone
+
+leaf_stone:
+  key: leaf_stone
+  item_type: evolution_stone
+
+transfer_cable:
+  key: transfer_cable
+  item_type: evolution_stone
+
 evolution_stone:
   key: evolution_stone
   item_type: evolution_stone

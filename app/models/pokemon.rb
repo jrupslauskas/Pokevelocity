@@ -7,6 +7,11 @@ class Pokemon < ApplicationRecord
   has_many :route_encounters, dependent: :destroy
   has_many :routes, through: :route_encounters
 
+  # Evolution associations
+  has_many :evolutions_from, class_name: 'Evolution', foreign_key: 'from_pokemon_id', dependent: :destroy
+  has_many :evolutions_to, class_name: 'Evolution', foreign_key: 'to_pokemon_id', dependent: :destroy
+  has_many :evolution_options, through: :evolutions_from, source: :to_pokemon
+
   validates :pokedex_number, presence: true, uniqueness: true,
             numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: 151 }
   validates :name, presence: true
@@ -24,5 +29,15 @@ class Pokemon < ApplicationRecord
   # Helper method to find Pokemon data by name
   def self.data_by_name(name)
     POKEDEX_DATA.find { |p| p["name"] == name }
+  end
+
+  # Check if this Pokemon can evolve
+  def can_evolve?
+    evolutions_from.any?
+  end
+
+  # Get all possible evolutions for this Pokemon
+  def possible_evolutions
+    evolutions_from.includes(:to_pokemon, :from_pokemon)
   end
 end

@@ -1,0 +1,29 @@
+pikachu_to_raichu:
+  from_pokemon: pikachu
+  to_pokemon: raichu
+  required_item_key: thunder_stone
+  required_item_quantity: 1
+
+eevee_to_vaporeon:
+  from_pokemon: eevee
+  to_pokemon: vaporeon
+  required_item_key: water_stone
+  required_item_quantity: 1
+
+eevee_to_jolteon:
+  from_pokemon: eevee
+  to_pokemon: jolteon
+  required_item_key: thunder_stone
+  required_item_quantity: 1
+
+squirtle_to_wartortle:
+  from_pokemon: squirtle
+  to_pokemon: wartortle
+  required_item_key: evolution_stone
+  required_item_quantity: 2
+
+wartortle_to_blastoise:
+  from_pokemon: wartortle
+  to_pokemon: blastoise
+  required_item_key: evolution_stone
+  required_item_quantity: 3

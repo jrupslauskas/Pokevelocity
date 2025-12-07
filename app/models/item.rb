@@ -64,6 +64,27 @@ class Item < ApplicationRecord
       item_type: TYPES[:evolution_stone],
       sprite: 'thunder_stone.png'
     },
+    moon_stone: {
+      key: 'moon_stone',
+      name: 'Moon Stone',
+      description: 'A peculiar stone that makes certain species of Pokémon evolve. It is as black as the night sky.',
+      item_type: TYPES[:evolution_stone],
+      sprite: 'moon_stone.png'
+    },
+    leaf_stone: {
+      key: 'leaf_stone',
+      name: 'Leaf Stone',
+      description: 'A peculiar stone that makes certain species of Pokémon evolve. It has a leaf pattern.',
+      item_type: TYPES[:evolution_stone],
+      sprite: 'leaf_stone.png'
+    },
+    transfer_cable: {
+      key: 'transfer_cable',
+      name: 'Transfer Cable',
+      description: 'A special cable that allows certain Pokémon to evolve by simulating a trade connection.',
+      item_type: TYPES[:evolution_stone],
+      sprite: 'transfer_cable.png'
+    },
     evolution_stone: {
       key: 'evolution_stone',
       name: 'Evolution Stone',

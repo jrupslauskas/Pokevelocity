@@ -2050,3 +2050,103 @@ body > div:not(.app-layout) {
   }
 }
 
+
+/* ==================== Evolution Lab Styles ==================== */
+
+.evolution-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  padding: 20px 0;
+}
+
+.evolution-card {
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 2px solid #E8DCC8;
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.evolution-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-color: #7AC74C;
+}
+
+.evolution-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.evolution-pokemon {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.evolution-arrow {
+  font-size: 24px;
+  color: #7AC74C;
+  font-weight: bold;
+  flex-shrink: 0;
+  margin: 0 4px;
+}
+
+.evolution-meta {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+.requirement-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.requirement-text {
+  font-size: 11px;
+  color: #6B5537;
+  font-weight: 500;
+}
+
+.evolution-btn {
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Disabled state for evolution cards */
+.evolution-card.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.evolution-card.disabled:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: #E8DCC8;
+}
+
+.evolution-card.disabled .evolution-arrow {
+  color: #999;
+}
+
+.evolution-card.disabled .requirement-text {
+  color: #999;
+}
+
+@media (max-width: 768px) {
+  .evolution-grid {
+    grid-template-columns: 1fr;
+  }
+}

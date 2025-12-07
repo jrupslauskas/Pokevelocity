@@ -1,0 +1,351 @@
+# Evolution Requirements for All Pokemon
+# Format:
+#   - from: pokedex number of base pokemon
+#     to: pokedex number of evolved pokemon
+#     item: required item key (evolution_stone, fire_stone, water_stone, thunder_stone)
+#
+# Quantity is automatically calculated:
+#   - Elemental stones (fire, water, thunder): always 1
+#   - Evolution stones: max(1, to_pokemon.difficulty - 1)
+
+# Bulbasaur Line
+- from: 1   # Bulbasaur
+  to: 2     # Ivysaur
+  item: evolution_stone
+
+- from: 2   # Ivysaur
+  to: 3     # Venusaur
+  item: evolution_stone
+
+# Charmander Line
+- from: 4   # Charmander
+  to: 5     # Charmeleon
+  item: evolution_stone
+
+- from: 5   # Charmeleon
+  to: 6     # Charizard
+  item: evolution_stone
+
+# Squirtle Line
+- from: 7   # Squirtle
+  to: 8     # Wartortle
+  item: evolution_stone
+
+- from: 8   # Wartortle
+  to: 9     # Blastoise
+  item: evolution_stone
+
+# Caterpie Line
+- from: 10  # Caterpie
+  to: 11    # Metapod
+  item: evolution_stone
+
+- from: 11  # Metapod
+  to: 12    # Butterfree
+  item: evolution_stone
+
+# Weedle Line
+- from: 13  # Weedle
+  to: 14    # Kakuna
+  item: evolution_stone
+
+- from: 14  # Kakuna
+  to: 15    # Beedrill
+  item: evolution_stone
+
+# Pidgey Line
+- from: 16  # Pidgey
+  to: 17    # Pidgeotto
+  item: evolution_stone
+
+- from: 17  # Pidgeotto
+  to: 18    # Pidgeot
+  item: evolution_stone
+
+# Rattata Line
+- from: 19  # Rattata
+  to: 20    # Raticate
+  item: evolution_stone
+
+# Spearow Line
+- from: 21  # Spearow
+  to: 22    # Fearow
+  item: evolution_stone
+
+# Ekans Line
+- from: 23  # Ekans
+  to: 24    # Arbok
+  item: evolution_stone
+
+# Pikachu Line
+- from: 25  # Pikachu
+  to: 26    # Raichu
+  item: thunder_stone
+
+# Sandshrew Line
+- from: 27  # Sandshrew
+  to: 28    # Sandslash
+  item: evolution_stone
+
+# Nidoran♀ Line
+- from: 29  # Nidoran♀
+  to: 30    # Nidorina
+  item: evolution_stone
+
+- from: 30  # Nidorina
+  to: 31    # Nidoqueen
+  item: moon_stone
+
+# Nidoran♂ Line
+- from: 32  # Nidoran♂
+  to: 33    # Nidorino
+  item: evolution_stone
+
+- from: 33  # Nidorino
+  to: 34    # Nidoking
+  item: moon_stone
+
+# Clefairy Line
+- from: 35  # Clefairy
+  to: 36    # Clefable
+  item: moon_stone
+
+# Vulpix Line
+- from: 37  # Vulpix
+  to: 38    # Ninetales
+  item: fire_stone
+
+# Jigglypuff Line
+- from: 39  # Jigglypuff
+  to: 40    # Wigglytuff
+  item: moon_stone
+
+# Zubat Line
+- from: 41  # Zubat
+  to: 42    # Golbat
+  item: evolution_stone
+
+# Oddish Line
+- from: 43  # Oddish
+  to: 44    # Gloom
+  item: evolution_stone
+
+- from: 44  # Gloom
+  to: 45    # Vileplume
+  item: leaf_stone
+
+# Paras Line
+- from: 46  # Paras
+  to: 47    # Parasect
+  item: evolution_stone
+
+# Venonat Line
+- from: 48  # Venonat
+  to: 49    # Venomoth
+  item: evolution_stone
+
+# Diglett Line
+- from: 50  # Diglett
+  to: 51    # Dugtrio
+  item: evolution_stone
+
+# Meowth Line
+- from: 52  # Meowth
+  to: 53    # Persian
+  item: evolution_stone
+
+# Psyduck Line
+- from: 54  # Psyduck
+  to: 55    # Golduck
+  item: evolution_stone
+
+# Mankey Line
+- from: 56  # Mankey
+  to: 57    # Primeape
+  item: evolution_stone
+
+# Growlithe Line
+- from: 58  # Growlithe
+  to: 59    # Arcanine
+  item: fire_stone
+
+# Poliwag Line
+- from: 60  # Poliwag
+  to: 61    # Poliwhirl
+  item: evolution_stone
+
+- from: 61  # Poliwhirl
+  to: 62    # Poliwrath
+  item: water_stone
+
+# Abra Line
+- from: 63  # Abra
+  to: 64    # Kadabra
+  item: evolution_stone
+
+- from: 64  # Kadabra
+  to: 65    # Alakazam
+  item: transfer_cable
+
+# Machop Line
+- from: 66  # Machop
+  to: 67    # Machoke
+  item: evolution_stone
+
+- from: 67  # Machoke
+  to: 68    # Machamp
+  item: transfer_cable
+
+# Bellsprout Line
+- from: 69  # Bellsprout
+  to: 70    # Weepinbell
+  item: evolution_stone
+
+- from: 70  # Weepinbell
+  to: 71    # Victreebel
+  item: leaf_stone
+
+# Tentacool Line
+- from: 72  # Tentacool
+  to: 73    # Tentacruel
+  item: evolution_stone
+
+# Geodude Line
+- from: 74  # Geodude
+  to: 75    # Graveler
+  item: evolution_stone
+
+- from: 75  # Graveler
+  to: 76    # Golem
+  item: transfer_cable
+
+# Ponyta Line
+- from: 77  # Ponyta
+  to: 78    # Rapidash
+  item: evolution_stone
+
+# Slowpoke Line
+- from: 79  # Slowpoke
+  to: 80    # Slowbro
+  item: evolution_stone
+
+# Magnemite Line
+- from: 81  # Magnemite
+  to: 82    # Magneton
+  item: evolution_stone
+
+# Doduo Line
+- from: 84  # Doduo
+  to: 85    # Dodrio
+  item: evolution_stone
+
+# Seel Line
+- from: 86  # Seel
+  to: 87    # Dewgong
+  item: evolution_stone
+
+# Grimer Line
+- from: 88  # Grimer
+  to: 89    # Muk
+  item: evolution_stone
+
+# Shellder Line
+- from: 90  # Shellder
+  to: 91    # Cloyster
+  item: water_stone
+
+# Gastly Line
+- from: 92  # Gastly
+  to: 93    # Haunter
+  item: evolution_stone
+
+- from: 93  # Haunter
+  to: 94    # Gengar
+  item: transfer_cable
+
+# Drowzee Line
+- from: 96  # Drowzee
+  to: 97    # Hypno
+  item: evolution_stone
+
+# Krabby Line
+- from: 98  # Krabby
+  to: 99    # Kingler
+  item: evolution_stone
+
+# Voltorb Line
+- from: 100 # Voltorb
+  to: 101   # Electrode
+  item: evolution_stone
+
+# Exeggcute Line
+- from: 102 # Exeggcute
+  to: 103   # Exeggutor
+  item: evolution_stone
+
+# Cubone Line
+- from: 104 # Cubone
+  to: 105   # Marowak
+  item: evolution_stone
+
+# Koffing Line
+- from: 109 # Koffing
+  to: 110   # Weezing
+  item: evolution_stone
+
+# Rhyhorn Line
+- from: 111 # Rhyhorn
+  to: 112   # Rhydon
+  item: evolution_stone
+
+# Horsea Line
+- from: 116 # Horsea
+  to: 117   # Seadra
+  item: evolution_stone
+
+# Goldeen Line
+- from: 118 # Goldeen
+  to: 119   # Seaking
+  item: evolution_stone
+
+# Staryu Line
+- from: 120 # Staryu
+  to: 121   # Starmie
+  item: water_stone
+
+# Magikarp Line
+- from: 129 # Magikarp
+  to: 130   # Gyarados
+  item: evolution_stone
+
+# Eevee Evolution Branches
+- from: 133 # Eevee
+  to: 134   # Vaporeon
+  item: water_stone
+
+- from: 133 # Eevee
+  to: 135   # Jolteon
+  item: thunder_stone
+
+- from: 133 # Eevee
+  to: 136   # Flareon
+  item: fire_stone
+
+# Omanyte Line
+- from: 138 # Omanyte
+  to: 139   # Omastar
+  item: evolution_stone
+
+# Kabuto Line
+- from: 140 # Kabuto
+  to: 141   # Kabutops
+  item: evolution_stone
+
+# Dratini Line
+- from: 147 # Dratini
+  to: 148   # Dragonair
+  item: evolution_stone
+
+- from: 148 # Dragonair
+  to: 149   # Dragonite
+  item: evolution_stone

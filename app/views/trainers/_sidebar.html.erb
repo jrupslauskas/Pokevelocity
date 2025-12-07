@@ -1,7 +1,7 @@
 <aside class="sidebar">
   <div class="sidebar-header">
     <%= link_to dashboard_path, class: "sidebar-logo" do %>
-      <span class="sidebar-logo-icon"><%= image_tag "icons/pokeball.png", alt: "Pokeball", class: "sidebar-logo-image" %></span>
+      <span class="sidebar-logo-icon"><%= image_tag "icons/pokevelocity_logo.png", alt: "Pokevelocity Logo", class: "sidebar-logo-image" %></span>
       <span>Pokévelocity</span>
     <% end %>
   </div>
@@ -20,6 +20,11 @@
     <%= link_to catches_path, class: "sidebar-nav-item #{current_page?(catches_path) ? 'active' : ''}" do %>
       <span class="sidebar-nav-icon"><%= image_tag "icons/pokeball.png", alt: "Pokeball", class: "sidebar-icon-image" %></span>
       <span>Catch</span>
+    <% end %>
+
+    <%= link_to evolution_lab_path, class: "sidebar-nav-item #{current_page?(evolution_lab_path) ? 'active' : ''}" do %>
+      <span class="sidebar-nav-icon"><%= image_tag "icons/evolution_machine.png", alt: "Evolution Machine", class: "sidebar-icon-image" %></span>
+      <span>Evolution Lab</span>
     <% end %>
 
     <%= link_to rewards_path, class: "sidebar-nav-item #{current_page?(rewards_path) ? 'active' : ''}" do %>

@@ -1,5 +1,5 @@
 class TrainersController < ApplicationController
-  before_action :require_login, only: [:dashboard, :pokedex]
+  before_action :require_login, only: [:dashboard, :pokedex, :evolution_lab]
 
   def new
     @trainer = Trainer.new
@@ -40,6 +40,39 @@ class TrainersController < ApplicationController
   def pokedex
     @trainer = current_trainer
     @captured_pokemon = @trainer.captured_pokemon.order(:pokedex_number)
+  end
+
+  def evolution_lab
+    @trainer = current_trainer
+
+    # Get all Pokemon the trainer has captured
+    captured_pokemon = @trainer.captured_pokemon
+    captured_pokemon_ids = captured_pokemon.pluck(:id)
+
+    # Build list of available evolutions
+    @available_evolutions = []
+
+    captured_pokemon.each do |pokemon|
+      # Get all possible evolutions for this Pokemon
+      pokemon.evolutions_from.includes(:to_pokemon, :from_pokemon).each do |evolution|
+        # Only show if trainer doesn't already have the evolved form
+        unless captured_pokemon_ids.include?(evolution.to_pokemon_id)
+          # Check if trainer has required items
+          trainer_item = @trainer.trainer_items.joins(:item).find_by(items: { key: evolution.required_item_key })
+          has_items = trainer_item && trainer_item.quantity >= evolution.required_item_quantity
+
+          @available_evolutions << {
+            evolution: evolution,
+            from_pokemon: evolution.from_pokemon,
+            to_pokemon: evolution.to_pokemon,
+            required_item: evolution.required_item,
+            required_quantity: evolution.required_item_quantity,
+            trainer_has_items: has_items,
+            trainer_item_quantity: trainer_item&.quantity || 0
+          }
+        end
+      end
+    end
   end
 
   private

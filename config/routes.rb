@@ -28,6 +28,9 @@ Rails.application.routes.draw do
   # Pokedex
   get "/pokedex", to: "trainers#pokedex", as: :pokedex
 
+  # Evolution Lab
+  get "/evolution-lab", to: "trainers#evolution_lab", as: :evolution_lab
+
   # Leaderboard
   get "/leaderboard", to: "leaderboard#index", as: :leaderboard
 

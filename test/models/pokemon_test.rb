@@ -322,4 +322,65 @@ class PokemonTest < ActiveSupport::TestCase
     pokemons(:mew).destroy # Remove existing pokemon at 151
     assert pokemon.save
   end
+
+  # ================================================================================
+  # EVOLUTION TESTS
+  # ================================================================================
+
+  test "should have many evolutions_from" do
+    pokemon = pokemons(:pikachu)
+    assert_respond_to pokemon, :evolutions_from
+  end
+
+  test "should have many evolutions_to" do
+    pokemon = pokemons(:raichu)
+    assert_respond_to pokemon, :evolutions_to
+  end
+
+  test "should have many evolution_options" do
+    pokemon = pokemons(:eevee)
+    assert_respond_to pokemon, :evolution_options
+  end
+
+  test "can_evolve? returns true for pokemon that can evolve" do
+    pikachu = pokemons(:pikachu)
+    assert pikachu.can_evolve?
+  end
+
+  test "can_evolve? returns false for pokemon that cannot evolve" do
+    mewtwo = pokemons(:mewtwo)
+    assert_not mewtwo.can_evolve?
+  end
+
+  test "possible_evolutions returns all evolution paths" do
+    eevee = pokemons(:eevee)
+    evolutions = eevee.possible_evolutions
+    assert_equal 2, evolutions.count
+  end
+
+  test "evolution_options returns all pokemon this can evolve into" do
+    eevee = pokemons(:eevee)
+    options = eevee.evolution_options
+    assert_equal 2, options.count
+    assert_includes options, pokemons(:vaporeon)
+    assert_includes options, pokemons(:jolteon)
+  end
+
+  test "should destroy dependent evolutions_from when pokemon is destroyed" do
+    pikachu = pokemons(:pikachu)
+    evolution_count = pikachu.evolutions_from.count
+
+    assert_difference("Evolution.count", -evolution_count) do
+      pikachu.destroy
+    end
+  end
+
+  test "should destroy dependent evolutions_to when pokemon is destroyed" do
+    raichu = pokemons(:raichu)
+    evolution_count = raichu.evolutions_to.count
+
+    assert_difference("Evolution.count", -evolution_count) do
+      raichu.destroy
+    end
+  end
 end

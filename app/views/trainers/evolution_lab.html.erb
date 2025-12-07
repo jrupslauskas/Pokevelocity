@@ -1,0 +1,80 @@
+<div class="app-layout">
+  <%= render "trainers/sidebar" %>
+
+  <main class="main-content">
+    <header class="page-header-authenticated">
+      <h1>Evolution Lab</h1>
+      <p>Evolve your Pokémon using Evolution Stones and other methods.</p>
+    </header>
+
+    <% if @available_evolutions.any? %>
+      <div class="pokedex-container">
+        <div class="evolution-grid">
+          <% @available_evolutions.each do |evo_data| %>
+            <div class="evolution-card <%= 'disabled' unless evo_data[:trainer_has_items] %>">
+              <!-- Pokemon Evolution Display -->
+              <div class="evolution-display">
+                <div class="evolution-pokemon">
+                  <div class="pokemon-image-container">
+                    <% if evo_data[:from_pokemon].image.attached? %>
+                      <%= image_tag evo_data[:from_pokemon].image, alt: evo_data[:from_pokemon].name, class: "pokemon-image" %>
+                    <% else %>
+                      <%= image_tag "pokemonSprites/#{evo_data[:from_pokemon].pokedex_number.to_s.rjust(3, '0')}.png",
+                          alt: evo_data[:from_pokemon].name,
+                          class: "pokemon-image",
+                          style: "image-rendering: pixelated;" %>
+                    <% end %>
+                  </div>
+                  <p class="pokemon-number">#<%= evo_data[:from_pokemon].pokedex_number.to_s.rjust(3, '0') %></p>
+                  <h3 class="pokemon-name"><%= evo_data[:from_pokemon].name %></h3>
+                </div>
+
+                <div class="evolution-arrow">→</div>
+
+                <div class="evolution-pokemon">
+                  <div class="pokemon-image-container">
+                    <% if evo_data[:to_pokemon].image.attached? %>
+                      <%= image_tag evo_data[:to_pokemon].image, alt: evo_data[:to_pokemon].name, class: "pokemon-image" %>
+                    <% else %>
+                      <%= image_tag "pokemonSprites/#{evo_data[:to_pokemon].pokedex_number.to_s.rjust(3, '0')}.png",
+                          alt: evo_data[:to_pokemon].name,
+                          class: "pokemon-image",
+                          style: "image-rendering: pixelated;" %>
+                    <% end %>
+                  </div>
+                  <p class="pokemon-number">#<%= evo_data[:to_pokemon].pokedex_number.to_s.rjust(3, '0') %></p>
+                  <h3 class="pokemon-name"><%= evo_data[:to_pokemon].name %></h3>
+                </div>
+              </div>
+
+              <!-- Requirements -->
+              <div class="pokemon-meta evolution-meta">
+                <%= image_tag "icons/#{evo_data[:required_item].sprite}", alt: evo_data[:required_item].name, class: "requirement-icon", style: "image-rendering: pixelated;" %>
+                <span class="requirement-text">
+                  <%= evo_data[:required_item].name %>: <%= evo_data[:trainer_item_quantity] %>/<%= evo_data[:required_quantity] %>
+                </span>
+              </div>
+
+              <!-- Evolve Button -->
+              <% if evo_data[:trainer_has_items] %>
+                <%= button_to "Evolve", "#", method: :post, class: "btn-primary evolution-btn" %>
+              <% else %>
+                <button class="btn-primary evolution-btn" disabled>Need Items</button>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% else %>
+      <div class="empty-state">
+        <div class="empty-state-icon"><%= image_tag "icons/evolution_machine.png", alt: "Evolution Machine", style: "width: 64px; height: 64px; image-rendering: pixelated;" %></div>
+        <h3 class="empty-state-title">No Evolutions Available</h3>
+        <p class="empty-state-description">You don't have any Pokémon ready to evolve. Catch more Pokémon and collect evolution items!</p>
+        <div style="display: flex; gap: 12px; justify-content: center; margin-top: 24px;">
+          <%= link_to "Go Catchin' →", catches_path, class: "btn-primary" %>
+          <%= link_to "Shop for Items", rewards_path, class: "btn-primary" %>
+        </div>
+      </div>
+    <% end %>
+  </main>
+</div>

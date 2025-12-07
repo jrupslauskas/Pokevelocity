@@ -216,7 +216,7 @@
 
 - name: Persian
   pokedex_number: 53
-  difficulty: 2
+  difficulty: 3
 
 - name: Psyduck
   pokedex_number: 54
@@ -296,7 +296,7 @@
 
 - name: Tentacruel
   pokedex_number: 73
-  difficulty: 2
+  difficulty: 3
 
 - name: Geodude
   pokedex_number: 74
@@ -304,7 +304,7 @@
 
 - name: Graveler
   pokedex_number: 75
-  difficulty: 2
+  difficulty: 3
 
 - name: Golem
   pokedex_number: 76
@@ -360,7 +360,7 @@
 
 - name: Muk
   pokedex_number: 89
-  difficulty: 2
+  difficulty: 3
 
 - name: Shellder
   pokedex_number: 90
@@ -400,7 +400,7 @@
 
 - name: Kingler
   pokedex_number: 99
-  difficulty: 2
+  difficulty: 3
 
 - name: Voltorb
   pokedex_number: 100
@@ -408,7 +408,7 @@
 
 - name: Electrode
   pokedex_number: 101
-  difficulty: 2
+  difficulty: 3
 
 - name: Exeggcute
   pokedex_number: 102
@@ -444,7 +444,7 @@
 
 - name: Weezing
   pokedex_number: 110
-  difficulty: 2
+  difficulty: 3
 
 - name: Rhyhorn
   pokedex_number: 111
@@ -472,7 +472,7 @@
 
 - name: Seadra
   pokedex_number: 117
-  difficulty: 2
+  difficulty: 3
 
 - name: Goldeen
   pokedex_number: 118
@@ -528,7 +528,7 @@
 
 - name: Lapras
   pokedex_number: 131
-  difficulty: 4
+  difficulty: 3
 
 - name: Ditto
   pokedex_number: 132
@@ -592,11 +592,11 @@
 
 - name: Dratini
   pokedex_number: 147
-  difficulty: 3
+  difficulty: 2
 
 - name: Dragonair
   pokedex_number: 148
-  difficulty: 4
+  difficulty: 3
 
 - name: Dragonite
   pokedex_number: 149

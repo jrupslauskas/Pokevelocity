@@ -20,6 +20,36 @@ pikachu:
   name: Pikachu
   difficulty: 2
 
+raichu:
+  pokedex_number: 26
+  name: Raichu
+  difficulty: 3
+
+wartortle:
+  pokedex_number: 8
+  name: Wartortle
+  difficulty: 3
+
+blastoise:
+  pokedex_number: 9
+  name: Blastoise
+  difficulty: 4
+
+eevee:
+  pokedex_number: 133
+  name: Eevee
+  difficulty: 2
+
+vaporeon:
+  pokedex_number: 134
+  name: Vaporeon
+  difficulty: 3
+
+jolteon:
+  pokedex_number: 135
+  name: Jolteon
+  difficulty: 3
+
 mewtwo:
   pokedex_number: 150
   name: Mewtwo
