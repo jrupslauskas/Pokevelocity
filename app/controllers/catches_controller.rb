@@ -95,6 +95,9 @@ class CatchesController < ApplicationController
     @trainer = current_trainer
     @pokemon = Pokemon.find(params[:id])
 
+    # Check if already caught
+    @already_caught = @trainer.captured_pokemon.include?(@pokemon)
+
     # Get catch probabilities for each ball type
     @catch_probabilities = PokemonCatchService::CAPTURE_EFFICIENCY.transform_values do |difficulty_hash|
       difficulty_hash[@pokemon.difficulty]

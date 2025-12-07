@@ -339,6 +339,150 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
   end
 
   # ================================================================================
+  # ALREADY CAUGHT INDICATOR TESTS
+  # ================================================================================
+
+  test "should display already caught indicator when pokemon is in pokedex" do
+    trainer = trainers(:ash)
+    pokemon = pokemons(:bulbasaur)
+
+    # Catch the pokemon first
+    Capture.create!(trainer: trainer, pokemon: pokemon, ball_type: "pokeball")
+
+    log_in_as(trainer)
+    get catch_path(pokemon)
+
+    assert_response :success
+    assert_match "Already in your Pokédex!", response.body
+    assert_match "Catching #{pokemon.name} again will reward you with an Evolution Stone", response.body
+  end
+
+  test "should not display already caught indicator for new pokemon" do
+    trainer = trainers(:ash)
+    pokemon = pokemons(:bulbasaur)
+
+    log_in_as(trainer)
+    get catch_path(pokemon)
+
+    assert_response :success
+    assert_no_match "Already in your Pokédex!", response.body
+    assert_no_match "Evolution Stone", response.body
+  end
+
+  test "should display checkmark in already caught indicator" do
+    trainer = trainers(:ash)
+    pokemon = pokemons(:bulbasaur)
+
+    Capture.create!(trainer: trainer, pokemon: pokemon, ball_type: "pokeball")
+
+    log_in_as(trainer)
+    get catch_path(pokemon)
+
+    assert_response :success
+    assert_match "✓", response.body
+  end
+
+  test "should show pokemon name in evolution stone reward message" do
+    trainer = trainers(:ash)
+    pokemon = pokemons(:pikachu)
+
+    Capture.create!(trainer: trainer, pokemon: pokemon, ball_type: "pokeball")
+
+    log_in_as(trainer)
+    get catch_path(pokemon)
+
+    assert_response :success
+    assert_match "Catching Pikachu again will reward you with an Evolution Stone", response.body
+  end
+
+  test "should show already caught indicator for any difficulty level" do
+    trainer = trainers(:ash)
+
+    # Test with different difficulty pokemon
+    [pokemons(:bulbasaur), pokemons(:pikachu), pokemons(:mewtwo)].each do |pokemon|
+      Capture.create!(trainer: trainer, pokemon: pokemon, ball_type: "pokeball")
+
+      log_in_as(trainer)
+      get catch_path(pokemon)
+
+      assert_response :success
+      assert_match "Already in your Pokédex!", response.body
+    end
+  end
+
+  test "should display already caught indicator even after multiple captures" do
+    trainer = trainers(:ash)
+    pokemon = pokemons(:bulbasaur)
+
+    # Catch it the first time
+    Capture.create!(trainer: trainer, pokemon: pokemon, ball_type: "pokeball")
+
+    log_in_as(trainer)
+    get catch_path(pokemon)
+
+    assert_response :success
+    assert_match "Already in your Pokédex!", response.body
+
+    # The message should still appear even though we can catch it again
+    post catch_path(pokemon), params: { ball_type: "pokeball" }
+
+    # Encounter it again
+    get catch_path(pokemon)
+    assert_response :success
+    assert_match "Already in your Pokédex!", response.body
+  end
+
+  test "should show indicator styling with gradient background" do
+    trainer = trainers(:ash)
+    pokemon = pokemons(:bulbasaur)
+
+    Capture.create!(trainer: trainer, pokemon: pokemon, ball_type: "pokeball")
+
+    log_in_as(trainer)
+    get catch_path(pokemon)
+
+    assert_response :success
+    # Check for styling elements
+    assert_match "background: linear-gradient", response.body
+    assert_match "#FFF4E6", response.body
+  end
+
+  test "should not show already caught indicator for different trainer" do
+    trainer1 = trainers(:ash)
+    trainer2 = trainers(:gary)
+    pokemon = pokemons(:bulbasaur)
+
+    # Trainer 1 catches the pokemon
+    Capture.create!(trainer: trainer1, pokemon: pokemon, ball_type: "pokeball")
+
+    # Trainer 2 should not see the indicator
+    log_in_as(trainer2)
+    get catch_path(pokemon)
+
+    assert_response :success
+    assert_no_match "Already in your Pokédex!", response.body
+  end
+
+  test "should show already caught indicator immediately after first capture" do
+    trainer = trainers(:ash)
+    pokemon = pokemons(:bulbasaur)
+
+    # Give trainer master ball for guaranteed success
+    trainer.add_item(:master_ball, 2)
+
+    log_in_as(trainer)
+
+    # First capture
+    post catch_path(pokemon), params: { ball_type: "master_ball" }
+    assert_redirected_to pokedex_path
+
+    # Immediately encounter it again
+    get catch_path(pokemon)
+    assert_response :success
+    assert_match "Already in your Pokédex!", response.body
+  end
+
+  # ================================================================================
   # RUN ACTION TESTS
   # ================================================================================
 
