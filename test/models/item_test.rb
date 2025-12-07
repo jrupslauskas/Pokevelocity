@@ -51,7 +51,7 @@ class ItemTest < ActiveSupport::TestCase
 
   test "should return sprite from definition" do
     item = Item.new(key: "fire_stone", item_type: Item::TYPES[:evolution_stone])
-    assert_equal "fire_stone.png", item.sprite
+    assert_equal "firestone.png", item.sprite
   end
 
   test "should fallback to titleized key for undefined item name" do

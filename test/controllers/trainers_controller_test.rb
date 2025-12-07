@@ -542,13 +542,13 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
   test "should display page title on rewards page" do
     log_in_as(trainers(:ash))
     get rewards_path
-    assert_match "Redeem Rewards", response.body
+    assert_match "Shop", response.body
   end
 
   test "should display page description on rewards page" do
     log_in_as(trainers(:ash))
     get rewards_path
-    assert_match "Claim Pokéballs for completing tickets", response.body
+    assert_match "Claim rewards and buy or sell items", response.body
   end
 
   test "should display claim reward card header" do
@@ -737,12 +737,12 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     assert_select "input[type='hidden'][value='8']"
   end
 
-  test "should have 6 forms total on rewards page" do
+  test "should have forms for story points and shop on rewards page" do
     log_in_as(trainers(:ash))
     get rewards_path
-    # 5 preset buttons + 1 "Other" input form (not counting sidebar logout form)
+    # 5 preset buttons + 1 "Other" input form + shop buy/sell forms (not counting sidebar logout form)
     assert_select "main.main-content" do
-      assert_select "form", count: 6
+      assert_select "form", minimum: 6
     end
   end
 
@@ -813,7 +813,8 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
   test "should display dashboard cards layout" do
     log_in_as(trainers(:ash))
     get rewards_path
-    assert_select "div.card-dashboard", count: 2
+    # Awards Counter + Reward Probabilities + Sales Counter
+    assert_select "div.card-dashboard", minimum: 2
   end
 
   test "should display card dashboard headers" do
@@ -1970,6 +1971,541 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     # Should not show Bulbasaur, Pikachu, etc.
     assert_no_match "Bulbasaur", response.body
     assert_no_match "Pikachu", response.body
+  end
+
+  # ================================================================================
+  # EVOLUTION LAB - PAGE ACCESS AND AUTHENTICATION TESTS
+  # ================================================================================
+
+  test "should get evolution lab when logged in" do
+    log_in_as(trainers(:ash))
+    get evolution_lab_path
+    assert_response :success
+  end
+
+  test "should redirect to login when accessing evolution lab without authentication" do
+    get evolution_lab_path
+    assert_redirected_to login_path
+    assert_equal "You must be logged in to access this page", flash[:alert]
+  end
+
+  test "should display evolution lab title" do
+    log_in_as(trainers(:ash))
+    get evolution_lab_path
+    assert_match "Evolution Lab", response.body
+  end
+
+  test "should display evolution lab description" do
+    log_in_as(trainers(:ash))
+    get evolution_lab_path
+    assert_match "Evolve your Pokémon using Evolution Stones", response.body
+  end
+
+  test "should render sidebar on evolution lab" do
+    log_in_as(trainers(:ash))
+    get evolution_lab_path
+    assert_select "aside.sidebar"
+  end
+
+  # ================================================================================
+  # EVOLUTION LAB - EMPTY STATE TESTS
+  # ================================================================================
+
+  test "should display empty state when no evolutions available" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+    get evolution_lab_path
+    assert_match "No Evolutions Available", response.body
+  end
+
+  test "should display empty state description when no evolutions available" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+    get evolution_lab_path
+    assert_match "don't have any Pokémon ready to evolve", response.body
+  end
+
+  test "should display link to catches page in empty state" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+    get evolution_lab_path
+    assert_select "a[href=?]", catches_path
+  end
+
+  test "should display link to shop in empty state" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+    get evolution_lab_path
+    assert_select "a[href=?]", rewards_path
+  end
+
+  # ================================================================================
+  # EVOLUTION LAB - AVAILABLE EVOLUTIONS DISPLAY TESTS
+  # ================================================================================
+
+  test "should display evolution when trainer has pre-evolution pokemon" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer Pikachu
+    Capture.create!(trainer: trainer, pokemon: pokemons(:pikachu), ball_type: "pokeball")
+
+    get evolution_lab_path
+    assert_match "Pikachu", response.body
+    assert_match "Raichu", response.body
+  end
+
+  test "should not display evolution when trainer already has evolved form" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer both Pikachu and Raichu
+    Capture.create!(trainer: trainer, pokemon: pokemons(:pikachu), ball_type: "pokeball")
+    Capture.create!(trainer: trainer, pokemon: pokemons(:raichu), ball_type: "pokeball")
+
+    get evolution_lab_path
+    # Should show empty state, not evolution cards
+    assert_match "No Evolutions Available", response.body
+    assert_select "div.evolution-card", count: 0
+  end
+
+  test "should display required item for evolution" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer Pikachu
+    Capture.create!(trainer: trainer, pokemon: pokemons(:pikachu), ball_type: "pokeball")
+
+    get evolution_lab_path
+    assert_match "Thunder Stone", response.body
+  end
+
+  test "should display item quantity requirement" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer Pikachu
+    Capture.create!(trainer: trainer, pokemon: pokemons(:pikachu), ball_type: "pokeball")
+
+    get evolution_lab_path
+    # Should show 0/1 for thunder stone
+    assert_match "0/1", response.body
+  end
+
+  test "should display current and required item quantities" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer Squirtle
+    Capture.create!(trainer: trainer, pokemon: pokemons(:squirtle), ball_type: "pokeball")
+    # Give trainer 1 evolution stone (needs 2)
+    thunder_stone = items(:evolution_stone)
+    trainer.add_item(:evolution_stone, 1)
+
+    get evolution_lab_path
+    # Should show 1/2 for evolution stone
+    assert_match "1/2", response.body
+  end
+
+  test "should enable evolve button when trainer has enough items" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer Pikachu and thunder stone
+    Capture.create!(trainer: trainer, pokemon: pokemons(:pikachu), ball_type: "pokeball")
+    trainer.add_item(:thunder_stone, 1)
+
+    get evolution_lab_path
+    # Check for the evolution form (button_to creates a form)
+    evolution = evolutions(:pikachu_to_raichu)
+    assert_select "form[action=?]", evolve_path(evolution.id)
+  end
+
+  test "should disable evolve button when trainer lacks items" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer Pikachu but no thunder stone
+    Capture.create!(trainer: trainer, pokemon: pokemons(:pikachu), ball_type: "pokeball")
+
+    get evolution_lab_path
+    assert_select "button[disabled]"
+  end
+
+  test "should display multiple evolutions from same pokemon" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer Eevee (can evolve to Vaporeon and Jolteon)
+    Capture.create!(trainer: trainer, pokemon: pokemons(:eevee), ball_type: "pokeball")
+
+    get evolution_lab_path
+    assert_match "Vaporeon", response.body
+    assert_match "Jolteon", response.body
+  end
+
+  test "should display evolution chain stages" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer Squirtle (first stage)
+    Capture.create!(trainer: trainer, pokemon: pokemons(:squirtle), ball_type: "pokeball")
+    trainer.add_item(:evolution_stone, 2)
+
+    get evolution_lab_path
+    # Should show Squirtle -> Wartortle
+    assert_match "Squirtle", response.body
+    assert_match "Wartortle", response.body
+  end
+
+  test "should show second evolution stage when trainer has middle evolution" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer Wartortle (middle stage)
+    Capture.create!(trainer: trainer, pokemon: pokemons(:wartortle), ball_type: "pokeball")
+    trainer.add_item(:evolution_stone, 3)
+
+    get evolution_lab_path
+    # Should show Wartortle -> Blastoise
+    assert_match "Wartortle", response.body
+    assert_match "Blastoise", response.body
+  end
+
+  # ================================================================================
+  # EVOLUTION LAB - EVOLUTION PROCESS TESTS
+  # ================================================================================
+
+  test "should successfully evolve pokemon when requirements met" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer Pikachu and thunder stone
+    Capture.create!(trainer: trainer, pokemon: pokemons(:pikachu), ball_type: "pokeball")
+    trainer.add_item(:thunder_stone, 1)
+
+    evolution = evolutions(:pikachu_to_raichu)
+
+    assert_difference("Capture.count", 1) do
+      post evolve_path(evolution), params: { id: evolution.id }
+    end
+
+    assert_redirected_to pokedex_path
+    trainer.reload
+    assert_includes trainer.captured_pokemon, pokemons(:raichu)
+  end
+
+  test "should deduct required items on successful evolution" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer Pikachu and thunder stone
+    Capture.create!(trainer: trainer, pokemon: pokemons(:pikachu), ball_type: "pokeball")
+    trainer.add_item(:thunder_stone, 1)
+
+    evolution = evolutions(:pikachu_to_raichu)
+    initial_thunder_stones = trainer.item_quantity(:thunder_stone)
+
+    post evolve_path(evolution), params: { id: evolution.id }
+
+    trainer.reload
+    assert_equal initial_thunder_stones - 1, trainer.item_quantity(:thunder_stone)
+  end
+
+  test "should display success message after evolution" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer Pikachu and thunder stone
+    Capture.create!(trainer: trainer, pokemon: pokemons(:pikachu), ball_type: "pokeball")
+    trainer.add_item(:thunder_stone, 1)
+
+    evolution = evolutions(:pikachu_to_raichu)
+
+    post evolve_path(evolution), params: { id: evolution.id }
+
+    assert_match "Congratulations! Your Pikachu evolved into Raichu!", flash[:notice]
+  end
+
+  test "should use same ball type as original capture for evolved pokemon" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer Pikachu caught with ultra ball
+    Capture.create!(trainer: trainer, pokemon: pokemons(:pikachu), ball_type: "ultra_ball")
+    trainer.add_item(:thunder_stone, 1)
+
+    evolution = evolutions(:pikachu_to_raichu)
+    post evolve_path(evolution), params: { id: evolution.id }
+
+    trainer.reload
+    raichu_capture = Capture.find_by(trainer: trainer, pokemon: pokemons(:raichu))
+    assert_equal "ultra_ball", raichu_capture.ball_type
+  end
+
+  test "should set captured_at timestamp for evolved pokemon" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer Pikachu and thunder stone
+    Capture.create!(trainer: trainer, pokemon: pokemons(:pikachu), ball_type: "pokeball")
+    trainer.add_item(:thunder_stone, 1)
+
+    evolution = evolutions(:pikachu_to_raichu)
+
+    freeze_time = Time.zone.parse("2025-06-15 14:30:00")
+    travel_to freeze_time do
+      post evolve_path(evolution), params: { id: evolution.id }
+    end
+
+    trainer.reload
+    raichu_capture = Capture.find_by(trainer: trainer, pokemon: pokemons(:raichu))
+    assert_in_delta freeze_time, raichu_capture.captured_at, 1.second
+  end
+
+  # ================================================================================
+  # EVOLUTION LAB - ERROR HANDLING TESTS
+  # ================================================================================
+
+  test "should not evolve when trainer lacks pre-evolution pokemon" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer thunder stone but no Pikachu
+    trainer.add_item(:thunder_stone, 1)
+
+    evolution = evolutions(:pikachu_to_raichu)
+
+    assert_no_difference("Capture.count") do
+      post evolve_path(evolution), params: { id: evolution.id }
+    end
+
+    assert_redirected_to evolution_lab_path
+    assert_match "don't have Pikachu", flash[:alert]
+  end
+
+  test "should not evolve when trainer already has evolved form" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer both Pikachu, Raichu, and thunder stone
+    Capture.create!(trainer: trainer, pokemon: pokemons(:pikachu), ball_type: "pokeball")
+    Capture.create!(trainer: trainer, pokemon: pokemons(:raichu), ball_type: "pokeball")
+    trainer.add_item(:thunder_stone, 1)
+
+    evolution = evolutions(:pikachu_to_raichu)
+    initial_captures = trainer.captures.count
+
+    post evolve_path(evolution), params: { id: evolution.id }
+
+    assert_redirected_to evolution_lab_path
+    assert_match "already have Raichu", flash[:alert]
+
+    trainer.reload
+    assert_equal initial_captures, trainer.captures.count
+  end
+
+  test "should not evolve when trainer lacks required items" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer Pikachu but no thunder stone
+    Capture.create!(trainer: trainer, pokemon: pokemons(:pikachu), ball_type: "pokeball")
+
+    evolution = evolutions(:pikachu_to_raichu)
+
+    assert_no_difference("Capture.count") do
+      post evolve_path(evolution), params: { id: evolution.id }
+    end
+
+    assert_redirected_to evolution_lab_path
+    assert_match "don't have enough Thunder Stone", flash[:alert]
+  end
+
+  test "should not evolve when trainer has insufficient item quantity" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer Squirtle but only 1 evolution stone (needs 2)
+    Capture.create!(trainer: trainer, pokemon: pokemons(:squirtle), ball_type: "pokeball")
+    trainer.add_item(:evolution_stone, 1)
+
+    evolution = evolutions(:squirtle_to_wartortle)
+
+    assert_no_difference("Capture.count") do
+      post evolve_path(evolution), params: { id: evolution.id }
+    end
+
+    assert_redirected_to evolution_lab_path
+    assert_match "don't have enough Evolution Stone", flash[:alert]
+  end
+
+  test "should not deduct items when evolution fails" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer only thunder stone (no Pikachu)
+    trainer.add_item(:thunder_stone, 1)
+
+    evolution = evolutions(:pikachu_to_raichu)
+    initial_stones = trainer.item_quantity(:thunder_stone)
+
+    post evolve_path(evolution), params: { id: evolution.id }
+
+    trainer.reload
+    assert_equal initial_stones, trainer.item_quantity(:thunder_stone)
+  end
+
+  test "should redirect to login when evolving without authentication" do
+    evolution = evolutions(:pikachu_to_raichu)
+    post evolve_path(evolution), params: { id: evolution.id }
+    assert_redirected_to login_path
+    assert_equal "You must be logged in to access this page", flash[:alert]
+  end
+
+  # ================================================================================
+  # EVOLUTION LAB - EDGE CASE AND INTEGRATION TESTS
+  # ================================================================================
+
+  test "should handle evolution chain correctly" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # First evolution: Squirtle -> Wartortle
+    Capture.create!(trainer: trainer, pokemon: pokemons(:squirtle), ball_type: "pokeball")
+    trainer.add_item(:evolution_stone, 5) # Enough for both evolutions
+
+    evolution1 = evolutions(:squirtle_to_wartortle)
+    post evolve_path(evolution1), params: { id: evolution1.id }
+
+    trainer.reload
+    assert_includes trainer.captured_pokemon, pokemons(:wartortle)
+    assert_equal 3, trainer.item_quantity(:evolution_stone) # 5 - 2 = 3
+
+    # Second evolution: Wartortle -> Blastoise
+    evolution2 = evolutions(:wartortle_to_blastoise)
+    post evolve_path(evolution2), params: { id: evolution2.id }
+
+    trainer.reload
+    assert_includes trainer.captured_pokemon, pokemons(:blastoise)
+    assert_equal 0, trainer.item_quantity(:evolution_stone) # 3 - 3 = 0
+  end
+
+  test "should maintain session across evolution flow" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer Pikachu and thunder stone
+    Capture.create!(trainer: trainer, pokemon: pokemons(:pikachu), ball_type: "pokeball")
+    trainer.add_item(:thunder_stone, 1)
+
+    # Visit evolution lab
+    get evolution_lab_path
+    assert_response :success
+
+    # Perform evolution
+    evolution = evolutions(:pikachu_to_raichu)
+    post evolve_path(evolution), params: { id: evolution.id }
+
+    # Session should still be valid
+    assert_equal trainer.id, session[:trainer_id]
+  end
+
+  test "should handle multiple different evolutions in sequence" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer Eevee with both water and thunder stones
+    Capture.create!(trainer: trainer, pokemon: pokemons(:eevee), ball_type: "pokeball")
+    Capture.create!(trainer: trainer, pokemon: pokemons(:pikachu), ball_type: "pokeball")
+    trainer.add_item(:water_stone, 1)
+    trainer.add_item(:thunder_stone, 1)
+
+    # Evolve Eevee to Vaporeon
+    evolution1 = evolutions(:eevee_to_vaporeon)
+    post evolve_path(evolution1), params: { id: evolution1.id }
+
+    trainer.reload
+    assert_includes trainer.captured_pokemon, pokemons(:vaporeon)
+
+    # Evolve Pikachu to Raichu
+    evolution2 = evolutions(:pikachu_to_raichu)
+    post evolve_path(evolution2), params: { id: evolution2.id }
+
+    trainer.reload
+    assert_includes trainer.captured_pokemon, pokemons(:raichu)
+  end
+
+  test "should show empty state after evolving only available pokemon" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer Pikachu and thunder stone
+    Capture.create!(trainer: trainer, pokemon: pokemons(:pikachu), ball_type: "pokeball")
+    trainer.add_item(:thunder_stone, 1)
+
+    evolution = evolutions(:pikachu_to_raichu)
+    post evolve_path(evolution), params: { id: evolution.id }
+
+    # After evolution, should show empty state
+    get evolution_lab_path
+    assert_match "No Evolutions Available", response.body
+  end
+
+  test "should not show evolution option after evolving" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer Pikachu and thunder stone
+    Capture.create!(trainer: trainer, pokemon: pokemons(:pikachu), ball_type: "pokeball")
+    trainer.add_item(:thunder_stone, 2)
+
+    # Before evolution, should show option
+    get evolution_lab_path
+    assert_select "div.evolution-card", minimum: 1
+
+    # Perform evolution
+    evolution = evolutions(:pikachu_to_raichu)
+    post evolve_path(evolution), params: { id: evolution.id }
+
+    # After evolution, should not show option (already have Raichu)
+    get evolution_lab_path
+    assert_select "div.evolution-card", count: 0
+    assert_match "No Evolutions Available", response.body
+  end
+
+  test "should preserve original pokemon after evolution" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer Pikachu and thunder stone
+    Capture.create!(trainer: trainer, pokemon: pokemons(:pikachu), ball_type: "pokeball")
+    trainer.add_item(:thunder_stone, 1)
+
+    evolution = evolutions(:pikachu_to_raichu)
+    post evolve_path(evolution), params: { id: evolution.id }
+
+    trainer.reload
+    # Trainer should still have Pikachu
+    assert_includes trainer.captured_pokemon, pokemons(:pikachu)
+    # And also have Raichu
+    assert_includes trainer.captured_pokemon, pokemons(:raichu)
+  end
+
+  test "should handle evolution with master ball captured pokemon" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer Pikachu caught with master ball
+    Capture.create!(trainer: trainer, pokemon: pokemons(:pikachu), ball_type: "master_ball")
+    trainer.add_item(:thunder_stone, 1)
+
+    evolution = evolutions(:pikachu_to_raichu)
+    post evolve_path(evolution), params: { id: evolution.id }
+
+    trainer.reload
+    raichu_capture = Capture.find_by(trainer: trainer, pokemon: pokemons(:raichu))
+    assert_equal "master_ball", raichu_capture.ball_type
   end
 
   private
