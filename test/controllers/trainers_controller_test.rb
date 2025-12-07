@@ -941,13 +941,13 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     assert_match "Pikachu", response.body
   end
 
-  test "should redirect when trying to select already caught pokemon" do
+  test "should allow selecting already caught pokemon for duplicate capture" do
     log_in_as(trainers(:gary))
     pokemon = pokemons(:charmander) # Gary already caught this
 
     get catch_path(pokemon)
-    assert_redirected_to catches_path
-    assert_equal "You've already caught #{pokemon.name}!", flash[:alert]
+    assert_response :success
+    assert_match pokemon.name, response.body
   end
 
   test "should redirect to login when accessing select pokemon without login" do
@@ -1037,21 +1037,28 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     assert_not_includes trainer.captured_pokemon, pokemon
   end
 
-  test "should not catch already caught pokemon" do
+  test "should give evolution stone when catching already caught pokemon" do
     trainer = trainers(:gary)
     log_in_as(trainer)
     pokemon = pokemons(:charmander) # Gary already caught this
 
-    initial_pokeballs = trainer.ball_count(:pokeball)
+    # Give trainer master ball for guaranteed success
+    trainer.add_item(:master_ball, 1)
+    initial_captures = trainer.captures.count
+    initial_stones = trainer.item_quantity(:evolution_stone)
 
-    post catch_path(pokemon), params: { ball_type: "pokeball" }
+    post catch_path(pokemon), params: { ball_type: "master_ball" }
 
-    assert_redirected_to catch_path(pokemon)
-    assert_match(/already caught/, flash[:alert])
+    assert_redirected_to pokedex_path
+    follow_redirect!
+    assert_match "Evolution Stone", response.body
+    assert_match "already in your Pokédex", response.body
 
     trainer.reload
-    # Ball should not be used
-    assert_equal initial_pokeballs, trainer.ball_count(:pokeball)
+    # Should not create new capture
+    assert_equal initial_captures, trainer.captures.count
+    # Should give evolution stone
+    assert_equal initial_stones + 1, trainer.item_quantity(:evolution_stone)
   end
 
   test "should redirect to login when attempting catch without login" do

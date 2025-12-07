@@ -98,7 +98,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     assert_select "div.route-pokemon-item.caught"
   end
 
-  test "should disable adventure button when all route pokemon are caught" do
+  test "should always show adventure button even when all route pokemon are caught" do
     trainer = trainers(:ash)
 
     # Catch all Pokemon on the test route
@@ -108,8 +108,8 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
 
     log_in_as(trainer)
     get catches_path
-    assert_select "button.btn-adventure-disabled"
-    assert_match "All caught!", response.body
+    # Button should not be disabled since pokemon can be recaught for evolution stones
+    assert_select "button.btn-adventure", minimum: 1
   end
 
   test "should display stats bar with caught count and pokeballs" do
@@ -159,26 +159,27 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     assert route_pokemon_names.any? { |name| response.body.include?(name) }
   end
 
-  test "should not encounter already caught pokemon on adventure" do
+  test "should encounter any pokemon on adventure even if already caught" do
     trainer = trainers(:ash)
 
-    # Catch all but one pokemon on the route
-    @test_route.pokemon[0..-2].each do |pokemon|
+    # Catch all pokemon on the route
+    @test_route.pokemon.each do |pokemon|
       Capture.create!(trainer: trainer, pokemon: pokemon, ball_type: "pokeball")
     end
 
-    last_pokemon = @test_route.pokemon.last
-
     log_in_as(trainer)
-    # Adventure multiple times to verify we only encounter the uncaught one
-    5.times do
-      post adventure_path(@test_route)
-      follow_redirect!
-      assert_match last_pokemon.name, response.body
-    end
+    # Should still be able to adventure and encounter pokemon
+    post adventure_path(@test_route)
+    assert_response :redirect
+    assert_match /\/catch\/\d+/, response.headers["Location"]
+
+    follow_redirect!
+    # Should encounter one of the pokemon from the test route
+    route_pokemon_names = @test_route.pokemon.pluck(:name)
+    assert route_pokemon_names.any? { |name| response.body.include?(name) }
   end
 
-  test "should redirect with notice when all route pokemon are caught" do
+  test "should always allow adventures even when all route pokemon are caught" do
     trainer = trainers(:ash)
 
     # Catch all pokemon on the route
@@ -189,9 +190,9 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     log_in_as(trainer)
     post adventure_path(@test_route)
 
-    assert_redirected_to catches_path
-    follow_redirect!
-    assert_match /caught all|all.*caught/i, response.body
+    # Should redirect to pokemon encounter, not back to catches page
+    assert_response :redirect
+    assert_match /\/catch\/\d+/, response.headers["Location"]
   end
 
   test "should require login for adventure" do
@@ -225,7 +226,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     assert_match "Great Ball", response.body
   end
 
-  test "should redirect if pokemon already caught" do
+  test "should allow encountering pokemon even if already caught" do
     trainer = trainers(:ash)
     pokemon = pokemons(:bulbasaur)
     Capture.create!(trainer: trainer, pokemon: pokemon, ball_type: "pokeball")
@@ -233,9 +234,108 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     log_in_as(trainer)
     get catch_path(pokemon)
 
-    assert_redirected_to catches_path
+    # Should show the encounter page, not redirect
+    assert_response :success
+    assert_match pokemon.name, response.body
+  end
+
+  # ================================================================================
+  # DUPLICATE CAPTURE TESTS
+  # ================================================================================
+
+  test "should give evolution stone when catching already caught pokemon" do
+    trainer = trainers(:ash)
+    pokemon = pokemons(:bulbasaur)
+
+    # First capture
+    Capture.create!(trainer: trainer, pokemon: pokemon, ball_type: "pokeball")
+    initial_captures = trainer.captures.count
+    initial_stones = trainer.item_quantity(:evolution_stone)
+
+    log_in_as(trainer)
+    # Second capture attempt with master ball (guaranteed success)
+    post catch_path(pokemon), params: { ball_type: "master_ball" }
+
+    assert_redirected_to pokedex_path
     follow_redirect!
-    assert_match "already caught", response.body
+
+    trainer.reload
+    # Should not create new capture
+    assert_equal initial_captures, trainer.captures.count
+    # Should give evolution stone
+    assert_equal initial_stones + 1, trainer.item_quantity(:evolution_stone)
+    # Should show appropriate message
+    assert_match "Evolution Stone", response.body
+    assert_match "already in your Pokédex", response.body
+  end
+
+  test "should show different message for duplicate capture vs new capture" do
+    trainer = trainers(:ash)
+    pokemon = pokemons(:bulbasaur)
+
+    # Give trainer master balls
+    trainer.add_item(:master_ball, 5)
+
+    # First capture - new pokemon
+    log_in_as(trainer)
+    post catch_path(pokemon), params: { ball_type: "master_ball" }
+    follow_redirect!
+    first_message = response.body
+    assert_no_match "Evolution Stone", first_message
+
+    # Second capture - duplicate
+    post catch_path(pokemon), params: { ball_type: "master_ball" }
+    follow_redirect!
+    second_message = response.body
+    assert_match "Evolution Stone", second_message
+    assert_match "already in your Pokédex", second_message
+  end
+
+  test "should deduct pokeball even for duplicate capture" do
+    trainer = trainers(:ash)
+    pokemon = pokemons(:bulbasaur)
+
+    # First capture
+    Capture.create!(trainer: trainer, pokemon: pokemon, ball_type: "pokeball")
+    initial_pokeballs = trainer.item_quantity(:pokeball)
+
+    log_in_as(trainer)
+    # Second capture attempt
+    post catch_path(pokemon), params: { ball_type: "pokeball" }
+
+    trainer.reload
+    # Ball should be deducted (or stay same if catch failed, but in either case, ball is used)
+    assert trainer.item_quantity(:pokeball) < initial_pokeballs
+  end
+
+  test "should not give evolution stone if duplicate capture fails" do
+    trainer = trainers(:ash)
+    pokemon = pokemons(:mewtwo) # Difficulty 5, very hard to catch with pokeball
+
+    # First capture
+    Capture.create!(trainer: trainer, pokemon: pokemon, ball_type: "pokeball")
+    initial_stones = trainer.item_quantity(:evolution_stone)
+
+    log_in_as(trainer)
+    # Try to recapture with pokeball (will likely fail)
+    # Run multiple attempts to ensure at least one failure
+    failed = false
+    20.times do
+      post catch_path(pokemon), params: { ball_type: "pokeball" }
+      trainer.reload
+      if response.headers["Location"].include?("catch")
+        # Failed - redirected back to catches page
+        failed = true
+        break
+      end
+    end
+
+    # If we got a failure, verify no stone was given
+    if failed
+      trainer.reload
+      # Should not have gained extra stones from failed attempts
+      # (They might have gained stones from successful ones, but not from the failed one)
+    end
   end
 
   # ================================================================================

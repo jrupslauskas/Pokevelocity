@@ -22,29 +22,41 @@ class PokemonCatchService
       return { success: false, error: "You've already caught all 151 Pokemon! Congratulations!" }
     end
 
-    # Check if already caught
-    if @trainer.captured_pokemon.include?(pokemon_to_catch)
-      return { success: false, error: "You've already caught #{pokemon_to_catch.name}!" }
-    end
+    # Check if already caught (duplicate capture)
+    already_caught = @trainer.captured_pokemon.include?(pokemon_to_catch)
 
     # Deduct the ball (ball is used regardless of success)
     deduct_ball!
 
     # Check if catch is successful based on difficulty and ball type
     if catch_successful?(pokemon_to_catch)
-      # Create the capture
-      capture = @trainer.captures.create!(
-        pokemon: pokemon_to_catch,
-        ball_type: @ball_type
-      )
+      if already_caught
+        # Give Evolution Stone instead of capturing
+        @trainer.add_item(:evolution_stone, 1)
 
-      {
-        success: true,
-        caught: true,
-        pokemon: pokemon_to_catch,
-        capture: capture,
-        ball_type: @ball_type
-      }
+        {
+          success: true,
+          caught: true,
+          duplicate: true,
+          pokemon: pokemon_to_catch,
+          ball_type: @ball_type
+        }
+      else
+        # Create the capture
+        capture = @trainer.captures.create!(
+          pokemon: pokemon_to_catch,
+          ball_type: @ball_type
+        )
+
+        {
+          success: true,
+          caught: true,
+          duplicate: false,
+          pokemon: pokemon_to_catch,
+          capture: capture,
+          ball_type: @ball_type
+        }
+      end
     else
       # Catch failed, but ball was still used
       {

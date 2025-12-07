@@ -138,14 +138,24 @@ class PokemonCatchServiceTest < ActiveSupport::TestCase
   # POKEMON VALIDATION TESTS
   # ================================================================================
 
-  test "should reject already caught pokemon" do
+  test "should give evolution stone for already caught pokemon" do
     trainer = trainers(:gary)
     pokemon = pokemons(:charmander) # Gary already caught this
 
-    result = PokemonCatchService.new(trainer, "pokeball", pokemon).catch!
+    initial_stones = trainer.item_quantity(:evolution_stone)
+    initial_captures = trainer.captures.count
 
-    assert_equal false, result[:success]
-    assert_match(/already caught/, result[:error])
+    result = PokemonCatchService.new(trainer, "master_ball", pokemon).catch!
+
+    assert_equal true, result[:success]
+    assert_equal true, result[:caught]
+    assert_equal true, result[:duplicate]
+
+    trainer.reload
+    # Should not create new capture
+    assert_equal initial_captures, trainer.captures.count
+    # Should give evolution stone
+    assert_equal initial_stones + 1, trainer.item_quantity(:evolution_stone)
   end
 
   test "should handle all pokemon caught scenario" do
