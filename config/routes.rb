@@ -41,6 +41,8 @@ Rails.application.routes.draw do
   # Redeem rewards
   get "/rewards", to: "rewards#index", as: :rewards
   post "/rewards", to: "rewards#create"
+  post "/rewards/buy", to: "rewards#buy_item", as: :buy_item_rewards
+  post "/rewards/sell", to: "rewards#sell_item", as: :sell_item_rewards
 
   # Catch Pokemon
   get "/catch", to: "catches#new", as: :catches

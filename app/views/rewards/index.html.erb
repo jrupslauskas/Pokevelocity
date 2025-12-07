@@ -3,9 +3,17 @@
 
   <main class="main-content">
     <header class="page-header-authenticated">
-      <h1>Redeem Rewards</h1>
-      <p>Claim Pokéballs for completing tickets.</p>
+      <h1>Shop</h1>
+      <p>Claim rewards and buy or sell items.</p>
+      <div style="text-align: center; margin-top: 16px;">
+        <span style="background: #FFF4E6; color: #2C5F2D; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 18px;">
+          💰 Currency: <%= @trainer.currency %>
+        </span>
+      </div>
     </header>
+
+    <!-- Awards Counter Section -->
+    <h2 style="text-align: center; color: #2C5F2D; margin: 32px 0 16px;">Awards Counter</h2>
 
     <!-- Claim Reward Card -->
     <div class="card-dashboard" style="max-width: 800px; margin: 0 auto 32px;">
@@ -102,5 +110,93 @@
         </div>
       </div>
     </div>
+
+    <!-- Sales Counter Section -->
+    <h2 style="text-align: center; color: #2C5F2D; margin: 48px 0 16px;">Sales Counter</h2>
+
+    <div class="card-dashboard" style="max-width: 800px; margin: 0 auto;">
+      <div style="display: flex; gap: 8px; margin-bottom: 24px; border-bottom: 2px solid #E8D5C4;">
+        <button id="buyTab" class="shop-tab active" onclick="showTab('buy')">Buy</button>
+        <button id="sellTab" class="shop-tab" onclick="showTab('sell')">Sell</button>
+      </div>
+
+      <!-- Buy Tab Content -->
+      <div id="buyContent" class="tab-content">
+        <p style="color: #6B5537; margin-bottom: 20px; text-align: center;">
+          Purchase evolution items to help your Pokémon evolve!
+        </p>
+        <div style="display: grid; gap: 12px;">
+          <% Item.where(item_type: 'evolution_stone').each do |item| %>
+            <div class="shop-item">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <%= image_tag "icons/#{item.sprite}", alt: item.name, class: "shop-item-icon" %>
+                <div>
+                  <div style="font-weight: 600; color: #2C5F2D;"><%= item.name %></div>
+                  <div style="font-size: 14px; color: #6B5537;"><%= item.description %></div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-weight: 600; color: #2C5F2D;">💰 <%= item.buy_price %></span>
+                <%= form_with url: buy_item_rewards_path, method: :post, local: true do |f| %>
+                  <%= hidden_field_tag :item_key, item.key %>
+                  <%= submit_tag "Buy", class: "btn-primary-small" %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Sell Tab Content -->
+      <div id="sellContent" class="tab-content" style="display: none;">
+        <p style="color: #6B5537; margin-bottom: 20px; text-align: center;">
+          Sell your items for currency!
+        </p>
+        <div style="display: grid; gap: 12px;">
+          <% (Item.where(item_type: 'evolution_stone') + Item.where(item_type: 'pokeball')).each do |item| %>
+            <% quantity = @trainer.item_quantity(item.key) %>
+            <% if quantity > 0 %>
+              <div class="shop-item">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <%= image_tag "icons/#{item.sprite}", alt: item.name, class: "shop-item-icon" %>
+                  <div>
+                    <div style="font-weight: 600; color: #2C5F2D;"><%= item.name %></div>
+                    <div style="font-size: 14px; color: #6B5537;">Owned: <%= quantity %></div>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <span style="font-weight: 600; color: #2C5F2D;">💰 <%= item.sell_price %></span>
+                  <%= form_with url: sell_item_rewards_path, method: :post, local: true do |f| %>
+                    <%= hidden_field_tag :item_key, item.key %>
+                    <%= submit_tag "Sell", class: "btn-primary-small" %>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function showTab(tab) {
+        const buyTab = document.getElementById('buyTab');
+        const sellTab = document.getElementById('sellTab');
+        const buyContent = document.getElementById('buyContent');
+        const sellContent = document.getElementById('sellContent');
+
+        if (tab === 'buy') {
+          buyTab.classList.add('active');
+          sellTab.classList.remove('active');
+          buyContent.style.display = 'block';
+          sellContent.style.display = 'none';
+        } else {
+          sellTab.classList.add('active');
+          buyTab.classList.remove('active');
+          sellContent.style.display = 'block';
+          buyContent.style.display = 'none';
+        }
+      }
+    </script>
   </main>
 </div>

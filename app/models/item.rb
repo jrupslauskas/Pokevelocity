@@ -20,77 +20,99 @@ class Item < ApplicationRecord
       name: 'Poké Ball',
       description: 'A device for catching wild Pokémon. It is designed as a capsule system.',
       item_type: TYPES[:pokeball],
-      sprite: 'pokeball_shop.png'
+      sprite: 'pokeball_shop.png',
+      buy_price: nil,
+      sell_price: 100
     },
     great_ball: {
       key: 'great_ball',
       name: 'Great Ball',
       description: 'A good, high-performance Poké Ball that provides a higher Pokémon catch rate than a standard Poké Ball.',
       item_type: TYPES[:pokeball],
-      sprite: 'greatball.png'
+      sprite: 'greatball.png',
+      buy_price: nil,
+      sell_price: 100
     },
     ultra_ball: {
       key: 'ultra_ball',
       name: 'Ultra Ball',
       description: 'An ultra-high performance Poké Ball that provides a higher success rate for catching Pokémon than a Great Ball.',
       item_type: TYPES[:pokeball],
-      sprite: 'ultraball.jpg'
+      sprite: 'ultraball.jpg',
+      buy_price: nil,
+      sell_price: 100
     },
     master_ball: {
       key: 'master_ball',
       name: 'Master Ball',
       description: 'The best Poké Ball with the ultimate level of performance. It will catch any wild Pokémon without fail.',
       item_type: TYPES[:pokeball],
-      sprite: 'masterball.png'
+      sprite: 'masterball.png',
+      buy_price: nil,
+      sell_price: 100
     },
     fire_stone: {
       key: 'fire_stone',
       name: 'Fire Stone',
       description: 'A peculiar stone that makes certain species of Pokémon evolve. It burns as red as the evening sun.',
       item_type: TYPES[:evolution_stone],
-      sprite: 'fire_stone.png'
+      sprite: 'firestone.png',
+      buy_price: 100,
+      sell_price: 100
     },
     water_stone: {
       key: 'water_stone',
       name: 'Water Stone',
       description: 'A peculiar stone that makes certain species of Pokémon evolve. It is a clear, light blue.',
       item_type: TYPES[:evolution_stone],
-      sprite: 'water_stone.png'
+      sprite: 'waterstone.png',
+      buy_price: 100,
+      sell_price: 100
     },
     thunder_stone: {
       key: 'thunder_stone',
       name: 'Thunder Stone',
       description: 'A peculiar stone that makes certain species of Pokémon evolve. It has a thunderbolt pattern.',
       item_type: TYPES[:evolution_stone],
-      sprite: 'thunder_stone.png'
+      sprite: 'thunderstone.png',
+      buy_price: 100,
+      sell_price: 100
     },
     moon_stone: {
       key: 'moon_stone',
       name: 'Moon Stone',
       description: 'A peculiar stone that makes certain species of Pokémon evolve. It is as black as the night sky.',
       item_type: TYPES[:evolution_stone],
-      sprite: 'moon_stone.png'
+      sprite: 'moonstone.png',
+      buy_price: 100,
+      sell_price: 100
     },
     leaf_stone: {
       key: 'leaf_stone',
       name: 'Leaf Stone',
       description: 'A peculiar stone that makes certain species of Pokémon evolve. It has a leaf pattern.',
       item_type: TYPES[:evolution_stone],
-      sprite: 'leaf_stone.png'
+      sprite: 'leafstone.png',
+      buy_price: 100,
+      sell_price: 100
     },
     transfer_cable: {
       key: 'transfer_cable',
       name: 'Transfer Cable',
       description: 'A special cable that allows certain Pokémon to evolve by simulating a trade connection.',
       item_type: TYPES[:evolution_stone],
-      sprite: 'transfer_cable.png'
+      sprite: 'transfer_cable.png',
+      buy_price: 100,
+      sell_price: 100
     },
     evolution_stone: {
       key: 'evolution_stone',
       name: 'Evolution Stone',
       description: 'A mysterious stone used to evolve most Pokémon',
       item_type: TYPES[:evolution_stone],
-      sprite: 'evolution_stone.png'
+      sprite: 'evolution_stone.png',
+      buy_price: 100,
+      sell_price: 100
     }
   }.freeze
 
@@ -115,6 +137,14 @@ class Item < ApplicationRecord
 
   def sprite
     definition&.dig(:sprite) || "default_item.png"
+  end
+
+  def buy_price
+    definition&.dig(:buy_price)
+  end
+
+  def sell_price
+    definition&.dig(:sell_price)
   end
 
   # Check if this is a pokeball

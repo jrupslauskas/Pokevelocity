@@ -134,6 +134,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_06_190020) do
     t.string "password_digest", null: false
     t.datetime "updated_at", null: false
     t.string "username", null: false
+    t.integer "currency", default: 1000, null: false
     t.index ["username"], name: "index_trainers_on_username", unique: true
   end
 
