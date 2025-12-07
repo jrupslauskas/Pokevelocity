@@ -22,15 +22,16 @@ class CatchesController < ApplicationController
       end
     end
 
-    # Get all gates ordered by gate number
-    @gates = Gate.order(:gate_number).includes(:routes)
+    # Get all gates ordered by gate number (descending for newest first)
+    @gates = Gate.order(gate_number: :desc).includes(:routes)
 
     # Get next locked gate to show only routes up to that gate
     @next_locked_gate = @trainer.next_locked_gate
 
-    # Get routes that don't require any gate (null gate_requirement) - always accessible
-    @always_accessible_routes = Route.where(gate_requirement: nil)
-                                     .order(:order)
+    # Get routes that don't require any gate (null or 0 gate_requirement) - always accessible
+    # Keep these in ascending order since they're always available
+    @always_accessible_routes = Route.where("gate_requirement IS NULL OR gate_requirement = 0")
+                                     .order(order: :asc)
                                      .includes(route_encounters: :pokemon)
 
     # Get accessible routes based on unlocked gates (only up to next locked gate)
@@ -38,12 +39,13 @@ class CatchesController < ApplicationController
       # Show routes up to (but not including) the next locked gate
       accessible_gate_numbers = @trainer.unlocked_gates.pluck(:gate_number)
       @gated_routes = Route.where(gate_requirement: accessible_gate_numbers)
-                           .order(:order)
+                           .where("gate_requirement > 0")
+                           .order(order: :desc)
                            .includes(route_encounters: :pokemon)
     else
-      # All gates unlocked, show all gated routes
-      @gated_routes = Route.where.not(gate_requirement: nil)
-                           .order(:order)
+      # All gates unlocked, show all gated routes (excluding always accessible ones)
+      @gated_routes = Route.where("gate_requirement IS NOT NULL AND gate_requirement > 0")
+                           .order(order: :desc)
                            .includes(route_encounters: :pokemon)
     end
 

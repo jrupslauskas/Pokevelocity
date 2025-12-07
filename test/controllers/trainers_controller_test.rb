@@ -4,18 +4,18 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
   def setup
     # Create test gates (display data loaded from YAML)
     @gate_0 = Gate.create!(
-      gate_number: 0,
+      gate_number: 1,
       required_difficulty_score: 1
     )
 
     @gate_1 = Gate.create!(
-      gate_number: 1,
+      gate_number: 2,
       required_difficulty_score: 5
     )
 
     # Create always-accessible route (display data loaded from YAML)
     @starter_route = Route.create!(
-      gate_requirement: nil,
+      gate_requirement: 0,
       order: 1
     )
 
@@ -26,7 +26,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     RouteEncounter.create!(route: @starter_route, pokemon: pokemons(:pikachu), spawn_rate: 10)
     RouteEncounter.create!(route: @starter_route, pokemon: pokemons(:mewtwo), spawn_rate: 10)
 
-    # Create gated route (display data loaded from YAML)
+    # Create always accessible route (display data loaded from YAML)
     @test_route = Route.create!(
       gate_requirement: 0,
       order: 2

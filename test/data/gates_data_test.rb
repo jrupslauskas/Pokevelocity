@@ -22,9 +22,9 @@ class GatesDataTest < ActiveSupport::TestCase
   end
 
   # Gate Number Tests
-  test "should have all gate numbers from 0 to 8 with no gaps" do
+  test "should have all gate numbers from 1 to 10 with no gaps" do
     gate_numbers = @gates_data.map { |g| g["gate_number"] }.sort
-    expected_numbers = (0..8).to_a
+    expected_numbers = (1..10).to_a
     missing_numbers = expected_numbers - gate_numbers
 
     assert_empty missing_numbers,
@@ -67,13 +67,13 @@ class GatesDataTest < ActiveSupport::TestCase
     end
   end
 
-  test "gate 0 should have the lowest difficulty score" do
-    gate_0 = @gates_data.find { |g| g["gate_number"] == 0 }
-    other_gates = @gates_data.reject { |g| g["gate_number"] == 0 }
+  test "gate 1 should have the lowest difficulty score" do
+    gate_1 = @gates_data.find { |g| g["gate_number"] == 1 }
+    other_gates = @gates_data.reject { |g| g["gate_number"] == 1 }
 
     other_gates.each do |gate|
-      assert gate_0["required_difficulty_score"] < gate["required_difficulty_score"],
-             "Gate 0 score (#{gate_0["required_difficulty_score"]}) should be less than #{gate["name"]} score (#{gate["required_difficulty_score"]})"
+      assert gate_1["required_difficulty_score"] < gate["required_difficulty_score"],
+             "Gate 1 score (#{gate_1["required_difficulty_score"]}) should be less than #{gate["name"]} score (#{gate["required_difficulty_score"]})"
     end
   end
 
@@ -88,17 +88,17 @@ class GatesDataTest < ActiveSupport::TestCase
                  "Gates with invalid sprite_type: #{invalid_sprites.map { |g| "#{g["name"]} (#{g["sprite_type"]})" }.join(', ')}"
   end
 
-  test "gate 0 should use gym_leader sprite type for Professor Oak" do
-    gate_0 = @gates_data.find { |g| g["gate_number"] == 0 }
+  test "gate 1 should use gym_leader sprite type for Professor Oak" do
+    gate_1 = @gates_data.find { |g| g["gate_number"] == 1 }
 
-    assert_equal "gym_leader", gate_0["sprite_type"],
-                 "Gate 0 (#{gate_0["name"]}) should use gym_leader sprite type"
-    assert_equal "oak", gate_0["sprite_value"],
-                 "Gate 0 should have sprite_value 'oak'"
+    assert_equal "gym_leader", gate_1["sprite_type"],
+                 "Gate 1 (#{gate_1["name"]}) should use gym_leader sprite type"
+    assert_equal "oak", gate_1["sprite_value"],
+                 "Gate 1 should have sprite_value 'oak'"
   end
 
-  test "gates 1-8 should use gym_leader sprite type" do
-    gym_gates = @gates_data.select { |g| g["gate_number"] >= 1 }
+  test "gates 2-10 should use gym_leader sprite type" do
+    gym_gates = @gates_data.select { |g| g["gate_number"] >= 2 }
     non_gym_leader_sprites = gym_gates.reject { |g| g["sprite_type"] == "gym_leader" }
 
     assert_empty non_gym_leader_sprites,

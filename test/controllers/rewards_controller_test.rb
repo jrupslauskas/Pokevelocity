@@ -15,10 +15,10 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     post buy_item_rewards_path, params: { item_key: 'fire_stone' }
 
     assert_redirected_to rewards_path
-    assert_match "Successfully purchased Fire Stone for 100 currency!", flash[:notice]
+    assert_match "Successfully purchased Fire Stone for 300 currency!", flash[:notice]
 
     trainer.reload
-    assert_equal initial_currency - 100, trainer.currency
+    assert_equal initial_currency - 300, trainer.currency
     assert_equal initial_stones + 1, trainer.item_quantity(:fire_stone)
   end
 
@@ -33,7 +33,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to rewards_path
     trainer.reload
-    assert_equal initial_currency - 100, trainer.currency
+    assert_equal initial_currency - 300, trainer.currency
     assert_equal initial_stones + 1, trainer.item_quantity(:thunder_stone)
   end
 
@@ -48,7 +48,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to rewards_path
     trainer.reload
-    assert_equal initial_currency - 100, trainer.currency
+    assert_equal initial_currency - 300, trainer.currency
     assert_equal initial_stones + 1, trainer.item_quantity(:water_stone)
   end
 
@@ -63,7 +63,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to rewards_path
     trainer.reload
-    assert_equal initial_currency - 100, trainer.currency
+    assert_equal initial_currency - 300, trainer.currency
     assert_equal initial_stones + 1, trainer.item_quantity(:moon_stone)
   end
 
@@ -78,7 +78,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to rewards_path
     trainer.reload
-    assert_equal initial_currency - 100, trainer.currency
+    assert_equal initial_currency - 300, trainer.currency
     assert_equal initial_stones + 1, trainer.item_quantity(:leaf_stone)
   end
 
@@ -93,7 +93,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to rewards_path
     trainer.reload
-    assert_equal initial_currency - 100, trainer.currency
+    assert_equal initial_currency - 300, trainer.currency
     assert_equal initial_cables + 1, trainer.item_quantity(:transfer_cable)
   end
 
@@ -118,20 +118,20 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
     initial_currency = trainer.currency
 
-    # Buy fire stone
+    # Buy fire stone (300)
     post buy_item_rewards_path, params: { item_key: 'fire_stone' }
     trainer.reload
-    assert_equal initial_currency - 100, trainer.currency
+    assert_equal initial_currency - 300, trainer.currency
 
-    # Buy water stone
+    # Buy water stone (300)
     post buy_item_rewards_path, params: { item_key: 'water_stone' }
     trainer.reload
-    assert_equal initial_currency - 200, trainer.currency
+    assert_equal initial_currency - 600, trainer.currency
 
-    # Buy thunder stone
+    # Buy thunder stone (300)
     post buy_item_rewards_path, params: { item_key: 'thunder_stone' }
     trainer.reload
-    assert_equal initial_currency - 300, trainer.currency
+    assert_equal initial_currency - 900, trainer.currency
   end
 
   test "should successfully buy same item multiple times" do
@@ -157,7 +157,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
 
-    # Set currency to less than item price
+    # Set currency to less than item price (fire_stone costs 300)
     trainer.update!(currency: 50)
     initial_currency = trainer.currency
     initial_stones = trainer.item_quantity(:fire_stone)
@@ -165,7 +165,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     post buy_item_rewards_path, params: { item_key: 'fire_stone' }
 
     assert_redirected_to rewards_path
-    assert_match "Not enough currency! You need 100 but only have 50", flash[:alert]
+    assert_match "Not enough currency! You need 300 but only have 50", flash[:alert]
 
     trainer.reload
     assert_equal initial_currency, trainer.currency
@@ -276,8 +276,8 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
 
-    # Set currency to exactly item price
-    trainer.update!(currency: 100)
+    # Set currency to exactly item price (fire_stone costs 300)
+    trainer.update!(currency: 300)
     initial_stones = trainer.item_quantity(:fire_stone)
 
     post buy_item_rewards_path, params: { item_key: 'fire_stone' }
@@ -306,10 +306,10 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     post sell_item_rewards_path, params: { item_key: 'fire_stone' }
 
     assert_redirected_to rewards_path
-    assert_match "Successfully sold Fire Stone for 100 currency!", flash[:notice]
+    assert_match "Successfully sold Fire Stone for 200 currency!", flash[:notice]
 
     trainer.reload
-    assert_equal initial_currency + 100, trainer.currency
+    assert_equal initial_currency + 200, trainer.currency
     assert_equal initial_stones - 1, trainer.item_quantity(:fire_stone)
   end
 
@@ -325,7 +325,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to rewards_path
     trainer.reload
-    assert_equal initial_currency + 100, trainer.currency
+    assert_equal initial_currency + 200, trainer.currency
     assert_equal initial_stones - 1, trainer.item_quantity(:thunder_stone)
   end
 
@@ -341,7 +341,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to rewards_path
     trainer.reload
-    assert_equal initial_currency + 100, trainer.currency
+    assert_equal initial_currency + 200, trainer.currency
     assert_equal initial_stones - 1, trainer.item_quantity(:water_stone)
   end
 
@@ -373,7 +373,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to rewards_path
     trainer.reload
-    assert_equal initial_currency + 100, trainer.currency
+    assert_equal initial_currency + 200, trainer.currency
     assert_equal initial_great_balls - 1, trainer.item_quantity(:great_ball)
   end
 
@@ -388,7 +388,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to rewards_path
     trainer.reload
-    assert_equal initial_currency + 100, trainer.currency
+    assert_equal initial_currency + 300, trainer.currency
     assert_equal initial_ultra_balls - 1, trainer.item_quantity(:ultra_ball)
   end
 
@@ -403,7 +403,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to rewards_path
     trainer.reload
-    assert_equal initial_currency + 100, trainer.currency
+    assert_equal initial_currency + 500, trainer.currency
     assert_equal initial_master_balls - 1, trainer.item_quantity(:master_ball)
   end
 
@@ -418,18 +418,18 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
     initial_currency = trainer.currency
 
-    # Sell all three
+    # Sell all three (each worth 200)
     post sell_item_rewards_path, params: { item_key: 'fire_stone' }
-    trainer.reload
-    assert_equal initial_currency + 100, trainer.currency
-
-    post sell_item_rewards_path, params: { item_key: 'water_stone' }
     trainer.reload
     assert_equal initial_currency + 200, trainer.currency
 
+    post sell_item_rewards_path, params: { item_key: 'water_stone' }
+    trainer.reload
+    assert_equal initial_currency + 400, trainer.currency
+
     post sell_item_rewards_path, params: { item_key: 'thunder_stone' }
     trainer.reload
-    assert_equal initial_currency + 300, trainer.currency
+    assert_equal initial_currency + 600, trainer.currency
   end
 
   test "should successfully sell multiple of same item" do
@@ -440,13 +440,13 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_stones = trainer.item_quantity(:fire_stone)
 
-    # Sell 3 fire stones
+    # Sell 3 fire stones (each worth 200)
     3.times do
       post sell_item_rewards_path, params: { item_key: 'fire_stone' }
     end
 
     trainer.reload
-    assert_equal initial_currency + 300, trainer.currency
+    assert_equal initial_currency + 600, trainer.currency
     assert_equal initial_stones - 3, trainer.item_quantity(:fire_stone)
   end
 
@@ -538,16 +538,16 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
     initial_currency = trainer.currency
 
-    # Buy fire stone
+    # Buy fire stone (costs 300)
     post buy_item_rewards_path, params: { item_key: 'fire_stone' }
     trainer.reload
-    assert_equal initial_currency - 100, trainer.currency
+    assert_equal initial_currency - 300, trainer.currency
     assert_equal 1, trainer.item_quantity(:fire_stone)
 
-    # Sell it back
+    # Sell it back (sells for 200)
     post sell_item_rewards_path, params: { item_key: 'fire_stone' }
     trainer.reload
-    assert_equal initial_currency, trainer.currency
+    assert_equal initial_currency - 100, trainer.currency
     assert_equal 0, trainer.item_quantity(:fire_stone)
   end
 
@@ -629,14 +629,14 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     # Ensure enough currency
     trainer.update!(currency: 10000)
 
-    # Buy 10 items rapidly
+    # Buy 10 fire stones rapidly (each costs 300)
     10.times do
       post buy_item_rewards_path, params: { item_key: 'fire_stone' }
     end
 
     trainer.reload
     assert_equal 10, trainer.item_quantity(:fire_stone)
-    assert_equal 9000, trainer.currency
+    assert_equal 7000, trainer.currency
   end
 
   test "should handle rapid successive sales" do
@@ -647,14 +647,14 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     trainer.add_item(:fire_stone, 10)
     initial_currency = trainer.currency
 
-    # Sell 10 items rapidly
+    # Sell 10 fire stones rapidly (each sells for 200)
     10.times do
       post sell_item_rewards_path, params: { item_key: 'fire_stone' }
     end
 
     trainer.reload
     assert_equal 0, trainer.item_quantity(:fire_stone)
-    assert_equal initial_currency + 1000, trainer.currency
+    assert_equal initial_currency + 2000, trainer.currency
   end
 
   test "should display different flash messages for buy and sell" do
@@ -680,7 +680,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     post buy_item_rewards_path, params: { item_key: 'fire_stone' }
 
     trainer.reload
-    assert_equal 999900, trainer.currency
+    assert_equal 999700, trainer.currency
   end
 
   private

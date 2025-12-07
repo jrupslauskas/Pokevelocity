@@ -3,7 +3,7 @@ require "test_helper"
 class GateTest < ActiveSupport::TestCase
   def setup
     @gate = Gate.new(
-      gate_number: 5,
+      gate_number: 7,
       required_difficulty_score: 100
     )
     @trainer = trainers(:ash)
@@ -23,7 +23,7 @@ class GateTest < ActiveSupport::TestCase
   test "should require unique gate_number" do
     @gate.save!
     duplicate_gate = Gate.new(
-      gate_number: 5,
+      gate_number: 7,
       required_difficulty_score: 50
     )
     assert_not duplicate_gate.valid?
@@ -36,17 +36,17 @@ class GateTest < ActiveSupport::TestCase
     assert_includes @gate.errors[:gate_number], "must be an integer"
   end
 
-  test "gate_number should be between 0 and 9" do
-    @gate.gate_number = -1
-    assert_not @gate.valid?
-
-    @gate.gate_number = 10
-    assert_not @gate.valid?
-
+  test "gate_number should be between 1 and 10" do
     @gate.gate_number = 0
+    assert_not @gate.valid?
+
+    @gate.gate_number = 11
+    assert_not @gate.valid?
+
+    @gate.gate_number = 1
     assert @gate.valid?
 
-    @gate.gate_number = 9
+    @gate.gate_number = 10
     assert @gate.valid?
   end
 
@@ -137,7 +137,7 @@ class GateTest < ActiveSupport::TestCase
   end
 
   test "data_for should return gate data for given gate_number" do
-    data = Gate.data_for(0)
+    data = Gate.data_for(1)
     assert_not_nil data
     assert_equal "Professor Oak - Let Your Adventure Begin!", data["name"]
     assert_equal 2, data["required_difficulty_score"]

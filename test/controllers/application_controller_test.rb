@@ -4,7 +4,7 @@ class ApplicationControllerTest < ActionDispatch::IntegrationTest
   def setup
     # Create test gates (display data loaded from YAML)
     @gate_0 = Gate.create!(
-      gate_number: 0,
+      gate_number: 1,
       required_difficulty_score: 0
     )
 

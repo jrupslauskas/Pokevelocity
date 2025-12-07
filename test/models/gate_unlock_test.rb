@@ -4,7 +4,7 @@ class GateUnlockTest < ActiveSupport::TestCase
   def setup
     @trainer = trainers(:ash)
     @gate = Gate.create!(
-      gate_number: 5,
+      gate_number: 8,
       required_difficulty_score: 100
     )
     @gate_unlock = GateUnlock.new(trainer: @trainer, gate: @gate)
@@ -54,7 +54,7 @@ class GateUnlockTest < ActiveSupport::TestCase
     @gate_unlock.save!
 
     other_gate = Gate.create!(
-      gate_number: 6,
+      gate_number: 9,
       required_difficulty_score: 150
     )
     other_unlock = GateUnlock.new(trainer: @trainer, gate: other_gate, unlocked_at: Time.current)

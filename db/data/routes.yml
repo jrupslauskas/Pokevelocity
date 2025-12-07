@@ -3,7 +3,7 @@
 # Structure:
 #   - name: Route name (must be unique)
 #     description: Route description text
-#     gate_requirement: Gate number (0-8) that must be unlocked to access this route
+#     gate_requirement: Gate number (0 for always accessible, 1-10 for gated routes)
 #     order: Display order (unique, determines route sequence)
 #     encounters:
 #       - pokemon: Pokemon name (must match exactly from pokemon.yml)
@@ -13,7 +13,7 @@
 
 - name: Pallet Town
   description: Note to developer - Make sure to update so only one can be caught
-  gate_requirement: null
+  gate_requirement: 0
   order: 1
   encounters:
     - pokemon: Bulbasaur
@@ -23,11 +23,11 @@
     - pokemon: Charmander
       spawn_rate: 33
 
-## Professor Oak Requirement
+## Professor Oak Requirement, Gate 1
 
 - name: Route 1
   description: A peaceful route connecting Pallet Town and Viridian City. Common Pokémon can be found in the tall grass.
-  gate_requirement: 0
+  gate_requirement: 1
   order: 2
   encounters:
     - pokemon: Pidgey
@@ -37,7 +37,7 @@
 
 - name: Route 22
   description: A grassy path west of Viridian City. Ambitious Trainers test their strength before heading toward the Pokémon League.
-  gate_requirement: 0
+  gate_requirement: 1
   order: 3
   encounters:
     - pokemon: Rattata
@@ -49,7 +49,7 @@
 
 - name: Route 2
   description: A forest-lined path linking Viridian City to Pewter City. Viridian Forest lies just to the north.
-  gate_requirement: 0
+  gate_requirement: 1
   order: 4
   encounters:
     - pokemon: Rattata
@@ -61,7 +61,7 @@
 
 - name: Viridian Forest
   description: A dense, shadowy woodland filled with tall trees and vibrant bug Pokémon. Trainers navigate its winding paths as sunlight filters softly through the canopy.
-  gate_requirement: 0
+  gate_requirement: 1
   order: 5
   encounters:
     - pokemon: Caterpie
@@ -75,11 +75,11 @@
     - pokemon: Pikachu
       spawn_rate: 10
 
-## Pewter City Badge - Gate 1
+## Pewter City Badge - Gate 2
 
 - name: Route 3
   description: A sunny route stretching from Pewter City to Mt. Moon. Young Trainers gather here for early battles.
-  gate_requirement: 1
+  gate_requirement: 2
   order: 6
   encounters:
     - pokemon: Spearow
@@ -97,7 +97,7 @@
 
 - name: Mt. Moon
   description: A mysterious mountain filled with winding caverns and sparkling moonlit minerals. Clefairy are said to gather here during the full moon.
-  gate_requirement: 1
+  gate_requirement: 2
   order: 7
   encounters:
     - pokemon: Zubat
@@ -111,7 +111,7 @@
 
 - name: Route 4
   description: A rugged trail leading from Mt. Moon to Cerulean City. Wild Pokémon hide among scattered rocky outcrops.
-  gate_requirement: 1
+  gate_requirement: 2
   order: 8
   encounters:
     - pokemon: Rattata
@@ -129,7 +129,7 @@
 
 - name: Cerulean City
   description: A vibrant riverside city known for its love of Water-type Pokémon. The Cerulean Gym and the scenic waterways make it a favorite stop for travelers.
-  gate_requirement: 1
+  gate_requirement: 2
   order: 9
   encounters:
     - pokemon: Jynx
@@ -138,7 +138,7 @@
 
 - name: Route 24
   description: A bridge north of Cerulean City known for the Nugget Bridge challenge. Trainers line up for battles.
-  gate_requirement: 1
+  gate_requirement: 2
   order: 10
   encounters:
     - pokemon: Oddish
@@ -156,7 +156,7 @@
 
 - name: Route 25
   description: A cliffside path overlooking the sea. Bill’s Cottage lies at the far end, welcoming curious visitors.
-  gate_requirement: 1
+  gate_requirement: 2
   order: 11
   encounters:
     - pokemon: Oddish
@@ -172,11 +172,11 @@
     - pokemon: Pidgey
       spawn_rate: 15
 
-## Water Badge Gate - Gate 2
+## Water Badge Gate - Gate 3
 
 - name: Route 5
   description: A gentle hillside path south of Cerulean City. The Pokémon Day Care lies along this peaceful route.
-  gate_requirement: 2
+  gate_requirement: 3
   order: 12
   encounters:
     - pokemon: Bellsprout
@@ -188,7 +188,7 @@
 
 - name: Route 6
   description: A quiet, tree-shaded road connecting Saffron City and Vermilion City. A small pond attracts water-loving Pokémon.
-  gate_requirement: 2
+  gate_requirement: 3
   order: 13
   encounters:
     - pokemon: Oddish
@@ -200,7 +200,7 @@
 
 - name: Diglett's Cave
   description: A long, narrow tunnel carved entirely by Diglett and Dugtrio. Its twisting passages provide a quick underground shortcut between Routes 11 and 2.
-  gate_requirement: 2
+  gate_requirement: 3
   order: 14
   encounters:
     - pokemon: Diglett
@@ -210,7 +210,7 @@
 
 - name: Route 2 (East)
   description: A quiet stretch of road running along the eastern edge of Route 2. It lies at the far end of Diglett's CaveOn t and is home to a trader possessing a mysterious Pokemon.
-  gate_requirement: 2
+  gate_requirement: 3
   order: 15
   encounters:
     - pokemon: Mr. Mime
@@ -218,7 +218,7 @@
 
 - name: Route 11
   description: A coastal route near Vermilion City. The SS Anne can be seen in the distance.
-  gate_requirement: 2
+  gate_requirement: 3
   order: 16
   encounters:
     - pokemon: Spearow
@@ -232,17 +232,17 @@
 
 - name: Vermillion City
   description: Add in requirement for Spearow
-  gate_requirement: 2
+  gate_requirement: 3
   order: 17
   encounters:
     - pokemon: Farfetch'd
       spawn_rate: 100
 
-## Lt Surge Badge - Gate 3
+## Lt Surge Badge - Gate 4
 
 - name: Route 9
   description: A winding, rocky route leading from Cerulean City toward Rock Tunnel. The terrain is favored by hardy Pokémon.
-  gate_requirement: 3
+  gate_requirement: 4
   order: 18
   encounters:
     - pokemon: Spearow
@@ -256,7 +256,7 @@
 
 - name: Route 10
   description: A desolate area surrounding the entrance to Rock Tunnel. Power Plant lies hidden nearby.
-  gate_requirement: 3
+  gate_requirement: 4
   order: 19
   encounters:
     - pokemon: Spearow
@@ -270,7 +270,7 @@
 
 - name: Rock Tunnel
   description: A dark, rugged cave network where visibility is low and the path twists unpredictably. Strong Rock- and Ground-type Pokémon make this a challenging passage for travelers.
-  gate_requirement: 3
+  gate_requirement: 4
   order: 20
   encounters:
     - pokemon: Geodude
@@ -288,7 +288,7 @@
 
 - name: Route 8
   description: A trainer-filled road to the west of Lavender Town. Frequent battles make it a popular training spot.
-  gate_requirement: 3
+  gate_requirement: 4
   order: 21
   encounters:
     - pokemon: Pidgey
@@ -306,7 +306,7 @@
 
 - name: Route 7
   description: A short route between Celadon City and Saffron City. The few grassy patches still hide a handful of wild Pokémon.
-  gate_requirement: 3
+  gate_requirement: 4
   order: 22
   encounters:
     - pokemon: Pidgey
@@ -324,7 +324,7 @@
 
 - name: Celadon City - Game Corner and Mansion
   description: A bustling city. Home to the Celadon City Game Corner as well as the Celadon Mansion
-  gate_requirement: 3
+  gate_requirement: 4
   order: 23
   encounters:
     - pokemon: Abra
@@ -342,11 +342,11 @@
     - pokemon: Eevee
       spawn_rate: 10
 
-## Celadon Gym - Gate 4
+## Celadon Gym - Gate 5
 
 - name: Pokemon Tower
   description: Fill in
-  gate_requirement: 4
+  gate_requirement: 5
   order: 24
   encounters:
     - pokemon: Gastly
@@ -358,7 +358,7 @@
 
 - name: Route 12
   description: Fill in
-  gate_requirement: 4
+  gate_requirement: 5
   order: 25
   encounters:
     - pokemon: Pidgey
@@ -376,7 +376,7 @@
 
 - name: Route 13
   description: Fill in
-  gate_requirement: 4
+  gate_requirement: 5
   order: 26
   encounters:
     - pokemon: Pidgey
@@ -392,7 +392,7 @@
 
 - name: Route 14
   description: Fill in
-  gate_requirement: 4
+  gate_requirement: 5
   order: 27
   encounters:
     - pokemon: Pidgey
@@ -408,7 +408,7 @@
 
 - name: Route 15
   description: Fill in
-  gate_requirement: 4
+  gate_requirement: 5
   order: 28
   encounters:
     - pokemon: Oddish
@@ -424,11 +424,11 @@
     - pokemon: Ditto
       spawn_rate: 10
 
-## Fuchsia Gym  - Gate 5 (Unlocks surf)
+## Fuchsia Gym  - Gate 6 (Unlocks surf)
 
 - name: Safari Zone - Area 1
   description: Fill in
-  gate_requirement: 5
+  gate_requirement: 6
   order: 29
   encounters:
     - pokemon: Nidoran♀
@@ -450,7 +450,7 @@
 
 - name: Safari Zone - Area 2
   description: Fill in
-  gate_requirement: 5
+  gate_requirement: 6
   order: 30
   encounters:
     - pokemon: Nidoran♂
@@ -472,7 +472,7 @@
 
 - name: Route 16
   description: Fill in
-  gate_requirement: 5
+  gate_requirement: 6
   order: 31
   encounters:
     - pokemon: Rattata
@@ -489,7 +489,7 @@
 ## Route 17
 - name: Route 17
   description: Fill in
-  gate_requirement: 5
+  gate_requirement: 6
   order: 32
   encounters:
     - pokemon: Rattata
@@ -505,7 +505,7 @@
 
 - name: Route 18
   description: Fill in
-  gate_requirement: 5
+  gate_requirement: 6
   order: 33
   encounters:
     - pokemon: Lickitung
@@ -514,7 +514,7 @@
 
 - name: Fighting Dojo
   description: Fill in
-  gate_requirement: 5
+  gate_requirement: 6
   order: 34
   encounters:
     - pokemon: Hitmonchan
@@ -524,7 +524,7 @@
 
 - name: Power Plant
   description: Fill in
-  gate_requirement: 5
+  gate_requirement: 6
   order: 35
   encounters:
     - pokemon: Magnemite
@@ -540,11 +540,11 @@
     - pokemon: Zapdos
       spawn_rate: 10
 
-## Saffron Gym  - Gate 6
+## Saffron Gym  - Gate 7
 
 - name: Route 19
   description: Fill in
-  gate_requirement: 6
+  gate_requirement: 7
   order: 36
   encounters:
     - pokemon: Rattata
@@ -555,7 +555,7 @@
 
 - name: Route 20
   description: Fill in
-  gate_requirement: 6
+  gate_requirement: 7
   order: 37
   encounters:
     - pokemon: Rattata
@@ -566,7 +566,7 @@
 
 - name: Seafoam Islands - Floor 1
   description: Fill in
-  gate_requirement: 6
+  gate_requirement: 7
   order: 38
   encounters:
     - pokemon: Psyduck
@@ -580,7 +580,7 @@
 
 - name: Seafoam Islands - Floor 2
   description: Fill in
-  gate_requirement: 6
+  gate_requirement: 7
   order: 39
   encounters:
     - pokemon: Slowpoke
@@ -596,7 +596,7 @@
 
 - name: Cinnabar Island - Pokemon Lab
   description: Fill in
-  gate_requirement: 6
+  gate_requirement: 7
   order: 40
   encounters:
     - pokemon: Electrode
@@ -617,7 +617,7 @@
 
 - name: Pokemon Mansion
   description: Fill in
-  gate_requirement: 6
+  gate_requirement: 7
   order: 41
   encounters:
     - pokemon: Growlithe
@@ -633,11 +633,11 @@
     - pokemon: Weezing
       spawn_rate: 10
 
-## Cinnabar Gym - Gate 7
+## Cinnabar Gym - Gate 8
 
 - name: Sevii Islands - One Island, Treasure Beach
   description: Fill in
-  gate_requirement: 7
+  gate_requirement: 8
   order: 42
   encounters:
     - pokemon: Spearow
@@ -657,7 +657,7 @@
 
 - name: Sevii Islands - One Island, Kindle Road
   description: Fill in
-  gate_requirement: 7
+  gate_requirement: 8
   order: 43
   encounters:
     - pokemon: Ponyta
@@ -677,7 +677,7 @@
 
 - name: Sevii Islands - One Island, Mount Ember
   description: Fill in
-  gate_requirement: 7
+  gate_requirement: 8
   order: 44
   encounters:
     - pokemon: Ponyta
@@ -697,17 +697,17 @@
 
 - name: Route 21
   description: Fill in
-  gate_requirement: 7
+  gate_requirement: 8
   order: 45
   encounters:
     - pokemon: Tangela
       spawn_rate: 100
 
-## Viridian Gym - Gate 8
+## Viridian Gym - Gate 9
 
 - name: Route 23
   description: Fill in
-  gate_requirement: 8
+  gate_requirement: 9
   order: 46
   encounters:
     - pokemon: Sandshrew
@@ -725,7 +725,7 @@
 
 - name: Victory Road
   description: Fill in
-  gate_requirement: 8
+  gate_requirement: 9
   order: 47
   encounters:
     - pokemon: Onix
@@ -743,12 +743,12 @@
     - pokemon: Marowak
       spawn_rate: 10
 
-## Add another gate
+## Elite 4 Gate - Gate 10
 
 ## Cerulean Cave
 - name: Cerulean Cave
   description: Fill in
-  gate_requirement: 9
+  gate_requirement: 10
   order: 48
   encounters:
     - pokemon: Parasect

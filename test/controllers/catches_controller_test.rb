@@ -4,12 +4,12 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
   def setup
     # Create test gates (display data loaded from YAML)
     @gate_0 = Gate.create!(
-      gate_number: 0,
+      gate_number: 1,
       required_difficulty_score: 0
     )
 
     @gate_1 = Gate.create!(
-      gate_number: 1,
+      gate_number: 2,
       required_difficulty_score: 5
     )
 
@@ -20,7 +20,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     )
 
     @locked_route = Route.create!(
-      gate_requirement: 1,
+      gate_requirement: 2,
       order: 101
     )
 
