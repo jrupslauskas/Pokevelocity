@@ -126,7 +126,7 @@
           Purchase evolution items to help your Pokémon evolve!
         </p>
         <div style="display: grid; gap: 12px;">
-          <% Item.where(item_type: 'evolution_stone').each do |item| %>
+          <% Item.where(item_type: 'evolution_stone').sort_by { |item| item.key == 'evolution_stone' ? 0 : 1 }.each do |item| %>
             <div class="shop-item">
               <div style="display: flex; align-items: center; gap: 12px;">
                 <%= image_tag "icons/#{item.sprite}", alt: item.name, class: "shop-item-icon" %>
