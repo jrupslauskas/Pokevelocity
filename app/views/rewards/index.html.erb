@@ -13,7 +13,6 @@
     </header>
 
     <!-- Awards Counter Section -->
-    <h2 style="text-align: center; color: #2C5F2D; margin: 32px 0 16px;">Awards Counter</h2>
 
     <!-- Claim Reward Card -->
     <div class="card-dashboard" style="max-width: 800px; margin: 0 auto 32px;">
@@ -23,7 +22,7 @@
       </div>
 
       <p style="text-align: center; color: #6B5537; margin-bottom: 24px;">
-        Select the story points from your completed ticket to receive a Pokéball reward!
+        After completing a ticket, select the option below associated to your ticket's story points to receive a reward! Higher story points are more likely to grant better pokeballs!
       </p>
 
       <div class="story-points-grid">
@@ -65,54 +64,12 @@
       </div>
     </div>
 
-    <!-- Reward Probabilities Card -->
-    <div class="card-dashboard" style="max-width: 800px; margin: 0 auto;">
-      <div class="card-dashboard-header">
-        <span class="card-dashboard-icon">📊</span>
-        <h2 class="card-dashboard-title">Reward Probabilities</h2>
-      </div>
-
-      <p style="color: #6B5537; margin-bottom: 20px;">
-        Different story points have different chances of earning various Pokéballs:
-      </p>
-
-      <div style="display: grid; gap: 12px;">
-        <div class="reward-probability-item">
-          <div>
-            <div style="font-weight: 600; color: #2C5F2D;">1-2 Point Tickets</div>
-            <div style="font-size: 14px; color: #6B5537;">Mostly Pokéballs, small chance of Great Balls</div>
-          </div>
-          <span><%= image_tag "icons/pokeball_shop.png", alt: "Pokeball", class: "reward-icon" %></span>
-        </div>
-
-        <div class="reward-probability-item">
-          <div>
-            <div style="font-weight: 600; color: #2C5F2D;">3 Point Tickets</div>
-            <div style="font-size: 14px; color: #6B5537;">Mix of Pokéballs and Great Balls</div>
-          </div>
-          <span><%= image_tag "icons/greatball.png", alt: "Great Ball", class: "reward-icon" %></span>
-        </div>
-
-        <div class="reward-probability-item">
-          <div>
-            <div style="font-weight: 600; color: #2C5F2D;">5 Point Tickets</div>
-            <div style="font-size: 14px; color: #6B5537;">Mostly Great Balls, chance of Ultra Balls</div>
-          </div>
-          <span><%= image_tag "icons/ultraball.jpg", alt: "Ultra Ball", class: "reward-icon" %></span>
-        </div>
-
-        <div class="reward-probability-item">
-          <div>
-            <div style="font-weight: 600; color: #2C5F2D;">8+ Point Tickets</div>
-            <div style="font-size: 14px; color: #6B5537;">Mostly Ultra Balls, chance of Master Balls!</div>
-          </div>
-          <span><%= image_tag "icons/masterball.png", alt: "Master Ball", class: "reward-icon" %></span>
-        </div>
-      </div>
-    </div>
-
     <!-- Sales Counter Section -->
-    <h2 style="text-align: center; color: #2C5F2D; margin: 48px 0 16px;">Sales Counter</h2>
+    <div class="card-dashboard" style="max-width: 800px; margin: 0 auto 32px;">
+          <div class="card-dashboard-header">
+            <span class="card-dashboard-icon">✅</span>
+            <h2 class="card-dashboard-title">Buy and Sell</h2>
+          </div>
 
     <div class="card-dashboard" style="max-width: 800px; margin: 0 auto;">
       <div style="display: flex; gap: 8px; margin-bottom: 24px; border-bottom: 2px solid #E8D5C4;">

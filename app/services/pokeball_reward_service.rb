@@ -3,20 +3,27 @@ class PokeballRewardService
   # Format: { ball_type => weight }
   REWARD_WEIGHTS = {
     1 => {
-      "pokeball" => 90,
-      "great_ball" => 10
+      "pokeball" => 80,
+      "great_ball" => 10,
+      "ultra_ball" => 5,
+      "master_ball" => 5
     },
     2 => {
-       "pokeball" => 80,
-       "great_ball" => 20
+      "pokeball" => 80,
+      "great_ball" => 10,
+      "ultra_ball" => 5,
+      "master_ball" => 5
     },
     3 => {
-      "pokeball" => 70,
-      "great_ball" => 30
+      "pokeball" => 60,
+      "great_ball" => 20,
+      "ultra_ball" => 10,
+      "master_ball" => 10
     },
     5 => {
-      "great_ball" => 75,
-      "ultra_ball" => 25
+      "great_ball" => 60,
+      "ultra_ball" => 30,
+      "master_ball" => 10
     },
     8 => {
       "ultra_ball" => 75,

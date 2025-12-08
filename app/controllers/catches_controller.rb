@@ -49,10 +49,12 @@ class CatchesController < ApplicationController
                            .includes(route_encounters: :pokemon)
     end
 
-    # For each route, show all Pokemon (including already caught)
+    # For each route, show all Pokemon (including already caught) that meet appearance requirements
     @route_available_pokemon = {}
     (@always_accessible_routes + @gated_routes).each do |route|
-      @route_available_pokemon[route.id] = route.pokemon
+      # Get all Pokemon from encounters that are available for this trainer
+      available_encounters = route.route_encounters.select { |encounter| encounter.available_for?(@trainer) }
+      @route_available_pokemon[route.id] = available_encounters.map(&:pokemon)
     end
 
     # Check if trainer has any pokeballs (show message but don't redirect)
@@ -66,22 +68,22 @@ class CatchesController < ApplicationController
     @trainer = current_trainer
     route = Route.find(params[:id])
 
-    # Get all Pokemon on this route (including already caught)
-    available_encounters = route.route_encounters
+    # Get all Pokemon on this route that meet appearance requirements (including already caught)
+    available_encounters = route.route_encounters.select { |encounter| encounter.available_for?(@trainer) }
 
     if available_encounters.empty?
       redirect_to catches_path, notice: "No Pokémon on this route!"
       return
     end
 
-    # Calculate total weight from all encounters
-    total_weight = available_encounters.sum(:spawn_rate)
+    # Calculate total weight from available encounters
+    total_weight = available_encounters.sum(&:spawn_rate)
     random_value = rand(1..total_weight)
 
     # Find which Pokemon was encountered
     cumulative_weight = 0
     encountered_pokemon = nil
-    available_encounters.includes(:pokemon).each do |encounter|
+    available_encounters.each do |encounter|
       cumulative_weight += encounter.spawn_rate
       if random_value <= cumulative_weight
         encountered_pokemon = encounter.pokemon

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_06_190020) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_08_020412) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -100,12 +100,18 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_06_190020) do
   end
 
   create_table "route_encounters", force: :cascade do |t|
+    t.integer "alternative_required_pokemon_id"
     t.datetime "created_at", null: false
     t.bigint "pokemon_id", null: false
+    t.integer "required_gate_number"
+    t.integer "required_pokemon_id"
     t.bigint "route_id", null: false
     t.integer "spawn_rate"
     t.datetime "updated_at", null: false
+    t.index ["alternative_required_pokemon_id"], name: "index_route_encounters_on_alternative_required_pokemon_id"
     t.index ["pokemon_id"], name: "index_route_encounters_on_pokemon_id"
+    t.index ["required_gate_number"], name: "index_route_encounters_on_required_gate_number"
+    t.index ["required_pokemon_id"], name: "index_route_encounters_on_required_pokemon_id"
     t.index ["route_id"], name: "index_route_encounters_on_route_id"
   end
 
@@ -130,11 +136,11 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_06_190020) do
 
   create_table "trainers", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.integer "currency", default: 1000, null: false
     t.integer "icon_pokemon_id"
     t.string "password_digest", null: false
     t.datetime "updated_at", null: false
     t.string "username", null: false
-    t.integer "currency", default: 1000, null: false
     t.index ["username"], name: "index_trainers_on_username", unique: true
   end
 
@@ -151,6 +157,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_06_190020) do
   add_foreign_key "gate_unlocks", "gates"
   add_foreign_key "gate_unlocks", "trainers"
   add_foreign_key "route_encounters", "pokemons"
+  add_foreign_key "route_encounters", "pokemons", column: "alternative_required_pokemon_id"
+  add_foreign_key "route_encounters", "pokemons", column: "required_pokemon_id"
   add_foreign_key "route_encounters", "routes"
   add_foreign_key "trainer_items", "items"
   add_foreign_key "trainer_items", "trainers"

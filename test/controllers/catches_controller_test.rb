@@ -631,4 +631,325 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     # Now locked route should be visible (trainer meets gate 1 requirement)
     assert_match "Route 101", response.body
   end
+
+  # ================================================================================
+  # APPEARANCE REQUIREMENT TESTS
+  # ================================================================================
+
+  test "should not show pokemon with unmet pokemon requirement" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Create a route with a pokemon that requires catching Bulbasaur first
+    test_route = Route.create!(gate_requirement: 0, order: 200)
+    RouteEncounter.create!(
+      route: test_route,
+      pokemon: pokemons(:pikachu),
+      spawn_rate: 50,
+      required_pokemon_id: pokemons(:bulbasaur).id
+    )
+
+    get catches_path
+
+    # Pikachu should appear locked (darkened) with requirement message
+    assert_match "Pikachu", response.body
+    assert_match "Requires: Bulbasaur", response.body
+  end
+
+  test "should show pokemon when pokemon requirement is met" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Create a route with a pokemon that requires catching Bulbasaur first
+    test_route = Route.create!(gate_requirement: 0, order: 200)
+    encounter = RouteEncounter.create!(
+      route: test_route,
+      pokemon: pokemons(:pikachu),
+      spawn_rate: 50,
+      required_pokemon_id: pokemons(:bulbasaur).id
+    )
+
+    # Trainer catches Bulbasaur
+    Capture.create!(trainer: trainer, pokemon: pokemons(:bulbasaur), ball_type: "pokeball")
+
+    get catches_path
+
+    # Pikachu should appear unlocked (no requirement message shown)
+    assert_match "Pikachu", response.body
+    # Should not show requirement since it's met
+    # The view only shows requirement_description for locked pokemon
+  end
+
+  test "should not allow encounter with unmet pokemon requirement" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Create a route with only a pokemon that requires Bulbasaur
+    test_route = Route.create!(gate_requirement: 0, order: 200)
+    RouteEncounter.create!(
+      route: test_route,
+      pokemon: pokemons(:pikachu),
+      spawn_rate: 50,
+      required_pokemon_id: pokemons(:bulbasaur).id
+    )
+
+    # Try to adventure on this route
+    post adventure_path(test_route)
+
+    # Should redirect with no pokemon message
+    assert_redirected_to catches_path
+    assert_match "No Pokémon on this route!", flash[:notice]
+  end
+
+  test "should allow encounter when pokemon requirement is met" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Create a route with a pokemon that requires Bulbasaur
+    test_route = Route.create!(gate_requirement: 0, order: 200)
+    RouteEncounter.create!(
+      route: test_route,
+      pokemon: pokemons(:pikachu),
+      spawn_rate: 50,
+      required_pokemon_id: pokemons(:bulbasaur).id
+    )
+
+    # Trainer catches Bulbasaur
+    Capture.create!(trainer: trainer, pokemon: pokemons(:bulbasaur), ball_type: "pokeball")
+
+    # Try to adventure on this route
+    post adventure_path(test_route)
+
+    # Should encounter Pikachu
+    assert_redirected_to catch_path(pokemons(:pikachu))
+  end
+
+  test "should not show pokemon with unmet gate requirement" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Create a gate
+    gate = Gate.create!(gate_number: 6, required_difficulty_score: 50)
+
+    # Create a route with a pokemon that requires gate 6
+    test_route = Route.create!(gate_requirement: 0, order: 200)
+    RouteEncounter.create!(
+      route: test_route,
+      pokemon: pokemons(:pikachu),
+      spawn_rate: 50,
+      required_gate_number: 6
+    )
+
+    get catches_path
+
+    # Pikachu should appear locked with gate requirement message
+    assert_match "Pikachu", response.body
+    assert_match "Requires:", response.body
+    assert_match "Fuchsia City Gym", response.body
+  end
+
+  test "should show pokemon when gate requirement is met" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Create a gate
+    gate = Gate.create!(gate_number: 5, required_difficulty_score: 50)
+    GateUnlock.create!(trainer: trainer, gate: gate, unlocked_at: Time.current)
+
+    # Create a route with a pokemon that requires gate 5
+    test_route = Route.create!(gate_requirement: 0, order: 200)
+    RouteEncounter.create!(
+      route: test_route,
+      pokemon: pokemons(:pikachu),
+      spawn_rate: 50,
+      required_gate_number: 5
+    )
+
+    get catches_path
+
+    # Pikachu should appear unlocked
+    assert_match "Pikachu", response.body
+  end
+
+  test "should require BOTH pokemon and gate when both are set" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Create a gate
+    gate = Gate.create!(gate_number: 6, required_difficulty_score: 50)
+
+    # Create a route with a pokemon that requires both Bulbasaur AND gate 6
+    test_route = Route.create!(gate_requirement: 0, order: 200)
+    encounter = RouteEncounter.create!(
+      route: test_route,
+      pokemon: pokemons(:pikachu),
+      spawn_rate: 50,
+      required_pokemon_id: pokemons(:bulbasaur).id,
+      required_gate_number: 6
+    )
+
+    get catches_path
+
+    # Should show both requirements
+    assert_match "Bulbasaur", response.body
+    assert_match "Fuchsia City Gym", response.body
+    assert_match "&", response.body
+
+    # Try to adventure - should fail
+    post adventure_path(test_route)
+    assert_redirected_to catches_path
+
+    # Meet only pokemon requirement
+    Capture.create!(trainer: trainer, pokemon: pokemons(:bulbasaur), ball_type: "pokeball")
+    post adventure_path(test_route)
+    assert_redirected_to catches_path  # Still fails
+
+    # Meet both requirements
+    GateUnlock.create!(trainer: trainer, gate: gate, unlocked_at: Time.current)
+    post adventure_path(test_route)
+    assert_redirected_to catch_path(pokemons(:pikachu))  # Now succeeds
+  end
+
+  test "should correctly count available pokemon excluding locked encounters" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Create a route with 2 pokemon: one always available, one requires Bulbasaur
+    test_route = Route.create!(gate_requirement: 0, order: 200)
+    RouteEncounter.create!(
+      route: test_route,
+      pokemon: pokemons(:charmander),
+      spawn_rate: 50
+    )
+    RouteEncounter.create!(
+      route: test_route,
+      pokemon: pokemons(:pikachu),
+      spawn_rate: 50,
+      required_pokemon_id: pokemons(:bulbasaur).id
+    )
+
+    get catches_path
+
+    # Should show 1 pokemon available (only Charmander)
+    assert_match "1 Pokémon available", response.body
+
+    # Catch Bulbasaur
+    Capture.create!(trainer: trainer, pokemon: pokemons(:bulbasaur), ball_type: "pokeball")
+
+    get catches_path
+
+    # Should now show 2 pokemon available
+    assert_match "2 Pokémon available", response.body
+  end
+
+  test "should show pokemon locked when required pokemon not caught" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Create a test route with pokemon that requires Bulbasaur
+    test_route = Route.create!(gate_requirement: 0, order: 500)
+    RouteEncounter.create!(
+      route: test_route,
+      pokemon: pokemons(:pikachu),
+      spawn_rate: 100,
+      required_pokemon_id: pokemons(:bulbasaur).id
+    )
+
+    get catches_path
+
+    # Should show pokemon as locked with requirement message
+    assert_match "Pikachu", response.body
+    assert_match "Requires: Bulbasaur", response.body
+  end
+
+  test "should show pokemon unlocked when required pokemon is caught" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Create a test route with pokemon that requires Bulbasaur
+    test_route = Route.create!(gate_requirement: 0, order: 500)
+    RouteEncounter.create!(
+      route: test_route,
+      pokemon: pokemons(:pikachu),
+      spawn_rate: 100,
+      required_pokemon_id: pokemons(:bulbasaur).id
+    )
+
+    # Catch Bulbasaur
+    Capture.create!(trainer: trainer, pokemon: pokemons(:bulbasaur), ball_type: "pokeball")
+
+    get catches_path
+
+    # Should show Pikachu as available
+    assert_match "Pikachu", response.body
+    # Should not show lock icon since requirement is met
+    assert_match "1 Pokémon available", response.body
+  end
+
+  test "should show pokemon locked when neither required nor alternative pokemon caught" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Create a test route with OR logic (Bulbasaur OR Charmander)
+    test_route = Route.create!(gate_requirement: 0, order: 500)
+    RouteEncounter.create!(
+      route: test_route,
+      pokemon: pokemons(:pikachu),
+      spawn_rate: 100,
+      required_pokemon_id: pokemons(:bulbasaur).id,
+      alternative_required_pokemon_id: pokemons(:charmander).id
+    )
+
+    get catches_path
+
+    # Should show pokemon as locked with OR requirement
+    assert_match "Pikachu", response.body
+    assert_match "Requires: Bulbasaur or Charmander", response.body
+  end
+
+  test "should show pokemon unlocked when alternative pokemon caught" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Create a test route with OR logic (Bulbasaur OR Charmander)
+    test_route = Route.create!(gate_requirement: 0, order: 500)
+    RouteEncounter.create!(
+      route: test_route,
+      pokemon: pokemons(:pikachu),
+      spawn_rate: 100,
+      required_pokemon_id: pokemons(:bulbasaur).id,
+      alternative_required_pokemon_id: pokemons(:charmander).id
+    )
+
+    # Catch only Charmander (the alternative)
+    Capture.create!(trainer: trainer, pokemon: pokemons(:charmander), ball_type: "pokeball")
+
+    get catches_path
+
+    # Should show Pikachu as available
+    assert_match "Pikachu", response.body
+    assert_match "1 Pokémon available", response.body
+  end
+
+  test "should allow encountering pokemon when alternative requirement met" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Create a test route with OR logic
+    test_route = Route.create!(gate_requirement: 0, order: 500)
+    RouteEncounter.create!(
+      route: test_route,
+      pokemon: pokemons(:pikachu),
+      spawn_rate: 100,
+      required_pokemon_id: pokemons(:bulbasaur).id,
+      alternative_required_pokemon_id: pokemons(:charmander).id
+    )
+
+    # Catch only Charmander (the alternative)
+    Capture.create!(trainer: trainer, pokemon: pokemons(:charmander), ball_type: "pokeball")
+
+    # Try to adventure - should succeed
+    post adventure_path(test_route)
+    assert_redirected_to catch_path(pokemons(:pikachu))
+  end
 end

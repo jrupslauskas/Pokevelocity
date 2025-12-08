@@ -55,9 +55,42 @@ routes_data.each do |route_data|
       next
     end
 
-    RouteEncounter.find_or_create_by!(route: route, pokemon: pokemon) do |encounter|
-      encounter.spawn_rate = encounter_data["spawn_rate"]
+    # Find or create the encounter
+    encounter = RouteEncounter.find_or_initialize_by(route: route, pokemon: pokemon)
+    encounter.spawn_rate = encounter_data["spawn_rate"]
+
+    # Handle required_pokemon
+    if encounter_data["required_pokemon"].present?
+      required_pokemon = Pokemon.find_by(name: encounter_data["required_pokemon"])
+      if required_pokemon
+        encounter.required_pokemon_id = required_pokemon.id
+      else
+        puts "  WARNING: Required Pokemon '#{encounter_data["required_pokemon"]}' not found for #{pokemon.name}"
+      end
+    else
+      encounter.required_pokemon_id = nil
     end
+
+    # Handle alternative_required_pokemon
+    if encounter_data["alternative_required_pokemon"].present?
+      alternative_pokemon = Pokemon.find_by(name: encounter_data["alternative_required_pokemon"])
+      if alternative_pokemon
+        encounter.alternative_required_pokemon_id = alternative_pokemon.id
+      else
+        puts "  WARNING: Alternative required Pokemon '#{encounter_data["alternative_required_pokemon"]}' not found for #{pokemon.name}"
+      end
+    else
+      encounter.alternative_required_pokemon_id = nil
+    end
+
+    # Handle required_gate
+    if encounter_data["required_gate"].present?
+      encounter.required_gate_number = encounter_data["required_gate"]
+    else
+      encounter.required_gate_number = nil
+    end
+
+    encounter.save!
   end
 
   puts "  #{route.name}: #{route.route_encounters.count} Pokémon"

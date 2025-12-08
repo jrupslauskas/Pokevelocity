@@ -57,7 +57,10 @@
     - pokemon: Pidgey
       spawn_rate: 45
     - pokemon: Caterpie
-      spawn_rate: 10
+      spawn_rate: 5
+    - pokemon: Mr. Mime
+      spawn_rate: 5
+      required_pokemon: Abra
 
 - name: Viridian Forest
   description: A dense, shadowy woodland filled with tall trees and vibrant bug Pokémon. Trainers navigate its winding paths as sunlight filters softly through the canopy.
@@ -134,7 +137,7 @@
   encounters:
     - pokemon: Jynx
       spawn_rate: 100
-## Add blocker requirement of Poliwhirl in pokedex
+      required_pokemon: Poliwhirl
 
 - name: Route 24
   description: A bridge north of Cerulean City known for the Nugget Bridge challenge. Trainers line up for battles.
@@ -209,12 +212,13 @@
       spawn_rate: 10
 
 - name: Route 2 (East)
-  description: A quiet stretch of road running along the eastern edge of Route 2. It lies at the far end of Diglett's CaveOn t and is home to a trader possessing a mysterious Pokemon.
+  description: A quiet stretch of road running along the eastern edge of Route 2. It lies at the far end of Diglett's Cave and is home to a trader possessing a mysterious Pokemon.
   gate_requirement: 3
   order: 15
   encounters:
     - pokemon: Mr. Mime
       spawn_rate: 100
+      required_pokemon: Abra
 
 - name: Route 11
   description: A coastal route near Vermilion City. The SS Anne can be seen in the distance.
@@ -231,12 +235,13 @@
       spawn_rate: 20
 
 - name: Vermillion City
-  description: Add in requirement for Spearow
+  description: A bustling port city filled with the cries of sea birds and the sound of ship horns. The S.S. Anne docks here, bringing travelers from faraway regions. A trader here possesses a unique bird pokemon.
   gate_requirement: 3
   order: 17
   encounters:
     - pokemon: Farfetch'd
       spawn_rate: 100
+      required_pokemon: Spearow
 
 ## Lt Surge Badge - Gate 4
 
@@ -345,7 +350,7 @@
 ## Celadon Gym - Gate 5
 
 - name: Pokemon Tower
-  description: Fill in
+  description: A tall, solemn tower rising above Lavender Town. Mist coils around its upper floors, where the spirits of departed Pokémon are said to wander.
   gate_requirement: 5
   order: 24
   encounters:
@@ -357,7 +362,7 @@
       spawn_rate: 20
 
 - name: Route 12
-  description: Fill in
+  description: A wooden boardwalk south of Lavender Town running along the coast. Fishermen line the piers as the ocean breeze rolls in.
   gate_requirement: 5
   order: 25
   encounters:
@@ -375,7 +380,7 @@
       spawn_rate: 10
 
 - name: Route 13
-  description: Fill in
+  description: A winding coastal path connecting Routes 12 and 14. Its zig-zag walkways overlook calm, sparkling water.
   gate_requirement: 5
   order: 26
   encounters:
@@ -391,7 +396,7 @@
       spawn_rate: 15
 
 - name: Route 14
-  description: Fill in
+  description: A quiet grassy route south of Route 13 leading toward Fuchsia City. Bird Pokémon soar overhead.
   gate_requirement: 5
   order: 27
   encounters:
@@ -407,7 +412,7 @@
       spawn_rate: 20
 
 - name: Route 15
-  description: Fill in
+  description: A roadside path west of Route 14, bordered by tall grass and fencing. The Fuchsia City gate stands at its end.
   gate_requirement: 5
   order: 28
   encounters:
@@ -425,9 +430,8 @@
       spawn_rate: 10
 
 ## Fuchsia Gym  - Gate 6 (Unlocks surf)
-
 - name: Safari Zone - Area 1
-  description: Fill in
+  description: A sprawling wildlife preserve on the northern edge of Fuchsia City. Tall grass, winding ponds, and rocky clearings create a natural haven where rare Pokémon roam freely.
   gate_requirement: 6
   order: 29
   encounters:
@@ -449,7 +453,7 @@
       spawn_rate: 5
 
 - name: Safari Zone - Area 2
-  description: Fill in
+  description: A vast, maze-like park filled with exotic Pokémon and branching trails. Trainers come from all over to hunt elusive species found nowhere else in Kanto.
   gate_requirement: 6
   order: 30
   encounters:
@@ -471,7 +475,7 @@
       spawn_rate: 5
 
 - name: Route 16
-  description: Fill in
+  description: A short stretch west of Celadon City leading to the Cycling Road entrance.
   gate_requirement: 6
   order: 31
   encounters:
@@ -488,7 +492,7 @@
 
 ## Route 17
 - name: Route 17
-  description: Fill in
+  description: A sloped Cycling Road connecting Routes 16 and 18. Cyclists zip by as you coast down the long metal bridge.
   gate_requirement: 6
   order: 32
   encounters:
@@ -504,16 +508,17 @@
       spawn_rate: 5
 
 - name: Route 18
-  description: Fill in
+  description: A brief route west of Fuchsia City meeting the base of Cycling Road. Bird Keepers train along the open grass. A trainer is willing to trade a truly unusual pokemon for a Golduck or Slowbro
   gate_requirement: 6
   order: 33
   encounters:
     - pokemon: Lickitung
       spawn_rate: 100
-      ## Requires Golduck or Slowbrow
+      required_pokemon: Golduck
+      alternative_required_pokemon: Slowbro
 
 - name: Fighting Dojo
-  description: Fill in
+  description: A humble training hall beside the Saffron City Gym. Inside, martial artists test their skills in intense, old-school battles.
   gate_requirement: 6
   order: 34
   encounters:
@@ -523,7 +528,7 @@
       spawn_rate: 50
 
 - name: Power Plant
-  description: Fill in
+  description: A lonely industrial facility hidden along the river near Route 10. Its humming machinery attracts Electric-type Pokémon, and an overwhelming surge of electricity from deep within its halls hints that a legendary force may be nesting within.
   gate_requirement: 6
   order: 35
   encounters:
@@ -543,7 +548,7 @@
 ## Saffron Gym  - Gate 7
 
 - name: Route 19
-  description: Fill in
+  description: A southern beach leaving Fuchsia City toward the Seafoam Islands. Swimmers challenge the waves as the water deepens.
   gate_requirement: 7
   order: 36
   encounters:
@@ -553,21 +558,10 @@
     # Surf
     # Fishing
 
-- name: Route 20
-  description: Fill in
+- name: Seafoam Islands - Floor 1
+  description: A pair of icy caverns between Fuchsia City and Cinnabar Island, where frigid winds whistle through twisting tunnels. Strong currents rush beneath the frozen floors, and the chilling air grows colder the deeper you explore.
   gate_requirement: 7
   order: 37
-  encounters:
-    - pokemon: Rattata
-      spawn_rate: 100
-    ## ^^^ is inaccurate, surf and fish only
-    # Surf
-    # Fishing
-
-- name: Seafoam Islands - Floor 1
-  description: Fill in
-  gate_requirement: 7
-  order: 38
   encounters:
     - pokemon: Psyduck
       spawn_rate: 35
@@ -579,9 +573,9 @@
       spawn_rate: 10
 
 - name: Seafoam Islands - Floor 2
-  description: Fill in
+  description: Inn the deep hidden caverns, the temperature drops sharply, frost creeps along the walls, and an eerie silence prevails as though the entire cave holds its breath in the presence of a majestic, long-forgotten guardian of ice.
   gate_requirement: 7
-  order: 39
+  order: 38
   encounters:
     - pokemon: Slowpoke
       spawn_rate: 30
@@ -594,20 +588,31 @@
     - pokemon: Articuno
       spawn_rate: 10
 
+- name: Route 20
+  description: A long ocean route stretching between the Seafoam Islands and Cinnabar Island. Strong currents swirl around the icy caverns.
+  gate_requirement: 7
+  order: 39
+  encounters:
+    - pokemon: Rattata
+      spawn_rate: 100
+    ## ^^^ is inaccurate, surf and fish only
+    # Surf
+    # Fishing
+
 - name: Cinnabar Island - Pokemon Lab
-  description: Fill in
+  description: A cutting-edge research center on the volcanic island of Cinnabar. Scientists bustle about, many of them eager to trade their exotic species. High tech machines are said to resurrect ancient fossils.
   gate_requirement: 7
   order: 40
   encounters:
     - pokemon: Electrode
       spawn_rate: 20
-      ## Requires Raichu
+      required_pokemon: Raichu
     - pokemon: Tangela
       spawn_rate: 20
-      ## Requires Venonat
+      required_pokemon: Venonat
     - pokemon: Seel
       spawn_rate: 20
-      ## Requires Ponyta
+      required_pokemon: Ponyta
     - pokemon: Kabuto
       spawn_rate: 15
     - pokemon: Omanyte
@@ -616,7 +621,7 @@
       spawn_rate: 10
 
 - name: Pokemon Mansion
-  description: Fill in
+  description: The crumbling remains of an abandoned estate overrun by wild Pokémon. Burnt papers and broken machines hint at secret experiments once conducted within its walls.
   gate_requirement: 7
   order: 41
   encounters:
@@ -636,7 +641,7 @@
 ## Cinnabar Gym - Gate 8
 
 - name: Sevii Islands - One Island, Treasure Beach
-  description: Fill in
+  description: A quiet shoreline south of One Island where waves gently sweep hidden items onto the sand. Trainers come here hoping to find something shiny washed ashore.
   gate_requirement: 8
   order: 42
   encounters:
@@ -656,7 +661,7 @@
       spawn_rate: 5
 
 - name: Sevii Islands - One Island, Kindle Road
-  description: Fill in
+  description: A rugged, sunbaked trail stretching from One Island toward Mt. Ember. Hot springs bubble alongside the path, attracting both Trainers and wild Pokémon.
   gate_requirement: 8
   order: 43
   encounters:
@@ -676,7 +681,7 @@
       spawn_rate: 30
 
 - name: Sevii Islands - One Island, Mount Ember
-  description: Fill in
+  description: A towering volcanic mountain glowing with inner heat. Embers drift on the wind and the air grows hotter as challengers rise to its peak. Locals whisper of a mythical firebird said to ignite the very sky.
   gate_requirement: 8
   order: 44
   encounters:
@@ -696,7 +701,7 @@
       spawn_rate: 10
 
 - name: Route 21
-  description: Fill in
+  description: A sea route north of Cinnabar Island leading back to Pallet Town. Fishers drift lazily across the gentle waves.
   gate_requirement: 8
   order: 45
   encounters:
@@ -706,7 +711,7 @@
 ## Viridian Gym - Gate 9
 
 - name: Route 23
-  description: Fill in
+  description: A grand path north of the Pokémon League gates, passing through checkpoints and Victory Road’s entrance.
   gate_requirement: 9
   order: 46
   encounters:
@@ -724,7 +729,7 @@
       spawn_rate: 10
 
 - name: Victory Road
-  description: Fill in
+  description: A cavernous mountain passage connecting Route 23 to the Indigo Plateau. Powerful Trainers and rare Pokémon make this the final trial before the Pokémon League.
   gate_requirement: 9
   order: 47
   encounters:
@@ -747,7 +752,7 @@
 
 ## Cerulean Cave
 - name: Cerulean Cave
-  description: Fill in
+  description: A dark, labyrinthine cave north of Cerulean City, accessible only to the strongest Trainers. Its depths radiate a strange energy, and a legendary Pokémon waits at its heart.
   gate_requirement: 10
   order: 48
   encounters:
