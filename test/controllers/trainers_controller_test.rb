@@ -563,22 +563,10 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     assert_match "✅", response.body
   end
 
-  test "should display reward probabilities card header" do
-    log_in_as(trainers(:ash))
-    get rewards_path
-    assert_match "Reward Probabilities", response.body
-  end
-
-  test "should display reward probabilities card icon" do
-    log_in_as(trainers(:ash))
-    get rewards_path
-    assert_match "📊", response.body
-  end
-
   test "should display instructions for claiming rewards" do
     log_in_as(trainers(:ash))
     get rewards_path
-    assert_match "Select the story points from your completed ticket", response.body
+    assert_match "After completing a ticket, select the option below associated to your ticket's story points to receive a reward! Higher story points are more likely to grant better pokeballs!", response.body
   end
 
   test "should render sidebar on rewards page" do
@@ -655,50 +643,6 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     log_in_as(trainers(:ash))
     get rewards_path
     assert_select "div.story-points-grid"
-  end
-
-  # ================================================================================
-  # REWARDS PAGE - PROBABILITY INFORMATION TESTS
-  # ================================================================================
-
-  test "should display 1-2 point tickets probability info" do
-    log_in_as(trainers(:ash))
-    get rewards_path
-    assert_match "1-2 Point Tickets", response.body
-    assert_match "Mostly Pokéballs, small chance of Great Balls", response.body
-  end
-
-  test "should display 3 point tickets probability info" do
-    log_in_as(trainers(:ash))
-    get rewards_path
-    assert_match "3 Point Tickets", response.body
-    assert_match "Mix of Pokéballs and Great Balls", response.body
-  end
-
-  test "should display 5 point tickets probability info" do
-    log_in_as(trainers(:ash))
-    get rewards_path
-    assert_match "5 Point Tickets", response.body
-    assert_match "Mostly Great Balls, chance of Ultra Balls", response.body
-  end
-
-  test "should display 8+ point tickets probability info" do
-    log_in_as(trainers(:ash))
-    get rewards_path
-    assert_match "8+ Point Tickets", response.body
-    assert_match "Mostly Ultra Balls, chance of Master Balls!", response.body
-  end
-
-  test "should display all 4 reward probability items" do
-    log_in_as(trainers(:ash))
-    get rewards_path
-    assert_select "div.reward-probability-item", count: 4
-  end
-
-  test "should display probability info description" do
-    log_in_as(trainers(:ash))
-    get rewards_path
-    assert_match "Different story points have different chances", response.body
   end
 
   # ================================================================================
@@ -1138,8 +1082,6 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
   # CATCH PAGE (NEW) - POKEMON CARD DISPLAY TESTS
   # ================================================================================
 
-
-
   test "should display pokemon names on catch cards" do
     trainer = trainers(:ash)
     log_in_as(trainer)
@@ -1148,14 +1090,9 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     assert_match "Charmander", response.body
   end
 
-
-
-
-
   # ================================================================================
   # CATCH PAGE (NEW) - DIFFICULTY DISPLAY TESTS
   # ================================================================================
-
 
   test "should display correct number of stars for difficulty 1" do
     trainer = trainers(:ash)

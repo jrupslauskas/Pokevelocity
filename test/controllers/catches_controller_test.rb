@@ -320,22 +320,26 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     # Try to recapture with pokeball (will likely fail)
     # Run multiple attempts to ensure at least one failure
     failed = false
+    stones_before_fail = initial_stones
     20.times do
+      stones_before_attempt = trainer.reload.item_quantity(:evolution_stone)
       post catch_path(pokemon), params: { ball_type: "pokeball" }
       trainer.reload
+
       if response.headers["Location"].include?("catch")
         # Failed - redirected back to catches page
         failed = true
+        stones_after_fail = trainer.item_quantity(:evolution_stone)
+        assert_equal stones_before_attempt, stones_after_fail, "Should not gain evolution stone when capture fails"
         break
+      else
+        # Successful duplicate capture - should have gained a stone
+        stones_before_fail = trainer.item_quantity(:evolution_stone)
       end
     end
 
-    # If we got a failure, verify no stone was given
-    if failed
-      trainer.reload
-      # Should not have gained extra stones from failed attempts
-      # (They might have gained stones from successful ones, but not from the failed one)
-    end
+    # Verify we got at least one failure to test
+    assert failed, "Expected at least one failed capture attempt in 20 tries with pokeball on difficulty 5 Pokemon"
   end
 
   # ================================================================================
