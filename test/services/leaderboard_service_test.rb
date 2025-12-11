@@ -48,9 +48,9 @@ class LeaderboardServiceTest < ActiveSupport::TestCase
   test "should rank by pokemon count when scores are tied" do
     # Create two trainers with same difficulty score but different pokemon counts
     trainer1 = Trainer.create!(username: "test1_#{rand(10000)}", password: "pass",
-                               )
+                               icon_pokemon_id: pokemons(:pikachu).id)
     trainer2 = Trainer.create!(username: "test2_#{rand(10000)}", password: "pass",
-                               )
+                               icon_pokemon_id: pokemons(:squirtle).id)
 
     # Give trainer2 more pokemon but same difficulty total
     Capture.create!(trainer: trainer1, pokemon: pokemons(:bulbasaur), ball_type: "pokeball")
@@ -77,9 +77,9 @@ class LeaderboardServiceTest < ActiveSupport::TestCase
   test "should group tied trainers in same slot" do
     # Create two trainers with identical scores
     trainer1 = Trainer.create!(username: "tied1_#{rand(10000)}", password: "pass",
-                               )
+                               icon_pokemon_id: pokemons(:pikachu).id)
     trainer2 = Trainer.create!(username: "tied2_#{rand(10000)}", password: "pass",
-                               )
+                               icon_pokemon_id: pokemons(:squirtle).id)
 
     # Give them same pokemon
     Capture.create!(trainer: trainer1, pokemon: pokemons(:bulbasaur), ball_type: "pokeball")
@@ -106,7 +106,7 @@ class LeaderboardServiceTest < ActiveSupport::TestCase
 
     # Create another trainer with same score (0 pokemon)
     tied_trainer = Trainer.create!(username: "tied_#{rand(10000)}", password: "pass",
-                                   )
+                                   icon_pokemon_id: pokemons(:pikachu).id)
 
     service = LeaderboardService.new(current_trainer.id)
     slots = service.slots
@@ -187,7 +187,7 @@ class LeaderboardServiceTest < ActiveSupport::TestCase
     # Create 15 more trainers
     15.times do |i|
       Trainer.create!(username: "extra_#{i}_#{rand(10000)}", password: "pass",
-                     )
+                     icon_pokemon_id: pokemons(:pikachu).id)
     end
 
     service = LeaderboardService.new(trainers(:ash).id)

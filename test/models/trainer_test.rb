@@ -8,7 +8,8 @@ class TrainerTest < ActiveSupport::TestCase
   test "should be valid with valid attributes" do
     trainer = Trainer.new(
       username: "test_trainer",
-      password: "password"
+      password: "password",
+      icon_pokemon_id: pokemons(:pikachu).id
     )
     assert trainer.valid?
   end
@@ -53,10 +54,14 @@ class TrainerTest < ActiveSupport::TestCase
     assert_equal pokemons(:pikachu), trainer.icon_pokemon
   end
 
-  test "should allow nil icon pokemon" do
-    trainer = Trainer.new(username: "test", password: "password")
-    assert_nil trainer.icon_pokemon
+  test "should allow nil icon pokemon on update" do
+    trainer = Trainer.new(username: "test", password: "password", icon_pokemon_id: pokemons(:pikachu).id)
     assert trainer.valid?
+    # Can update without icon (validation only on create)
+    trainer.save!
+    trainer.icon_pokemon_id = nil
+    assert trainer.valid?
+    assert_nil trainer.icon_pokemon
   end
 
   # ================================================================================
@@ -167,7 +172,7 @@ class TrainerTest < ActiveSupport::TestCase
   end
 
   test "should hash password on save" do
-    trainer = Trainer.new(username: "test", password: "secret")
+    trainer = Trainer.new(username: "test", password: "secret", icon_pokemon_id: pokemons(:pikachu).id)
     trainer.save!
 
     assert_not_nil trainer.password_digest

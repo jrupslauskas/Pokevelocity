@@ -4,11 +4,13 @@ class TrainersController < ApplicationController
   def new
     @trainer = Trainer.new
     @pokemon = Pokemon.order(:pokedex_number)
+    @trainer_sprites = get_trainer_sprites
   end
 
   def create
     @trainer = Trainer.new(trainer_params)
     @pokemon = Pokemon.order(:pokedex_number)
+    @trainer_sprites = get_trainer_sprites
 
     # Validate activation code
     activation_code = params[:activation_code]&.strip&.upcase
@@ -116,7 +118,32 @@ class TrainersController < ApplicationController
   private
 
   def trainer_params
-    params.require(:trainer).permit(:username, :password, :icon_pokemon_id)
+    params.require(:trainer).permit(:username, :password, :icon_pokemon_id, :icon_trainer_sprite)
+  end
+
+  # Get list of available trainer sprites, sorted alphabetically
+  def get_trainer_sprites
+    regular_trainers = [
+      "aroma-lady", "beauty", "biker", "bill", "bird-keeper", "black-belt",
+      "blue-casual", "blue-faceoff", "bug-catcher", "burglar", "camper",
+      "channeler", "cool-couple", "cooltrainer-female", "cooltrainer-male", "crush-girl",
+      "crush-kin", "cue-ball", "daisy-oak", "engineer", "fisherman",
+      "gambler", "gentleman", "hiker", "juggler", "lady",
+      "lass", "mr-fuji", "painter", "picnicker", "pokemaniac", "pokemon-breeder",
+      "pokemon-ranger-female", "pokemon-ranger-male", "psychic-female", "psychic-male",
+      "red-portrait", "rocker", "rocker-grunt-female", "rocker-grunt-male", "ruin-maniac",
+      "sailor", "scientist", "sis-and-bro", "super-nerd", "swimmer-female", "swimmer-male",
+      "tamer", "tuber", "twins", "young-couple", "youngster"
+    ]
+
+    gym_leaders = [
+      "gymLeaders/agatha", "gymLeaders/blaine", "gymLeaders/blue", "gymLeaders/brock", "gymLeaders/bruno",
+      "gymLeaders/erika", "gymLeaders/giovanni", "gymLeaders/koga", "gymLeaders/lance", "gymLeaders/lorelei",
+      "gymLeaders/ltsurge", "gymLeaders/misty", "gymLeaders/oak", "gymLeaders/red", "gymLeaders/sabrina"
+    ]
+
+    # Sort alphabetically by display name (last part after '/')
+    (regular_trainers + gym_leaders).sort_by { |sprite| sprite.split('/').last }
   end
 
   # Fetch items of specific type(s) that the trainer has (quantity > 0)

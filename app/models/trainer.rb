@@ -11,6 +11,15 @@ class Trainer < ApplicationRecord
 
   validates :username, presence: true, uniqueness: true
   validates :password, presence: true, length: { minimum: 1 }, if: :password_required?
+  validate :icon_selection_present, on: :create
+
+  def icon_selection_present
+    if icon_pokemon_id.blank? && icon_trainer_sprite.blank?
+      errors.add(:base, "Please select an icon (Pokémon or Trainer)")
+    elsif icon_pokemon_id.present? && icon_trainer_sprite.present?
+      errors.add(:base, "Please select only one icon (either Pokémon or Trainer, not both)")
+    end
+  end
 
   # Award a pokeball based on story points completed
   def award_pokeball_for_ticket(story_points)

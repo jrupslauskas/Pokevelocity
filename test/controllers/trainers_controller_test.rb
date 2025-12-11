@@ -364,17 +364,19 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
   # ICON POKEMON SELECTION TESTS
   # ================================================================================
 
-  test "should allow registration without icon pokemon" do
-    assert_difference("Trainer.count", 1) do
+  test "should not allow registration without icon" do
+    assert_no_difference("Trainer.count") do
       post trainers_path, params: {
         trainer: {
           username: "newtrainer",
           password: "password123",
-          icon_pokemon_id: nil
+          icon_pokemon_id: nil,
+          icon_trainer_sprite: nil
         },
         activation_code: "TEST01"
       }
     end
+    assert_response :unprocessable_entity
   end
 
   test "should save icon pokemon when provided" do

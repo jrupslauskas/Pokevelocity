@@ -4,7 +4,8 @@ class TrainerItemTest < ActiveSupport::TestCase
   def setup
     @trainer = Trainer.create!(
       username: "test_trainer_for_items",
-      password: "password123"
+      password: "password123",
+      icon_pokemon_id: pokemons(:pikachu).id
     )
     @item = Item.create!(
       key: "test_stone",

@@ -48,8 +48,8 @@
 
       <div class="form-group">
         <div style="display: flex; align-items: center;">
-          <%= f.label :icon_pokemon_id, class: "form-label", style: "margin-bottom: 0;" do %>
-            Choose Your Icon Pokémon <span style="color: #E85D75;">*</span>
+          <%= label_tag :icon_selection, class: "form-label", style: "margin-bottom: 0;" do %>
+            Choose Your Icon <span style="color: #E85D75;">*</span>
           <% end %>
           <div class="info-icon-wrapper">
             <div class="info-icon">i</div>
@@ -58,10 +58,22 @@
             </div>
           </div>
         </div>
-        <div class="icon-pokemon-grid" style="margin-top: 12px;">
+
+        <!-- Toggle between Pokemon and Trainers -->
+        <div style="display: flex; gap: 8px; margin-top: 12px; margin-bottom: 16px;">
+          <button type="button" id="toggle-pokemon" class="icon-toggle-btn active" onclick="showIconType('pokemon')">
+            Pokémon
+          </button>
+          <button type="button" id="toggle-trainers" class="icon-toggle-btn" onclick="showIconType('trainers')">
+            Trainers
+          </button>
+        </div>
+
+        <!-- Pokemon Grid -->
+        <div id="pokemon-grid" class="icon-pokemon-grid" style="display: grid;">
           <% @pokemon.each do |pokemon| %>
             <label class="icon-pokemon-option">
-              <%= f.radio_button :icon_pokemon_id, pokemon.id, required: true, class: "icon-pokemon-radio" %>
+              <%= f.radio_button :icon_pokemon_id, pokemon.id, required: false, class: "icon-pokemon-radio icon-selection-radio", data: { type: "pokemon" } %>
               <div class="icon-pokemon-card">
                 <% if pokemon.image.attached? %>
                   <%= image_tag pokemon.image, alt: pokemon.name, class: "icon-pokemon-image" %>
@@ -72,6 +84,22 @@
                       style: "image-rendering: pixelated;" %>
                 <% end %>
                 <span class="icon-pokemon-name"><%= pokemon.name %></span>
+              </div>
+            </label>
+          <% end %>
+        </div>
+
+        <!-- Trainer Sprites Grid -->
+        <div id="trainers-grid" class="icon-pokemon-grid" style="display: none;">
+          <% @trainer_sprites.each do |sprite_name| %>
+            <% display_name = sprite_name.split('/').last.titleize %>
+            <label class="icon-pokemon-option">
+              <%= f.radio_button :icon_trainer_sprite, sprite_name, required: false, class: "icon-pokemon-radio icon-selection-radio", data: { type: "trainer" } %>
+              <div class="icon-pokemon-card">
+                <%= image_tag "trainerSprites/#{sprite_name}.png",
+                    alt: display_name,
+                    class: "icon-pokemon-image" %>
+                <span class="icon-pokemon-name"><%= display_name %></span>
               </div>
             </label>
           <% end %>
@@ -115,4 +143,53 @@
       <%= link_to "View on GitHub", "https://github.com/jrupslauskas/Pokevelocity", target: "_blank", class: "footer-link" %>
     </p>
   </footer>
+
+  <script>
+    function showIconType(type) {
+      const pokemonGrid = document.getElementById('pokemon-grid');
+      const trainersGrid = document.getElementById('trainers-grid');
+      const pokemonToggle = document.getElementById('toggle-pokemon');
+      const trainersToggle = document.getElementById('toggle-trainers');
+
+      if (type === 'pokemon') {
+        // Show Pokemon grid
+        pokemonGrid.style.display = 'grid';
+        trainersGrid.style.display = 'none';
+        pokemonToggle.classList.add('active');
+        trainersToggle.classList.remove('active');
+
+        // Clear trainer sprite selections
+        document.querySelectorAll('input[name="trainer[icon_trainer_sprite]"]').forEach(radio => {
+          radio.checked = false;
+        });
+      } else {
+        // Show Trainers grid
+        pokemonGrid.style.display = 'none';
+        trainersGrid.style.display = 'grid';
+        trainersToggle.classList.add('active');
+        pokemonToggle.classList.remove('active');
+
+        // Clear Pokemon selections
+        document.querySelectorAll('input[name="trainer[icon_pokemon_id]"]').forEach(radio => {
+          radio.checked = false;
+        });
+      }
+    }
+
+    // Add validation to ensure at least one icon is selected before submitting
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.querySelector('form');
+
+      form.addEventListener('submit', function(e) {
+        const pokemonSelected = document.querySelector('input[name="trainer[icon_pokemon_id]"]:checked');
+        const trainerSelected = document.querySelector('input[name="trainer[icon_trainer_sprite]"]:checked');
+
+        if (!pokemonSelected && !trainerSelected) {
+          e.preventDefault();
+          alert('Please select an icon (Pokémon or Trainer)');
+          return false;
+        }
+      });
+    });
+  </script>
 </div>

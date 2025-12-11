@@ -2214,3 +2214,34 @@ body > div:not(.app-layout) {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
   transform: translateY(-1px);
 }
+
+/* ==================== Icon Toggle Styles ==================== */
+
+.icon-toggle-btn {
+  flex: 1;
+  padding: 10px 20px;
+  background: #F5EFE6;
+  color: #8B6F47;
+  font-size: 14px;
+  font-weight: 600;
+  border: 2px solid #E8DCC8;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.icon-toggle-btn:hover {
+  background: #EDE4D3;
+  border-color: #D4C4A8;
+}
+
+.icon-toggle-btn.active {
+  background: #97D2A6;
+  color: #2C5F2D;
+  border-color: #7BC087;
+}
+
+.icon-toggle-btn.active:hover {
+  background: #88C497;
+  border-color: #6FB07D;
+}

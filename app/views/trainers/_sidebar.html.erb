@@ -45,15 +45,21 @@
 
   <div class="sidebar-footer">
     <div class="sidebar-user">
-      <% if current_trainer.icon_pokemon %>
+      <% if current_trainer.icon_pokemon || current_trainer.icon_trainer_sprite %>
         <div class="sidebar-user-avatar">
-          <% if current_trainer.icon_pokemon.image.attached? %>
-            <%= image_tag current_trainer.icon_pokemon.image, alt: current_trainer.icon_pokemon.name, class: "sidebar-avatar-image" %>
-          <% else %>
-            <%= image_tag "pokemonSprites/#{current_trainer.icon_pokemon.pokedex_number.to_s.rjust(3, '0')}.png",
-                alt: current_trainer.icon_pokemon.name,
-                class: "sidebar-avatar-image",
-                style: "image-rendering: pixelated;" %>
+          <% if current_trainer.icon_pokemon %>
+            <% if current_trainer.icon_pokemon.image.attached? %>
+              <%= image_tag current_trainer.icon_pokemon.image, alt: current_trainer.icon_pokemon.name, class: "sidebar-avatar-image" %>
+            <% else %>
+              <%= image_tag "pokemonSprites/#{current_trainer.icon_pokemon.pokedex_number.to_s.rjust(3, '0')}.png",
+                  alt: current_trainer.icon_pokemon.name,
+                  class: "sidebar-avatar-image",
+                  style: "image-rendering: pixelated;" %>
+            <% end %>
+          <% elsif current_trainer.icon_trainer_sprite %>
+            <%= image_tag "trainerSprites/#{current_trainer.icon_trainer_sprite}.png",
+                alt: current_trainer.icon_trainer_sprite.split('/').last.titleize,
+                class: "sidebar-avatar-image" %>
           <% end %>
         </div>
       <% end %>

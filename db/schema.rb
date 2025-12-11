@@ -138,6 +138,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_08_020412) do
     t.datetime "created_at", null: false
     t.integer "currency", default: 1000, null: false
     t.integer "icon_pokemon_id"
+    t.string "icon_trainer_sprite"
     t.string "password_digest", null: false
     t.datetime "updated_at", null: false
     t.string "username", null: false
