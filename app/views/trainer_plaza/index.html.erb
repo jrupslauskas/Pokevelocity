@@ -13,14 +13,20 @@
           <% @trainers.each do |trainer| %>
             <div class="trainer-plaza-card <%= 'trainer-plaza-current' if trainer.id == current_trainer.id %>">
               <div class="trainer-plaza-avatar">
-                <% if trainer.icon_pokemon %>
-                  <% if trainer.icon_pokemon.image.attached? %>
-                    <%= image_tag trainer.icon_pokemon.image, alt: trainer.icon_pokemon.name, class: "trainer-plaza-avatar-image" %>
-                  <% else %>
-                    <%= image_tag "pokemonSprites/#{trainer.icon_pokemon.pokedex_number.to_s.rjust(3, '0')}.png",
-                        alt: trainer.icon_pokemon.name,
-                        class: "trainer-plaza-avatar-image",
-                        style: "image-rendering: pixelated;" %>
+                <% if trainer.icon_pokemon || trainer.icon_trainer_sprite %>
+                  <% if trainer.icon_pokemon %>
+                    <% if trainer.icon_pokemon.image.attached? %>
+                      <%= image_tag trainer.icon_pokemon.image, alt: trainer.icon_pokemon.name, class: "trainer-plaza-avatar-image" %>
+                    <% else %>
+                      <%= image_tag "pokemonSprites/#{trainer.icon_pokemon.pokedex_number.to_s.rjust(3, '0')}.png",
+                          alt: trainer.icon_pokemon.name,
+                          class: "trainer-plaza-avatar-image",
+                          style: "image-rendering: pixelated;" %>
+                    <% end %>
+                  <% elsif trainer.icon_trainer_sprite %>
+                    <%= image_tag "trainerSprites/#{trainer.icon_trainer_sprite}.png",
+                        alt: trainer.icon_trainer_sprite.split('/').last.titleize,
+                        class: "trainer-plaza-avatar-image" %>
                   <% end %>
                 <% else %>
                   <div class="trainer-plaza-avatar-empty">

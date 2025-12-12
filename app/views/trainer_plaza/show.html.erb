@@ -4,14 +4,20 @@
   <main class="main-content">
     <header class="page-header-authenticated">
       <div style="display: flex; align-items: center; gap: 16px;">
-        <% if @trainer.icon_pokemon %>
+        <% if @trainer.icon_pokemon || @trainer.icon_trainer_sprite %>
           <div style="width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;">
-            <% if @trainer.icon_pokemon.image.attached? %>
-              <%= image_tag @trainer.icon_pokemon.image, alt: @trainer.icon_pokemon.name, style: "width: 64px; height: 64px; object-fit: contain;" %>
-            <% else %>
-              <%= image_tag "pokemonSprites/#{@trainer.icon_pokemon.pokedex_number.to_s.rjust(3, '0')}.png",
-                  alt: @trainer.icon_pokemon.name,
-                  style: "width: 64px; height: 64px; object-fit: contain; image-rendering: pixelated;" %>
+            <% if @trainer.icon_pokemon %>
+              <% if @trainer.icon_pokemon.image.attached? %>
+                <%= image_tag @trainer.icon_pokemon.image, alt: @trainer.icon_pokemon.name, style: "width: 64px; height: 64px; object-fit: contain;" %>
+              <% else %>
+                <%= image_tag "pokemonSprites/#{@trainer.icon_pokemon.pokedex_number.to_s.rjust(3, '0')}.png",
+                    alt: @trainer.icon_pokemon.name,
+                    style: "width: 64px; height: 64px; object-fit: contain; image-rendering: pixelated;" %>
+              <% end %>
+            <% elsif @trainer.icon_trainer_sprite %>
+              <%= image_tag "trainerSprites/#{@trainer.icon_trainer_sprite}.png",
+                  alt: @trainer.icon_trainer_sprite.split('/').last.titleize,
+                  style: "width: 64px; height: 64px; object-fit: contain;" %>
             <% end %>
           </div>
         <% end %>

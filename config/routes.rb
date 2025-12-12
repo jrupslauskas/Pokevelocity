@@ -37,6 +37,7 @@ Rails.application.routes.draw do
 
   # Trainer Plaza
   get "/trainer-plaza", to: "trainer_plaza#index", as: :trainer_plaza
+  post "/trainer-plaza", to: redirect("/trainer-plaza")  # Handle accidental POST requests
   get "/trainer-plaza/:id", to: "trainer_plaza#show", as: :trainer
 
   # Redeem rewards
