@@ -57,10 +57,7 @@
     - pokemon: Pidgey
       spawn_rate: 45
     - pokemon: Caterpie
-      spawn_rate: 5
-    - pokemon: Mr. Mime
-      spawn_rate: 5
-      required_pokemon: Abra
+      spawn_rate: 10
 
 - name: Viridian Forest
   description: A dense, shadowy woodland filled with tall trees and vibrant bug Pokémon. Trainers navigate its winding paths as sunlight filters softly through the canopy.
