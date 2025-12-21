@@ -77,7 +77,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
     get catches_path
-    assert_select "button.btn-adventure"
+    assert_select "input.btn-adventure"
   end
 
   test "should show pokemon available count for each route" do
@@ -109,7 +109,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     log_in_as(trainer)
     get catches_path
     # Button should not be disabled since pokemon can be recaught for evolution stones
-    assert_select "button.btn-adventure", minimum: 1
+    assert_select "input.btn-adventure", minimum: 1
   end
 
   test "should display stats bar with caught count and pokeballs" do
@@ -702,7 +702,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
 
     # Should redirect with no pokemon message
     assert_redirected_to catches_path
-    assert_match "No Pokémon on this route!", flash[:notice]
+    assert_match "No Pokémon available for that encounter type on this route!", flash[:notice]
   end
 
   test "should allow encounter when pokemon requirement is met" do

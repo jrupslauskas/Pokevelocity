@@ -39,56 +39,7 @@
           <div class="gate-routes">
             <div class="routes-grid">
               <% gate_routes.each do |route| %>
-                <% available_pokemon = @route_available_pokemon[route.id] %>
-                <div class="route-card">
-                  <div class="route-header">
-                    <h2 class="route-name"><%= route.name %></h2>
-                    <% if route.description.present? %>
-                      <p class="route-description"><%= route.description %></p>
-                    <% end %>
-                  </div>
-
-                  <div class="route-pokemon">
-                    <h3 class="route-pokemon-title">Wild Pokémon:</h3>
-                    <div class="route-pokemon-list">
-                      <% route.route_encounters.includes(:pokemon, :required_pokemon).sort_by { |e| e.pokemon.pokedex_number }.each do |encounter| %>
-                        <% pokemon = encounter.pokemon %>
-                        <% is_available = encounter.available_for?(@trainer) %>
-                        <% is_caught = @trainer.captured_pokemon.include?(pokemon) %>
-                        <div class="route-pokemon-item <%= is_caught ? 'caught' : '' %> <%= is_available ? '' : 'locked' %>">
-                          <%= image_tag "pokemonSprites/#{pokemon.pokedex_number.to_s.rjust(3, '0')}.png",
-                              alt: pokemon.name,
-                              class: "route-pokemon-sprite",
-                              style: "image-rendering: pixelated; #{is_available ? '' : 'filter: brightness(0.4);'}" %>
-                          <div class="route-pokemon-info">
-                            <span class="route-pokemon-name"><%= pokemon.name %></span>
-                            <% if !is_available && encounter.requirement_description %>
-                              <span class="route-pokemon-requirement" style="font-size: 0.75rem; color: #888;">🔒 <%= encounter.requirement_description %></span>
-                            <% else %>
-                              <div class="route-pokemon-difficulty">
-                                <% pokemon.difficulty.times do %>
-                                  <span class="difficulty-star filled">★</span>
-                                <% end %>
-                                <% (5 - pokemon.difficulty).times do %>
-                                  <span class="difficulty-star empty">★</span>
-                                <% end %>
-                              </div>
-                            <% end %>
-                          </div>
-                        </div>
-                      <% end %>
-                    </div>
-                  </div>
-
-                  <div class="route-actions">
-                    <% if available_pokemon.any? %>
-                      <%= button_to "Adventure", adventure_path(route), class: "btn-adventure" %>
-                      <span class="route-available-count"><%= available_pokemon.count %> Pokémon available</span>
-                    <% else %>
-                      <button class="btn-adventure-disabled" disabled>All caught!</button>
-                    <% end %>
-                  </div>
-                </div>
+                <%= render partial: 'route_card', locals: { route: route } %>
               <% end %>
             </div>
           </div>
@@ -151,47 +102,7 @@
         <div class="gate-routes">
           <div class="routes-grid">
             <% @always_accessible_routes.each do |route| %>
-              <% available_pokemon = @route_available_pokemon[route.id] %>
-              <div class="route-card">
-                <div class="route-header">
-                  <h2 class="route-name"><%= route.name %></h2>
-                  <% if route.description.present? %>
-                    <p class="route-description"><%= route.description %></p>
-                  <% end %>
-                </div>
-
-                <div class="route-pokemon">
-                  <h3 class="route-pokemon-title">Wild Pokémon:</h3>
-                  <div class="route-pokemon-list">
-                    <% route.route_encounters.includes(:pokemon, :required_pokemon).sort_by { |e| e.pokemon.pokedex_number }.each do |encounter| %>
-                      <% pokemon = encounter.pokemon %>
-                      <% is_available = encounter.available_for?(@trainer) %>
-                      <% is_caught = @trainer.captured_pokemon.include?(pokemon) %>
-                      <div class="route-pokemon-item <%= is_caught ? 'caught' : '' %> <%= is_available ? '' : 'locked' %>">
-                        <%= image_tag "pokemonSprites/#{pokemon.pokedex_number.to_s.rjust(3, '0')}.png",
-                            alt: pokemon.name,
-                            class: "route-pokemon-sprite",
-                            style: "image-rendering: pixelated; #{is_available ? '' : 'filter: brightness(0.4);'}" %>
-                        <div class="route-pokemon-info">
-                          <span class="route-pokemon-name"><%= pokemon.name %></span>
-                          <% if !is_available && encounter.requirement_description %>
-                            <span class="route-pokemon-requirement" style="font-size: 0.75rem; color: #888;">🔒 <%= encounter.requirement_description %></span>
-                          <% end %>
-                        </div>
-                      </div>
-                    <% end %>
-                  </div>
-                </div>
-
-                <div class="route-actions">
-                  <% if available_pokemon.any? %>
-                    <%= button_to "Adventure", adventure_path(route), class: "btn-adventure" %>
-                    <span class="route-available-count"><%= available_pokemon.count %> Pokémon available</span>
-                  <% else %>
-                    <button class="btn-adventure-disabled" disabled>All caught!</button>
-                  <% end %>
-                </div>
-              </div>
+              <%= render partial: 'route_card', locals: { route: route } %>
             <% end %>
           </div>
         </div>
@@ -199,3 +110,59 @@
     </div>
   </main>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Handle encounter type button clicks
+    document.querySelectorAll('.encounter-type-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        const routeId = this.dataset.routeId;
+        const encounterType = this.dataset.encounterType;
+
+        // Update active state for buttons on this route
+        document.querySelectorAll(`.encounter-type-btn[data-route-id="${routeId}"]`).forEach(btn => {
+          btn.classList.remove('active');
+        });
+        this.classList.add('active');
+
+        // Update hidden input in form
+        const form = document.querySelector(`.adventure-form[data-route-id="${routeId}"]`);
+        if (form) {
+          const input = form.querySelector('.encounter-type-input');
+          if (input) {
+            input.value = encounterType;
+          }
+        }
+
+        // Filter Pokemon list to show only matching encounter type
+        const allPokemon = document.querySelectorAll(`.route-pokemon-item[data-route-id="${routeId}"]`);
+        let visibleCount = 0;
+
+        allPokemon.forEach(item => {
+          if (item.dataset.encounterType === encounterType) {
+            item.style.display = '';
+            if (!item.classList.contains('locked')) {
+              visibleCount++;
+            }
+          } else {
+            item.style.display = 'none';
+          }
+        });
+
+        // Update available count
+        const countSpan = document.querySelector(`.route-available-count[data-route-id="${routeId}"]`);
+        if (countSpan) {
+          countSpan.textContent = `${visibleCount} Pokémon available`;
+        }
+      });
+    });
+
+    // Initialize: Show only the active encounter type on page load
+    document.querySelectorAll('.encounter-type-selector').forEach(selector => {
+      const activeBtn = selector.querySelector('.encounter-type-btn.active');
+      if (activeBtn) {
+        activeBtn.click();
+      }
+    });
+  });
+</script>

@@ -26,7 +26,11 @@
               <p class="pokemon-number">#<%= pokemon.pokedex_number.to_s.rjust(3, '0') %></p>
               <h3 class="pokemon-name"><%= pokemon.name %></h3>
               <div class="pokemon-meta">
-                <span class="pokemon-capture-info">Caught with a <%= capture.ball_type.humanize %> on <%= capture.captured_at.strftime("%m/%d/%y") %></span>
+                <% if capture.evolved %>
+                  <span class="pokemon-capture-info">Evolved on <%= capture.captured_at.strftime("%m/%d/%y") %></span>
+                <% else %>
+                  <span class="pokemon-capture-info">Caught with a <%= capture.ball_type.humanize %> on <%= capture.captured_at.strftime("%m/%d/%y") %></span>
+                <% end %>
               </div>
             </div>
           <% end %>

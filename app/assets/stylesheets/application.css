@@ -2245,3 +2245,40 @@ body > div:not(.app-layout) {
   background: #88C497;
   border-color: #6FB07D;
 }
+
+/* Encounter Type Selector */
+.encounter-type-selector {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0;
+  padding: 0 16px;
+}
+
+.encounter-type-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  color: #666;
+}
+
+.encounter-type-btn:hover {
+  border-color: #4CAF50;
+  background: #f5f5f5;
+}
+
+.encounter-type-btn.active {
+  border-color: #4CAF50;
+  background: #4CAF50;
+  color: white;
+}
+
+.encounter-type-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

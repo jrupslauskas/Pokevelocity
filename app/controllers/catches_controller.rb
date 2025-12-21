@@ -49,12 +49,24 @@ class CatchesController < ApplicationController
                            .includes(route_encounters: :pokemon)
     end
 
+    # Check what encounter types the trainer can access
+    @has_fishing_rod = @trainer.has_item?(:old_rod) || @trainer.has_item?(:good_rod) || @trainer.has_item?(:super_rod)
+    @has_surf = @trainer.has_item?(:hm_surf)
+
     # For each route, show all Pokemon (including already caught) that meet appearance requirements
     @route_available_pokemon = {}
+    @route_available_by_type = {}
     (@always_accessible_routes + @gated_routes).each do |route|
       # Get all Pokemon from encounters that are available for this trainer
       available_encounters = route.route_encounters.select { |encounter| encounter.available_for?(@trainer) }
       @route_available_pokemon[route.id] = available_encounters.map(&:pokemon)
+
+      # Group by encounter type
+      @route_available_by_type[route.id] = {
+        grass: available_encounters.select(&:grass?).map(&:pokemon),
+        fish: available_encounters.select(&:fish?).map(&:pokemon),
+        surf: available_encounters.select(&:surf?).map(&:pokemon)
+      }
     end
 
     # Check if trainer has any pokeballs (show message but don't redirect)
@@ -67,12 +79,16 @@ class CatchesController < ApplicationController
   def adventure
     @trainer = current_trainer
     route = Route.find(params[:id])
+    encounter_type = params[:encounter_type] || 'grass'
 
     # Get all Pokemon on this route that meet appearance requirements (including already caught)
-    available_encounters = route.route_encounters.select { |encounter| encounter.available_for?(@trainer) }
+    # Filter by encounter type
+    available_encounters = route.route_encounters.select do |encounter|
+      encounter.available_for?(@trainer) && encounter.encounter_type == encounter_type
+    end
 
     if available_encounters.empty?
-      redirect_to catches_path, notice: "No Pokémon on this route!"
+      redirect_to catches_path, notice: "No Pokémon available for that encounter type on this route!"
       return
     end
 

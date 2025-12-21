@@ -108,7 +108,8 @@ class TrainersController < ApplicationController
     @trainer.captures.create!(
       pokemon_id: evolution.to_pokemon_id,
       ball_type: original_capture&.ball_type || 'pokeball',
-      captured_at: Time.current
+      captured_at: Time.current,
+      evolved: true
     )
 
     # Redirect to pokedex with success message

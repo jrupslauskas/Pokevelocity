@@ -4,11 +4,7 @@ class RouteEncounter < ApplicationRecord
   belongs_to :required_pokemon, class_name: "Pokemon", optional: true
   belongs_to :alternative_required_pokemon, class_name: "Pokemon", optional: true
 
-  enum :encounter_type, {
-    grass: "grass",
-    fish: "fish",
-    surf: "surf"
-  }, default: "grass"
+  enum :encounter_type, { grass: "grass", fish: "fish", surf: "surf" }, validate: true
 
   validates :spawn_rate, presence: true,
             numericality: { only_integer: true, greater_than: 0 }

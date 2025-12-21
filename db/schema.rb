@@ -46,6 +46,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_08_020412) do
     t.string "ball_type", null: false
     t.datetime "captured_at", null: false
     t.datetime "created_at", null: false
+    t.boolean "evolved", default: false, null: false
     t.integer "pokemon_id", null: false
     t.integer "trainer_id", null: false
     t.datetime "updated_at", null: false
