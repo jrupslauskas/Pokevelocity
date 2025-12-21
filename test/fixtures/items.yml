@@ -43,3 +43,15 @@ transfer_cable:
 evolution_stone:
   key: evolution_stone
   item_type: evolution_stone
+
+old_rod:
+  key: old_rod
+  item_type: key_item
+
+good_rod:
+  key: good_rod
+  item_type: key_item
+
+super_rod:
+  key: super_rod
+  item_type: key_item

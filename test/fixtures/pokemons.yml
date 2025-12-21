@@ -59,3 +59,28 @@ mew:
   pokedex_number: 151
   name: Mew
   difficulty: 5
+
+pidgey:
+  pokedex_number: 16
+  name: Pidgey
+  difficulty: 1
+
+rattata:
+  pokedex_number: 19
+  name: Rattata
+  difficulty: 1
+
+tentacool:
+  pokedex_number: 72
+  name: Tentacool
+  difficulty: 2
+
+magikarp:
+  pokedex_number: 129
+  name: Magikarp
+  difficulty: 1
+
+gyarados:
+  pokedex_number: 130
+  name: Gyarados
+  difficulty: 5

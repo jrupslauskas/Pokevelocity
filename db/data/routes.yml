@@ -22,6 +22,7 @@
       spawn_rate: 33
     - pokemon: Charmander
       spawn_rate: 33
+## TODO: Add Surf and Fishing Encounters
 
 ## Professor Oak Requirement, Gate 1
 
@@ -46,6 +47,31 @@
       spawn_rate: 45
     - pokemon: Spearow
       spawn_rate: 10
+  fishing_encounters:
+    old_rod:
+      - pokemon: Magikarp
+        spawn_rate: 100
+    good_rod:
+      - pokemon: Magikarp
+        spawn_rate: 20
+      - pokemon: Goldeen
+        spawn_rate: 20
+      - pokemon: Poliwag
+        spawn_rate: 60
+    super_rod:
+      - pokemon: Poliwag
+        spawn_rate: 45
+      - pokemon: Poliwhirl
+        spawn_rate: 30
+      - pokemon: Slowpoke
+        spawn_rate: 10
+      - pokemon: Gyarados
+        spawn_rate: 15
+  surf_encounters:
+    - pokemon: Psyduck
+      spawn_rate: 50
+    - pokemon: Slowpoke
+      spawn_rate: 50
 
 - name: Route 2
   description: A forest-lined path linking Viridian City to Pewter City. Viridian Forest lies just to the north.
@@ -115,17 +141,36 @@
   order: 8
   encounters:
     - pokemon: Rattata
-      spawn_rate: 30
-    - pokemon: Spearow
       spawn_rate: 25
+    - pokemon: Spearow
+      spawn_rate: 20
     - pokemon: Ekans
       spawn_rate: 20
     - pokemon: Sandshrew
       spawn_rate: 20
     - pokemon: Mankey
-      spawn_rate: 3
-    - pokemon: Magikarp
-      spawn_rate: 2
+      spawn_rate: 15
+  surf_encounters:
+    - pokemon: Tentacool
+      spawn_rate: 100
+  fishing_encounters:
+    old_rod:
+      - pokemon: Magikarp
+        spawn_rate: 100
+    good_rod:
+      - pokemon: Magikarp
+        spawn_rate: 20
+      - pokemon: Horsea
+        spawn_rate: 40
+      - pokemon: Krabby
+        spawn_rate: 40
+    super_rod:
+      - pokemon: Krabby
+        spawn_rate: 45
+      - pokemon: Horsea
+        spawn_rate: 45
+      - pokemon: Gyarados
+        spawn_rate: 10
 
 - name: Cerulean City
   description: A vibrant riverside city known for its love of Water-type Pokémon. The Cerulean Gym and the scenic waterways make it a favorite stop for travelers.
@@ -135,6 +180,7 @@
     - pokemon: Jynx
       spawn_rate: 100
       required_pokemon: Poliwhirl
+## TODO: Add Surf and Fishing Encounters
 
 - name: Route 24
   description: A bridge north of Cerulean City known for the Nugget Bridge challenge. Trainers line up for battles.
@@ -153,6 +199,27 @@
       spawn_rate: 10
     - pokemon: Pidgey
       spawn_rate: 15
+  surf_encounters:
+    - pokemon: Tentacool
+      spawn_rate: 100
+  fishing_encounters:
+    old_rod:
+      - pokemon: Magikarp
+        spawn_rate: 100
+    good_rod:
+      - pokemon: Magikarp
+        spawn_rate: 20
+      - pokemon: Horsea
+        spawn_rate: 40
+      - pokemon: Krabby
+        spawn_rate: 40
+    super_rod:
+      - pokemon: Krabby
+        spawn_rate: 45
+      - pokemon: Horsea
+        spawn_rate: 45
+      - pokemon: Gyarados
+        spawn_rate: 10
 
 - name: Route 25
   description: A cliffside path overlooking the sea. Bill’s Cottage lies at the far end, welcoming curious visitors.
@@ -171,6 +238,33 @@
       spawn_rate: 10
     - pokemon: Pidgey
       spawn_rate: 15
+  surf_encounters:
+    - pokemon: Psyduck
+      spawn_rate: 50
+    - pokemon: Slowpoke
+      spawn_rate: 50
+  fishing_encounters:
+    old_rod:
+      - pokemon: Magikarp
+        spawn_rate: 100
+    good_rod:
+      - pokemon: Magikarp
+        spawn_rate: 20
+      - pokemon: Poliwag
+        spawn_rate: 40
+      - pokemon: Goldeen
+        spawn_rate: 40
+    super_rod:
+      - pokemon: Poliwag
+        spawn_rate: 50
+      - pokemon: Poliwhirl
+        spawn_rate: 30
+      - pokemon: Psyduck
+        spawn_rate: 5
+      - pokemon: Slowpoke
+        spawn_rate: 5
+      - pokemon: Gyarados
+        spawn_rate: 10
 
 ## Water Badge Gate - Gate 3
 
@@ -197,6 +291,33 @@
       spawn_rate: 35
     - pokemon: Pidgey
       spawn_rate: 40
+  surf_encounters:
+    - pokemon: Psyduck
+      spawn_rate: 50
+    - pokemon: Slowpoke
+      spawn_rate: 50
+  fishing_encounters:
+    old_rod:
+      - pokemon: Magikarp
+        spawn_rate: 100
+    good_rod:
+      - pokemon: Magikarp
+        spawn_rate: 20
+      - pokemon: Poliwag
+        spawn_rate: 40
+      - pokemon: Goldeen
+        spawn_rate: 40
+    super_rod:
+      - pokemon: Poliwag
+        spawn_rate: 40
+      - pokemon: Poliwhirl
+        spawn_rate: 40
+      - pokemon: Psyduck
+        spawn_rate: 5
+      - pokemon: Slowpoke
+        spawn_rate: 5
+      - pokemon: Gyarados
+        spawn_rate: 10
 
 - name: Diglett's Cave
   description: A long, narrow tunnel carved entirely by Diglett and Dugtrio. Its twisting passages provide a quick underground shortcut between Routes 11 and 2.
@@ -230,6 +351,29 @@
       spawn_rate: 25
     - pokemon: Drowzee
       spawn_rate: 20
+  surf_encounters:
+    - pokemon: Tentacool
+      spawn_rate: 100
+  fishing_encounters:
+    old_rod:
+      - pokemon: Magikarp
+        spawn_rate: 100
+    good_rod:
+      - pokemon: Magikarp
+        spawn_rate: 20
+      - pokemon: Krabby
+        spawn_rate: 40
+      - pokemon: Horsea
+        spawn_rate: 40
+    super_rod:
+      - pokemon: Horsea
+        spawn_rate: 40
+      - pokemon: Magikarp
+        spawn_rate: 20
+      - pokemon: Krabby
+        spawn_rate: 25
+      - pokemon: Gyarados
+        spawn_rate: 15
 
 - name: Vermillion City
   description: A bustling port city filled with the cries of sea birds and the sound of ship horns. The S.S. Anne docks here, bringing travelers from faraway regions. A trader here possesses a unique bird pokemon.
@@ -239,6 +383,7 @@
     - pokemon: Farfetch'd
       spawn_rate: 100
       required_pokemon: Spearow
+## TODO: Add Surf and Fishing Encounters
 
 ## Lt Surge Badge - Gate 4
 
@@ -269,6 +414,27 @@
       spawn_rate: 20
     - pokemon: Voltorb
       spawn_rate: 40
+  surf_encounters:
+    - pokemon: Tentacool
+      spawn_rate: 100
+  fishing_encounters:
+    old_rod:
+      - pokemon: Magikarp
+        spawn_rate: 100
+    good_rod:
+      - pokemon: Magikarp
+        spawn_rate: 20
+      - pokemon: Krabby
+        spawn_rate: 40
+      - pokemon: Horsea
+        spawn_rate: 40
+    super_rod:
+      - pokemon: Horsea
+        spawn_rate: 40
+      - pokemon: Krabby
+        spawn_rate: 40
+      - pokemon: Gyarados
+        spawn_rate: 20
 
 - name: Rock Tunnel
   description: A dark, rugged cave network where visibility is low and the path twists unpredictably. Strong Rock- and Ground-type Pokémon make this a challenging passage for travelers.
@@ -375,6 +541,27 @@
       spawn_rate: 25
     - pokemon: Weepinbell
       spawn_rate: 10
+  surf_encounters:
+    - pokemon: Tentacool
+      spawn_rate: 100
+  fishing_encounters:
+    old_rod:
+      - pokemon: Magikarp
+        spawn_rate: 100
+    good_rod:
+      - pokemon: Magikarp
+        spawn_rate: 20
+      - pokemon: Krabby
+        spawn_rate: 40
+      - pokemon: Horsea
+        spawn_rate: 40
+    super_rod:
+      - pokemon: Horsea
+        spawn_rate: 40
+      - pokemon: Krabby
+        spawn_rate: 40
+      - pokemon: Gyarados
+        spawn_rate: 20
 
 - name: Route 13
   description: A winding coastal path connecting Routes 12 and 14. Its zig-zag walkways overlook calm, sparkling water.
@@ -391,6 +578,27 @@
       spawn_rate: 15
     - pokemon: Ditto
       spawn_rate: 15
+  surf_encounters:
+    - pokemon: Tentacool
+      spawn_rate: 100
+  fishing_encounters:
+    old_rod:
+      - pokemon: Magikarp
+        spawn_rate: 100
+    good_rod:
+      - pokemon: Magikarp
+        spawn_rate: 20
+      - pokemon: Krabby
+        spawn_rate: 40
+      - pokemon: Horsea
+        spawn_rate: 40
+    super_rod:
+      - pokemon: Horsea
+        spawn_rate: 40
+      - pokemon: Krabby
+        spawn_rate: 40
+      - pokemon: Gyarados
+        spawn_rate: 20
 
 - name: Route 14
   description: A quiet grassy route south of Route 13 leading toward Fuchsia City. Bird Pokémon soar overhead.
@@ -448,6 +656,7 @@
       spawn_rate: 5
     - pokemon: Tauros
       spawn_rate: 5
+## TODO: Add Surf and Fishing Encounters
 
 - name: Safari Zone - Area 2
   description: A vast, maze-like park filled with exotic Pokémon and branching trails. Trainers come from all over to hunt elusive species found nowhere else in Kanto.
@@ -470,6 +679,7 @@
       spawn_rate: 5
     - pokemon: Scyther
       spawn_rate: 5
+## TODO: Add Surf and Fishing Encounters
 
 - name: Route 16
   description: A short stretch west of Celadon City leading to the Cycling Road entrance.
@@ -548,12 +758,31 @@
   description: A southern beach leaving Fuchsia City toward the Seafoam Islands. Swimmers challenge the waves as the water deepens.
   gate_requirement: 7
   order: 36
-  encounters:
-    - pokemon: Rattata
+  surf_encounters:
+    - pokemon: Tentacool
       spawn_rate: 100
-    ## ^^^ is inaccurate, surf and fish only
-    # Surf
-    # Fishing
+  fishing_encounters:
+    old_rod:
+      - pokemon: Magikarp
+        spawn_rate: 100
+    good_rod:
+      - pokemon: Magikarp
+        spawn_rate: 20
+      - pokemon: Krabby
+        spawn_rate: 40
+      - pokemon: Horsea
+        spawn_rate: 40
+    super_rod:
+      - pokemon: Horsea
+        spawn_rate: 35
+      - pokemon: Seadra
+        spawn_rate: 5
+      - pokemon: Krabby
+        spawn_rate: 35
+      - pokemon: Kingler
+        spawn_rate: 5
+      - pokemon: Gyarados
+        spawn_rate: 20
 
 - name: Seafoam Islands - Floor 1
   description: A pair of icy caverns between Fuchsia City and Cinnabar Island, where frigid winds whistle through twisting tunnels. Strong currents rush beneath the frozen floors, and the chilling air grows colder the deeper you explore.
@@ -568,6 +797,7 @@
       spawn_rate: 35
     - pokemon: Golbat
       spawn_rate: 10
+## TODO: Add Surf and Fishing Encounters
 
 - name: Seafoam Islands - Floor 2
   description: Inn the deep hidden caverns, the temperature drops sharply, frost creeps along the walls, and an eerie silence prevails as though the entire cave holds its breath in the presence of a majestic, long-forgotten guardian of ice.
@@ -584,17 +814,37 @@
       spawn_rate: 15
     - pokemon: Articuno
       spawn_rate: 10
+## TODO: Add Surf and Fishing Encounters
 
 - name: Route 20
   description: A long ocean route stretching between the Seafoam Islands and Cinnabar Island. Strong currents swirl around the icy caverns.
   gate_requirement: 7
   order: 39
-  encounters:
-    - pokemon: Rattata
+  surf_encounters:
+    - pokemon: Tentacool
       spawn_rate: 100
-    ## ^^^ is inaccurate, surf and fish only
-    # Surf
-    # Fishing
+  fishing_encounters:
+    old_rod:
+      - pokemon: Magikarp
+        spawn_rate: 100
+    good_rod:
+      - pokemon: Magikarp
+        spawn_rate: 20
+      - pokemon: Krabby
+        spawn_rate: 40
+      - pokemon: Horsea
+        spawn_rate: 40
+    super_rod:
+      - pokemon: Horsea
+        spawn_rate: 35
+      - pokemon: Seadra
+        spawn_rate: 5
+      - pokemon: Krabby
+        spawn_rate: 35
+      - pokemon: Kingler
+        spawn_rate: 5
+      - pokemon: Gyarados
+        spawn_rate: 20
 
 - name: Cinnabar Island - Pokemon Lab
   description: A cutting-edge research center on the volcanic island of Cinnabar. Scientists bustle about, many of them eager to trade their exotic species. High tech machines are said to resurrect ancient fossils.
@@ -656,6 +906,7 @@
       spawn_rate: 5
     - pokemon: Slowpoke
       spawn_rate: 5
+## TODO: Add Surf and Fishing Encounters
 
 - name: Sevii Islands - One Island, Kindle Road
   description: A rugged, sunbaked trail stretching from One Island toward Mt. Ember. Hot springs bubble alongside the path, attracting both Trainers and wild Pokémon.
@@ -676,6 +927,7 @@
       spawn_rate: 10
     - pokemon: Geodude
       spawn_rate: 30
+## TODO: Add Surf and Fishing Encounters
 
 - name: Sevii Islands - One Island, Mount Ember
   description: A towering volcanic mountain glowing with inner heat. Embers drift on the wind and the air grows hotter as challengers rise to its peak. Locals whisper of a mythical firebird said to ignite the very sky.
@@ -696,6 +948,7 @@
       spawn_rate: 10
     - pokemon: Moltres
       spawn_rate: 10
+## TODO: Add Surf and Fishing Encounters
 
 - name: Route 21
   description: A sea route north of Cinnabar Island leading back to Pallet Town. Fishers drift lazily across the gentle waves.
@@ -704,6 +957,31 @@
   encounters:
     - pokemon: Tangela
       spawn_rate: 100
+  surf_encounters:
+    - pokemon: Tentacool
+      spawn_rate: 100
+  fishing_encounters:
+    old_rod:
+      - pokemon: Magikarp
+        spawn_rate: 100
+    good_rod:
+      - pokemon: Magikarp
+        spawn_rate: 20
+      - pokemon: Krabby
+        spawn_rate: 40
+      - pokemon: Horsea
+        spawn_rate: 40
+    super_rod:
+      - pokemon: Horsea
+        spawn_rate: 35
+      - pokemon: Seadra
+        spawn_rate: 5
+      - pokemon: Krabby
+        spawn_rate: 35
+      - pokemon: Kingler
+        spawn_rate: 5
+      - pokemon: Gyarados
+        spawn_rate: 20
 
 ## Viridian Gym - Gate 9
 
@@ -724,6 +1002,33 @@
       spawn_rate: 20
     - pokemon: Arbok
       spawn_rate: 10
+  surf_encounters:
+    - pokemon: Psyduck
+      spawn_rate: 50
+    - pokemon: Slowpoke
+      spawn_rate: 50
+  fishing_encounters:
+    old_rod:
+      - pokemon: Magikarp
+        spawn_rate: 100
+    good_rod:
+      - pokemon: Poliwag
+        spawn_rate: 60
+      - pokemon: Goldeen
+        spawn_rate: 20
+      - pokemon: Magikarp
+        spawn_rate: 20
+    super_rod:
+      - pokemon: Psyduck
+        spawn_rate: 5
+      - pokemon: Poliwag
+        spawn_rate: 40
+      - pokemon: Poliwhirl
+        spawn_rate: 40
+      - pokemon: Slowpoke
+        spawn_rate: 5
+      - pokemon: Gyarados
+        spawn_rate: 10
 
 - name: Victory Road
   description: A cavernous mountain passage connecting Route 23 to the Indigo Plateau. Powerful Trainers and rare Pokémon make this the final trial before the Pokémon League.
@@ -767,5 +1072,6 @@
       spawn_rate: 10
     - pokemon: Mewtwo
       spawn_rate: 10
+      ## TODO: Add Surf and Fishing Encounters
 
       ## Where to add mew?

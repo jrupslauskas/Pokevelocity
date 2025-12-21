@@ -61,4 +61,26 @@ class Route < ApplicationRecord
     # Fallback to first Pokemon (should never reach here)
     encounters.first.pokemon
   end
+
+  # Check if this route has fishing encounters
+  def has_fishing?
+    route_encounters.fish.exists?
+  end
+
+  # Check if this route has surfing encounters
+  def has_surfing?
+    route_encounters.surf.exists?
+  end
+
+  # Check if fishing is unlocked for a trainer on this route
+  def fishing_unlocked_for?(trainer)
+    return false unless has_fishing?
+    fishing_required_item_key.nil? || trainer.has_item?(fishing_required_item_key)
+  end
+
+  # Check if surfing is unlocked for a trainer on this route
+  def surfing_unlocked_for?(trainer)
+    return false unless has_surfing?
+    surfing_required_item_key.nil? || trainer.has_item?(surfing_required_item_key)
+  end
 end

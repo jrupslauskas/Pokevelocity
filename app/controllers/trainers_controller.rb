@@ -128,7 +128,7 @@ class TrainersController < ApplicationController
       "blue-casual", "blue-faceoff", "bug-catcher", "burglar", "camper",
       "channeler", "cool-couple", "cooltrainer-female", "cooltrainer-male", "crush-girl",
       "crush-kin", "cue-ball", "daisy-oak", "engineer", "fisherman",
-      "gambler", "gentleman", "hiker", "juggler", "lady",
+      "gentleman", "hiker", "juggler", "lady",
       "lass", "mr-fuji", "painter", "picnicker", "pokemaniac", "pokemon-breeder",
       "pokemon-ranger-female", "pokemon-ranger-male", "psychic-female", "psychic-male",
       "red-portrait", "rocker", "rocker-grunt-female", "rocker-grunt-male", "ruin-maniac",

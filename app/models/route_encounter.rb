@@ -4,10 +4,17 @@ class RouteEncounter < ApplicationRecord
   belongs_to :required_pokemon, class_name: "Pokemon", optional: true
   belongs_to :alternative_required_pokemon, class_name: "Pokemon", optional: true
 
+  enum :encounter_type, {
+    grass: "grass",
+    fish: "fish",
+    surf: "surf"
+  }, default: "grass"
+
   validates :spawn_rate, presence: true,
             numericality: { only_integer: true, greater_than: 0 }
-  validates :pokemon_id, uniqueness: { scope: :route_id,
-            message: "already exists on this route" }
+  validates :encounter_type, presence: true
+  validates :pokemon_id, uniqueness: { scope: [:route_id, :encounter_type, :required_item_key],
+            message: "already exists on this route for this encounter type and item requirement" }
   validates :required_gate_number,
             numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 10, allow_nil: true }
 
@@ -31,6 +38,11 @@ class RouteEncounter < ApplicationRecord
       return false unless required_gate && trainer.has_unlocked_gate?(required_gate)
     end
 
+    # Check item requirement (for fishing rods, etc.)
+    if required_item_key.present?
+      return false unless trainer.has_item?(required_item_key)
+    end
+
     true
   end
 
@@ -50,6 +62,11 @@ class RouteEncounter < ApplicationRecord
     if required_gate_number.present?
       gate = Gate.find_by(gate_number: required_gate_number)
       requirements << gate&.name if gate
+    end
+
+    if required_item_key.present?
+      item = Item.find_by(key: required_item_key)
+      requirements << item&.name if item
     end
 
     requirements.any? ? "Requires: #{requirements.join(' & ')}" : nil

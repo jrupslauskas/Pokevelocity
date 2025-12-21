@@ -95,4 +95,68 @@ class GateUnlockTest < ActiveSupport::TestCase
     # The callback shouldn't reset it to Time.current
     assert_not_equal Time.current.to_i, @gate_unlock.unlocked_at.to_i
   end
+
+  # Fishing Rod Reward Tests
+  test "should award Old Rod when unlocking gate 3" do
+    gate_3 = Gate.create!(gate_number: 3, required_difficulty_score: 10)
+    trainer = trainers(:ash)
+
+    assert_equal 0, trainer.item_quantity(:old_rod)
+
+    GateUnlock.create!(trainer: trainer, gate: gate_3)
+
+    # Reload both the trainer and the association
+    trainer.reload
+    trainer.trainer_items.reload
+
+    assert_equal 1, trainer.item_quantity(:old_rod)
+  end
+
+  test "should award Good Rod when unlocking gate 5" do
+    gate_5 = Gate.create!(gate_number: 5, required_difficulty_score: 20)
+    trainer = trainers(:ash)
+
+    assert_equal 0, trainer.item_quantity(:good_rod)
+
+    GateUnlock.create!(trainer: trainer, gate: gate_5)
+
+    # Reload both the trainer and the association
+    trainer.reload
+    trainer.trainer_items.reload
+
+    assert_equal 1, trainer.item_quantity(:good_rod)
+  end
+
+  test "should award Super Rod when unlocking gate 7" do
+    gate_7 = Gate.create!(gate_number: 7, required_difficulty_score: 30)
+    trainer = trainers(:ash)
+
+    assert_equal 0, trainer.item_quantity(:super_rod)
+
+    GateUnlock.create!(trainer: trainer, gate: gate_7)
+
+    # Reload both the trainer and the association
+    trainer.reload
+    trainer.trainer_items.reload
+
+    assert_equal 1, trainer.item_quantity(:super_rod)
+  end
+
+  test "should not award any rod for non-rod gates" do
+    trainer = trainers(:ash)
+
+    # Check initial state
+    assert_equal 0, trainer.item_quantity(:old_rod)
+    assert_equal 0, trainer.item_quantity(:good_rod)
+    assert_equal 0, trainer.item_quantity(:super_rod)
+
+    # Unlock gate 1 (not a rod gate)
+    gate_1 = Gate.create!(gate_number: 1, required_difficulty_score: 5)
+    GateUnlock.create!(trainer: trainer, gate: gate_1)
+
+    # No rods should be awarded
+    assert_equal 0, trainer.item_quantity(:old_rod)
+    assert_equal 0, trainer.item_quantity(:good_rod)
+    assert_equal 0, trainer.item_quantity(:super_rod)
+  end
 end

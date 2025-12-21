@@ -46,17 +46,17 @@ routes_data.each do |route_data|
     route.update!(gate_requirement: route_data["gate_requirement"])
   end
 
-  # Create encounters for this route
-  route_data["encounters"].each do |encounter_data|
+  # Helper method to create/update an encounter
+  def create_encounter(route, encounter_data, encounter_type, required_item_key = nil)
     pokemon = Pokemon.find_by(name: encounter_data["pokemon"])
 
     if pokemon.nil?
       puts "  WARNING: Pokemon '#{encounter_data["pokemon"]}' not found, skipping encounter"
-      next
+      return nil
     end
 
     # Find or create the encounter
-    encounter = RouteEncounter.find_or_initialize_by(route: route, pokemon: pokemon)
+    encounter = RouteEncounter.find_or_initialize_by(route: route, pokemon: pokemon, encounter_type: encounter_type, required_item_key: required_item_key)
     encounter.spawn_rate = encounter_data["spawn_rate"]
 
     # Handle required_pokemon
@@ -91,6 +91,40 @@ routes_data.each do |route_data|
     end
 
     encounter.save!
+    encounter
+  end
+
+  # Create grass encounters for this route
+  if route_data["encounters"].present?
+    route_data["encounters"].each do |encounter_data|
+      encounter_type = encounter_data["encounter_type"] || "grass"
+      create_encounter(route, encounter_data, encounter_type)
+    end
+  end
+
+  # Create fishing encounters
+  if route_data["fishing_encounters"].present?
+    route_data["fishing_encounters"].each do |rod_type, encounters|
+      encounters.each do |encounter_data|
+        create_encounter(route, encounter_data, "fish", rod_type)
+      end
+    end
+  end
+
+  # Create surf encounters
+  if route_data["surf_encounters"].present?
+    route_data["surf_encounters"].each do |encounter_data|
+      create_encounter(route, encounter_data, "surf")
+    end
+  end
+
+  # Update route's fishing and surfing requirements
+  if route_data["fishing_required_item_key"].present?
+    route.update!(fishing_required_item_key: route_data["fishing_required_item_key"])
+  end
+
+  if route_data["surfing_required_item_key"].present?
+    route.update!(surfing_required_item_key: route_data["surfing_required_item_key"])
   end
 
   puts "  #{route.name}: #{route.route_encounters.count} Pokémon"

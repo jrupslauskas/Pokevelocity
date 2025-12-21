@@ -90,4 +90,101 @@ class ItemTest < ActiveSupport::TestCase
     assert_equal :has_many, item.macro
     assert_equal :trainer_items, item.options[:through]
   end
+
+  # ================================================================================
+  # FISHING ROD TESTS
+  # ================================================================================
+
+  test "old_rod should be a key_item" do
+    old_rod = items(:old_rod)
+    assert_equal "key_item", old_rod.item_type
+    assert old_rod.key_item?
+  end
+
+  test "good_rod should be a key_item" do
+    good_rod = items(:good_rod)
+    assert_equal "key_item", good_rod.item_type
+    assert good_rod.key_item?
+  end
+
+  test "super_rod should be a key_item" do
+    super_rod = items(:super_rod)
+    assert_equal "key_item", super_rod.item_type
+    assert super_rod.key_item?
+  end
+
+  test "old_rod should not have buy_price" do
+    definition = Item::ITEMS[:old_rod]
+    assert_nil definition[:buy_price], "Old Rod should not be buyable"
+  end
+
+  test "old_rod should not have sell_price" do
+    definition = Item::ITEMS[:old_rod]
+    assert_nil definition[:sell_price], "Old Rod should not be sellable"
+  end
+
+  test "good_rod should not have buy_price" do
+    definition = Item::ITEMS[:good_rod]
+    assert_nil definition[:buy_price], "Good Rod should not be buyable"
+  end
+
+  test "good_rod should not have sell_price" do
+    definition = Item::ITEMS[:good_rod]
+    assert_nil definition[:sell_price], "Good Rod should not be sellable"
+  end
+
+  test "super_rod should not have buy_price" do
+    definition = Item::ITEMS[:super_rod]
+    assert_nil definition[:buy_price], "Super Rod should not be buyable"
+  end
+
+  test "super_rod should not have sell_price" do
+    definition = Item::ITEMS[:super_rod]
+    assert_nil definition[:sell_price], "Super Rod should not be sellable"
+  end
+
+  test "old_rod should have correct name" do
+    old_rod = items(:old_rod)
+    assert_equal "Old Rod", old_rod.name
+  end
+
+  test "good_rod should have correct name" do
+    good_rod = items(:good_rod)
+    assert_equal "Good Rod", good_rod.name
+  end
+
+  test "super_rod should have correct name" do
+    super_rod = items(:super_rod)
+    assert_equal "Super Rod", super_rod.name
+  end
+
+  test "old_rod description should mention Misty" do
+    old_rod = items(:old_rod)
+    assert_includes old_rod.description, "Misty"
+    assert_includes old_rod.description, "Cerulean Gym"
+  end
+
+  test "good_rod description should mention Erika" do
+    good_rod = items(:good_rod)
+    assert_includes good_rod.description, "Erika"
+    assert_includes good_rod.description, "Celadon Gym"
+  end
+
+  test "super_rod description should mention Sabrina" do
+    super_rod = items(:super_rod)
+    assert_includes super_rod.description, "Sabrina"
+    assert_includes super_rod.description, "Saffron Gym"
+  end
+
+  test "all fishing rods should exist in ITEMS constant" do
+    assert Item::ITEMS.key?(:old_rod), "Old Rod should be defined"
+    assert Item::ITEMS.key?(:good_rod), "Good Rod should be defined"
+    assert Item::ITEMS.key?(:super_rod), "Super Rod should be defined"
+  end
+
+  test "fishing rods should have correct keys" do
+    assert_equal "old_rod", Item::ITEMS[:old_rod][:key]
+    assert_equal "good_rod", Item::ITEMS[:good_rod][:key]
+    assert_equal "super_rod", Item::ITEMS[:super_rod][:key]
+  end
 end

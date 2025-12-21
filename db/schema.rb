@@ -102,8 +102,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_08_020412) do
   create_table "route_encounters", force: :cascade do |t|
     t.integer "alternative_required_pokemon_id"
     t.datetime "created_at", null: false
+    t.string "encounter_type", default: "grass", null: false
     t.bigint "pokemon_id", null: false
     t.integer "required_gate_number"
+    t.string "required_item_key"
     t.integer "required_pokemon_id"
     t.bigint "route_id", null: false
     t.integer "spawn_rate"
@@ -117,8 +119,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_08_020412) do
 
   create_table "routes", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.string "fishing_required_item_key"
     t.integer "gate_requirement"
     t.integer "order", null: false
+    t.string "surfing_required_item_key"
     t.datetime "updated_at", null: false
     t.index ["order"], name: "index_routes_on_order", unique: true
   end

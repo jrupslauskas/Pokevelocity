@@ -113,6 +113,33 @@ class Item < ApplicationRecord
       sprite: 'evolution_stone.png',
       buy_price: 100,
       sell_price: 100
+    },
+    old_rod: {
+      key: 'old_rod',
+      name: 'Old Rod',
+      description: 'An old fishing rod that can be used to catch Pokémon in water. Awarded for defeating Misty at Cerulean Gym.',
+      item_type: TYPES[:key_item],
+      sprite: 'old_rod.png',
+      buy_price: nil,
+      sell_price: nil
+    },
+    good_rod: {
+      key: 'good_rod',
+      name: 'Good Rod',
+      description: 'A decent fishing rod that can catch a greater variety of Pokémon than the Old Rod. Awarded for defeating Erika at Celadon Gym.',
+      item_type: TYPES[:key_item],
+      sprite: 'good_rod.png',
+      buy_price: nil,
+      sell_price: nil
+    },
+    super_rod: {
+      key: 'super_rod',
+      name: 'Super Rod',
+      description: 'The best fishing rod available. It can catch the rarest water-dwelling Pokémon. Awarded for defeating Sabrina at Saffron Gym.',
+      item_type: TYPES[:key_item],
+      sprite: 'super_rod.png',
+      buy_price: nil,
+      sell_price: nil
     }
   }.freeze
 
