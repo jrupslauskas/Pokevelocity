@@ -285,18 +285,18 @@ class SeedsTest < ActiveSupport::TestCase
       "spawn_rate" => 100
     }
 
-    # Suppress the warning output for this test
-    original_logger = Rails.logger
-    Rails.logger = Logger.new(nil)
+    # Suppress expected warning for this test
+    original_stdout = $stdout
+    $stdout = StringIO.new
 
     encounter = create_encounter(route, encounter_data, "grass")
 
-    Rails.logger = original_logger
+    $stdout = original_stdout
 
     assert_nil encounter
   end
 
-  test "create_encounter warns about non-existent required_pokemon" do
+  test "create_encounter handles non-existent required_pokemon" do
     route = Route.create!(order: 1, gate_requirement: nil)
 
     encounter_data = {
@@ -305,14 +305,13 @@ class SeedsTest < ActiveSupport::TestCase
       "required_pokemon" => "NonExistentPokemon"
     }
 
-    # Capture the warning
-    original_logger = Rails.logger
-    log_output = StringIO.new
-    Rails.logger = Logger.new(log_output)
+    # Suppress expected warning for this test
+    original_stdout = $stdout
+    $stdout = StringIO.new
 
     encounter = create_encounter(route, encounter_data, "fish", "super_rod")
 
-    Rails.logger = original_logger
+    $stdout = original_stdout
 
     # Encounter should still be created, but without the required_pokemon_id
     assert encounter.persisted?

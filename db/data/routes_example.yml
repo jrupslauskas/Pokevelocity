@@ -1,0 +1,154 @@
+# ================================================================================
+# ROUTES.YML FORMAT EXAMPLES
+# ================================================================================
+# This file shows examples of different route encounter configurations.
+# Copy these patterns into your actual routes.yml file.
+
+# ================================================================================
+# EXAMPLE 1: Basic route with only grass encounters (most common)
+# ================================================================================
+- order: 1
+  name: "Route 1"
+  description: "The road between Pallet Town and Viridian City"
+  gate_requirement: null
+  encounters:
+    - pokemon: "Pidgey"
+      spawn_rate: 50
+    - pokemon: "Rattata"
+      spawn_rate: 50
+
+# ================================================================================
+# EXAMPLE 2: Route with fishing encounters (different Pokemon for each rod)
+# ================================================================================
+- order: 19
+  name: "Route 19 - Fuchsia City to Seafoam Islands"
+  description: "A water route connecting Fuchsia City to the Seafoam Islands"
+  gate_requirement: null
+  # Grass encounters on land
+  encounters:
+    - pokemon: "Tentacool"
+      spawn_rate: 60
+    - pokemon: "Raticate"
+      spawn_rate: 40
+  # Fishing encounters - organized by rod type
+  fishing_encounters:
+    old_rod:  # Only appears when fishing with Old Rod
+      - pokemon: "Magikarp"
+        spawn_rate: 100
+    good_rod:  # Only appears when fishing with Good Rod
+      - pokemon: "Magikarp"
+        spawn_rate: 60
+      - pokemon: "Tentacool"
+        spawn_rate: 40
+    super_rod:  # Only appears when fishing with Super Rod
+      - pokemon: "Tentacool"
+        spawn_rate: 40
+      - pokemon: "Tentacruel"
+        spawn_rate: 30
+      - pokemon: "Gyarados"
+        spawn_rate: 30
+
+# ================================================================================
+# EXAMPLE 3: Route with surf encounters
+# ================================================================================
+- order: 20
+  name: "Route 20 - Seafoam Islands to Cinnabar Island"
+  description: "A sea route with powerful Water-type Pokémon"
+  gate_requirement: null
+  # Surf encounters - requires HM Surf (when implemented)
+  surf_encounters:
+    - pokemon: "Tentacool"
+      spawn_rate: 60
+    - pokemon: "Tentacruel"
+      spawn_rate: 40
+  # This route could also have fishing encounters
+  fishing_encounters:
+    super_rod:
+      - pokemon: "Staryu"
+        spawn_rate: 50
+      - pokemon: "Seaking"
+        spawn_rate: 50
+
+# ================================================================================
+# EXAMPLE 4: Route with all three encounter types
+# ================================================================================
+- order: 21
+  name: "Route 21 - Cinnabar Island to Pallet Town"
+  description: "The final water route back home"
+  gate_requirement: null
+  # Land encounters
+  encounters:
+    - pokemon: "Tangela"
+      spawn_rate: 100
+  # Fishing encounters for all rod types
+  fishing_encounters:
+    old_rod:
+      - pokemon: "Magikarp"
+        spawn_rate: 100
+    good_rod:
+      - pokemon: "Poliwag"
+        spawn_rate: 60
+      - pokemon: "Goldeen"
+        spawn_rate: 40
+    super_rod:
+      - pokemon: "Seaking"
+        spawn_rate: 60
+      - pokemon: "Poliwhirl"
+        spawn_rate: 40
+  # Surf encounters
+  surf_encounters:
+    - pokemon: "Tentacool"
+      spawn_rate: 50
+    - pokemon: "Tentacruel"
+      spawn_rate: 30
+    - pokemon: "Seadra"
+      spawn_rate: 20
+
+# ================================================================================
+# EXAMPLE 5: Route with encounter requirements
+# ================================================================================
+- order: 25
+  name: "Cerulean Cave"
+  description: "A mysterious cave with legendary Pokémon"
+  gate_requirement: 10  # Requires completing all gym badges
+  encounters:
+    - pokemon: "Electrode"
+      spawn_rate: 30
+    - pokemon: "Parasect"
+      spawn_rate: 30
+    - pokemon: "Kadabra"
+      spawn_rate: 20
+    - pokemon: "Ditto"
+      spawn_rate: 10
+    - pokemon: "Chansey"
+      spawn_rate: 5
+    # Mewtwo only appears after catching Articuno OR Zapdos OR Moltres
+    - pokemon: "Mewtwo"
+      spawn_rate: 5
+      required_pokemon: "Articuno"  # Main requirement
+      alternative_required_pokemon: "Zapdos"  # OR alternative
+      # Note: For three-way OR, you'd need to create separate encounters
+  # Even caves can have water-based fishing!
+  fishing_encounters:
+    super_rod:
+      - pokemon: "Gyarados"
+        spawn_rate: 100
+
+# ================================================================================
+# NOTES:
+# ================================================================================
+# - spawn_rate: Must total 100 within each encounter type/rod combination
+# - encounter_type: Automatically set based on which section it's in
+# - required_item_key: Automatically set based on rod type for fishing
+# - fishing_required_item_key: Optional route-level gate (not shown in examples)
+# - surfing_required_item_key: Optional route-level gate (not shown in examples)
+#
+# Encounter Types:
+#   - "grass": Land encounters (default for "encounters" section)
+#   - "fish": Fishing encounters (from "fishing_encounters" section)
+#   - "surf": Surfing encounters (from "surf_encounters" section)
+#
+# Rod Types (for fishing_encounters):
+#   - old_rod: Awarded at Gate 3 (Misty's Gym)
+#   - good_rod: Awarded at Gate 5 (Erika's Gym)
+#   - super_rod: Awarded at Gate 7 (Sabrina's Gym)

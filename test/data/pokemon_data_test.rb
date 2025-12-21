@@ -105,15 +105,6 @@ class PokemonDataTest < ActiveSupport::TestCase
       assert count > 0,
                      "No Pokemon with difficulty #{difficulty} found. Every difficulty level should have at least one Pokemon."
     end
-
-    # Print distribution for informational purposes
-    puts "\n📊 Difficulty Distribution:"
-    (1..5).each do |difficulty|
-      count = difficulty_counts[difficulty] || 0
-      percentage = (count.to_f / 151 * 100).round(1)
-      stars = "★" * difficulty + "☆" * (5 - difficulty)
-      puts "   #{stars} (#{difficulty}): #{count} Pokemon (#{percentage}%)"
-    end
   end
 
   # ================================================================================
@@ -175,11 +166,6 @@ class PokemonDataTest < ActiveSupport::TestCase
           issues << "#{name1} (difficulty #{diff1}) should be easier than #{name2} (difficulty #{diff2})"
         end
       end
-    end
-
-    if issues.any?
-      puts "\n⚠️  Evolution Chain Issues:"
-      issues.each { |issue| puts "   - #{issue}" }
     end
 
     # Add assertion so test isn't marked as "missing assertions"
