@@ -1,15 +1,4 @@
 # Route definitions with wild Pokemon encounters
-#
-# Structure:
-#   - name: Route name (must be unique)
-#     description: Route description text
-#     gate_requirement: Gate number (0 for always accessible, 1-10 for gated routes)
-#     order: Display order (unique, determines route sequence)
-#     encounters:
-#       - pokemon: Pokemon name (must match exactly from pokemon.yml)
-#         spawn_rate: Weight for random selection (higher = more common)
-#
-# To see updates, run: bin/rails db:seed
 
 - name: Pallet Town
   description: Note to developer - Make sure to update so only one can be caught
@@ -180,7 +169,27 @@
     - pokemon: Jynx
       spawn_rate: 100
       required_pokemon: Poliwhirl
-## TODO: Add Surf and Fishing Encounters
+  surf_encounters:
+    - pokemon: Tentacool
+      spawn_rate: 100
+  fishing_encounters:
+    old_rod:
+      - pokemon: Magikarp
+        spawn_rate: 100
+    good_rod:
+      - pokemon: Magikarp
+        spawn_rate: 20
+      - pokemon: Horsea
+        spawn_rate: 40
+      - pokemon: Krabby
+        spawn_rate: 40
+    super_rod:
+      - pokemon: Krabby
+        spawn_rate: 45
+      - pokemon: Horsea
+        spawn_rate: 45
+      - pokemon: Gyarados
+        spawn_rate: 10
 
 - name: Route 24
   description: A bridge north of Cerulean City known for the Nugget Bridge challenge. Trainers line up for battles.
@@ -383,7 +392,31 @@
     - pokemon: Farfetch'd
       spawn_rate: 100
       required_pokemon: Spearow
-## TODO: Add Surf and Fishing Encounters
+  surf_encounters:
+    - pokemon: Tentacool
+      spawn_rate: 100
+  fishing_encounters:
+    old_rod:
+      - pokemon: Magikarp
+        spawn_rate: 100
+    good_rod:
+      - pokemon: Magikarp
+        spawn_rate: 20
+      - pokemon: Horsea
+        spawn_rate: 40
+      - pokemon: Krabby
+        spawn_rate: 40
+    super_rod:
+      - pokemon: Krabby
+        spawn_rate: 20
+      - pokemon: Horsea
+        spawn_rate: 20
+      - pokemon: Shelldar
+        spawn_rate: 20
+      - pokemon: Staryu
+        spawn_rate: 20
+      - pokemon: Gyarados
+        spawn_rate: 20
 
 ## Lt Surge Badge - Gate 4
 
@@ -656,7 +689,29 @@
       spawn_rate: 5
     - pokemon: Tauros
       spawn_rate: 5
-## TODO: Add Surf and Fishing Encounters
+  surf_encounters:
+    - pokemon: Psyduck
+      spawn_rate: 100
+  fishing_encounters:
+    old_rod:
+      - pokemon: Magikarp
+        spawn_rate: 100
+    good_rod:
+      - pokemon: Magikarp
+        spawn_rate: 20
+      - pokemon: Goldeen
+        spawn_rate: 40
+      - pokemon: Poliwag
+        spawn_rate: 40
+    super_rod:
+      - pokemon: Goldeen
+        spawn_rate: 40
+      - pokemon: Seaking
+        spawn_rate: 40
+      - pokemon: Dratini
+        spawn_rate: 15
+      - pokemon: Dragonair
+        spawn_rate: 5
 
 - name: Safari Zone - Area 2
   description: A vast, maze-like park filled with exotic Pokémon and branching trails. Trainers come from all over to hunt elusive species found nowhere else in Kanto.
@@ -679,7 +734,29 @@
       spawn_rate: 5
     - pokemon: Scyther
       spawn_rate: 5
-## TODO: Add Surf and Fishing Encounters
+  surf_encounters:
+    - pokemon: Slowpoke
+      spawn_rate: 100
+  fishing_encounters:
+    old_rod:
+      - pokemon: Magikarp
+        spawn_rate: 100
+    good_rod:
+      - pokemon: Magikarp
+        spawn_rate: 20
+      - pokemon: Goldeen
+        spawn_rate: 40
+      - pokemon: Poliwag
+        spawn_rate: 40
+    super_rod:
+      - pokemon: Goldeen
+        spawn_rate: 40
+      - pokemon: Seaking
+        spawn_rate: 40
+      - pokemon: Dratini
+        spawn_rate: 15
+      - pokemon: Dragonair
+        spawn_rate: 5
 
 - name: Route 16
   description: A short stretch west of Celadon City leading to the Cycling Road entrance.
@@ -697,7 +774,6 @@
     - pokemon: Snorlax
       spawn_rate: 35
 
-## Route 17
 - name: Route 17
   description: A sloped Cycling Road connecting Routes 16 and 18. Cyclists zip by as you coast down the long metal bridge.
   gate_requirement: 6
@@ -797,7 +873,6 @@
       spawn_rate: 35
     - pokemon: Golbat
       spawn_rate: 10
-## TODO: Add Surf and Fishing Encounters
 
 - name: Seafoam Islands - Floor 2
   description: Inn the deep hidden caverns, the temperature drops sharply, frost creeps along the walls, and an eerie silence prevails as though the entire cave holds its breath in the presence of a majestic, long-forgotten guardian of ice.
@@ -814,7 +889,41 @@
       spawn_rate: 15
     - pokemon: Articuno
       spawn_rate: 10
-## TODO: Add Surf and Fishing Encounters
+  surf_encounters:
+    - pokemon: Seel
+      spawn_rate: 40
+    - pokemon: Horsea
+      spawn_rate: 20
+    - pokemon: Krabby
+      spawn_rate: 20
+    - pokemon: Dewgong
+      spawn_rate: 10
+    - pokemon: Psyduck
+      spawn_rate: 5
+    - pokemon: Slowpoke
+      spawn_rate: 5
+  fishing_encounters:
+    old_rod:
+      - pokemon: Magikarp
+        spawn_rate: 100
+    good_rod:
+      - pokemon: Magikarp
+        spawn_rate: 20
+      - pokemon: Horsea
+        spawn_rate: 40
+      - pokemon: Krabby
+        spawn_rate: 40
+    super_rod:
+      - pokemon: Horsea
+        spawn_rate: 40
+      - pokemon: Krabby
+        spawn_rate: 35
+      - pokemon: Slowpoke
+        spawn_rate: 5
+      - pokemon: Psyduck
+        spawn_rate: 5
+      - pokemon: Gyarados
+        spawn_rate: 15
 
 - name: Route 20
   description: A long ocean route stretching between the Seafoam Islands and Cinnabar Island. Strong currents swirl around the icy caverns.
@@ -906,7 +1015,33 @@
       spawn_rate: 5
     - pokemon: Slowpoke
       spawn_rate: 5
-## TODO: Add Surf and Fishing Encounters
+  surf_encounters:
+    - pokemon: Tentacool
+      spawn_rate: 95
+    - pokemon: Tentacruel
+      spawn_rate: 5
+  fishing_encounters:
+    old_rod:
+      - pokemon: Magikarp
+        spawn_rate: 100
+    good_rod:
+      - pokemon: Magikarp
+        spawn_rate: 20
+      - pokemon: Horsea
+        spawn_rate: 40
+      - pokemon: Krabby
+        spawn_rate: 40
+    super_rod:
+      - pokemon: Horsea
+        spawn_rate: 40
+      - pokemon: Krabby
+        spawn_rate: 40
+      - pokemon: Kingler
+        spawn_rate: 5
+      - pokemon: Seadra
+        spawn_rate: 5
+      - pokemon: Gyarados
+        spawn_rate: 10
 
 - name: Sevii Islands - One Island, Kindle Road
   description: A rugged, sunbaked trail stretching from One Island toward Mt. Ember. Hot springs bubble alongside the path, attracting both Trainers and wild Pokémon.
@@ -927,7 +1062,33 @@
       spawn_rate: 10
     - pokemon: Geodude
       spawn_rate: 30
-## TODO: Add Surf and Fishing Encounters
+  surf_encounters:
+    - pokemon: Tentacool
+      spawn_rate: 95
+    - pokemon: Tentacruel
+      spawn_rate: 5
+  fishing_encounters:
+    old_rod:
+      - pokemon: Magikarp
+        spawn_rate: 100
+    good_rod:
+      - pokemon: Magikarp
+        spawn_rate: 20
+      - pokemon: Horsea
+        spawn_rate: 40
+      - pokemon: Krabby
+        spawn_rate: 40
+    super_rod:
+      - pokemon: Horsea
+        spawn_rate: 40
+      - pokemon: Krabby
+        spawn_rate: 40
+      - pokemon: Kingler
+        spawn_rate: 5
+      - pokemon: Seadra
+        spawn_rate: 5
+      - pokemon: Gyarados
+        spawn_rate: 10
 
 - name: Sevii Islands - One Island, Mount Ember
   description: A towering volcanic mountain glowing with inner heat. Embers drift on the wind and the air grows hotter as challengers rise to its peak. Locals whisper of a mythical firebird said to ignite the very sky.
@@ -948,7 +1109,6 @@
       spawn_rate: 10
     - pokemon: Moltres
       spawn_rate: 10
-## TODO: Add Surf and Fishing Encounters
 
 - name: Route 21
   description: A sea route north of Cinnabar Island leading back to Pallet Town. Fishers drift lazily across the gentle waves.
@@ -1072,6 +1232,36 @@
       spawn_rate: 10
     - pokemon: Mewtwo
       spawn_rate: 10
-      ## TODO: Add Surf and Fishing Encounters
+  surf_encounters:
+    - pokemon: Psyduck
+      spawn_rate: 30
+    - pokemon: Golduck
+      spawn_rate: 20
+    - pokemon: Slowpoke
+      spawn_rate: 30
+    - pokemon: Slowbro
+      spawn_rate: 20
+  fishing_encounters:
+    old_rod:
+      - pokemon: Magikarp
+        spawn_rate: 100
+    good_rod:
+      - pokemon: Magikarp
+        spawn_rate: 20
+      - pokemon: Poliwag
+        spawn_rate: 40
+      - pokemon: Goldeen
+        spawn_rate: 40
+    super_rod:
+      - pokemon: Poliwag
+        spawn_rate: 40
+      - pokemon: Poliwhirl
+        spawn_rate: 40
+      - pokemon: Psyduck
+        spawn_rate: 5
+      - pokemon: Slowpoke
+        spawn_rate: 5
+      - pokemon: Gyarados
+        spawn_rate: 10
 
-      ## Where to add mew?
+      ## TODO: Add Mew?
