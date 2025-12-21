@@ -1212,7 +1212,6 @@
 
 ## Elite 4 Gate - Gate 10
 
-## Cerulean Cave
 - name: Cerulean Cave
   description: A dark, labyrinthine cave north of Cerulean City, accessible only to the strongest Trainers. Its depths radiate a strange energy, and a legendary Pokémon waits at its heart.
   gate_requirement: 10
@@ -1264,4 +1263,26 @@
       - pokemon: Gyarados
         spawn_rate: 10
 
-      ## TODO: Add Mew?
+- name: Professor Oak's Back Forty
+  description: Professor Oak's private retreat. Unique pokemon wander around the property, coming and going as they please, still wild but curious and friendly towards the professor and any guests.
+  gate_requirement: 10
+  order: 49
+  encounters:
+    - pokemon: Bulbasaur
+      spawn_rate: 20
+    - pokemon: Squirtle
+      spawn_rate: 20
+    - pokemon: Charmander
+      spawn_rate: 20
+    - pokemon: Pikachu
+      spawn_rate: 20
+    - pokemon: Eevee
+      spawn_rate: 20
+
+- name: Forgotten Grotto
+  description: A small, hidden cavern tucked away from well-traveled paths, as if the world simply forgot it was there. Footprints never seem to last, but those who visit swear something is watching—curious, playful, and just out of reach.
+  gate_requirement: 10
+  order: 50
+  encounters:
+    - pokemon: Mew
+      spawn_rate: 100
