@@ -92,11 +92,25 @@
         <%= f.submit "Adventure", class: "btn-adventure" %>
       <% end %>
       <span class="route-available-count" data-route-id="<%= route.id %>">
-        <% count = encounter_types_count > 1 ? available_by_type[default_type.to_sym].count : available_pokemon.count %>
+        <%
+          # Show count of uncaught Pokemon
+          uncaught_by_type = {
+            grass: available_by_type[:grass].reject { |p| @trainer.captured_pokemon.include?(p) },
+            fish: available_by_type[:fish].reject { |p| @trainer.captured_pokemon.include?(p) },
+            surf: available_by_type[:surf].reject { |p| @trainer.captured_pokemon.include?(p) }
+          }
+          uncaught_pokemon = available_pokemon.reject { |p| @trainer.captured_pokemon.include?(p) }
+          count = encounter_types_count > 1 ? uncaught_by_type[default_type.to_sym].count : uncaught_pokemon.count
+        %>
         <%= count %> Pokémon available
       </span>
     <% else %>
-      <button class="btn-adventure-disabled" disabled>All caught!</button>
+      <%
+        # Check if there are any locked Pokemon on accessible encounter types
+        has_locked_pokemon = accessible_encounters.any? { |encounter| !encounter.available_for?(@trainer) }
+        button_text = has_locked_pokemon ? "Locked" : "All caught!"
+      %>
+      <button class="btn-adventure-disabled" disabled><%= button_text %></button>
     <% end %>
   </div>
 </div>

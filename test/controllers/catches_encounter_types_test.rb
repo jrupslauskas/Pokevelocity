@@ -388,4 +388,55 @@ class CatchesEncounterTypesTest < ActionDispatch::IntegrationTest
     assert_select "div.route-card[data-route-id='#{@multi_type_route.id}'] div.route-pokemon-item", text: /Magikarp/, minimum: 1  # fish
     assert_select "div.route-card[data-route-id='#{@multi_type_route.id}'] div.route-pokemon-item", text: /Tentacool/, minimum: 1  # surf
   end
+
+  test "should show Locked button when route has only locked pokemon" do
+    # Create a route with a pokemon that requires another pokemon to encounter (like a trade)
+    locked_route = Route.create!(order: 1003, gate_requirement: nil)
+    required_pokemon = Pokemon.find_or_create_by!(pokedex_number: 1) { |p| p.name = "Bulbasaur"; p.difficulty = 3 }
+    locked_pokemon = Pokemon.find_or_create_by!(pokedex_number: 122) { |p| p.name = "Mr. Mime"; p.difficulty = 3 }
+
+    RouteEncounter.create!(
+      route: locked_route,
+      pokemon: locked_pokemon,
+      spawn_rate: 100,
+      encounter_type: "grass",
+      required_pokemon_id: required_pokemon.id  # Requires Bulbasaur
+    )
+
+    # Trainer doesn't have Bulbasaur
+    get catches_path
+    assert_response :success
+
+    # Should show "Locked" button since pokemon is visible but not available
+    assert_select "div.route-card[data-route-id='#{locked_route.id}'] button.btn-adventure-disabled", text: "Locked"
+  end
+
+  test "should show Adventure button when all pokemon on route are caught to allow recatching" do
+    # Create a simple route with one pokemon
+    simple_route = Route.create!(order: 1004, gate_requirement: nil)
+    simple_pokemon = Pokemon.find_or_create_by!(pokedex_number: 16) { |p| p.name = "Pidgey"; p.difficulty = 1 }
+
+    RouteEncounter.create!(
+      route: simple_route,
+      pokemon: simple_pokemon,
+      spawn_rate: 100,
+      encounter_type: "grass"
+    )
+
+    # Catch the pokemon
+    @trainer.captures.create!(
+      pokemon_id: simple_pokemon.id,
+      ball_type: 'pokeball',
+      captured_at: Time.current
+    )
+
+    get catches_path
+    assert_response :success
+
+    # Should still show Adventure button to allow recatching for evolution stones
+    assert_select "div.route-card[data-route-id='#{simple_route.id}'] input.btn-adventure", minimum: 1
+
+    # Should show 0 available since all are caught
+    assert_select "div.route-card[data-route-id='#{simple_route.id}'] span.route-available-count", text: /0 Pokémon available/
+  end
 end
