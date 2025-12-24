@@ -320,4 +320,72 @@ class CatchesEncounterTypesTest < ActionDispatch::IntegrationTest
     # The count should be for grass pokemon only when selector is shown
     assert_select "span.route-available-count[data-route-id='#{@multi_type_route.id}']"
   end
+
+  # ================================================================================
+  # POKEMON VISIBILITY BASED ON ENCOUNTER TYPE ACCESS
+  # ================================================================================
+
+  test "should not display fish pokemon when trainer has no fishing rod" do
+    # Don't give trainer any fishing rod
+    get catches_path
+    assert_response :success
+
+    # Fish pokemon should not be displayed at all (not even as locked)
+    assert_select "div.route-card[data-route-id='#{@multi_type_route.id}'] div.route-pokemon-item", text: /Magikarp/, count: 0
+  end
+
+  test "should not display surf pokemon when trainer has no hm_surf" do
+    # Don't give trainer hm_surf
+    get catches_path
+    assert_response :success
+
+    # Surf pokemon should not be displayed at all (not even as locked)
+    assert_select "div.route-card[data-route-id='#{@multi_type_route.id}'] div.route-pokemon-item", text: /Tentacool/, count: 0
+  end
+
+  test "should display fish pokemon when trainer gets fishing rod" do
+    @trainer.add_item(:old_rod, 1)
+
+    get catches_path
+    assert_response :success
+
+    # Fish pokemon should now be displayed
+    assert_select "div.route-card[data-route-id='#{@multi_type_route.id}'] div.route-pokemon-item", text: /Magikarp/, minimum: 1
+  end
+
+  test "should display surf pokemon when trainer gets hm_surf" do
+    @trainer.add_item(:hm_surf, 1)
+
+    get catches_path
+    assert_response :success
+
+    # Surf pokemon should now be displayed
+    assert_select "div.route-card[data-route-id='#{@multi_type_route.id}'] div.route-pokemon-item", text: /Tentacool/, minimum: 1
+  end
+
+  test "should only display grass pokemon when trainer has no special items" do
+    # Don't give trainer any fishing rod or surf
+    get catches_path
+    assert_response :success
+
+    # Should display grass pokemon
+    assert_select "div.route-card[data-route-id='#{@multi_type_route.id}'] div.route-pokemon-item", text: /Caterpie/, minimum: 1
+
+    # Should NOT display fish or surf pokemon
+    assert_select "div.route-card[data-route-id='#{@multi_type_route.id}'] div.route-pokemon-item", text: /Magikarp/, count: 0
+    assert_select "div.route-card[data-route-id='#{@multi_type_route.id}'] div.route-pokemon-item", text: /Tentacool/, count: 0
+  end
+
+  test "should display all three encounter type pokemon when trainer has all items" do
+    @trainer.add_item(:old_rod, 1)
+    @trainer.add_item(:hm_surf, 1)
+
+    get catches_path
+    assert_response :success
+
+    # Should display pokemon from all three encounter types
+    assert_select "div.route-card[data-route-id='#{@multi_type_route.id}'] div.route-pokemon-item", text: /Caterpie/, minimum: 1  # grass
+    assert_select "div.route-card[data-route-id='#{@multi_type_route.id}'] div.route-pokemon-item", text: /Magikarp/, minimum: 1  # fish
+    assert_select "div.route-card[data-route-id='#{@multi_type_route.id}'] div.route-pokemon-item", text: /Tentacool/, minimum: 1  # surf
+  end
 end

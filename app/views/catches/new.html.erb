@@ -113,11 +113,19 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
+    console.log('Encounter type selector initialized');
+
     // Handle encounter type button clicks
     document.querySelectorAll('.encounter-type-btn').forEach(button => {
-      button.addEventListener('click', function() {
+      console.log('Attaching click handler to button:', button.dataset.encounterType);
+
+      button.addEventListener('click', function(e) {
+        e.preventDefault(); // Prevent any default button behavior
+
         const routeId = this.dataset.routeId;
         const encounterType = this.dataset.encounterType;
+
+        console.log(`Encounter type button clicked: ${encounterType} for route ${routeId}`);
 
         // Update active state for buttons on this route
         document.querySelectorAll(`.encounter-type-btn[data-route-id="${routeId}"]`).forEach(btn => {
@@ -131,23 +139,33 @@
           const input = form.querySelector('.encounter-type-input');
           if (input) {
             input.value = encounterType;
+            console.log(`Updated form input to: ${encounterType}`);
           }
         }
 
-        // Filter Pokemon list to show only matching encounter type
+        // Filter Pokemon list to show only matching encounter type that are available
         const allPokemon = document.querySelectorAll(`.route-pokemon-item[data-route-id="${routeId}"]`);
         let visibleCount = 0;
+        let totalMatching = 0;
 
         allPokemon.forEach(item => {
-          if (item.dataset.encounterType === encounterType) {
+          const isMatchingType = item.dataset.encounterType === encounterType;
+          const isLocked = item.classList.contains('locked');
+
+          if (isMatchingType) {
+            totalMatching++;
+          }
+
+          // Show only if it matches the encounter type AND is not locked
+          if (isMatchingType && !isLocked) {
             item.style.display = '';
-            if (!item.classList.contains('locked')) {
-              visibleCount++;
-            }
+            visibleCount++;
           } else {
             item.style.display = 'none';
           }
         });
+
+        console.log(`Found ${totalMatching} ${encounterType} pokemon, ${visibleCount} available`);
 
         // Update available count
         const countSpan = document.querySelector(`.route-available-count[data-route-id="${routeId}"]`);
@@ -161,6 +179,7 @@
     document.querySelectorAll('.encounter-type-selector').forEach(selector => {
       const activeBtn = selector.querySelector('.encounter-type-btn.active');
       if (activeBtn) {
+        console.log('Clicking active button on page load:', activeBtn.dataset.encounterType);
         activeBtn.click();
       }
     });

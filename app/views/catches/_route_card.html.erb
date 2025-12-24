@@ -37,7 +37,23 @@
   <div class="route-pokemon">
     <h3 class="route-pokemon-title">Wild Pokémon:</h3>
     <div class="route-pokemon-list">
-      <% route.route_encounters.includes(:pokemon, :required_pokemon).sort_by { |e| e.pokemon.pokedex_number }.each do |encounter| %>
+      <%
+        # Only show encounters from types the trainer can access
+        accessible_encounters = route.route_encounters.includes(:pokemon, :required_pokemon).select do |encounter|
+          case encounter.encounter_type
+          when "grass"
+            true  # Grass is always accessible
+          when "fish"
+            @has_fishing_rod  # Only show fish if they have any fishing rod
+          when "surf"
+            @has_surf  # Only show surf if they have hm_surf
+          else
+            false
+          end
+        end
+
+        accessible_encounters.sort_by { |e| e.pokemon.pokedex_number }.each do |encounter|
+      %>
         <% pokemon = encounter.pokemon %>
         <% is_available = encounter.available_for?(@trainer) %>
         <% is_caught = @trainer.captured_pokemon.include?(pokemon) %>
