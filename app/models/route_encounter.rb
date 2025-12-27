@@ -36,7 +36,18 @@ class RouteEncounter < ApplicationRecord
 
     # Check item requirement (for fishing rods, etc.)
     if required_item_key.present?
-      return false unless trainer.has_item?(required_item_key)
+      # Handle fishing rod hierarchy: better rods can catch lower-tier Pokemon
+      case required_item_key
+      when 'old_rod'
+        return false unless (trainer.has_item?(:old_rod) || trainer.has_item?(:good_rod) || trainer.has_item?(:super_rod))
+      when 'good_rod'
+        return false unless (trainer.has_item?(:good_rod) || trainer.has_item?(:super_rod))
+      when 'super_rod'
+        return false unless trainer.has_item?(:super_rod)
+      else
+        # For other items (like hm_surf), require exact match
+        return false unless trainer.has_item?(required_item_key)
+      end
     end
 
     true

@@ -49,24 +49,19 @@ class CatchesController < ApplicationController
                            .includes(route_encounters: :pokemon)
     end
 
-    # Check what encounter types the trainer can access
-    @has_fishing_rod = @trainer.has_item?(:old_rod) || @trainer.has_item?(:good_rod) || @trainer.has_item?(:super_rod)
+    # Track which encounter types the trainer can access based on items
+    @has_old_rod = @trainer.has_item?(:old_rod)
+    @has_good_rod = @trainer.has_item?(:good_rod)
+    @has_super_rod = @trainer.has_item?(:super_rod)
+    @has_any_fishing_rod = @has_old_rod || @has_good_rod || @has_super_rod
     @has_surf = @trainer.has_item?(:hm_surf)
 
     # For each route, show all Pokemon (including already caught) that meet appearance requirements
     @route_available_pokemon = {}
-    @route_available_by_type = {}
     (@always_accessible_routes + @gated_routes).each do |route|
       # Get all Pokemon from encounters that are available for this trainer
       available_encounters = route.route_encounters.select { |encounter| encounter.available_for?(@trainer) }
       @route_available_pokemon[route.id] = available_encounters.map(&:pokemon)
-
-      # Group by encounter type
-      @route_available_by_type[route.id] = {
-        grass: available_encounters.select(&:grass?).map(&:pokemon),
-        fish: available_encounters.select(&:fish?).map(&:pokemon),
-        surf: available_encounters.select(&:surf?).map(&:pokemon)
-      }
     end
 
     # Check if trainer has any pokeballs (show message but don't redirect)
@@ -80,15 +75,35 @@ class CatchesController < ApplicationController
     @trainer = current_trainer
     route = Route.find(params[:id])
     encounter_type = params[:encounter_type] || 'grass'
+    rod_type = params[:rod_type]
+
+    # Validate trainer has the exact rod they're trying to use
+    if rod_type.present?
+      has_rod = @trainer.has_item?(rod_type.to_sym)
+
+      unless has_rod
+        redirect_to catches_path, notice: "No Pokémon available on this route!"
+        return
+      end
+    end
 
     # Get all Pokemon on this route that meet appearance requirements (including already caught)
     # Filter by encounter type
     available_encounters = route.route_encounters.select do |encounter|
-      encounter.available_for?(@trainer) && encounter.encounter_type == encounter_type
+      next false unless encounter.available_for?(@trainer)
+      next false unless encounter.encounter_type == encounter_type
+
+      # For fish encounters, filter by rod type if specified
+      if encounter_type == 'fish' && rod_type.present?
+        # Exclusive rod selection: each rod uses only its own encounter table
+        encounter.required_item_key == rod_type
+      else
+        true
+      end
     end
 
     if available_encounters.empty?
-      redirect_to catches_path, notice: "No Pokémon available for that encounter type on this route!"
+      redirect_to catches_path, notice: "No Pokémon available on this route!"
       return
     end
 

@@ -112,26 +112,77 @@
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    console.log('Encounter type selector initialized');
+  // Use turbo:load instead of DOMContentLoaded to handle Turbo navigation
+  document.addEventListener('turbo:load', function() {
+    console.log('=== Encounter selector initialized (turbo:load) ===');
+    console.log('Current URL:', window.location.href);
+
+    // Function to filter Pokemon for a specific route and encounter type
+    function filterPokemonByEncounterType(routeId, encounterType) {
+      console.log(`filterPokemonByEncounterType called: route=${routeId}, type=${encounterType}`);
+
+      const allPokemon = document.querySelectorAll(`.route-pokemon-item[data-route-id="${routeId}"]`);
+      console.log(`Found ${allPokemon.length} total Pokemon for route ${routeId}`);
+
+      let visibleCount = 0;
+
+      allPokemon.forEach(item => {
+        const isMatchingType = item.dataset.encounterType === encounterType;
+        const isLocked = item.classList.contains('locked');
+
+        // Show if it matches the encounter type
+        if (isMatchingType) {
+          item.style.display = '';
+          // Only count if not locked
+          if (!isLocked) {
+            visibleCount++;
+          }
+        } else {
+          item.style.display = 'none';
+        }
+      });
+
+      // Update available count
+      const countSpan = document.querySelector(`.route-card[data-route-id="${routeId}"] .route-available-count`);
+      if (countSpan) {
+        countSpan.textContent = `${visibleCount} Pokémon available`;
+        console.log(`Updated count to ${visibleCount}`);
+      }
+
+      console.log(`Route ${routeId}: Filtered to ${encounterType}, ${visibleCount} available`);
+    }
+
+    // Find all encounter type buttons
+    const allButtons = document.querySelectorAll('.encounter-type-btn');
+    console.log(`Found ${allButtons.length} encounter type buttons on page`);
 
     // Handle encounter type button clicks
-    document.querySelectorAll('.encounter-type-btn').forEach(button => {
-      console.log('Attaching click handler to button:', button.dataset.encounterType);
+    allButtons.forEach((button, index) => {
+      const encounterType = button.dataset.encounterType;
+      const routeId = button.dataset.routeId;
+      const isActive = button.classList.contains('active');
+
+      console.log(`Button ${index}: type=${encounterType}, route=${routeId}, active=${isActive}`);
 
       button.addEventListener('click', function(e) {
-        e.preventDefault(); // Prevent any default button behavior
+        console.log(`=== BUTTON CLICKED ===`);
+        console.log(`Type: ${this.dataset.encounterType}, Route: ${this.dataset.routeId}`);
+
+        e.preventDefault();
+        e.stopPropagation();
 
         const routeId = this.dataset.routeId;
         const encounterType = this.dataset.encounterType;
 
-        console.log(`Encounter type button clicked: ${encounterType} for route ${routeId}`);
-
         // Update active state for buttons on this route
-        document.querySelectorAll(`.encounter-type-btn[data-route-id="${routeId}"]`).forEach(btn => {
+        const routeButtons = document.querySelectorAll(`.encounter-type-btn[data-route-id="${routeId}"]`);
+        console.log(`Found ${routeButtons.length} buttons for this route`);
+
+        routeButtons.forEach(btn => {
           btn.classList.remove('active');
         });
         this.classList.add('active');
+        console.log(`Set ${encounterType} button to active`);
 
         // Update hidden input in form
         const form = document.querySelector(`.adventure-form[data-route-id="${routeId}"]`);
@@ -140,48 +191,129 @@
           if (input) {
             input.value = encounterType;
             console.log(`Updated form input to: ${encounterType}`);
+          } else {
+            console.warn('Could not find encounter-type-input in form');
+          }
+        } else {
+          console.warn(`Could not find adventure-form for route ${routeId}`);
+        }
+
+        // Filter Pokemon list
+        filterPokemonByEncounterType(routeId, encounterType);
+
+        // Show/hide rod selector based on encounter type
+        const rodSelector = document.querySelector(`.rod-selector[data-route-id="${routeId}"]`);
+        if (rodSelector) {
+          if (encounterType === 'fish') {
+            rodSelector.style.display = 'flex';
+            // Trigger filtering by active rod
+            const activeRodBtn = rodSelector.querySelector('.rod-btn.active');
+            if (activeRodBtn) {
+              activeRodBtn.click();
+            }
+          } else {
+            rodSelector.style.display = 'none';
+          }
+        }
+      }, { passive: false });
+
+      console.log(`✓ Attached click handler to button ${index}`);
+    });
+
+    // Handle rod type button clicks
+    const allRodButtons = document.querySelectorAll('.rod-btn');
+    console.log(`Found ${allRodButtons.length} rod buttons on page`);
+
+    allRodButtons.forEach((button, index) => {
+      const rodType = button.dataset.rodType;
+      const routeId = button.dataset.routeId;
+      const isActive = button.classList.contains('active');
+
+      console.log(`Rod Button ${index}: type=${rodType}, route=${routeId}, active=${isActive}`);
+
+      button.addEventListener('click', function(e) {
+        console.log(`=== ROD BUTTON CLICKED ===`);
+        console.log(`Rod Type: ${this.dataset.rodType}, Route: ${this.dataset.routeId}`);
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const routeId = this.dataset.routeId;
+        const rodType = this.dataset.rodType;
+
+        // Update active state for rod buttons on this route
+        const routeRodButtons = document.querySelectorAll(`.rod-btn[data-route-id="${routeId}"]`);
+        console.log(`Found ${routeRodButtons.length} rod buttons for this route`);
+
+        routeRodButtons.forEach(btn => {
+          btn.classList.remove('active');
+        });
+        this.classList.add('active');
+        console.log(`Set ${rodType} rod button to active`);
+
+        // Update hidden input in form
+        const form = document.querySelector(`.adventure-form[data-route-id="${routeId}"]`);
+        if (form) {
+          const input = form.querySelector('.rod-type-input');
+          if (input) {
+            input.value = rodType;
+            console.log(`Updated rod_type input to: ${rodType}`);
+          } else {
+            console.warn('Could not find rod-type-input in form');
           }
         }
 
-        // Filter Pokemon list to show only matching encounter type that are available
-        const allPokemon = document.querySelectorAll(`.route-pokemon-item[data-route-id="${routeId}"]`);
+        // Filter fish Pokemon by rod type
+        const allFishPokemon = document.querySelectorAll(`.route-pokemon-item[data-route-id="${routeId}"][data-encounter-type="fish"]`);
         let visibleCount = 0;
-        let totalMatching = 0;
 
-        allPokemon.forEach(item => {
-          const isMatchingType = item.dataset.encounterType === encounterType;
+        // Exclusive rod selection: each rod shows only its own encounter table
+        allFishPokemon.forEach(item => {
+          const requiredItem = item.dataset.requiredItem;
           const isLocked = item.classList.contains('locked');
+          const canCatch = requiredItem === rodType;
 
-          if (isMatchingType) {
-            totalMatching++;
-          }
-
-          // Show only if it matches the encounter type AND is not locked
-          if (isMatchingType && !isLocked) {
+          if (canCatch) {
             item.style.display = '';
-            visibleCount++;
+            if (!isLocked) {
+              visibleCount++;
+            }
           } else {
             item.style.display = 'none';
           }
         });
 
-        console.log(`Found ${totalMatching} ${encounterType} pokemon, ${visibleCount} available`);
+        console.log(`Filtered fish Pokemon: ${visibleCount} available for ${rodType}`);
 
         // Update available count
-        const countSpan = document.querySelector(`.route-available-count[data-route-id="${routeId}"]`);
+        const countSpan = document.querySelector(`.route-card[data-route-id="${routeId}"] .route-available-count`);
         if (countSpan) {
           countSpan.textContent = `${visibleCount} Pokémon available`;
         }
-      });
+      }, { passive: false });
+
+      console.log(`✓ Attached click handler to rod button ${index}`);
     });
 
-    // Initialize: Show only the active encounter type on page load
-    document.querySelectorAll('.encounter-type-selector').forEach(selector => {
+    // Initialize: Filter Pokemon on page load based on active button
+    const selectors = document.querySelectorAll('.encounter-type-selector');
+    console.log(`Found ${selectors.length} encounter type selectors`);
+
+    selectors.forEach((selector, index) => {
       const activeBtn = selector.querySelector('.encounter-type-btn.active');
       if (activeBtn) {
-        console.log('Clicking active button on page load:', activeBtn.dataset.encounterType);
-        activeBtn.click();
+        const routeId = activeBtn.dataset.routeId;
+        const encounterType = activeBtn.dataset.encounterType;
+        console.log(`Selector ${index}: Initializing route ${routeId} with ${encounterType}`);
+
+        // Run filtering directly instead of clicking
+        filterPokemonByEncounterType(routeId, encounterType);
+      } else {
+        console.warn(`Selector ${index}: No active button found`);
       }
     });
+
+    console.log('=== Initialization complete ===');
   });
 </script>
+

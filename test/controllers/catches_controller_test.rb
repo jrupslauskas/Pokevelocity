@@ -702,7 +702,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
 
     # Should redirect with no pokemon message
     assert_redirected_to catches_path
-    assert_match "No Pokémon available for that encounter type on this route!", flash[:notice]
+    assert_match "No Pokémon available on this route!", flash[:notice]
   end
 
   test "should allow encounter when pokemon requirement is met" do

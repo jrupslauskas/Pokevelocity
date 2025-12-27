@@ -1,5 +1,4 @@
 <% available_pokemon = @route_available_pokemon[route.id] %>
-<% available_by_type = @route_available_by_type[route.id] %>
 <div class="route-card" data-route-id="<%= route.id %>">
   <div class="route-header">
     <h2 class="route-name"><%= route.name %></h2>
@@ -8,27 +7,59 @@
     <% end %>
   </div>
 
-  <!-- Encounter Type Selector -->
-  <% has_grass = available_by_type[:grass].any? %>
-  <% has_fish = available_by_type[:fish].any? && @has_fishing_rod %>
-  <% has_surf = available_by_type[:surf].any? && @has_surf %>
-  <% encounter_types_count = [has_grass, has_fish, has_surf].count(true) %>
+  <%
+    # Determine which encounter types are available for this route
+    has_grass_encounters = route.route_encounters.any? { |e| e.grass? }
+    has_fish_encounters = route.route_encounters.any? { |e| e.fish? } && @has_any_fishing_rod
+    has_surf_encounters = route.route_encounters.any? { |e| e.surf? } && @has_surf
+    available_encounter_types = [has_grass_encounters, has_fish_encounters, has_surf_encounters].count(true)
 
-  <% if encounter_types_count > 1 %>
+    # Determine default active encounter type (priority: grass -> fish -> surf)
+    default_encounter_type = has_grass_encounters ? 'grass' : (has_fish_encounters ? 'fish' : 'surf')
+  %>
+
+  <!-- Encounter Type Selector (only show if 2+ types available) -->
+  <% if available_encounter_types > 1 %>
     <div class="encounter-type-selector">
-      <% if has_grass %>
+      <% if has_grass_encounters %>
         <button class="encounter-type-btn active" data-encounter-type="grass" data-route-id="<%= route.id %>">
           🌿 Land
         </button>
       <% end %>
-      <% if has_surf %>
-        <button class="encounter-type-btn <%= has_grass ? '' : 'active' %>" data-encounter-type="surf" data-route-id="<%= route.id %>">
+      <% if has_fish_encounters %>
+        <button class="encounter-type-btn <%= has_grass_encounters ? '' : 'active' %>" data-encounter-type="fish" data-route-id="<%= route.id %>">
+          🎣 Fish
+        </button>
+      <% end %>
+      <% if has_surf_encounters %>
+        <button class="encounter-type-btn <%= (has_grass_encounters || has_fish_encounters) ? '' : 'active' %>" data-encounter-type="surf" data-route-id="<%= route.id %>">
           🌊 Surf
         </button>
       <% end %>
-      <% if has_fish %>
-        <button class="encounter-type-btn <%= (has_grass || has_surf) ? '' : 'active' %>" data-encounter-type="fish" data-route-id="<%= route.id %>">
-          🎣 Fish
+    </div>
+  <% end %>
+
+  <!-- Rod Type Selector (only show when fish encounters exist and trainer has rods) -->
+  <% if has_fish_encounters %>
+    <%
+      # Determine which rods the trainer has
+      # Better rods give access to all lower-tier encounters
+      best_rod = @has_super_rod ? 'super_rod' : (@has_good_rod ? 'good_rod' : 'old_rod')
+    %>
+    <div class="rod-selector" data-route-id="<%= route.id %>" style="<%= has_grass_encounters ? 'display: none;' : '' %>">
+      <% if @has_old_rod || @has_good_rod || @has_super_rod %>
+        <button class="rod-btn <%= best_rod == 'old_rod' ? 'active' : '' %>" data-rod-type="old_rod" data-route-id="<%= route.id %>">
+          🎣 Old Rod
+        </button>
+      <% end %>
+      <% if @has_good_rod || @has_super_rod %>
+        <button class="rod-btn <%= best_rod == 'good_rod' ? 'active' : '' %>" data-rod-type="good_rod" data-route-id="<%= route.id %>">
+          🎣 Good Rod
+        </button>
+      <% end %>
+      <% if @has_super_rod %>
+        <button class="rod-btn <%= best_rod == 'super_rod' ? 'active' : '' %>" data-rod-type="super_rod" data-route-id="<%= route.id %>">
+          🎣 Super Rod
         </button>
       <% end %>
     </div>
@@ -38,28 +69,60 @@
     <h3 class="route-pokemon-title">Wild Pokémon:</h3>
     <div class="route-pokemon-list">
       <%
-        # Only show encounters from types the trainer can access
-        accessible_encounters = route.route_encounters.includes(:pokemon, :required_pokemon).select do |encounter|
+        # Helper method to determine if an encounter should be visible based on trainer's items
+        def encounter_visible_for_trainer?(encounter, trainer_items)
           case encounter.encounter_type
           when "grass"
-            true  # Grass is always accessible
+            # Land encounters are always visible
+            true
           when "fish"
-            @has_fishing_rod  # Only show fish if they have any fishing rod
+            # Fish encounters are visible if trainer has the required rod or better
+            case encounter.required_item_key
+            when "old_rod"
+              trainer_items[:old_rod] || trainer_items[:good_rod] || trainer_items[:super_rod]
+            when "good_rod"
+              trainer_items[:good_rod] || trainer_items[:super_rod]
+            when "super_rod"
+              trainer_items[:super_rod]
+            else
+              false
+            end
           when "surf"
-            @has_surf  # Only show surf if they have hm_surf
+            # Surf encounters are visible if trainer has hm_surf
+            trainer_items[:surf]
           else
             false
           end
         end
 
-        accessible_encounters.sort_by { |e| e.pokemon.pokedex_number }.each do |encounter|
+        # Build trainer items hash
+        trainer_items = {
+          old_rod: @has_old_rod,
+          good_rod: @has_good_rod,
+          super_rod: @has_super_rod,
+          surf: @has_surf
+        }
+
+        # Filter and display only visible encounters
+        visible_encounters = route.route_encounters.includes(:pokemon, :required_pokemon).select do |encounter|
+          encounter_visible_for_trainer?(encounter, trainer_items)
+        end
+
+        visible_encounters.sort_by { |e| e.pokemon.pokedex_number }.each do |encounter|
       %>
         <% pokemon = encounter.pokemon %>
         <% is_available = encounter.available_for?(@trainer) %>
         <% is_caught = @trainer.captured_pokemon.include?(pokemon) %>
+        <%
+          # Initially hide Pokemon that don't match the default encounter type (unless only one type exists)
+          should_hide_initially = available_encounter_types > 1 && encounter.encounter_type != default_encounter_type
+          initial_display_style = should_hide_initially ? "display: none;" : ""
+        %>
         <div class="route-pokemon-item <%= is_caught ? 'caught' : '' %> <%= is_available ? '' : 'locked' %>"
              data-encounter-type="<%= encounter.encounter_type %>"
-             data-route-id="<%= route.id %>">
+             data-route-id="<%= route.id %>"
+             <% if encounter.required_item_key.present? %>data-required-item="<%= encounter.required_item_key %>"<% end %>
+             style="<%= initial_display_style %>">
           <%= image_tag "pokemonSprites/#{pokemon.pokedex_number.to_s.rjust(3, '0')}.png",
               alt: pokemon.name,
               class: "route-pokemon-sprite",
@@ -86,28 +149,22 @@
 
   <div class="route-actions">
     <% if available_pokemon.any? %>
-      <% default_type = has_grass ? 'grass' : (has_surf ? 'surf' : 'fish') %>
       <%= form_with url: adventure_path(route), method: :post, class: "adventure-form", data: { route_id: route.id } do |f| %>
-        <%= f.hidden_field :encounter_type, value: default_type, class: "encounter-type-input" %>
+        <%= f.hidden_field :encounter_type, value: default_encounter_type, class: "encounter-type-input" %>
+        <%= f.hidden_field :rod_type, value: (has_fish_encounters ? best_rod : ''), class: "rod-type-input" %>
         <%= f.submit "Adventure", class: "btn-adventure" %>
       <% end %>
-      <span class="route-available-count" data-route-id="<%= route.id %>">
+      <span class="route-available-count">
         <%
           # Show count of uncaught Pokemon
-          uncaught_by_type = {
-            grass: available_by_type[:grass].reject { |p| @trainer.captured_pokemon.include?(p) },
-            fish: available_by_type[:fish].reject { |p| @trainer.captured_pokemon.include?(p) },
-            surf: available_by_type[:surf].reject { |p| @trainer.captured_pokemon.include?(p) }
-          }
           uncaught_pokemon = available_pokemon.reject { |p| @trainer.captured_pokemon.include?(p) }
-          count = encounter_types_count > 1 ? uncaught_by_type[default_type.to_sym].count : uncaught_pokemon.count
         %>
-        <%= count %> Pokémon available
+        <%= uncaught_pokemon.count %> Pokémon available
       </span>
     <% else %>
       <%
-        # Check if there are any locked Pokemon on accessible encounter types
-        has_locked_pokemon = accessible_encounters.any? { |encounter| !encounter.available_for?(@trainer) }
+        # Check if there are any locked Pokemon among visible encounters
+        has_locked_pokemon = visible_encounters.any? { |encounter| !encounter.available_for?(@trainer) }
         button_text = has_locked_pokemon ? "Locked" : "All caught!"
       %>
       <button class="btn-adventure-disabled" disabled><%= button_text %></button>
