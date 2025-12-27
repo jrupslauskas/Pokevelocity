@@ -93,7 +93,14 @@ class Trainer < ApplicationRecord
     return nil if has_unlocked_gate?(gate)
     return nil unless gate.requirement_met_for?(self)
 
-    gate_unlocks.create!(gate: gate, unlocked_at: Time.current)
+    gate_unlock = gate_unlocks.create!(gate: gate, unlocked_at: Time.current)
+
+    # Award HM03 Surf for defeating Koga (Gate 6)
+    if gate.gate_number == 6 && !has_item?(:hm_surf)
+      add_item(:hm_surf, 1)
+    end
+
+    gate_unlock
   end
 
   # Get the next locked gate that meets or doesn't meet the requirement

@@ -353,7 +353,7 @@ class CatchesEncounterSelectorTest < ActionDispatch::IntegrationTest
     assert_select "div.route-card[data-route-id='#{water_route.id}'] button.encounter-type-btn[data-encounter-type='fish']", text: /Fish/
     assert_select "div.route-card[data-route-id='#{water_route.id}'] button.encounter-type-btn[data-encounter-type='surf']", text: /Surf/
 
-    # Fish should be active by default (first available type)
-    assert_select "div.route-card[data-route-id='#{water_route.id}'] button.encounter-type-btn.active[data-encounter-type='fish']", count: 1
+    # Surf should be active by default (priority: grass -> surf -> fish)
+    assert_select "div.route-card[data-route-id='#{water_route.id}'] button.encounter-type-btn.active[data-encounter-type='surf']", count: 1
   end
 end

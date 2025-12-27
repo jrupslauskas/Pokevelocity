@@ -140,6 +140,15 @@ class Item < ApplicationRecord
       sprite: 'super_rod.png',
       buy_price: nil,
       sell_price: nil
+    },
+    hm_surf: {
+      key: 'hm_surf',
+      name: 'HM03 Surf',
+      description: 'A Hidden Machine that teaches the move Surf, allowing travel across water. Awarded for defeating Koga at Fuchsia Gym.',
+      item_type: TYPES[:key_item],
+      sprite: 'hm_surf.png',
+      buy_price: nil,
+      sell_price: nil
     }
   }.freeze
 

@@ -14,25 +14,26 @@
     has_surf_encounters = route.route_encounters.any? { |e| e.surf? } && @has_surf
     available_encounter_types = [has_grass_encounters, has_fish_encounters, has_surf_encounters].count(true)
 
-    # Determine default active encounter type (priority: grass -> fish -> surf)
-    default_encounter_type = has_grass_encounters ? 'grass' : (has_fish_encounters ? 'fish' : 'surf')
+    # Determine default active encounter type (priority: grass -> surf -> fish)
+    # Surf takes priority over fish when no land encounters exist
+    default_encounter_type = has_grass_encounters ? 'grass' : (has_surf_encounters ? 'surf' : 'fish')
   %>
 
   <!-- Encounter Type Selector (only show if 2+ types available) -->
   <% if available_encounter_types > 1 %>
     <div class="encounter-type-selector">
       <% if has_grass_encounters %>
-        <button class="encounter-type-btn active" data-encounter-type="grass" data-route-id="<%= route.id %>">
+        <button class="encounter-type-btn <%= default_encounter_type == 'grass' ? 'active' : '' %>" data-encounter-type="grass" data-route-id="<%= route.id %>">
           🌿 Land
         </button>
       <% end %>
       <% if has_fish_encounters %>
-        <button class="encounter-type-btn <%= has_grass_encounters ? '' : 'active' %>" data-encounter-type="fish" data-route-id="<%= route.id %>">
+        <button class="encounter-type-btn <%= default_encounter_type == 'fish' ? 'active' : '' %>" data-encounter-type="fish" data-route-id="<%= route.id %>">
           🎣 Fish
         </button>
       <% end %>
       <% if has_surf_encounters %>
-        <button class="encounter-type-btn <%= (has_grass_encounters || has_fish_encounters) ? '' : 'active' %>" data-encounter-type="surf" data-route-id="<%= route.id %>">
+        <button class="encounter-type-btn <%= default_encounter_type == 'surf' ? 'active' : '' %>" data-encounter-type="surf" data-route-id="<%= route.id %>">
           🌊 Surf
         </button>
       <% end %>
