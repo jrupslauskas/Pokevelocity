@@ -1773,6 +1773,17 @@ body > div:not(.app-layout) {
   color: #D3D3D3;
 }
 
+.route-pokemon-percentage {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: #2C5F2D;
+  background-color: #E8F5E8;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
 .route-actions {
   display: flex;
   flex-direction: column;

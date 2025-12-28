@@ -1,4 +1,5 @@
-# Pokevelocity![Pokevelocity Logo](app/assets/images/icons/pokevelocity_logo.png)
+# Pokevelocity!
+<img src="app/assets/images/icons/pokevelocity_logo.png" width="150">
 
 Pokévelocity is a gamified productivity app that turns software development into a Pokémon-catching adventure. Complete your Jira tickets,
 earn Pokéballs based on story points, and use them to catch all 151 original Pokémon as you adventure through Kanto. The harder your tickets and the faster your velocity, the more and better Pokéballs you'll earn

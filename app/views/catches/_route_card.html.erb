@@ -109,11 +109,31 @@
           encounter_visible_for_trainer?(encounter, trainer_items)
         end
 
+        # Calculate appearance percentages for each encounter type
+        # Group encounters by encounter type and rod requirement
+        encounter_groups = visible_encounters.group_by do |e|
+          if e.fish?
+            "fish_#{e.required_item_key}"
+          else
+            e.encounter_type
+          end
+        end
+
+        # Calculate percentage for each encounter in its group
+        encounter_percentages = {}
+        encounter_groups.each do |group_key, encounters|
+          total_spawn_rate = encounters.sum(&:spawn_rate)
+          encounters.each do |encounter|
+            encounter_percentages[encounter.id] = ((encounter.spawn_rate.to_f / total_spawn_rate) * 100).round(1)
+          end
+        end
+
         visible_encounters.sort_by { |e| e.pokemon.pokedex_number }.each do |encounter|
       %>
         <% pokemon = encounter.pokemon %>
         <% is_available = encounter.available_for?(@trainer) %>
         <% is_caught = @trainer.captured_pokemon.include?(pokemon) %>
+        <% appearance_percentage = encounter_percentages[encounter.id] %>
         <%
           # Initially hide Pokemon that don't match the default encounter type (unless only one type exists)
           should_hide_initially = available_encounter_types > 1 && encounter.encounter_type != default_encounter_type
@@ -141,6 +161,7 @@
                   <span class="difficulty-star empty">★</span>
                 <% end %>
               </div>
+              <span class="route-pokemon-percentage"><%= appearance_percentage %>%</span>
             <% end %>
           </div>
         </div>
