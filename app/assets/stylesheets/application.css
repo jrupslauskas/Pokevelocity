@@ -41,8 +41,8 @@ body > div:not(.app-layout) {
 }
 
 .logo-image {
-  width: 48px;
-  height: 48px;
+  width: 64px;
+  height: 64px;
   object-fit: contain;
   display: block;
 }
@@ -480,8 +480,8 @@ body > div:not(.app-layout) {
 }
 
 .sidebar-logo-image {
-  width: 28px;
-  height: 28px;
+  width: 48px;
+  height: 48px;
   object-fit: contain;
   display: block;
 }
