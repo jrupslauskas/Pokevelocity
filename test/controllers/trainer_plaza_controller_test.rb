@@ -256,6 +256,91 @@ class TrainerPlazaControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "should display Evolved on for evolved pokemon" do
+    log_in_as(trainers(:ash))
+    # Create a new trainer to avoid conflicts with existing captures
+    trainer = Trainer.create!(
+      username: "evolvedtest",
+      password: "password",
+      icon_pokemon_id: pokemons(:pikachu).id
+    )
+
+    # Create an evolved Pokemon for the trainer
+    evolved_pokemon = Pokemon.find_or_create_by!(pokedex_number: 130) { |p| p.name = "Gyarados"; p.difficulty = 5 }
+    trainer.captures.create!(
+      pokemon: evolved_pokemon,
+      ball_type: 'pokeball',
+      captured_at: Time.current,
+      evolved: true
+    )
+
+    get trainer_path(trainer)
+    assert_response :success
+
+    # Should show "Evolved on" for evolved Pokemon
+    assert_match /Evolved on/, response.body
+  end
+
+  test "should display Caught with a for caught pokemon" do
+    log_in_as(trainers(:ash))
+    # Create a new trainer to avoid conflicts with existing captures
+    trainer = Trainer.create!(
+      username: "caughttest",
+      password: "password",
+      icon_pokemon_id: pokemons(:pikachu).id
+    )
+
+    # Create a caught (not evolved) Pokemon for the trainer
+    caught_pokemon = Pokemon.find_or_create_by!(pokedex_number: 131) { |p| p.name = "Lapras"; p.difficulty = 3 }
+    trainer.captures.create!(
+      pokemon: caught_pokemon,
+      ball_type: 'great_ball',
+      captured_at: Time.current,
+      evolved: false
+    )
+
+    get trainer_path(trainer)
+    assert_response :success
+
+    # Should show "Caught with a" for caught Pokemon
+    assert_match /Caught with a/, response.body
+  end
+
+  test "should correctly differentiate between caught and evolved pokemon on same page" do
+    log_in_as(trainers(:ash))
+    # Create a new trainer to avoid conflicts with existing captures
+    trainer = Trainer.create!(
+      username: "mixedtest",
+      password: "password",
+      icon_pokemon_id: pokemons(:pikachu).id
+    )
+
+    # Create both a caught and evolved Pokemon
+    caught_pokemon = Pokemon.find_or_create_by!(pokedex_number: 132) { |p| p.name = "Ditto"; p.difficulty = 4 }
+    evolved_pokemon = Pokemon.find_or_create_by!(pokedex_number: 133) { |p| p.name = "Eevee"; p.difficulty = 5 }
+
+    trainer.captures.create!(
+      pokemon: caught_pokemon,
+      ball_type: 'ultra_ball',
+      captured_at: Time.current,
+      evolved: false
+    )
+
+    trainer.captures.create!(
+      pokemon: evolved_pokemon,
+      ball_type: 'pokeball',
+      captured_at: Time.current,
+      evolved: true
+    )
+
+    get trainer_path(trainer)
+    assert_response :success
+
+    # Should show both types of capture info
+    assert_match /Caught with a/, response.body
+    assert_match /Evolved on/, response.body
+  end
+
   # ================================================================================
   # SHOW PAGE - EMPTY STATE TESTS
   # ================================================================================
