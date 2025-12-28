@@ -1028,6 +1028,35 @@ body > div:not(.app-layout) {
   min-height: 52px;
 }
 
+.adventure-again-card {
+  background: linear-gradient(to bottom, #E8F5E8, #D4E8D4);
+  border: 2px solid #A5D6A7;
+}
+
+.adventure-again-card:hover {
+  border-color: #4CAF50;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(76, 175, 80, 0.3);
+}
+
+.adventure-again-icon {
+  font-size: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.adventure-again-card-footer {
+  padding: 12px 20px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 52px;
+}
+
 .pokeball-card-icon {
   font-size: 48px;
 }

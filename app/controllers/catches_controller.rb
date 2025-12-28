@@ -77,6 +77,13 @@ class CatchesController < ApplicationController
     encounter_type = params[:encounter_type] || 'grass'
     rod_type = params[:rod_type]
 
+    # Store adventure parameters in session for "Adventure Again"
+    session[:last_adventure] = {
+      'route_id' => route.id,
+      'encounter_type' => encounter_type,
+      'rod_type' => rod_type
+    }
+
     # Validate trainer has the exact rod they're trying to use
     if rod_type.present?
       has_rod = @trainer.has_item?(rod_type.to_sym)
@@ -137,6 +144,9 @@ class CatchesController < ApplicationController
     @catch_probabilities = PokemonCatchService::CAPTURE_EFFICIENCY.transform_values do |difficulty_hash|
       difficulty_hash[@pokemon.difficulty]
     end
+
+    # Get last adventure parameters for "Adventure Again" button
+    @last_adventure = session[:last_adventure]
 
     # Check if trainer has any pokeballs (show message but don't redirect)
     # Only show this message if there isn't already a flash message

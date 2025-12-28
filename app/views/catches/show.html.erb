@@ -138,6 +138,24 @@
           </div>
         </button>
       <% end %>
+
+      <% if @last_adventure.present? %>
+        <%= form_with url: adventure_path(@last_adventure['route_id']), method: :post, local: true do |f| %>
+          <%= f.hidden_field :encounter_type, value: @last_adventure['encounter_type'] %>
+          <%= f.hidden_field :rod_type, value: @last_adventure['rod_type'] if @last_adventure['rod_type'].present? %>
+          <button type="submit" class="pokeball-card adventure-again-card">
+            <div class="pokeball-card-icon adventure-again-icon">🔄</div>
+            <div class="pokeball-card-content">
+              <h4 class="pokeball-card-name">Adventure Again</h4>
+              <p class="pokeball-card-description">Same route & type</p>
+              <p class="pokeball-card-rate">&nbsp;</p>
+            </div>
+            <div class="pokeball-card-count adventure-again-card-footer">
+              <span class="pokeball-count-label">Again</span>
+            </div>
+          </button>
+        <% end %>
+      <% end %>
     </div>
   </main>
 </div>
