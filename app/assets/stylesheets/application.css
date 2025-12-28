@@ -960,29 +960,29 @@ body > div:not(.app-layout) {
 
 .pokeball-selection-title {
   text-align: center;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 700;
   color: #2C5F2D;
-  margin: 0 0 24px 0;
+  margin: 0 0 16px 0;
 }
 
 .pokeball-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-  max-width: 1400px;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+  max-width: 1200px;
   margin: 0 auto 32px;
 }
 
 .pokeball-card {
   background: linear-gradient(to bottom, #FFF8DC, #F5F0E8);
   border: 2px solid #E8DCC8;
-  border-radius: 12px;
-  padding: 20px;
+  border-radius: 8px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
   transition: all 0.2s ease;
   cursor: pointer;
   width: 100%;
@@ -1011,21 +1011,21 @@ body > div:not(.app-layout) {
 }
 
 .run-icon {
-  font-size: 48px;
+  font-size: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .run-card-footer {
-  padding: 12px 20px;
+  padding: 6px 12px;
   background-color: rgba(255, 255, 255, 0.5);
-  border-radius: 8px;
+  border-radius: 6px;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 52px;
+  min-height: 36px;
 }
 
 .adventure-again-card {
@@ -1040,30 +1040,30 @@ body > div:not(.app-layout) {
 }
 
 .adventure-again-icon {
-  font-size: 48px;
+  font-size: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .adventure-again-card-footer {
-  padding: 12px 20px;
+  padding: 6px 12px;
   background-color: rgba(255, 255, 255, 0.5);
-  border-radius: 8px;
+  border-radius: 6px;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 52px;
+  min-height: 36px;
 }
 
 .pokeball-card-icon {
-  font-size: 48px;
+  font-size: 32px;
 }
 
 .pokeball-icon-image {
-  width: 48px;
-  height: 48px;
+  width: 36px;
+  height: 36px;
   object-fit: contain;
   display: block;
 }
@@ -1074,20 +1074,20 @@ body > div:not(.app-layout) {
 }
 
 .pokeball-card-name {
-  font-size: 20px;
+  font-size: 14px;
   font-weight: 700;
   color: #2C5F2D;
-  margin: 0 0 4px 0;
+  margin: 0 0 2px 0;
 }
 
 .pokeball-card-description {
-  font-size: 14px;
+  font-size: 11px;
   color: #6B5537;
-  margin: 0 0 8px 0;
+  margin: 0 0 4px 0;
 }
 
 .pokeball-card-rate {
-  font-size: 16px;
+  font-size: 12px;
   font-weight: 600;
   color: #5FA777;
   margin: 0;
@@ -1097,20 +1097,20 @@ body > div:not(.app-layout) {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 12px 20px;
+  padding: 6px 12px;
   background-color: rgba(255, 255, 255, 0.5);
-  border-radius: 8px;
+  border-radius: 6px;
   width: 100%;
 }
 
 .pokeball-count-number {
-  font-size: 28px;
+  font-size: 20px;
   font-weight: 700;
   color: #2C5F2D;
 }
 
 .pokeball-count-label {
-  font-size: 12px;
+  font-size: 10px;
   color: #6B5537;
   font-weight: 500;
 }
