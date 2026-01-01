@@ -180,6 +180,22 @@ class Trainer < ApplicationRecord
     item_quantity(item_key) >= quantity
   end
 
+  # ================================================================================
+  # ONBOARDING
+  # ================================================================================
+
+  # Check if trainer needs to complete onboarding
+  # @return [Boolean] true if onboarding not completed
+  def needs_onboarding?
+    !onboarding_completed
+  end
+
+  # Mark onboarding as completed
+  # @return [Boolean] true if successful
+  def complete_onboarding!
+    update!(onboarding_completed: true)
+  end
+
   private
 
   def password_required?

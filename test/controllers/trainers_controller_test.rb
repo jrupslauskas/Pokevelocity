@@ -88,7 +88,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     assert_equal "newtrainer", Trainer.find(session[:trainer_id]).username
   end
 
-  test "should redirect to dashboard on successful registration" do
+  test "should redirect to onboarding on successful registration" do
     post trainers_path, params: {
       trainer: {
         username: "newtrainer",
@@ -98,10 +98,10 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
       activation_code: "TEST01"
     }
 
-    assert_redirected_to dashboard_path
+    assert_redirected_to onboarding_welcome_path
   end
 
-  test "should show welcome message on successful registration" do
+  test "should not show welcome flash message on successful registration" do
     post trainers_path, params: {
       trainer: {
         username: "newtrainer",
@@ -111,8 +111,8 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
       activation_code: "TEST01"
     }
 
-    assert_match(/Welcome to Pokevelocity/, flash[:notice])
-    assert_match(/newtrainer/, flash[:notice])
+    # No flash message on registration - onboarding will handle welcome
+    assert_nil flash[:notice]
   end
 
   test "should automatically log in user after successful registration" do
@@ -125,9 +125,9 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
       activation_code: "TEST01"
     }
 
-    # Should be able to access protected page immediately
+    # Should be redirected to onboarding (not dashboard)
     get dashboard_path
-    assert_response :success
+    assert_redirected_to onboarding_welcome_path
   end
 
   # ================================================================================

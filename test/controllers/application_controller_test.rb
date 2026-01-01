@@ -182,8 +182,8 @@ class ApplicationControllerTest < ActionDispatch::IntegrationTest
       },
       activation_code: "TEST01"
     }
-    # Should redirect to dashboard after successful creation
-    assert_redirected_to dashboard_path
+    # Should redirect to onboarding after successful creation
+    assert_redirected_to onboarding_welcome_path
   end
 
   # ================================================================================

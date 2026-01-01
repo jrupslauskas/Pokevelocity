@@ -1,0 +1,29 @@
+<div class="app-layout">
+  <%= render "trainers/sidebar" %>
+
+  <main class="main-content">
+    <div class="onboarding-container">
+      <h1>Welcome to Pokevelocity, <%= @trainer.username %>!</h1>
+
+      <div class="professor-oak-section">
+        <%= image_tag "trainerSprites/gymLeaders/oak.png", class: "professor-oak" %>
+        <div class="dialogue-box">
+          <p>Hello there! Welcome to the world of Pokémon!</p>
+          <p>My name is Oak! People call me the Pokémon Prof!</p>
+          <p>This world is inhabited by creatures called Pokémon!</p>
+          <p><strong>Here's how Pokevelocity works:</strong></p>
+          <ul>
+            <li>🎫 Complete tickets to earn Pokéballs and items</li>
+            <li>🗺️ Explore routes to encounter and catch wild Pokémon</li>
+            <li>📖 Fill your Pokédex by catching all 151 Pokémon</li>
+            <li>🔓 View the progress of colleagues in the Trainer Plaza</li>
+            <li>X Compete for the top spot as the very best in the Indigo Plateau</li>
+          </ul>
+          <p>But first, you'll need a Pokémon of your own!</p>
+        </div>
+      </div>
+
+      <%= link_to "Choose Your Starter!", onboarding_choose_starter_path, class: "btn-primary btn-large" %>
+    </div>
+  </main>
+</div>

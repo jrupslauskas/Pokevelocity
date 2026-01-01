@@ -1,0 +1,54 @@
+<div class="app-layout">
+  <%= render "trainers/sidebar" %>
+
+  <main class="main-content">
+    <div class="onboarding-container">
+      <header class="page-header-authenticated">
+        <h1>Choose Your Starter Pokémon!</h1>
+      </header>
+
+      <div class="professor-oak-section">
+        <%= image_tag "trainerSprites/gymLeaders/oak.png", class: "professor-oak" %>
+        <div class="dialogue-box">
+          <p>Now, <%= @trainer.username %>, it's time to choose your first partner!</p>
+          <p>These three Pokémon are very special. Which one will you choose?</p>
+        </div>
+      </div>
+
+      <div class="starter-grid">
+        <% @starters.each do |starter| %>
+          <%= form_with url: onboarding_create_starter_path, method: :post do |f| %>
+            <%= f.hidden_field :pokemon_id, value: starter.id %>
+
+            <button type="submit" class="starter-card">
+              <div class="starter-image">
+                <%= image_tag "pokemonSprites/#{starter.pokedex_number.to_s.rjust(3, '0')}.png",
+                    alt: starter.name,
+                    style: "image-rendering: pixelated;" %>
+              </div>
+
+              <p class="pokedex-number">#<%= starter.pokedex_number.to_s.rjust(3, '0') %></p>
+              <h2 class="starter-name"><%= starter.name.capitalize %></h2>
+
+              <div class="starter-type">
+                <%= case starter.pokedex_number
+                    when 1 then "🌱 Grass Type"
+                    when 4 then "🔥 Fire Type"
+                    when 7 then "💧 Water Type"
+                    end %>
+              </div>
+
+              <p class="starter-description">
+                <%= case starter.pokedex_number
+                    when 1 then "Steady growth mindset - cultivates maintainable code and prioritizes personal development"
+                    when 4 then "Moves fast and burns bright - ships features fearlessly and iterates quickly"
+                    when 7 then "Defensive programming expert - slow, steady, and methodical. Every decision is made carefully"
+                    end %>
+              </p>
+            </button>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </main>
+</div>

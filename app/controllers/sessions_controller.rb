@@ -8,7 +8,12 @@ class SessionsController < ApplicationController
 
     if trainer&.authenticate(params[:password])
       session[:trainer_id] = trainer.id
-      redirect_to dashboard_path, notice: "Welcome back, #{trainer.username}!"
+
+      if trainer.needs_onboarding?
+        redirect_to onboarding_welcome_path
+      else
+        redirect_to dashboard_path, notice: "Welcome back, #{trainer.username}!"
+      end
     else
       flash.now[:alert] = "Invalid username or password"
       render :new, status: :unprocessable_entity

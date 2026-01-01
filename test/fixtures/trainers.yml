@@ -6,6 +6,7 @@ ash:
   username: ash
   password_digest: <%= BCrypt::Password.create('password', cost: 4) %>
   icon_pokemon: pikachu
+  onboarding_completed: true
 
 # Trainer with no pokeballs
 # Has no trainer_items
@@ -13,6 +14,7 @@ broke_trainer:
   username: broke_trainer
   password_digest: <%= BCrypt::Password.create('password', cost: 4) %>
   icon_pokemon: bulbasaur
+  onboarding_completed: true
 
 # Trainer who has already caught some pokemon
 # Pokeball inventory set via trainer_items fixtures
@@ -20,3 +22,4 @@ gary:
   username: gary
   password_digest: <%= BCrypt::Password.create('password', cost: 4) %>
   icon_pokemon: charmander
+  onboarding_completed: true

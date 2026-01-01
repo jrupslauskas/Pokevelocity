@@ -21,6 +21,11 @@ Rails.application.routes.draw do
   get "/trainers/new", to: "trainers#new", as: :new_trainer
   post "/trainers", to: "trainers#create", as: :trainers
 
+  # Onboarding
+  get "/onboarding/welcome", to: "onboarding#welcome", as: :onboarding_welcome
+  get "/onboarding/choose-starter", to: "onboarding#choose_starter", as: :onboarding_choose_starter
+  post "/onboarding/starter", to: "onboarding#create_starter", as: :onboarding_create_starter
+
   # Dashboard
   get "/dashboard", to: "trainers#dashboard", as: :dashboard
   post "/dashboard", to: redirect("/dashboard")  # Handle accidental POST requests

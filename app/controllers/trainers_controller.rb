@@ -24,7 +24,7 @@ class TrainersController < ApplicationController
 
     if @trainer.save
       session[:trainer_id] = @trainer.id
-      redirect_to dashboard_path, notice: "Welcome to Pokevelocity, #{@trainer.username}!"
+      redirect_to onboarding_welcome_path
     else
       render :new, status: :unprocessable_entity
     end

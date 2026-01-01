@@ -7,6 +7,7 @@ giving you higher catch rates and chances for rare and legendary Pokémon. Track
 velocity tracking.
 
 Upon spin up, the user activation code will be PALLET but you're encouraged to change that to a different 6 character string immediately
+This can be done in the `validation_codes` table.
 
 ## Running the App
 
