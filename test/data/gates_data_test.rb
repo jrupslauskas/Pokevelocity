@@ -6,9 +6,9 @@ class GatesDataTest < ActiveSupport::TestCase
   end
 
   # Structure and Count Tests
-  test "should have exactly 10 gates" do
-    assert_equal 10, @gates_data.count,
-                 "Expected 10 gates (Oak + 8 gyms + E4 gym gates), found #{@gates_data.count}"
+  test "should have exactly 9 gates" do
+    assert_equal 9, @gates_data.count,
+                 "Expected 9 gates (8 gyms + E4), found #{@gates_data.count}"
   end
 
   test "all gates should have required fields" do
@@ -22,9 +22,9 @@ class GatesDataTest < ActiveSupport::TestCase
   end
 
   # Gate Number Tests
-  test "should have all gate numbers from 1 to 10 with no gaps" do
+  test "should have all gate numbers from 1 to 9 with no gaps" do
     gate_numbers = @gates_data.map { |g| g["gate_number"] }.sort
-    expected_numbers = (1..10).to_a
+    expected_numbers = (1..9).to_a
     missing_numbers = expected_numbers - gate_numbers
 
     assert_empty missing_numbers,
@@ -88,16 +88,16 @@ class GatesDataTest < ActiveSupport::TestCase
                  "Gates with invalid sprite_type: #{invalid_sprites.map { |g| "#{g["name"]} (#{g["sprite_type"]})" }.join(', ')}"
   end
 
-  test "gate 1 should use gym_leader sprite type for Professor Oak" do
+  test "gate 1 should use gym_leader sprite type for Brock" do
     gate_1 = @gates_data.find { |g| g["gate_number"] == 1 }
 
     assert_equal "gym_leader", gate_1["sprite_type"],
                  "Gate 1 (#{gate_1["name"]}) should use gym_leader sprite type"
-    assert_equal "oak", gate_1["sprite_value"],
-                 "Gate 1 should have sprite_value 'oak'"
+    assert_equal "brock", gate_1["sprite_value"],
+                 "Gate 1 should have sprite_value 'brock'"
   end
 
-  test "gates 2-10 should use gym_leader sprite type" do
+  test "gates 2-9 should use gym_leader sprite type" do
     gym_gates = @gates_data.select { |g| g["gate_number"] >= 2 }
     non_gym_leader_sprites = gym_gates.reject { |g| g["sprite_type"] == "gym_leader" }
 

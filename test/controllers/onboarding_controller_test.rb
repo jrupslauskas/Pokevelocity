@@ -195,7 +195,7 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
     assert trainer.onboarding_completed
   end
 
-  test "should give trainer 5 pokeballs after selecting starter" do
+  test "should give trainer 1 pokeball after selecting starter" do
     trainer = create_trainer_without_onboarding
     log_in_as(trainer)
 
@@ -205,7 +205,7 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
     post onboarding_create_starter_path, params: { pokemon_id: bulbasaur.id }
 
     trainer.reload
-    assert_equal 5, trainer.item_quantity(:pokeball)
+    assert_equal 1, trainer.item_quantity(:pokeball)
   end
 
   test "should not give other ball types with starter" do
@@ -216,7 +216,7 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
     post onboarding_create_starter_path, params: { pokemon_id: bulbasaur.id }
 
     trainer.reload
-    assert_equal 5, trainer.item_quantity(:pokeball)
+    assert_equal 1, trainer.item_quantity(:pokeball)
     assert_equal 0, trainer.item_quantity(:great_ball)
     assert_equal 0, trainer.item_quantity(:ultra_ball)
     assert_equal 0, trainer.item_quantity(:master_ball)
@@ -304,7 +304,7 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
     assert trainer.onboarding_completed
     assert_equal 1, trainer.captured_pokemon.count
     assert_equal charmander, trainer.captured_pokemon.first
-    assert_equal 5, trainer.item_quantity(:pokeball)
+    assert_equal 1, trainer.item_quantity(:pokeball)
   end
 
   test "all three starters should work in the complete flow" do
@@ -331,7 +331,7 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
       trainer.reload
       assert trainer.onboarding_completed
       assert_equal starter, trainer.captured_pokemon.first
-      assert_equal 5, trainer.item_quantity(:pokeball)
+      assert_equal 1, trainer.item_quantity(:pokeball)
     end
   end
 

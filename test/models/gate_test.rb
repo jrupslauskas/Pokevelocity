@@ -133,14 +133,14 @@ class GateTest < ActiveSupport::TestCase
   test "gates_data should be loaded from YAML" do
     assert_not_nil Gate.gates_data
     assert_instance_of Array, Gate.gates_data
-    assert_equal 10, Gate.gates_data.count
+    assert_equal 9, Gate.gates_data.count
   end
 
   test "data_for should return gate data for given gate_number" do
     data = Gate.data_for(1)
     assert_not_nil data
-    assert_equal "Professor Oak - Let Your Adventure Begin!", data["name"]
-    assert_equal 2, data["required_difficulty_score"]
+    assert_equal "Pewter City Gym - Boulder Badge", data["name"]
+    assert_equal 8, data["required_difficulty_score"]
   end
 
   test "data_for should return nil for non-existent gate_number" do

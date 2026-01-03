@@ -2,14 +2,14 @@ require "test_helper"
 
 class CatchesControllerTest < ActionDispatch::IntegrationTest
   def setup
-    # Create test gates (display data loaded from YAML)
+    # Create test gates (use high numbers to avoid YAML conflicts)
     @gate_0 = Gate.create!(
-      gate_number: 1,
+      gate_number: 100,
       required_difficulty_score: 0
     )
 
     @gate_1 = Gate.create!(
-      gate_number: 2,
+      gate_number: 101,
       required_difficulty_score: 5
     )
 
@@ -20,7 +20,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     )
 
     @locked_route = Route.create!(
-      gate_requirement: 2,
+      gate_requirement: 101,
       order: 101
     )
 
@@ -733,7 +733,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     log_in_as(trainer)
 
     # Create a gate
-    gate = Gate.create!(gate_number: 6, required_difficulty_score: 50)
+    gate = Gate.create!(gate_number: 5, required_difficulty_score: 50)
 
     # Create a route with a pokemon that requires gate 6
     test_route = Route.create!(gate_requirement: 0, order: 200)
@@ -741,7 +741,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
       route: test_route,
       pokemon: pokemons(:pikachu),
       spawn_rate: 50,
-      required_gate_number: 6
+      required_gate_number: 5
     )
 
     get catches_path
@@ -780,7 +780,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     log_in_as(trainer)
 
     # Create a gate
-    gate = Gate.create!(gate_number: 6, required_difficulty_score: 50)
+    gate = Gate.create!(gate_number: 5, required_difficulty_score: 50)
 
     # Create a route with a pokemon that requires both Bulbasaur AND gate 6
     test_route = Route.create!(gate_requirement: 0, order: 200)
@@ -789,7 +789,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
       pokemon: pokemons(:pikachu),
       spawn_rate: 50,
       required_pokemon_id: pokemons(:bulbasaur).id,
-      required_gate_number: 6
+      required_gate_number: 5
     )
 
     get catches_path

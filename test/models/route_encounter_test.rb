@@ -233,17 +233,17 @@ class RouteEncounterTest < ActiveSupport::TestCase
   end
 
   test "requirement_description should show gate name when only gate required" do
-    gate = Gate.create!(gate_number: 2, required_difficulty_score: 10)
-    @encounter.required_gate_number = 2
+    gate = Gate.create!(gate_number: 1, required_difficulty_score: 10)
+    @encounter.required_gate_number = 1
     description = @encounter.requirement_description
     assert_includes description, "Requires:"
     assert_includes description, "Pewter City Gym"
   end
 
   test "requirement_description should show both when both required" do
-    gate = Gate.create!(gate_number: 2, required_difficulty_score: 10)
+    gate = Gate.create!(gate_number: 1, required_difficulty_score: 10)
     @encounter.required_pokemon = pokemons(:bulbasaur)
-    @encounter.required_gate_number = 2
+    @encounter.required_gate_number = 1
     description = @encounter.requirement_description
     assert_includes description, "Bulbasaur"
     assert_includes description, "&"
@@ -258,10 +258,10 @@ class RouteEncounterTest < ActiveSupport::TestCase
   end
 
   test "requirement_description should combine OR logic with gate requirement" do
-    gate = Gate.create!(gate_number: 2, required_difficulty_score: 10)
+    gate = Gate.create!(gate_number: 1, required_difficulty_score: 10)
     @encounter.required_pokemon = pokemons(:bulbasaur)
     @encounter.alternative_required_pokemon = pokemons(:charmander)
-    @encounter.required_gate_number = 2
+    @encounter.required_gate_number = 1
     description = @encounter.requirement_description
     assert_includes description, "Bulbasaur or Charmander"
     assert_includes description, "&"
@@ -479,9 +479,9 @@ class RouteEncounterTest < ActiveSupport::TestCase
   end
 
   test "requirement_description should combine item with gate requirement" do
-    gate = Gate.create!(gate_number: 2, required_difficulty_score: 10)
+    gate = Gate.create!(gate_number: 1, required_difficulty_score: 10)
     @encounter.required_item_key = "old_rod"
-    @encounter.required_gate_number = 2
+    @encounter.required_gate_number = 1
     description = @encounter.requirement_description
     assert_includes description, "Old Rod"
     assert_includes description, "&"
@@ -489,10 +489,10 @@ class RouteEncounterTest < ActiveSupport::TestCase
   end
 
   test "requirement_description should show all requirements (item, pokemon, gate)" do
-    gate = Gate.create!(gate_number: 2, required_difficulty_score: 10)
+    gate = Gate.create!(gate_number: 1, required_difficulty_score: 10)
     @encounter.required_item_key = "old_rod"
     @encounter.required_pokemon = pokemons(:bulbasaur)
-    @encounter.required_gate_number = 2
+    @encounter.required_gate_number = 1
     description = @encounter.requirement_description
     assert_includes description, "Bulbasaur"
     assert_includes description, "Old Rod"

@@ -1,9 +1,9 @@
 # Pokevelocity!
 <img src="app/assets/images/icons/pokevelocity_logo.png" width="150">
 
-Pokévelocity is a gamified productivity app that turns software development into a Pokémon-catching adventure. Complete your Jira tickets,
-earn Pokéballs based on story points, and use them to catch all 151 original Pokémon as you adventure through Kanto. The harder your tickets and the faster your velocity, the more and better Pokéballs you'll earn
-giving you higher catch rates and chances for rare and legendary Pokémon. Track your progress in your Pokédex, gather gym badges, compete on the leaderboard with teammates, and prove you can truly code 'em all. Built for development teams who want to add a fun, nostalgic twist to sprint
+Pokévelocity is a gamified productivity app that turns software development into a Pokémon-catching adventure. Complete your dev tickets,
+earn Pokéballs based on story points, and use them to catch all 151 original Pokémon as you adventure through Kanto (Pokemon Red and Blue/Fire Red and Leaf Green). The harder your tickets and the faster your velocity, the more and better Pokéballs you'll earn
+giving you higher catch rates. Track progress in your Pokédex, gather gym badges, compete on the leaderboard with teammates, and prove you can truly code 'em all. Built for development teams who want to add a fun, nostalgic twist to sprint
 velocity tracking.
 
 Upon spin up, the user activation code will be PALLET but you're encouraged to change that to a different 6 character string immediately
