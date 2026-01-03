@@ -183,7 +183,14 @@ class CatchesController < ApplicationController
         end
       else
         # Pokemon broke free
-        redirect_to catches_path, alert: result[:message]
+        # Check if trainer has any balls remaining
+        if @trainer.total_pokeballs > 0
+          # Trainer still has balls, stay on the encounter page to try again
+          redirect_to catch_path(@pokemon), alert: result[:message]
+        else
+          # Trainer is out of all balls, redirect to route selection
+          redirect_to catches_path, alert: result[:message]
+        end
       end
     else
       # Error occurred (no balls, etc.)

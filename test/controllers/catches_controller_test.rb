@@ -956,4 +956,312 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     post adventure_path(test_route)
     assert_redirected_to catch_path(pokemons(:pikachu))
   end
+
+  # ================================================================================
+  # MULTI-ATTEMPT CATCH WORKFLOW TESTS
+  # ================================================================================
+
+  test "should stay on encounter page when catch fails and trainer has balls remaining" do
+    trainer = trainers(:ash)
+    pokemon = pokemons(:mewtwo) # Difficulty 5, very hard to catch with pokeball
+
+    # Give trainer 5 pokeballs
+    trainer.add_item(:pokeball, 5)
+    initial_pokeballs = trainer.item_quantity(:pokeball)
+
+    log_in_as(trainer)
+
+    # Try to catch with pokeball (will likely fail due to difficulty 5)
+    # Run multiple attempts to ensure at least one failure
+    failed = false
+    20.times do
+      balls_before = trainer.reload.item_quantity(:pokeball)
+      post catch_path(pokemon), params: { ball_type: "pokeball" }
+
+      # Check if it failed (didn't redirect to pokedex)
+      if response.headers["Location"]&.include?("/catch/")
+        # Failed catch - should redirect back to encounter page
+        assert_redirected_to catch_path(pokemon)
+        follow_redirect!
+
+        # Should show "broke free" message
+        assert_match "broke free", response.body
+        assert_match pokemon.name, response.body
+
+        # Ball should be deducted
+        trainer.reload
+        assert_equal balls_before - 1, trainer.item_quantity(:pokeball)
+
+        # Should still have balls remaining
+        assert trainer.total_pokeballs > 0
+
+        failed = true
+        break
+      end
+    end
+
+    assert failed, "Expected at least one failed capture attempt in 20 tries with pokeball on difficulty 5 Pokemon"
+  end
+
+  test "should redirect to route selection when catch fails and trainer is out of all balls" do
+    trainer = trainers(:broke_trainer) # Use trainer with no items
+    pokemon = pokemons(:mewtwo) # Difficulty 5, very hard to catch with pokeball
+
+    log_in_as(trainer)
+
+    # Try to catch with pokeball (will likely fail due to difficulty 5)
+    # Run multiple attempts to ensure at least one failure on the last ball
+    failed_on_last_ball = false
+    max_attempts = 50 # Increase attempts for better probability
+    max_attempts.times do
+      # Reset to 1 ball for each attempt
+      trainer.reload
+      current_balls = trainer.total_pokeballs
+      if current_balls == 0
+        trainer.add_item(:pokeball, 1)
+      end
+
+      post catch_path(pokemon), params: { ball_type: "pokeball" }
+
+      # Check if catch failed (redirected to /catch but not /catch/:id)
+      if response.headers["Location"]&.include?("/catch") && !response.headers["Location"]&.include?("/catch/#{pokemon.id}")
+        # Failed catch - should redirect to route selection (catches_path)
+        assert_redirected_to catches_path
+        follow_redirect!
+
+        # Should show "broke free" message
+        assert_match "broke free", response.body
+        assert_match pokemon.name, response.body
+
+        # Trainer should have no balls left
+        trainer.reload
+        assert_equal 0, trainer.total_pokeballs
+
+        failed_on_last_ball = true
+        break
+      end
+    end
+
+    assert failed_on_last_ball, "Expected at least one failed capture on last ball in #{max_attempts} tries (10% success rate)"
+  end
+
+  test "should deduct correct ball type when catch fails" do
+    trainer = trainers(:ash)
+    pokemon = pokemons(:mewtwo) # Difficulty 5
+
+    # Give trainer multiple ball types
+    trainer.add_item(:pokeball, 5)
+    trainer.add_item(:great_ball, 3)
+
+    log_in_as(trainer)
+
+    initial_pokeballs = trainer.item_quantity(:pokeball)
+    initial_great_balls = trainer.item_quantity(:great_ball)
+
+    # Try to catch with great_ball (will likely fail)
+    failed = false
+    20.times do
+      great_balls_before = trainer.reload.item_quantity(:great_ball)
+      post catch_path(pokemon), params: { ball_type: "great_ball" }
+
+      if response.headers["Location"]&.include?("/catch/")
+        # Failed catch - verify correct ball was deducted
+        trainer.reload
+        assert_equal great_balls_before - 1, trainer.item_quantity(:great_ball)
+        assert_equal initial_pokeballs, trainer.item_quantity(:pokeball), "Wrong ball type was deducted"
+
+        failed = true
+        break
+      end
+    end
+
+    assert failed, "Expected at least one failed capture attempt"
+  end
+
+  test "should allow multiple catch attempts on same pokemon" do
+    trainer = trainers(:broke_trainer) # Use trainer with no items
+    pokemon = pokemons(:mewtwo) # Difficulty 5
+
+    # Give trainer 10 pokeballs for multiple attempts
+    trainer.add_item(:pokeball, 10)
+    initial_balls = 10
+
+    log_in_as(trainer)
+
+    # Try multiple catch attempts
+    attempts = 0
+    failed_attempts = 0
+    max_attempts = 3
+    max_attempts.times do
+      trainer.reload
+      balls_before = trainer.item_quantity(:pokeball)
+      post catch_path(pokemon), params: { ball_type: "pokeball" }
+
+      # Count the attempt
+      attempts += 1
+
+      # If failed, we should still be on encounter page with balls remaining
+      if response.headers["Location"]&.include?("/catch/#{pokemon.id}")
+        failed_attempts += 1
+        follow_redirect!
+        assert_response :success
+        assert_match pokemon.name, response.body
+
+        # Verify ball was used
+        trainer.reload
+        assert_equal balls_before - 1, trainer.item_quantity(:pokeball)
+      else
+        # Successful catch or redirected elsewhere, stop trying
+        break
+      end
+    end
+
+    # Should have made at least one attempt
+    assert attempts > 0, "Should have made at least one catch attempt"
+    # Should have used as many balls as attempts made
+    trainer.reload
+    balls_used = initial_balls - trainer.item_quantity(:pokeball)
+    assert_equal attempts, balls_used, "Should have used exactly #{attempts} balls for #{attempts} attempts"
+  end
+
+  test "successful catch should still redirect to pokedex" do
+    trainer = trainers(:ash)
+    pokemon = pokemons(:bulbasaur) # Difficulty 1
+
+    # Give trainer a master ball for guaranteed success
+    trainer.add_item(:master_ball, 1)
+
+    log_in_as(trainer)
+
+    post catch_path(pokemon), params: { ball_type: "master_ball" }
+
+    # Should redirect to pokedex on success
+    assert_redirected_to pokedex_path
+    follow_redirect!
+
+    # Should show success message
+    assert_match "Success", response.body
+    assert_match pokemon.name, response.body
+
+    # Should create capture record
+    trainer.reload
+    assert trainer.captured_pokemon.include?(pokemon)
+  end
+
+  test "should show correct flash message when pokemon breaks free with balls remaining" do
+    trainer = trainers(:ash)
+    pokemon = pokemons(:mewtwo) # Difficulty 5
+
+    # Give trainer multiple balls
+    trainer.add_item(:pokeball, 5)
+
+    log_in_as(trainer)
+
+    # Try to catch (will likely fail)
+    failed = false
+    20.times do
+      post catch_path(pokemon), params: { ball_type: "pokeball" }
+
+      if response.headers["Location"]&.include?("/catch/#{pokemon.id}")
+        follow_redirect!
+
+        # Check for red error flash message
+        assert_match "broke free", response.body
+        assert_match "Pokeball was lost", response.body
+
+        trainer.reload
+        assert trainer.total_pokeballs > 0
+
+        failed = true
+        break
+      end
+    end
+
+    assert failed, "Expected at least one failed capture attempt"
+  end
+
+  test "should show correct flash message when pokemon breaks free on last ball" do
+    trainer = trainers(:broke_trainer) # Use trainer with no items
+    pokemon = pokemons(:mewtwo) # Difficulty 5
+
+    log_in_as(trainer)
+
+    # Try to catch with pokeball (10% success rate = 90% failure rate)
+    # Use more attempts to ensure we get a failure
+    failed_on_last = false
+    max_attempts = 50
+    max_attempts.times do
+      # Reset for each attempt
+      trainer.reload
+      if trainer.total_pokeballs == 0
+        trainer.add_item(:pokeball, 1)
+      end
+
+      post catch_path(pokemon), params: { ball_type: "pokeball" }
+
+      if response.headers["Location"]&.include?("/catch") && !response.headers["Location"]&.include?("/catch/#{pokemon.id}")
+        follow_redirect!
+
+        # Should show "broke free" message
+        assert_match "broke free", response.body
+        assert_match "Pokeball was lost", response.body
+
+        trainer.reload
+        assert_equal 0, trainer.total_pokeballs
+
+        failed_on_last = true
+        break
+      end
+    end
+
+    assert failed_on_last, "Expected at least one failed capture on last ball in #{max_attempts} tries (10% success rate)"
+  end
+
+  test "should count all ball types when checking if trainer has balls remaining" do
+    trainer = trainers(:broke_trainer) # Use trainer with no items
+    pokemon = pokemons(:mewtwo) # Difficulty 5
+
+    # Give trainer 1 pokeball and 2 great balls (total: 3)
+    trainer.add_item(:pokeball, 1)
+    trainer.add_item(:great_ball, 2)
+
+    log_in_as(trainer)
+
+    # Use the pokeball (will likely fail)
+    failed = false
+    catch_attempts = 0
+    20.times do
+      trainer.reload
+      pokeballs = trainer.item_quantity(:pokeball)
+      break if pokeballs == 0 # Already used it in a previous iteration
+
+      post catch_path(pokemon), params: { ball_type: "pokeball" }
+      catch_attempts += 1
+
+      if response.headers["Location"]&.include?("/catch/#{pokemon.id}")
+        # Failed but should stay on encounter because we have great balls
+        assert_redirected_to catch_path(pokemon)
+
+        trainer.reload
+        # Should have used pokeball
+        assert_equal 0, trainer.item_quantity(:pokeball), "Pokeball should be used"
+        # Should still have great balls untouched
+        assert_equal 2, trainer.item_quantity(:great_ball), "Great balls should remain"
+        # Should have balls remaining (2 great balls)
+        assert_equal 2, trainer.total_pokeballs, "Should have 2 balls remaining"
+
+        failed = true
+        break
+      elsif response.headers["Location"]&.include?("/pokedex")
+        # Successful catch on pokeball, can't test this scenario
+        # Break and don't assert failed
+        break
+      end
+    end
+
+    # Only assert if we actually attempted the test scenario
+    if catch_attempts > 0
+      assert failed, "Expected at least one failed capture attempt with pokeball in #{catch_attempts} tries"
+    end
+  end
 end
