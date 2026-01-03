@@ -29,12 +29,14 @@
       <% end %>
       <% if has_fish_encounters %>
         <button class="encounter-type-btn <%= default_encounter_type == 'fish' ? 'active' : '' %>" data-encounter-type="fish" data-route-id="<%= route.id %>">
-          🎣 Fish
+          <%= image_tag "icons/fishing.png", alt: "Fishing", class: "encounter-type-icon" %>
+          Fish
         </button>
       <% end %>
       <% if has_surf_encounters %>
         <button class="encounter-type-btn <%= default_encounter_type == 'surf' ? 'active' : '' %>" data-encounter-type="surf" data-route-id="<%= route.id %>">
-          🌊 Surf
+          <%= image_tag "icons/surfing.png", alt: "Surfing", class: "encounter-type-icon" %>
+          Surf
         </button>
       <% end %>
     </div>
@@ -50,17 +52,20 @@
     <div class="rod-selector" data-route-id="<%= route.id %>" style="<%= has_grass_encounters ? 'display: none;' : '' %>">
       <% if @has_old_rod || @has_good_rod || @has_super_rod %>
         <button class="rod-btn <%= best_rod == 'old_rod' ? 'active' : '' %>" data-rod-type="old_rod" data-route-id="<%= route.id %>">
-          🎣 Old Rod
+          <%= image_tag "icons/fishing.png", alt: "Fishing", class: "rod-icon" %>
+          Old Rod
         </button>
       <% end %>
       <% if @has_good_rod || @has_super_rod %>
         <button class="rod-btn <%= best_rod == 'good_rod' ? 'active' : '' %>" data-rod-type="good_rod" data-route-id="<%= route.id %>">
-          🎣 Good Rod
+          <%= image_tag "icons/fishing.png", alt: "Fishing", class: "rod-icon" %>
+          Good Rod
         </button>
       <% end %>
       <% if @has_super_rod %>
         <button class="rod-btn <%= best_rod == 'super_rod' ? 'active' : '' %>" data-rod-type="super_rod" data-route-id="<%= route.id %>">
-          🎣 Super Rod
+          <%= image_tag "icons/fishing.png", alt: "Fishing", class: "rod-icon" %>
+          Super Rod
         </button>
       <% end %>
     </div>

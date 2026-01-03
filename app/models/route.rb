@@ -4,7 +4,7 @@ class Route < ApplicationRecord
   belongs_to :required_gate, class_name: "Gate", foreign_key: :gate_requirement, primary_key: :gate_number, optional: true
 
   validates :gate_requirement,
-            numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 10, allow_nil: true }
+            numericality: { only_integer: true, greater_than_or_equal_to: 0, allow_nil: true }
   validates :order, presence: true, uniqueness: true,
             numericality: { only_integer: true, greater_than: 0 }
 
