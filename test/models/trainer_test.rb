@@ -33,6 +33,15 @@ class TrainerTest < ActiveSupport::TestCase
     assert_includes trainer.errors[:password], "can't be blank"
   end
 
+  test "should have 0 currency by default" do
+    trainer = Trainer.create!(
+      username: "new_trainer_#{rand(100000)}",
+      password: "password",
+      icon_pokemon_id: pokemons(:pikachu).id
+    )
+    assert_equal 0, trainer.currency
+  end
+
   # ================================================================================
   # ASSOCIATION TESTS
   # ================================================================================

@@ -130,6 +130,21 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to onboarding_welcome_path
   end
 
+  test "should create new trainer with 0 starting currency" do
+    post trainers_path, params: {
+      trainer: {
+        username: "newtrainer",
+        password: "password123",
+        icon_pokemon_id: pokemons(:pikachu).id
+      },
+      activation_code: "TEST01"
+    }
+
+    new_trainer = Trainer.find_by(username: "newtrainer")
+    assert_not_nil new_trainer
+    assert_equal 0, new_trainer.currency
+  end
+
   # ================================================================================
   # FAILED REGISTRATION - MISSING FIELDS TESTS
   # ================================================================================
