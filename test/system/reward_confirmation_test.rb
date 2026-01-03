@@ -6,8 +6,8 @@ class RewardConfirmationTest < ApplicationSystemTestCase
     # Login
     visit login_path
     fill_in "Username", with: @trainer.username
-    fill_in "Password", with: "password"
-    click_button "Login"
+    find("input#password-field").set("password")
+    click_button "Continue Adventure"
   end
 
   test "should show confirmation modal when claiming 1 point reward" do

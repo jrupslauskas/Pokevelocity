@@ -422,6 +422,48 @@ body > div:not(.app-layout) {
   color: #A89F8F;
 }
 
+/* Password Toggle Button */
+.password-input-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+}
+
+.password-input-wrapper .password-input {
+  padding-right: 45px;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.password-toggle-btn:hover {
+  opacity: 0.7;
+}
+
+.password-toggle-btn:active {
+  opacity: 0.5;
+}
+
+.password-toggle-icon {
+  font-size: 20px;
+  line-height: 1;
+  display: block;
+}
+
 /* Secondary/Helper Text */
 .text-secondary {
   font-size: 14px;

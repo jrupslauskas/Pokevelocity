@@ -40,10 +40,16 @@
 
       <div class="form-group">
         <%= f.label :password, "Password", class: "form-label" %>
-        <%= f.password_field :password,
-            placeholder: "Create a password",
-            required: true,
-            class: "form-input" %>
+        <div class="password-input-wrapper">
+          <%= f.password_field :password,
+              placeholder: "Create a password",
+              required: true,
+              class: "form-input password-input",
+              id: "password-field-register" %>
+          <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('password-field-register', this)" aria-label="Toggle password visibility">
+            <span class="password-toggle-icon">👁️</span>
+          </button>
+        </div>
       </div>
 
       <div class="form-group">
@@ -145,6 +151,19 @@
   </footer>
 
   <script>
+    function togglePasswordVisibility(fieldId, button) {
+      const passwordField = document.getElementById(fieldId);
+      const icon = button.querySelector('.password-toggle-icon');
+
+      if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        icon.textContent = '🙈';
+      } else {
+        passwordField.type = 'password';
+        icon.textContent = '👁️';
+      }
+    }
+
     function showIconType(type) {
       const pokemonGrid = document.getElementById('pokemon-grid');
       const trainersGrid = document.getElementById('trainers-grid');

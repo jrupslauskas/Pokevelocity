@@ -27,10 +27,16 @@
 
       <div class="form-group">
         <%= label_tag :password, "Password", class: "form-label" %>
-        <%= password_field_tag :password, nil,
-            placeholder: "Enter your password",
-            required: true,
-            class: "form-input" %>
+        <div class="password-input-wrapper">
+          <%= password_field_tag :password, nil,
+              placeholder: "Enter your password",
+              required: true,
+              class: "form-input password-input",
+              id: "password-field" %>
+          <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('password-field', this)" aria-label="Toggle password visibility">
+            <span class="password-toggle-icon">👁️</span>
+          </button>
+        </div>
       </div>
 
       <div class="form-group-center">
@@ -50,3 +56,18 @@
     </p>
   </footer>
 </div>
+
+<script>
+  function togglePasswordVisibility(fieldId, button) {
+    const passwordField = document.getElementById(fieldId);
+    const icon = button.querySelector('.password-toggle-icon');
+
+    if (passwordField.type === 'password') {
+      passwordField.type = 'text';
+      icon.textContent = '🙈';
+    } else {
+      passwordField.type = 'password';
+      icon.textContent = '👁️';
+    }
+  }
+</script>
