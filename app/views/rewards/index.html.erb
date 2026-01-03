@@ -7,7 +7,7 @@
       <p>Claim rewards and buy or sell items.</p>
       <div style="text-align: center; margin-top: 16px;">
         <span style="background: #FFF4E6; color: #2C5F2D; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 18px;">
-          💰 Currency: <%= @trainer.currency %>
+          💰 Pokedollars: <%= @trainer.currency %>
         </span>
       </div>
     </header>
@@ -17,7 +17,7 @@
     <!-- Claim Reward Card -->
     <div class="card-dashboard" style="max-width: 800px; margin: 0 auto 32px;">
       <div class="card-dashboard-header">
-        <span class="card-dashboard-icon">✅</span>
+        <span class="card-dashboard-icon">🎁</span>
         <h2 class="card-dashboard-title">Claim Your Reward</h2>
       </div>
 
@@ -68,7 +68,7 @@
     <!-- Sales Counter Section -->
     <div class="card-dashboard" style="max-width: 800px; margin: 0 auto 32px;">
           <div class="card-dashboard-header">
-            <span class="card-dashboard-icon">✅</span>
+            <span class="card-dashboard-icon">💳</span>
             <h2 class="card-dashboard-title">Buy and Sell</h2>
           </div>
 
@@ -108,7 +108,7 @@
       <!-- Sell Tab Content -->
       <div id="sellContent" class="tab-content" style="display: none;">
         <p style="color: #6B5537; margin-bottom: 20px; text-align: center;">
-          Sell your items for currency!
+          Sell your items for Pokedollars!
         </p>
         <div style="display: grid; gap: 12px;">
           <% (Item.where(item_type: 'evolution_stone') + Item.where(item_type: 'pokeball')).each do |item| %>
