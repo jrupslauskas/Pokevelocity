@@ -7,6 +7,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
   test "should successfully buy evolution stone when trainer has enough currency" do
     trainer = trainers(:ash)
+    trainer.update!(currency: 1000)
     log_in_as(trainer)
 
     initial_currency = trainer.currency
@@ -24,6 +25,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
   test "should successfully buy thunder stone" do
     trainer = trainers(:ash)
+    trainer.update!(currency: 1000)
     log_in_as(trainer)
 
     initial_currency = trainer.currency
@@ -39,6 +41,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
   test "should successfully buy water stone" do
     trainer = trainers(:ash)
+    trainer.update!(currency: 1000)
     log_in_as(trainer)
 
     initial_currency = trainer.currency
@@ -54,6 +57,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
   test "should successfully buy moon stone" do
     trainer = trainers(:ash)
+    trainer.update!(currency: 1000)
     log_in_as(trainer)
 
     initial_currency = trainer.currency
@@ -69,6 +73,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
   test "should successfully buy leaf stone" do
     trainer = trainers(:ash)
+    trainer.update!(currency: 1000)
     log_in_as(trainer)
 
     initial_currency = trainer.currency
@@ -84,6 +89,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
   test "should successfully buy transfer cable" do
     trainer = trainers(:ash)
+    trainer.update!(currency: 1000)
     log_in_as(trainer)
 
     initial_currency = trainer.currency
@@ -99,6 +105,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
   test "should successfully buy evolution stone" do
     trainer = trainers(:ash)
+    trainer.update!(currency: 1000)
     log_in_as(trainer)
 
     initial_currency = trainer.currency
@@ -114,6 +121,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
   test "should successfully buy multiple items in sequence" do
     trainer = trainers(:ash)
+    trainer.update!(currency: 1000)
     log_in_as(trainer)
 
     initial_currency = trainer.currency
@@ -136,6 +144,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
   test "should successfully buy same item multiple times" do
     trainer = trainers(:ash)
+    trainer.update!(currency: 1000)
     log_in_as(trainer)
 
     initial_stones = trainer.item_quantity(:fire_stone)
@@ -534,6 +543,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
   test "should be able to buy and sell same item" do
     trainer = trainers(:ash)
+    trainer.update!(currency: 1000)
     log_in_as(trainer)
 
     initial_currency = trainer.currency
@@ -659,6 +669,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
   test "should display different flash messages for buy and sell" do
     trainer = trainers(:ash)
+    trainer.update!(currency: 1000)
     log_in_as(trainer)
 
     # Buy

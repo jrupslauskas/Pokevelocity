@@ -577,7 +577,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
   test "should display claim reward card icon" do
     log_in_as(trainers(:ash))
     get rewards_path
-    assert_match "✅", response.body
+    assert_match "🎁", response.body
   end
 
   test "should display instructions for claiming rewards" do
