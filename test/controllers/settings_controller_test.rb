@@ -52,7 +52,18 @@ class SettingsControllerTest < ActionDispatch::IntegrationTest
 
     get edit_settings_path
     assert_response :success
-    assert_select "input[name='icon_trainer_sprite']", minimum: 1
+    # Should have 66 trainer sprites (51 regular + 15 gym leaders)
+    assert_select "input[name='icon_trainer_sprite']", count: 66
+  end
+
+  test "should display gym leader sprites in settings" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    get edit_settings_path
+    assert_response :success
+    # Check for a gym leader sprite option
+    assert_select "input[name='icon_trainer_sprite'][value='gymLeaders/brock']"
   end
 
   # ================================================================================
@@ -113,12 +124,28 @@ class SettingsControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
 
-    new_sprite = "cooltrainer-m"
+    new_sprite = "cooltrainer-male"
 
     patch update_settings_path, params: { icon_trainer_sprite: new_sprite }
 
     trainer.reload
     assert_equal new_sprite, trainer.icon_trainer_sprite
+    assert_nil trainer.icon_pokemon_id
+  end
+
+  test "should successfully update to gym leader sprite" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    gym_leader_sprite = "gymLeaders/brock"
+
+    patch update_settings_path, params: { icon_trainer_sprite: gym_leader_sprite }
+
+    assert_redirected_to edit_settings_path
+    assert_equal "Settings updated successfully!", flash[:notice]
+
+    trainer.reload
+    assert_equal gym_leader_sprite, trainer.icon_trainer_sprite
     assert_nil trainer.icon_pokemon_id
   end
 

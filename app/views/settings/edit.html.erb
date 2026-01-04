@@ -88,12 +88,8 @@
 
         <!-- Trainer Sprites Grid -->
         <div id="trainers-grid" class="icon-pokemon-grid" style="display: <%= @trainer.icon_trainer_sprite ? 'grid' : 'none' %>;">
-          <% ['aroma-lady', 'beauty', 'biker', 'bird-keeper', 'black-belt', 'bug-catcher',
-              'burglar', 'camper', 'channeler', 'cooltrainer-female', 'cooltrainer-male', 'cue-ball', 'engineer', 'fisherman',
-              'gamer', 'gentleman', 'hiker', 'juggler', 'lady', 'lass', 'painter',
-              'picnicker', 'pokemaniac', 'pokemon-breeder', 'pokemon-ranger-female', 'pokemon-ranger-male',
-              'psychic-female', 'psychic-male', 'rocker', 'ruin-maniac',
-              'sailor', 'scientist', 'super-nerd', 'swimmer-female', 'swimmer-male', 'tamer', 'youngster', 'young-couple'].each do |sprite_name| %>
+          <% @trainer_sprites.each do |sprite_name| %>
+            <% display_name = sprite_name.split('/').last.titleize %>
             <label class="icon-pokemon-option">
               <%= radio_button_tag :icon_trainer_sprite, sprite_name,
                   @trainer.icon_trainer_sprite == sprite_name,
@@ -101,10 +97,10 @@
                   data: { type: "trainer" } %>
               <div class="icon-pokemon-card">
                 <%= image_tag "trainerSprites/#{sprite_name}.png",
-                    alt: sprite_name.split('-').map(&:capitalize).join(' '),
+                    alt: display_name,
                     class: "icon-pokemon-image",
                     style: "image-rendering: pixelated;" %>
-                <span class="icon-pokemon-name"><%= sprite_name.split('-').map(&:capitalize).join(' ') %></span>
+                <span class="icon-pokemon-name"><%= display_name %></span>
               </div>
             </label>
           <% end %>
