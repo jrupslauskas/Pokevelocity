@@ -16,10 +16,13 @@ class GateUnlock < ApplicationRecord
 
   def award_gate_rewards
     # Award fishing rods based on gate number
+    # Gate 2 (Misty): Old Rod
+    # Gate 4 (Erika): Good Rod
+    # Gate 6 (Sabrina): Super Rod
     item_key = case gate.gate_number
-    when 3 then :old_rod
-    when 5 then :good_rod
-    when 7 then :super_rod
+    when 2 then :old_rod
+    when 4 then :good_rod
+    when 6 then :super_rod
     end
 
     return unless item_key

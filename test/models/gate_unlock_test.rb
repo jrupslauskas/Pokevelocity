@@ -97,13 +97,13 @@ class GateUnlockTest < ActiveSupport::TestCase
   end
 
   # Fishing Rod Reward Tests
-  test "should award Old Rod when unlocking gate 3" do
-    gate_3 = Gate.create!(gate_number: 3, required_difficulty_score: 10)
+  test "should award Old Rod when unlocking gate 2" do
+    gate_2 = Gate.create!(gate_number: 2, required_difficulty_score: 17)
     trainer = trainers(:ash)
 
     assert_equal 0, trainer.item_quantity(:old_rod)
 
-    GateUnlock.create!(trainer: trainer, gate: gate_3)
+    GateUnlock.create!(trainer: trainer, gate: gate_2)
 
     # Reload both the trainer and the association
     trainer.reload
@@ -112,13 +112,13 @@ class GateUnlockTest < ActiveSupport::TestCase
     assert_equal 1, trainer.item_quantity(:old_rod)
   end
 
-  test "should award Good Rod when unlocking gate 5" do
-    gate_5 = Gate.create!(gate_number: 5, required_difficulty_score: 20)
+  test "should award Good Rod when unlocking gate 4" do
+    gate_4 = Gate.create!(gate_number: 4, required_difficulty_score: 32)
     trainer = trainers(:ash)
 
     assert_equal 0, trainer.item_quantity(:good_rod)
 
-    GateUnlock.create!(trainer: trainer, gate: gate_5)
+    GateUnlock.create!(trainer: trainer, gate: gate_4)
 
     # Reload both the trainer and the association
     trainer.reload
@@ -127,13 +127,13 @@ class GateUnlockTest < ActiveSupport::TestCase
     assert_equal 1, trainer.item_quantity(:good_rod)
   end
 
-  test "should award Super Rod when unlocking gate 7" do
-    gate_7 = Gate.create!(gate_number: 7, required_difficulty_score: 30)
+  test "should award Super Rod when unlocking gate 6" do
+    gate_6 = Gate.create!(gate_number: 6, required_difficulty_score: 48)
     trainer = trainers(:ash)
 
     assert_equal 0, trainer.item_quantity(:super_rod)
 
-    GateUnlock.create!(trainer: trainer, gate: gate_7)
+    GateUnlock.create!(trainer: trainer, gate: gate_6)
 
     # Reload both the trainer and the association
     trainer.reload

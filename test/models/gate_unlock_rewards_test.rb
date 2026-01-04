@@ -4,16 +4,16 @@ class GateUnlockRewardsTest < ActiveSupport::TestCase
   def setup
     @trainer = trainers(:ash)
 
-    # Find or create Gate 6
-    @gate_6 = Gate.find_by(gate_number: 6) || Gate.create!(
-      gate_number: 6,
-      required_difficulty_score: 50
+    # Find or create Gate 5 (Koga - awards Surf)
+    @gate_5 = Gate.find_by(gate_number: 5) || Gate.create!(
+      gate_number: 5,
+      required_difficulty_score: 40
     )
 
     # Find or create Gate 1 for comparison tests
     @gate_1 = Gate.find_by(gate_number: 1) || Gate.create!(
       gate_number: 1,
-      required_difficulty_score: 5
+      required_difficulty_score: 8
     )
 
     # Create HM03 Surf item if it doesn't exist
@@ -43,26 +43,26 @@ class GateUnlockRewardsTest < ActiveSupport::TestCase
     end
   end
 
-  test "trainer should receive HM03 Surf when unlocking Gate 6" do
+  test "trainer should receive HM03 Surf when unlocking Gate 5" do
     # Ensure trainer doesn't have HM Surf yet
     assert_not @trainer.has_item?(:hm_surf)
 
-    # Reach Gate 6's difficulty requirement
-    reach_difficulty_score(@gate_6.required_difficulty_score)
+    # Reach Gate 5's difficulty requirement
+    reach_difficulty_score(@gate_5.required_difficulty_score)
 
     # Unlock the gate
-    @trainer.unlock_gate!(@gate_6)
+    @trainer.unlock_gate!(@gate_5)
 
     # Trainer should now have HM Surf
     assert @trainer.has_item?(:hm_surf)
   end
 
-  test "trainer should receive exactly one HM03 Surf when unlocking Gate 6" do
-    # Reach Gate 6's difficulty requirement
-    reach_difficulty_score(@gate_6.required_difficulty_score)
+  test "trainer should receive exactly one HM03 Surf when unlocking Gate 5" do
+    # Reach Gate 5's difficulty requirement
+    reach_difficulty_score(@gate_5.required_difficulty_score)
 
     # Unlock the gate
-    @trainer.unlock_gate!(@gate_6)
+    @trainer.unlock_gate!(@gate_5)
 
     # Should have exactly 1 HM Surf
     assert_equal 1, @trainer.item_quantity(:hm_surf)
@@ -73,11 +73,11 @@ class GateUnlockRewardsTest < ActiveSupport::TestCase
     @trainer.add_item(:hm_surf, 1)
     initial_quantity = @trainer.item_quantity(:hm_surf)
 
-    # Reach Gate 6's difficulty requirement
-    reach_difficulty_score(@gate_6.required_difficulty_score)
+    # Reach Gate 5's difficulty requirement
+    reach_difficulty_score(@gate_5.required_difficulty_score)
 
     # Unlock the gate
-    @trainer.unlock_gate!(@gate_6)
+    @trainer.unlock_gate!(@gate_5)
 
     # Should still have same quantity
     assert_equal initial_quantity, @trainer.item_quantity(:hm_surf)
@@ -94,18 +94,18 @@ class GateUnlockRewardsTest < ActiveSupport::TestCase
     assert_not @trainer.has_item?(:hm_surf)
   end
 
-  test "auto_unlock_gates! should award HM03 Surf when Gate 6 is auto-unlocked" do
+  test "auto_unlock_gates! should award HM03 Surf when Gate 5 is auto-unlocked" do
     # Ensure trainer doesn't have HM Surf yet
     assert_not @trainer.has_item?(:hm_surf)
 
-    # Reach Gate 6's difficulty requirement
-    reach_difficulty_score(@gate_6.required_difficulty_score)
+    # Reach Gate 5's difficulty requirement
+    reach_difficulty_score(@gate_5.required_difficulty_score)
 
     # Auto-unlock gates
     newly_unlocked = @trainer.auto_unlock_gates!
 
-    # Gate 6 should be in the newly unlocked list
-    assert_includes newly_unlocked, @gate_6
+    # Gate 5 should be in the newly unlocked list
+    assert_includes newly_unlocked, @gate_5
 
     # Trainer should now have HM Surf
     assert @trainer.has_item?(:hm_surf)

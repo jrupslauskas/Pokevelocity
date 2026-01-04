@@ -95,8 +95,8 @@ class Trainer < ApplicationRecord
 
     gate_unlock = gate_unlocks.create!(gate: gate, unlocked_at: Time.current)
 
-    # Award HM03 Surf for defeating Koga (Gate 6)
-    if gate.gate_number == 6 && !has_item?(:hm_surf)
+    # Award HM03 Surf for defeating Koga (Gate 5)
+    if gate.gate_number == 5 && !has_item?(:hm_surf)
       add_item(:hm_surf, 1)
     end
 
