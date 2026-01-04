@@ -2720,6 +2720,13 @@ body > div:not(.app-layout) {
   max-height: 100%;
 }
 
+.pokedex-number {
+  font-size: 14px;
+  font-weight: 600;
+  color: #888;
+  margin: 8px 0 4px 0;
+}
+
 .starter-name {
   font-size: 24px;
   color: #2C5F2D;

@@ -3,7 +3,10 @@
 
   <main class="main-content">
     <div class="onboarding-container">
-      <h1>Welcome to Pokevelocity, <%= @trainer.username %>!</h1>
+      <header class="page-header-authenticated">
+        <h1>Welcome to Pokévelocity, <%= @trainer.username %>!</h1>
+        <p>Your journey to become a Pokémon Master starts here!</p>
+      </header>
 
       <div class="professor-oak-section">
         <%= image_tag "trainerSprites/gymLeaders/oak.png", class: "professor-oak" %>

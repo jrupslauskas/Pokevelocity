@@ -287,7 +287,7 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
     # Step 1: Visit welcome page
     get onboarding_welcome_path
     assert_response :success
-    assert_match /Welcome to Pokevelocity/i, response.body
+    assert_match /Welcome to Pok[ée]velocity/i, response.body
 
     # Step 2: Visit choose starter page
     get onboarding_choose_starter_path
