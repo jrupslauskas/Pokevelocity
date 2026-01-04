@@ -665,6 +665,21 @@ body > div:not(.app-layout) {
   display: block;
 }
 
+.settings-checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #2C5F2D;
+}
+
+.settings-checkbox-label {
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  margin: 0;
+}
+
 .sidebar-logout {
   background: rgba(255, 255, 255, 0.1);
   color: white;
@@ -1656,15 +1671,15 @@ body > div:not(.app-layout) {
 #animation-overlay {
   width: 100vw;
   height: 100vh;
-  margin 0;
-  padding 0;
+  margin: 0;
+  padding: 0;
   position: fixed;
   top: 0;
   left: 0;
   pointer-events: none;
   mix-blend-mode: normal;
   background: rgba(255, 0, 0, 0.0);
-  z-index: 10;
+  z-index: 10000;
 }
 
 .hidden {

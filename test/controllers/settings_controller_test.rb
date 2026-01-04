@@ -238,4 +238,104 @@ class SettingsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "#gameplay-tab.settings-tab-content.active", count: 0
   end
+
+  # ================================================================================
+  # ENCOUNTER ANIMATION PREFERENCE TESTS
+  # ================================================================================
+
+  test "new trainers should have encounter animation disabled by default" do
+    trainer = Trainer.create!(
+      username: "newtrainer",
+      password: "password",
+      icon_pokemon_id: pokemons(:pikachu).id
+    )
+    assert_equal false, trainer.show_encounter_animation
+  end
+
+  test "should display encounter animation checkbox in gameplay tab" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    get edit_settings_path
+    assert_response :success
+    assert_select "input#show_encounter_animation[type='checkbox']"
+    assert_select "label[for='show_encounter_animation']", text: "Display Encounter Animation"
+  end
+
+  test "encounter animation checkbox should be unchecked when preference is false" do
+    trainer = trainers(:ash)
+    trainer.update!(show_encounter_animation: false)
+    log_in_as(trainer)
+
+    get edit_settings_path
+    assert_response :success
+    assert_select "input#show_encounter_animation[checked]", count: 0
+  end
+
+  test "encounter animation checkbox should be checked when preference is true" do
+    trainer = trainers(:ash)
+    trainer.update!(show_encounter_animation: true)
+    log_in_as(trainer)
+
+    get edit_settings_path
+    assert_response :success
+    assert_select "input#show_encounter_animation[checked='checked']"
+  end
+
+  test "should enable encounter animation when checkbox is checked" do
+    trainer = trainers(:ash)
+    trainer.update!(show_encounter_animation: false)
+    log_in_as(trainer)
+
+    patch update_settings_path, params: { show_encounter_animation: "1" }
+
+    assert_redirected_to edit_settings_path
+    assert_equal "Settings updated successfully!", flash[:notice]
+
+    trainer.reload
+    assert_equal true, trainer.show_encounter_animation
+  end
+
+  test "should disable encounter animation when checkbox is unchecked" do
+    trainer = trainers(:ash)
+    trainer.update!(show_encounter_animation: true)
+    log_in_as(trainer)
+
+    # When checkbox is unchecked, the parameter is not sent at all
+    # We need to explicitly set it to "0" or handle the absence
+    patch update_settings_path, params: { show_encounter_animation: "0" }
+
+    trainer.reload
+    assert_equal false, trainer.show_encounter_animation
+  end
+
+  test "should not modify encounter animation preference when updating other settings" do
+    trainer = trainers(:ash)
+    trainer.update!(show_encounter_animation: true)
+    log_in_as(trainer)
+
+    new_pokemon = pokemons(:bulbasaur)
+    patch update_settings_path, params: { icon_pokemon_id: new_pokemon.id }
+
+    trainer.reload
+    assert_equal new_pokemon.id, trainer.icon_pokemon_id
+    # Animation preference should remain unchanged
+    assert_equal true, trainer.show_encounter_animation
+  end
+
+  test "should update both icon and animation preference in same request" do
+    trainer = trainers(:ash)
+    trainer.update!(show_encounter_animation: false)
+    log_in_as(trainer)
+
+    new_pokemon = pokemons(:bulbasaur)
+    patch update_settings_path, params: {
+      icon_pokemon_id: new_pokemon.id,
+      show_encounter_animation: "1"
+    }
+
+    trainer.reload
+    assert_equal new_pokemon.id, trainer.icon_pokemon_id
+    assert_equal true, trainer.show_encounter_animation
+  end
 end

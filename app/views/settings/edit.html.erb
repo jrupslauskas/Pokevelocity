@@ -120,19 +120,30 @@
 
     <!-- Gameplay Tab Content -->
     <div id="gameplay-tab" class="settings-tab-content">
-      <div style="padding: 24px 0;">
-        <p style="color: #666; font-size: 15px; margin-bottom: 24px;">
-          Customize your gameplay experience and preferences.
-        </p>
-
-        <div style="background: #F5F5F5; padding: 32px; border-radius: 8px; text-align: center;">
-          <span style="font-size: 48px; display: block; margin-bottom: 16px;">🎮</span>
-          <h3 style="color: #2C5F2D; margin-bottom: 8px;">Gameplay Settings Coming Soon</h3>
-          <p style="color: #666; font-size: 14px;">
-            We're working on adding gameplay customization options. Check back soon!
+      <%= form_with url: update_settings_path, method: :patch, local: true do |f| %>
+        <div style="padding: 24px 0;">
+          <p style="color: #666; font-size: 15px; margin-bottom: 24px;">
+            Customize your gameplay experience and preferences.
           </p>
+
+          <div class="form-group">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 16px; background: #F9F9F9; border-radius: 8px;">
+              <%= hidden_field_tag :show_encounter_animation, "0" %>
+              <%= check_box_tag :show_encounter_animation, "1", @trainer.show_encounter_animation,
+                  class: "settings-checkbox",
+                  id: "show_encounter_animation" %>
+              <%= label_tag :show_encounter_animation, "Display Encounter Animation", class: "settings-checkbox-label" %>
+            </div>
+            <p style="color: #888; font-size: 13px; margin-top: 8px; margin-left: 4px;">
+              Show the classic Pokemon stripe animation when starting an adventure
+            </p>
+          </div>
+
+          <div style="margin-top: 24px;">
+            <%= submit_tag "Save Changes", class: "btn-primary" %>
+          </div>
         </div>
-      </div>
+      <% end %>
     </div>
     <!-- End Gameplay Tab Content -->
   </div>

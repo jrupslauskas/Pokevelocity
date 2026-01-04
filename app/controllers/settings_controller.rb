@@ -18,6 +18,12 @@ class SettingsController < ApplicationController
       @trainer.icon_pokemon_id = nil
     end
 
+    # Update gameplay preferences
+    # Note: The hidden field ensures this parameter is always sent when submitting from Gameplay tab
+    if params.key?(:show_encounter_animation)
+      @trainer.show_encounter_animation = (params[:show_encounter_animation] == "1")
+    end
+
     if @trainer.save
       redirect_to edit_settings_path, notice: "Settings updated successfully!"
     else

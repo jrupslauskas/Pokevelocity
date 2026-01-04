@@ -31,6 +31,11 @@
       window.assetPaths = {
         horizontalStripes: "<%= asset_path 'horizontal-stripes.png' %>",
       };
+      <% if defined?(current_trainer) && current_trainer %>
+        window.showEncounterAnimation = <%= current_trainer.show_encounter_animation %>;
+      <% else %>
+        window.showEncounterAnimation = false;
+      <% end %>
     </script>
   </body>
 </html>

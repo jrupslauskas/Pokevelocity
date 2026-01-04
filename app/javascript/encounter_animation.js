@@ -123,21 +123,34 @@ document.addEventListener('turbo:load', function () {
     }
   }
 
-  // Trigger animation when clicking "Catch" button on Pokemon selection
-  document.querySelectorAll('a.btn-catch').forEach(function (link) {
-    link.addEventListener('click', function(event) {
-      // Prevent default navigation
-      event.preventDefault();
+  // Trigger animation when clicking "Adventure" button on route selection
+  document.querySelectorAll('form.adventure-form').forEach(function (form) {
+    let isAnimating = false;
 
-      const targetUrl = link.href;
+    form.addEventListener('submit', function(event) {
+      // If already animating or submitted, allow the form to submit normally
+      if (isAnimating) {
+        return;
+      }
+
+      // Check if user has enabled encounter animation
+      if (!window.showEncounterAnimation) {
+        // Animation disabled, allow form to submit normally
+        return;
+      }
+
+      // Prevent default form submission
+      event.preventDefault();
+      isAnimating = true;
 
       document.getElementById("animation-overlay").classList.remove('hidden');
+      poke.animationStartTime = undefined; // Reset animation start time
       requestAnimationFrame(startAnimation);
 
       setTimeout(function () {
         document.getElementById("animation-overlay").classList.add('hidden');
-        // Navigate to the Pokemon encounter page after animation
-        window.location.href = targetUrl;
+        // Submit the form after animation completes (this will bypass the event listener)
+        form.submit();
       }, ANIMATION_LENGTH + BLACKOUT_LENGTH);
     });
   });
