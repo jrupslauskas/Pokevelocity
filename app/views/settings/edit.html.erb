@@ -9,11 +9,23 @@
   <div class="card-dashboard" style="max-width: 800px; margin: 0 auto;">
     <div class="card-dashboard-header">
       <span class="card-dashboard-icon">⚙️</span>
-      <h2 class="card-dashboard-title">Profile Settings</h2>
+      <h2 class="card-dashboard-title">Settings</h2>
     </div>
 
-    <%= form_with url: update_settings_path, method: :patch, local: true do |f| %>
-      <div class="form-group">
+    <!-- Settings Tabs -->
+    <div class="settings-tabs">
+      <button type="button" class="settings-tab active" onclick="switchSettingsTab('icons', this)">
+        Icons
+      </button>
+      <button type="button" class="settings-tab" onclick="switchSettingsTab('gameplay', this)">
+        Gameplay
+      </button>
+    </div>
+
+    <!-- Icons Tab Content -->
+    <div id="icons-tab" class="settings-tab-content active">
+      <%= form_with url: update_settings_path, method: :patch, local: true do |f| %>
+        <div class="form-group">
         <div style="display: flex; align-items: center;">
           <%= label_tag :icon_selection, class: "form-label", style: "margin-bottom: 0;" do %>
             Change Your Icon
@@ -99,10 +111,30 @@
         </div>
       </div>
 
-      <div style="margin-top: 24px;">
-        <%= submit_tag "Save Changes", class: "btn-primary" %>
+        <div style="margin-top: 24px;">
+          <%= submit_tag "Save Changes", class: "btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+    <!-- End Icons Tab Content -->
+
+    <!-- Gameplay Tab Content -->
+    <div id="gameplay-tab" class="settings-tab-content">
+      <div style="padding: 24px 0;">
+        <p style="color: #666; font-size: 15px; margin-bottom: 24px;">
+          Customize your gameplay experience and preferences.
+        </p>
+
+        <div style="background: #F5F5F5; padding: 32px; border-radius: 8px; text-align: center;">
+          <span style="font-size: 48px; display: block; margin-bottom: 16px;">🎮</span>
+          <h3 style="color: #2C5F2D; margin-bottom: 8px;">Gameplay Settings Coming Soon</h3>
+          <p style="color: #666; font-size: 14px;">
+            We're working on adding gameplay customization options. Check back soon!
+          </p>
+        </div>
       </div>
-    <% end %>
+    </div>
+    <!-- End Gameplay Tab Content -->
   </div>
 </main>
 
@@ -136,5 +168,23 @@
         radio.checked = false;
       });
     }
+  }
+
+  function switchSettingsTab(tabName, clickedTab) {
+    // Hide all tab contents
+    document.querySelectorAll('.settings-tab-content').forEach(content => {
+      content.classList.remove('active');
+    });
+
+    // Remove active class from all tabs
+    document.querySelectorAll('.settings-tab').forEach(tab => {
+      tab.classList.remove('active');
+    });
+
+    // Show the selected tab content
+    document.getElementById(tabName + '-tab').classList.add('active');
+
+    // Mark the clicked tab as active
+    clickedTab.classList.add('active');
   }
 </script>

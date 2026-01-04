@@ -621,6 +621,50 @@ body > div:not(.app-layout) {
   background: rgba(255, 255, 255, 0.1);
 }
 
+/* Settings Tabs */
+.settings-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 0 24px 0 24px;
+  border-bottom: 2px solid #E0E0E0;
+  margin-bottom: 24px;
+}
+
+.settings-tab {
+  background: transparent;
+  border: none;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.settings-tab:hover {
+  color: #2C5F2D;
+  background: rgba(44, 95, 45, 0.05);
+  border-radius: 8px 8px 0 0;
+}
+
+.settings-tab.active {
+  color: #2C5F2D;
+  border-bottom-color: #2C5F2D;
+  font-weight: 600;
+}
+
+.settings-tab-content {
+  display: none;
+  padding: 0 24px 24px 24px;
+}
+
+.settings-tab-content.active {
+  display: block;
+}
+
 .sidebar-logout {
   background: rgba(255, 255, 255, 0.1);
   color: white;

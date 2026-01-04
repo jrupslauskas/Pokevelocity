@@ -180,4 +180,62 @@ class SettingsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "a.sidebar-settings-link[href=?]", edit_settings_path
   end
+
+  # ================================================================================
+  # GAMEPLAY TAB TESTS
+  # ================================================================================
+
+  test "should display icons tab button" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    get edit_settings_path
+    assert_response :success
+    assert_select "button.settings-tab", text: "Icons"
+  end
+
+  test "should display gameplay tab button" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    get edit_settings_path
+    assert_response :success
+    assert_select "button.settings-tab", text: "Gameplay"
+  end
+
+  test "should display icons tab content" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    get edit_settings_path
+    assert_response :success
+    assert_select "#icons-tab.settings-tab-content"
+  end
+
+  test "should display gameplay tab content" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    get edit_settings_path
+    assert_response :success
+    assert_select "#gameplay-tab.settings-tab-content"
+  end
+
+  test "icons tab should be active by default" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    get edit_settings_path
+    assert_response :success
+    assert_select "#icons-tab.settings-tab-content.active"
+  end
+
+  test "gameplay tab should not be active by default" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    get edit_settings_path
+    assert_response :success
+    assert_select "#gameplay-tab.settings-tab-content.active", count: 0
+  end
 end
