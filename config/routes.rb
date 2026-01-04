@@ -17,6 +17,10 @@ Rails.application.routes.draw do
   post "/login", to: "sessions#create"
   delete "/logout", to: "sessions#destroy", as: :logout
 
+  # Settings
+  get "/settings", to: "settings#edit", as: :edit_settings
+  patch "/settings", to: "settings#update", as: :update_settings
+
   # Trainer registration
   get "/trainers/new", to: "trainers#new", as: :new_trainer
   post "/trainers", to: "trainers#create", as: :trainers

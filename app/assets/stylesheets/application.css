@@ -604,6 +604,23 @@ body > div:not(.app-layout) {
   flex: 1;
 }
 
+.sidebar-settings-link {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.sidebar-settings-link:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+}
+
 .sidebar-logout {
   background: rgba(255, 255, 255, 0.1);
   color: white;

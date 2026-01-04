@@ -63,7 +63,12 @@
           <% end %>
         </div>
       <% end %>
-      <span class="sidebar-username"><%= current_trainer.username %></span>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span class="sidebar-username"><%= current_trainer.username %></span>
+        <%= link_to edit_settings_path, class: "sidebar-settings-link", title: "Settings" do %>
+          ⚙️
+        <% end %>
+      </div>
     </div>
     <%= button_to "Logout", logout_path, method: :delete, class: "sidebar-logout" %>
   </div>
