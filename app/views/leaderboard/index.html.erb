@@ -35,6 +35,10 @@
             <%= image_tag image_path, alt: slot[:title], class: "rank-icon" %>
           </div>
 
+          <div class="leaderboard-tier-name">
+            <%= slot[:tier_name] %>
+          </div>
+
           <% if trainers && trainers.length > 1 %>
             <button class="carousel-arrow carousel-arrow-left" onclick="rotateCarousel(<%= slot[:position] %>, -1)">‹</button>
           <% end %>

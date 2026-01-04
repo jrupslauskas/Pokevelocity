@@ -48,4 +48,4 @@ If you prefer to run the app locally without Docker:
 
 **Note:** This is an unofficial fan project and isn’t associated with Nintendo, The Pokémon Company, or any other company in any way. 
 It’s simply my way of celebrating the nostalgia I have for the original Pokemon games and sharing something fun with the developer community. 
-This project is strictly and entirely non-commercial — I haven’t, can’t, and won’t accept any form of payment.
+This project is strictly and entirely non-commercial — I haven’t, can’t, and won’t accept any form of payment from the creation of this project.

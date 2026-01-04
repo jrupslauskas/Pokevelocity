@@ -57,6 +57,45 @@ class LeaderboardControllerTest < ActionDispatch::IntegrationTest
   # LEGENDARY TRAINER NAMES TESTS
   # ================================================================================
 
+  test "should display tier names for all slots" do
+    log_in_as(trainers(:ash))
+    get leaderboard_path
+
+    assert_response :success
+    # Check for a few tier names
+    assert_select ".leaderboard-tier-name", text: "1 - Red Tier"
+    assert_select ".leaderboard-tier-name", text: "2 - Blue Tier"
+    assert_select ".leaderboard-tier-name", text: "3 - Lance Tier"
+  end
+
+  test "should display tier name for top slot" do
+    log_in_as(trainers(:gary))
+    get leaderboard_path
+
+    assert_response :success
+    # First slot should be Red Tier
+    assert_match "1 - Red Tier", response.body
+  end
+
+  test "should display tier names for all 14 slots" do
+    log_in_as(trainers(:ash))
+    get leaderboard_path
+
+    assert_response :success
+    # Should have 14 tier name elements
+    assert_select ".leaderboard-tier-name", count: 14
+  end
+
+  test "should display tier names even for empty slots" do
+    log_in_as(trainers(:ash))
+    get leaderboard_path
+
+    assert_response :success
+    # Check that tier names appear with empty slots
+    # Bottom tier should be present
+    assert_select ".leaderboard-tier-name", text: "14 - Brock Tier"
+  end
+
   test "should show unclaimed slots" do
     log_in_as(trainers(:ash))
     get leaderboard_path

@@ -26,6 +26,34 @@ class LeaderboardServiceTest < ActiveSupport::TestCase
     end
   end
 
+  test "should include tier_name in slot data" do
+    service = LeaderboardService.new(trainers(:ash).id)
+    slots = service.slots
+
+    expected_tier_names = [
+      "1 - Red Tier", "2 - Blue Tier", "3 - Lance Tier", "4 - Agatha Tier",
+      "5 - Bruno Tier", "6 - Lorelei Tier", "7 - Giovanni Tier", "8 - Blaine Tier",
+      "9 - Sabrina Tier", "10 - Koga Tier", "11 - Erika Tier", "12 - Lt Surge Tier",
+      "13 - Misty Tier", "14 - Brock Tier"
+    ]
+
+    slots.each_with_index do |slot, index|
+      assert_equal expected_tier_names[index], slot[:tier_name]
+    end
+  end
+
+  test "should include tier_name for empty slots" do
+    service = LeaderboardService.new(trainers(:ash).id)
+    slots = service.slots
+
+    empty_slot = slots.find { |s| s[:trainer_data].nil? }
+
+    if empty_slot
+      assert_not_nil empty_slot[:tier_name]
+      assert_match /\d+ - \w+ Tier/, empty_slot[:tier_name]
+    end
+  end
+
   # ================================================================================
   # TRAINER RANKING TESTS
   # ================================================================================

@@ -62,6 +62,7 @@ class LeaderboardService
       slots << {
         position: current_slot,
         title: LEGENDARY_TRAINERS[current_slot - 1],
+        tier_name: "#{current_slot} - #{LEGENDARY_TRAINERS[current_slot - 1]} Tier",
         trainer_data: tied_trainers # Array of tied trainers
       }
 
@@ -74,6 +75,7 @@ class LeaderboardService
       slots << {
         position: current_slot,
         title: LEGENDARY_TRAINERS[current_slot - 1],
+        tier_name: "#{current_slot} - #{LEGENDARY_TRAINERS[current_slot - 1]} Tier",
         trainer_data: nil
       }
       current_slot += 1

@@ -1458,6 +1458,16 @@ body > div:not(.app-layout) {
   object-fit: contain;
 }
 
+.leaderboard-tier-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2C5F2D;
+  text-align: center;
+  padding: 0 12px;
+  white-space: nowrap;
+  min-width: 120px;
+}
+
 .rank-number {
   font-size: 24px;
   font-weight: 700;
