@@ -342,6 +342,79 @@ class TrainerPlazaControllerTest < ActionDispatch::IntegrationTest
   end
 
   # ================================================================================
+  # SHOW PAGE - TRAINER COUNT DISPLAY TESTS
+  # ================================================================================
+
+  test "should display trainer count for captured pokemon on show page" do
+    log_in_as(trainers(:ash))
+    trainer = trainers(:gary)
+    get trainer_path(trainer)
+    # Gary's pokemon should show trainer count
+    assert_match /Caught by \d+\/\d+ trainer/, response.body
+  end
+
+  test "should display correct trainer count when viewing another trainer's pokedex" do
+    log_in_as(trainers(:ash))
+    trainer = trainers(:gary)
+    get trainer_path(trainer)
+    total_trainers = Trainer.count
+    # Should show proper count format
+    assert_match /\d+\/#{total_trainers} trainer/, response.body
+  end
+
+  test "should display trainer count for each pokemon on show page" do
+    trainer1 = trainers(:gary)
+    trainer2 = trainers(:ash)
+
+    # Both trainers catch Pikachu
+    Capture.create!(trainer: trainer1, pokemon: pokemons(:pikachu), ball_type: "pokeball")
+    Capture.create!(trainer: trainer2, pokemon: pokemons(:pikachu), ball_type: "pokeball")
+
+    log_in_as(trainers(:ash))
+    get trainer_path(trainer1)
+
+    total_trainers = Trainer.count
+    # Pikachu should show 2 trainers caught it
+    assert_match "Caught by 2/#{total_trainers} trainers", response.body
+  end
+
+  test "should properly pluralize trainer word on show page" do
+    log_in_as(trainers(:ash))
+    trainer = trainers(:gary)
+    get trainer_path(trainer)
+    # Gary caught Charmander, only 1 trainer (himself)
+    total_trainers = Trainer.count
+    assert_match "Caught by 1/#{total_trainers} trainer", response.body
+  end
+
+  test "should show different trainer counts for different pokemon on show page" do
+    trainer1 = trainers(:gary)
+    trainer2 = trainers(:ash)
+
+    # Gary caught both Charmander and Squirtle (already in fixtures)
+    # Ash catches only Charmander
+    Capture.create!(trainer: trainer2, pokemon: pokemons(:charmander), ball_type: "pokeball")
+
+    log_in_as(trainers(:ash))
+    get trainer_path(trainer1)
+
+    total_trainers = Trainer.count
+    # Charmander: 2 trainers (Gary and Ash)
+    assert_match "Caught by 2/#{total_trainers} trainers", response.body
+    # Squirtle: 1 trainer (Gary only)
+    assert_match "Caught by 1/#{total_trainers} trainer", response.body
+  end
+
+  test "should include all trainers in count on show page" do
+    log_in_as(trainers(:ash))
+    trainer = trainers(:gary)
+    get trainer_path(trainer)
+    total_trainers = Trainer.count
+    # Total should match actual trainer count
+    assert_match /\/#{total_trainers} trainer/, response.body
+  end
+
+  # ================================================================================
   # SHOW PAGE - EMPTY STATE TESTS
   # ================================================================================
 

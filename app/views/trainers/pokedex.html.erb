@@ -31,6 +31,8 @@
                 <% else %>
                   <span class="pokemon-capture-info">Caught with a <%= capture.ball_type.humanize %> on <%= capture.captured_at.strftime("%m/%d/%y") %></span>
                 <% end %>
+                <% trainer_count = @pokemon_trainer_counts[pokemon.id] || 0 %>
+                <span class="pokemon-trainer-count">Caught by <%= trainer_count %>/<%= @total_trainers %> <%= 'trainer'.pluralize(trainer_count) %></span>
               </div>
             </div>
           <% end %>

@@ -1935,6 +1935,95 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
   end
 
   # ================================================================================
+  # POKEDEX - TRAINER COUNT TESTS
+  # ================================================================================
+
+  test "should display trainer count for captured pokemon" do
+    trainer = trainers(:gary)
+    log_in_as(trainer)
+    get pokedex_path
+    # Gary caught Charmander
+    # Should show "Caught by X/Y trainers"
+    assert_match /Caught by \d+\/\d+ trainer/, response.body
+  end
+
+  test "should display correct trainer count when only one trainer caught pokemon" do
+    trainer = trainers(:gary)
+    log_in_as(trainer)
+    get pokedex_path
+    total_trainers = Trainer.count
+    # Gary caught Charmander, and he's the only one
+    assert_match "Caught by 1/#{total_trainers} trainer", response.body
+  end
+
+  test "should display correct trainer count when multiple trainers caught same pokemon" do
+    trainer1 = trainers(:gary)
+    trainer2 = trainers(:ash)
+
+    # Both trainers catch Pikachu
+    Capture.create!(trainer: trainer1, pokemon: pokemons(:pikachu), ball_type: "pokeball")
+    Capture.create!(trainer: trainer2, pokemon: pokemons(:pikachu), ball_type: "pokeball")
+
+    log_in_as(trainer1)
+    get pokedex_path
+
+    total_trainers = Trainer.count
+    # 2 trainers caught Pikachu
+    assert_match "Caught by 2/#{total_trainers} trainers", response.body
+  end
+
+  test "should pluralize trainer correctly when count is 1" do
+    trainer = trainers(:gary)
+    log_in_as(trainer)
+    get pokedex_path
+    # Gary is the only one who caught Charmander
+    assert_match /1\/\d+ trainer[^s]/, response.body
+  end
+
+  test "should pluralize trainers correctly when count is greater than 1" do
+    trainer1 = trainers(:gary)
+    trainer2 = trainers(:ash)
+
+    # Both trainers catch Bulbasaur
+    Capture.create!(trainer: trainer1, pokemon: pokemons(:bulbasaur), ball_type: "pokeball")
+    Capture.create!(trainer: trainer2, pokemon: pokemons(:bulbasaur), ball_type: "pokeball")
+
+    log_in_as(trainer1)
+    get pokedex_path
+
+    # Should say "trainers" (plural)
+    assert_match "2/#{Trainer.count} trainers", response.body
+  end
+
+  test "should include current trainer in count" do
+    trainer = trainers(:gary)
+    log_in_as(trainer)
+    get pokedex_path
+    # Gary caught Charmander, count should include him
+    # So it should be at least 1/total
+    total_trainers = Trainer.count
+    assert_match /Caught by [1-9]\d*\/#{total_trainers} trainer/, response.body
+  end
+
+  test "should display different counts for different pokemon" do
+    trainer1 = trainers(:gary)
+    trainer2 = trainers(:ash)
+
+    # Gary caught both Charmander and Squirtle (already in fixtures)
+    # Ash catches only Charmander
+    Capture.create!(trainer: trainer2, pokemon: pokemons(:charmander), ball_type: "pokeball")
+
+    log_in_as(trainer1)
+    get pokedex_path
+
+    total_trainers = Trainer.count
+    # Charmander: 2 trainers (Gary and Ash)
+    assert_match "Caught by 2/#{total_trainers} trainers", response.body
+    # Squirtle: 1 trainer (Gary only)
+    assert_match "Caught by 1/#{total_trainers} trainer", response.body
+  end
+
+  # ================================================================================
   # EVOLUTION LAB - PAGE ACCESS AND AUTHENTICATION TESTS
   # ================================================================================
 
