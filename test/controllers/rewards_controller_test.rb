@@ -16,7 +16,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     post buy_item_rewards_path, params: { item_key: 'fire_stone' }
 
     assert_redirected_to rewards_path
-    assert_match "Successfully purchased Fire Stone for 300 currency!", flash[:notice]
+    assert_match "Successfully purchased Fire Stone for 300 Pokedollars!", flash[:notice]
 
     trainer.reload
     assert_equal initial_currency - 300, trainer.currency
@@ -174,7 +174,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     post buy_item_rewards_path, params: { item_key: 'fire_stone' }
 
     assert_redirected_to rewards_path
-    assert_match "Not enough currency! You need 300 but only have 50", flash[:alert]
+    assert_match "Not enough money! You need 300 but only have 50", flash[:alert]
 
     trainer.reload
     assert_equal initial_currency, trainer.currency
@@ -191,7 +191,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     post buy_item_rewards_path, params: { item_key: 'fire_stone' }
 
     assert_redirected_to rewards_path
-    assert_match "Not enough currency!", flash[:alert]
+    assert_match "Not enough money!", flash[:alert]
 
     trainer.reload
     assert_equal 0, trainer.currency
@@ -315,7 +315,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     post sell_item_rewards_path, params: { item_key: 'fire_stone' }
 
     assert_redirected_to rewards_path
-    assert_match "Successfully sold Fire Stone for 200 currency!", flash[:notice]
+    assert_match "Successfully sold Fire Stone for 200 Pokedollars!", flash[:notice]
 
     trainer.reload
     assert_equal initial_currency + 200, trainer.currency
@@ -364,7 +364,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     post sell_item_rewards_path, params: { item_key: 'pokeball' }
 
     assert_redirected_to rewards_path
-    assert_match "Successfully sold Poké Ball for 100 currency!", flash[:notice]
+    assert_match "Successfully sold Poké Ball for 100 Pokedollars!", flash[:notice]
 
     trainer.reload
     assert_equal initial_currency + 100, trainer.currency
@@ -601,7 +601,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     post buy_item_rewards_path, params: { item_key: 'fire_stone' }
 
     assert_redirected_to rewards_path
-    assert_match "Not enough currency!", flash[:alert]
+    assert_match "Not enough money!", flash[:alert]
 
     trainer.reload
     assert_equal 99, trainer.currency

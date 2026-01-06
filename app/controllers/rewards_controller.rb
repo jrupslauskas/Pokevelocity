@@ -33,7 +33,7 @@ class RewardsController < ApplicationController
     end
 
     if @trainer.currency < item.buy_price
-      redirect_to rewards_path, alert: "Not enough currency! You need #{item.buy_price} but only have #{@trainer.currency}"
+      redirect_to rewards_path, alert: "Not enough money! You need #{item.buy_price} but only have #{@trainer.currency}"
       return
     end
 
@@ -41,7 +41,7 @@ class RewardsController < ApplicationController
     @trainer.add_item(item_key, 1)
     @trainer.save
 
-    redirect_to rewards_path, notice: "Successfully purchased #{item.name} for #{item.buy_price} currency!"
+    redirect_to rewards_path, notice: "Successfully purchased #{item.name} for #{item.buy_price} Pokedollars!"
   end
 
   def sell_item
@@ -68,6 +68,6 @@ class RewardsController < ApplicationController
     @trainer.remove_item(item_key, 1)
     @trainer.save
 
-    redirect_to rewards_path, notice: "Successfully sold #{item.name} for #{item.sell_price} currency!"
+    redirect_to rewards_path, notice: "Successfully sold #{item.name} for #{item.sell_price} Pokedollars!"
   end
 end
