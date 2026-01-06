@@ -536,11 +536,13 @@
   order: 23
   encounters:
     - pokemon: Gastly
-      spawn_rate: 70
+      spawn_rate: 60
     - pokemon: Haunter
       spawn_rate: 10
     - pokemon: Cubone
       spawn_rate: 20
+    - pokemon: Marowak
+      spawn_rate: 10
 
 - name: Route 12
   description: A wooden boardwalk south of Lavender Town running along the coast. Fishermen line the piers as the ocean breeze rolls in.

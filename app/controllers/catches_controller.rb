@@ -173,12 +173,15 @@ class CatchesController < ApplicationController
           # Auto-unlock gates after catching (difficulty score increased)
           newly_unlocked = @trainer.auto_unlock_gates!
 
-          # Build success message
-          message = "Success! You caught #{@pokemon.name} (##{@pokemon.pokedex_number}) with a #{result[:ball_type].humanize}!"
+          # If gates were unlocked, redirect to celebration page
           if newly_unlocked.any?
-            message += " You unlocked #{newly_unlocked.map(&:name).join(', ')}!"
+            # Store the first unlocked gate in session for celebration page
+            session[:newly_unlocked_gate_id] = newly_unlocked.first.id
+            redirect_to gates_celebration_path and return
           end
 
+          # Build success message
+          message = "Success! You caught #{@pokemon.name} (##{@pokemon.pokedex_number}) with a #{result[:ball_type].humanize}!"
           redirect_to pokedex_path, notice: message
         end
       else

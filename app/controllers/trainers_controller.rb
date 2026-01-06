@@ -121,6 +121,16 @@ class TrainersController < ApplicationController
       evolved: true
     )
 
+    # Auto-unlock gates after evolution (difficulty score increased)
+    newly_unlocked = @trainer.auto_unlock_gates!
+
+    # If gates were unlocked, redirect to celebration page
+    if newly_unlocked.any?
+      # Store the first unlocked gate in session for celebration page
+      session[:newly_unlocked_gate_id] = newly_unlocked.first.id
+      redirect_to gates_celebration_path and return
+    end
+
     # Redirect to pokedex with success message
     redirect_to pokedex_path, notice: "Congratulations! Your #{evolution.from_pokemon.name} evolved into #{evolution.to_pokemon.name}!"
   end

@@ -1,0 +1,58 @@
+<div class="app-layout">
+  <%= render "trainers/sidebar" %>
+
+  <main class="main-content">
+    <div class="celebration-container">
+      <header class="page-header-authenticated">
+        <h1>Congratulations!</h1>
+        <p>You defeated <%= @gate.description.split(' - ').first %>!</p>
+      </header>
+
+      <div class="celebration-card">
+        <div class="celebration-gym-leader">
+          <% if @gate.sprite_type == "gym_leader" %>
+            <%= image_tag "trainerSprites/gymLeaders/#{@gate.sprite_value}.png",
+                          alt: @gate.description.split(' - ').first,
+                          class: "celebration-sprite" %>
+          <% else %>
+            <div class="celebration-sprite celebration-emoji">
+              <%= @gate.sprite_value %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="celebration-message">
+          <h2 class="celebration-title">You earned the <%= @gate.name.split(' - ').last %>!</h2>
+          <p class="celebration-text">
+            Your difficulty score has reached <%= @trainer.difficulty_score %>★!
+          </p>
+
+          <% if @awarded_items.any? %>
+            <div class="celebration-items">
+              <h3 class="celebration-items-title">Items Unlocked:</h3>
+              <ul class="celebration-items-list">
+                <% @awarded_items.each do |item| %>
+                  <li class="celebration-item">
+                    <span class="celebration-item-icon">🎁</span>
+                    <span class="celebration-item-name"><%= item[:name] %></span>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <div class="celebration-routes">
+            <p class="celebration-routes-text">
+              <span class="celebration-icon">🗺️</span>
+              New routes unlocked!
+            </p>
+          </div>
+        </div>
+
+        <div class="celebration-actions">
+          <%= button_to "Continue", catches_path, method: :get, class: "btn-primary btn-celebration" %>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

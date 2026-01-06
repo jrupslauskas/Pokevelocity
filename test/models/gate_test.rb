@@ -36,14 +36,15 @@ class GateTest < ActiveSupport::TestCase
     assert_includes @gate.errors[:gate_number], "must be an integer"
   end
 
-  test "gate_number should be between 1 and 10" do
+  test "gate_number should be at least 1" do
     @gate.gate_number = 0
     assert_not @gate.valid?
 
-    @gate.gate_number = 11
-    assert_not @gate.valid?
-
     @gate.gate_number = 1
+    assert @gate.valid?
+
+    # No upper limit - gates can be any number >= 1
+    @gate.gate_number = 11
     assert @gate.valid?
 
     @gate.gate_number = 10

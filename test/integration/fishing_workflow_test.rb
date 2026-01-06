@@ -4,10 +4,10 @@ class FishingWorkflowTest < ActiveSupport::TestCase
   def setup
     @trainer = trainers(:ash)
 
-    # Create gates
-    @gate_3 = Gate.find_or_create_by!(gate_number: 3, required_difficulty_score: 10)
-    @gate_5 = Gate.find_or_create_by!(gate_number: 5, required_difficulty_score: 25)
-    @gate_7 = Gate.find_or_create_by!(gate_number: 7, required_difficulty_score: 50)
+    # Create gates - Old Rod (Gate 2), Good Rod (Gate 4), Super Rod (Gate 6)
+    @gate_2 = Gate.find_or_create_by!(gate_number: 2, required_difficulty_score: 10)
+    @gate_4 = Gate.find_or_create_by!(gate_number: 4, required_difficulty_score: 25)
+    @gate_6 = Gate.find_or_create_by!(gate_number: 6, required_difficulty_score: 50)
 
     # Create a route with fishing encounters
     @route = Route.create!(order: 100, gate_requirement: nil)
@@ -57,7 +57,7 @@ class FishingWorkflowTest < ActiveSupport::TestCase
     assert_not @super_rod_encounter.available_for?(@trainer)
 
     # Unlock Gate 3 (Misty's Gym) -> Get Old Rod
-    GateUnlock.create!(trainer: @trainer, gate: @gate_3)
+    GateUnlock.create!(trainer: @trainer, gate: @gate_2)
     @trainer.reload
 
     assert_equal 1, @trainer.item_quantity(:old_rod)
@@ -66,7 +66,7 @@ class FishingWorkflowTest < ActiveSupport::TestCase
     assert_not @super_rod_encounter.available_for?(@trainer)
 
     # Unlock Gate 5 (Erika's Gym) -> Get Good Rod
-    GateUnlock.create!(trainer: @trainer, gate: @gate_5)
+    GateUnlock.create!(trainer: @trainer, gate: @gate_4)
     @trainer.reload
 
     assert_equal 1, @trainer.item_quantity(:good_rod)
@@ -75,7 +75,7 @@ class FishingWorkflowTest < ActiveSupport::TestCase
     assert_not @super_rod_encounter.available_for?(@trainer)
 
     # Unlock Gate 7 (Sabrina's Gym) -> Get Super Rod
-    GateUnlock.create!(trainer: @trainer, gate: @gate_7)
+    GateUnlock.create!(trainer: @trainer, gate: @gate_6)
     @trainer.reload
 
     assert_equal 1, @trainer.item_quantity(:super_rod)
@@ -85,7 +85,7 @@ class FishingWorkflowTest < ActiveSupport::TestCase
   end
 
   test "trainer with old rod can only fish old rod encounters" do
-    GateUnlock.create!(trainer: @trainer, gate: @gate_3)
+    GateUnlock.create!(trainer: @trainer, gate: @gate_2)
     @trainer.reload
 
     available_encounters = @route.route_encounters.select { |e| e.available_for?(@trainer) }
@@ -95,8 +95,8 @@ class FishingWorkflowTest < ActiveSupport::TestCase
   end
 
   test "trainer with good rod can fish both old and good rod encounters" do
-    GateUnlock.create!(trainer: @trainer, gate: @gate_3)
-    GateUnlock.create!(trainer: @trainer, gate: @gate_5)
+    GateUnlock.create!(trainer: @trainer, gate: @gate_2)
+    GateUnlock.create!(trainer: @trainer, gate: @gate_4)
     @trainer.reload
 
     available_encounters = @route.route_encounters.select { |e| e.available_for?(@trainer) }
@@ -107,9 +107,9 @@ class FishingWorkflowTest < ActiveSupport::TestCase
   end
 
   test "trainer with super rod can fish all encounters" do
-    GateUnlock.create!(trainer: @trainer, gate: @gate_3)
-    GateUnlock.create!(trainer: @trainer, gate: @gate_5)
-    GateUnlock.create!(trainer: @trainer, gate: @gate_7)
+    GateUnlock.create!(trainer: @trainer, gate: @gate_2)
+    GateUnlock.create!(trainer: @trainer, gate: @gate_4)
+    GateUnlock.create!(trainer: @trainer, gate: @gate_6)
     @trainer.reload
 
     available_encounters = @route.route_encounters.select { |e| e.available_for?(@trainer) }
@@ -133,7 +133,7 @@ class FishingWorkflowTest < ActiveSupport::TestCase
     assert_not @route.fishing_unlocked_for?(@trainer)
 
     # After getting the rod, it's unlocked
-    GateUnlock.create!(trainer: @trainer, gate: @gate_3)
+    GateUnlock.create!(trainer: @trainer, gate: @gate_2)
     @trainer.reload
 
     assert @route.fishing_unlocked_for?(@trainer)
@@ -167,7 +167,7 @@ class FishingWorkflowTest < ActiveSupport::TestCase
     assert_not @old_rod_encounter.available_for?(@trainer)
 
     # After getting Old Rod
-    GateUnlock.create!(trainer: @trainer, gate: @gate_3)
+    GateUnlock.create!(trainer: @trainer, gate: @gate_2)
     @trainer.reload
 
     # Both are available
@@ -204,7 +204,7 @@ class FishingWorkflowTest < ActiveSupport::TestCase
     assert_not surf_encounter.available_for?(@trainer)
 
     # After getting Old Rod
-    GateUnlock.create!(trainer: @trainer, gate: @gate_3)
+    GateUnlock.create!(trainer: @trainer, gate: @gate_2)
     @trainer.reload
 
     assert grass_encounter.available_for?(@trainer)
@@ -243,7 +243,7 @@ class FishingWorkflowTest < ActiveSupport::TestCase
     @old_rod_encounter.update!(spawn_rate: 50)
 
     # Give trainer Old Rod
-    GateUnlock.create!(trainer: @trainer, gate: @gate_3)
+    GateUnlock.create!(trainer: @trainer, gate: @gate_2)
     @trainer.reload
 
     # Both encounters should be available
@@ -274,7 +274,7 @@ class FishingWorkflowTest < ActiveSupport::TestCase
     assert_not rare_encounter.available_for?(@trainer)
 
     # Get Super Rod
-    GateUnlock.create!(trainer: @trainer, gate: @gate_7)
+    GateUnlock.create!(trainer: @trainer, gate: @gate_6)
     @trainer.reload
 
     # Still not available without Magikarp
@@ -305,7 +305,7 @@ class FishingWorkflowTest < ActiveSupport::TestCase
     assert_not legendary_encounter.available_for?(@trainer)
 
     # Get Super Rod
-    GateUnlock.create!(trainer: @trainer, gate: @gate_7)
+    GateUnlock.create!(trainer: @trainer, gate: @gate_6)
     @trainer.reload
 
     # Still not available without Gate 10
@@ -356,7 +356,7 @@ class FishingWorkflowTest < ActiveSupport::TestCase
 
   test "unlocking same gate twice doesn't give duplicate rods" do
     # Unlock Gate 3
-    GateUnlock.create!(trainer: @trainer, gate: @gate_3)
+    GateUnlock.create!(trainer: @trainer, gate: @gate_2)
     @trainer.reload
 
     initial_count = @trainer.item_quantity(:old_rod)
@@ -366,7 +366,7 @@ class FishingWorkflowTest < ActiveSupport::TestCase
     # but let's test the callback doesn't add duplicate items)
     # This should raise a validation error due to uniqueness constraint
     assert_raises(ActiveRecord::RecordInvalid) do
-      GateUnlock.create!(trainer: @trainer, gate: @gate_3)
+      GateUnlock.create!(trainer: @trainer, gate: @gate_2)
     end
   end
 
@@ -386,9 +386,9 @@ class FishingWorkflowTest < ActiveSupport::TestCase
 
   test "trainer can have multiple rods at once" do
     # Unlock all three gates
-    GateUnlock.create!(trainer: @trainer, gate: @gate_3)
-    GateUnlock.create!(trainer: @trainer, gate: @gate_5)
-    GateUnlock.create!(trainer: @trainer, gate: @gate_7)
+    GateUnlock.create!(trainer: @trainer, gate: @gate_2)
+    GateUnlock.create!(trainer: @trainer, gate: @gate_4)
+    GateUnlock.create!(trainer: @trainer, gate: @gate_6)
     @trainer.reload
 
     assert_equal 1, @trainer.item_quantity(:old_rod)

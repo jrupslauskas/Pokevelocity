@@ -273,6 +273,11 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     pokemon = pokemons(:bulbasaur)
 
+    # Unlock all gates so catch doesn't trigger celebration
+    Gate.all.each do |gate|
+      trainer.gate_unlocks.find_or_create_by(gate: gate)
+    end
+
     # Give trainer master balls
     trainer.add_item(:master_ball, 5)
 
@@ -470,6 +475,11 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
   test "should show already caught indicator immediately after first capture" do
     trainer = trainers(:ash)
     pokemon = pokemons(:bulbasaur)
+
+    # Unlock all gates so catch doesn't trigger celebration
+    Gate.all.each do |gate|
+      trainer.gate_unlocks.find_or_create_by(gate: gate)
+    end
 
     # Give trainer master ball for guaranteed success
     trainer.add_item(:master_ball, 2)
@@ -1127,6 +1137,11 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
   test "successful catch should still redirect to pokedex" do
     trainer = trainers(:ash)
     pokemon = pokemons(:bulbasaur) # Difficulty 1
+
+    # Unlock all gates so catch doesn't trigger celebration
+    Gate.all.each do |gate|
+      trainer.gate_unlocks.find_or_create_by(gate: gate)
+    end
 
     # Give trainer a master ball for guaranteed success
     trainer.add_item(:master_ball, 1)

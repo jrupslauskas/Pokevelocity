@@ -931,6 +931,11 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     log_in_as(trainer)
     pokemon = pokemons(:bulbasaur)
 
+    # Unlock all gates so catch doesn't trigger celebration
+    Gate.all.each do |gate|
+      trainer.gate_unlocks.find_or_create_by(gate: gate)
+    end
+
     initial_master_balls = trainer.ball_count(:master_ball)
 
     # Master ball has 100% catch rate
@@ -2230,6 +2235,11 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
 
+    # Unlock all gates so evolution doesn't trigger celebration
+    Gate.all.each do |gate|
+      trainer.gate_unlocks.find_or_create_by(gate: gate)
+    end
+
     # Give trainer Pikachu and thunder stone
     Capture.create!(trainer: trainer, pokemon: pokemons(:pikachu), ball_type: "pokeball")
     trainer.add_item(:thunder_stone, 1)
@@ -2265,6 +2275,11 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
   test "should display success message after evolution" do
     trainer = trainers(:ash)
     log_in_as(trainer)
+
+    # Unlock all gates so evolution doesn't trigger celebration
+    Gate.all.each do |gate|
+      trainer.gate_unlocks.find_or_create_by(gate: gate)
+    end
 
     # Give trainer Pikachu and thunder stone
     Capture.create!(trainer: trainer, pokemon: pokemons(:pikachu), ball_type: "pokeball")
