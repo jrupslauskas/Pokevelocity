@@ -81,10 +81,21 @@
       <!-- Buy Tab Content -->
       <div id="buyContent" class="tab-content">
         <p style="color: #6B5537; margin-bottom: 20px; text-align: center;">
-          Purchase evolution items to help your Pokémon evolve!
+          Purchase Poké Balls and evolution items!
         </p>
         <div style="display: grid; gap: 12px;">
-          <% Item.where(item_type: 'evolution_stone').sort_by { |item| item.key == 'evolution_stone' ? 0 : 1 }.each do |item| %>
+          <%
+            # Get pokeballs and evolution stones
+            pokeballs = Item.where(item_type: 'pokeball').to_a.select { |item| item.buy_price.present? }
+            evolution_stones = Item.where(item_type: 'evolution_stone').to_a.sort_by { |item| item.key == 'evolution_stone' ? 0 : 1 }
+
+            # Sort pokeballs by buy_price
+            pokeballs = pokeballs.sort_by { |item| item.buy_price }
+
+            # Combine with pokeballs first
+            all_items = pokeballs + evolution_stones
+          %>
+          <% all_items.each do |item| %>
             <div class="shop-item">
               <div style="display: flex; align-items: center; gap: 12px;">
                 <%= image_tag "icons/#{item.sprite}", alt: item.name, class: "shop-item-icon" %>

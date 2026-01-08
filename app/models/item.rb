@@ -21,7 +21,7 @@ class Item < ApplicationRecord
       description: 'A device for catching wild Pokémon. It is designed as a capsule system.',
       item_type: TYPES[:pokeball],
       sprite: 'pokeball_shop.png',
-      buy_price: nil,
+      buy_price: 200,
       sell_price: 100
     },
     great_ball: {
@@ -30,7 +30,7 @@ class Item < ApplicationRecord
       description: 'A good, high-performance Poké Ball that provides a higher Pokémon catch rate than a standard Poké Ball.',
       item_type: TYPES[:pokeball],
       sprite: 'greatball.png',
-      buy_price: nil,
+      buy_price: 300,
       sell_price: 200
     },
     ultra_ball: {
@@ -39,7 +39,7 @@ class Item < ApplicationRecord
       description: 'An ultra-high performance Poké Ball that provides a higher success rate for catching Pokémon than a Great Ball.',
       item_type: TYPES[:pokeball],
       sprite: 'ultraball.jpg',
-      buy_price: nil,
+      buy_price: 400,
       sell_price: 300
     },
     master_ball: {
@@ -48,7 +48,7 @@ class Item < ApplicationRecord
       description: 'The best Poké Ball with the ultimate level of performance. It will catch any wild Pokémon without fail.',
       item_type: TYPES[:pokeball],
       sprite: 'masterball.png',
-      buy_price: nil,
+      buy_price: 700,
       sell_price: 500
     },
     fire_stone: {

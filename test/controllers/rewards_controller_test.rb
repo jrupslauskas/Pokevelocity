@@ -198,8 +198,9 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     assert_equal initial_stones, trainer.item_quantity(:fire_stone)
   end
 
-  test "should not buy pokeball items" do
+  test "should successfully buy pokeball for 200" do
     trainer = trainers(:ash)
+    trainer.update!(currency: 1000)
     log_in_as(trainer)
 
     initial_currency = trainer.currency
@@ -208,56 +209,111 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     post buy_item_rewards_path, params: { item_key: 'pokeball' }
 
     assert_redirected_to rewards_path
-    assert_match "This item cannot be purchased", flash[:alert]
+    assert_match "Successfully purchased Poké Ball for 200 Pokedollars!", flash[:notice]
+
+    trainer.reload
+    assert_equal initial_currency - 200, trainer.currency
+    assert_equal initial_pokeballs + 1, trainer.item_quantity(:pokeball)
+  end
+
+  test "should successfully buy great ball for 300" do
+    trainer = trainers(:ash)
+    trainer.update!(currency: 1000)
+    log_in_as(trainer)
+
+    initial_currency = trainer.currency
+    initial_great_balls = trainer.item_quantity(:great_ball)
+
+    post buy_item_rewards_path, params: { item_key: 'great_ball' }
+
+    assert_redirected_to rewards_path
+    assert_match "Successfully purchased Great Ball for 300 Pokedollars!", flash[:notice]
+
+    trainer.reload
+    assert_equal initial_currency - 300, trainer.currency
+    assert_equal initial_great_balls + 1, trainer.item_quantity(:great_ball)
+  end
+
+  test "should successfully buy ultra ball for 400" do
+    trainer = trainers(:ash)
+    trainer.update!(currency: 1000)
+    log_in_as(trainer)
+
+    initial_currency = trainer.currency
+    initial_ultra_balls = trainer.item_quantity(:ultra_ball)
+
+    post buy_item_rewards_path, params: { item_key: 'ultra_ball' }
+
+    assert_redirected_to rewards_path
+    assert_match "Successfully purchased Ultra Ball for 400 Pokedollars!", flash[:notice]
+
+    trainer.reload
+    assert_equal initial_currency - 400, trainer.currency
+    assert_equal initial_ultra_balls + 1, trainer.item_quantity(:ultra_ball)
+  end
+
+  test "should successfully buy master ball for 700" do
+    trainer = trainers(:ash)
+    trainer.update!(currency: 1000)
+    log_in_as(trainer)
+
+    initial_currency = trainer.currency
+    initial_master_balls = trainer.item_quantity(:master_ball)
+
+    post buy_item_rewards_path, params: { item_key: 'master_ball' }
+
+    assert_redirected_to rewards_path
+    assert_match "Successfully purchased Master Ball for 700 Pokedollars!", flash[:notice]
+
+    trainer.reload
+    assert_equal initial_currency - 700, trainer.currency
+    assert_equal initial_master_balls + 1, trainer.item_quantity(:master_ball)
+  end
+
+  test "should not buy pokeball when trainer has insufficient currency" do
+    trainer = trainers(:ash)
+    trainer.update!(currency: 50)
+    log_in_as(trainer)
+
+    initial_currency = trainer.currency
+    initial_pokeballs = trainer.item_quantity(:pokeball)
+
+    post buy_item_rewards_path, params: { item_key: 'pokeball' }
+
+    assert_redirected_to rewards_path
+    assert_match "Not enough money! You need 200 but only have 50", flash[:alert]
 
     trainer.reload
     assert_equal initial_currency, trainer.currency
     assert_equal initial_pokeballs, trainer.item_quantity(:pokeball)
   end
 
-  test "should not buy great ball items" do
+  test "should successfully buy multiple different pokeballs in sequence" do
     trainer = trainers(:ash)
+    trainer.update!(currency: 2000)
     log_in_as(trainer)
 
     initial_currency = trainer.currency
 
+    # Buy pokeball (200)
+    post buy_item_rewards_path, params: { item_key: 'pokeball' }
+    trainer.reload
+    assert_equal initial_currency - 200, trainer.currency
+
+    # Buy great ball (300)
     post buy_item_rewards_path, params: { item_key: 'great_ball' }
-
-    assert_redirected_to rewards_path
-    assert_match "This item cannot be purchased", flash[:alert]
-
     trainer.reload
-    assert_equal initial_currency, trainer.currency
-  end
+    assert_equal initial_currency - 500, trainer.currency
 
-  test "should not buy ultra ball items" do
-    trainer = trainers(:ash)
-    log_in_as(trainer)
-
-    initial_currency = trainer.currency
-
+    # Buy ultra ball (400)
     post buy_item_rewards_path, params: { item_key: 'ultra_ball' }
-
-    assert_redirected_to rewards_path
-    assert_match "This item cannot be purchased", flash[:alert]
-
     trainer.reload
-    assert_equal initial_currency, trainer.currency
-  end
+    assert_equal initial_currency - 900, trainer.currency
 
-  test "should not buy master ball items" do
-    trainer = trainers(:ash)
-    log_in_as(trainer)
-
-    initial_currency = trainer.currency
-
+    # Buy master ball (500)
     post buy_item_rewards_path, params: { item_key: 'master_ball' }
-
-    assert_redirected_to rewards_path
-    assert_match "This item cannot be purchased", flash[:alert]
-
     trainer.reload
-    assert_equal initial_currency, trainer.currency
+    assert_equal initial_currency - 1600, trainer.currency
   end
 
   test "should not buy non-existent item" do
