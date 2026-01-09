@@ -27,14 +27,20 @@
             Your difficulty score has reached <%= @trainer.difficulty_score %>★!
           </p>
 
-          <% if @awarded_items.any? %>
+          <% if @awarded_items.any? || @awarded_currency > 0 %>
             <div class="celebration-items">
-              <h3 class="celebration-items-title">Items Unlocked:</h3>
+              <h3 class="celebration-items-title">Rewards:</h3>
               <ul class="celebration-items-list">
                 <% @awarded_items.each do |item| %>
                   <li class="celebration-item">
                     <span class="celebration-item-icon">🎁</span>
                     <span class="celebration-item-name"><%= item[:name] %></span>
+                  </li>
+                <% end %>
+                <% if @awarded_currency > 0 %>
+                  <li class="celebration-item">
+                    <span class="celebration-item-icon">💰</span>
+                    <span class="celebration-item-name"><%= @awarded_currency %> Pokedollars</span>
                   </li>
                 <% end %>
               </ul>
