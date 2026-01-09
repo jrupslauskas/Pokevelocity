@@ -30,6 +30,8 @@ Rails.application.routes.draw do
   get "/onboarding/welcome", to: "onboarding#welcome", as: :onboarding_welcome
   get "/onboarding/choose-starter", to: "onboarding#choose_starter", as: :onboarding_choose_starter
   post "/onboarding/starter", to: "onboarding#create_starter", as: :onboarding_create_starter
+  get "/onboarding/sendoff", to: "onboarding#sendoff", as: :onboarding_sendoff
+  post "/onboarding/complete", to: "onboarding#complete", as: :onboarding_complete
 
   # Dashboard
   get "/dashboard", to: "trainers#dashboard", as: :dashboard

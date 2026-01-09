@@ -108,9 +108,8 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
       post onboarding_create_starter_path, params: { pokemon_id: bulbasaur.id }
     end
 
-    assert_redirected_to dashboard_path
+    assert_redirected_to onboarding_sendoff_path
     trainer.reload
-    assert trainer.onboarding_completed
     assert_equal bulbasaur, trainer.captured_pokemon.first
   end
 
@@ -123,9 +122,8 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
       post onboarding_create_starter_path, params: { pokemon_id: charmander.id }
     end
 
-    assert_redirected_to dashboard_path
+    assert_redirected_to onboarding_sendoff_path
     trainer.reload
-    assert trainer.onboarding_completed
     assert_equal charmander, trainer.captured_pokemon.first
   end
 
@@ -138,9 +136,8 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
       post onboarding_create_starter_path, params: { pokemon_id: squirtle.id }
     end
 
-    assert_redirected_to dashboard_path
+    assert_redirected_to onboarding_sendoff_path
     trainer.reload
-    assert trainer.onboarding_completed
     assert_equal squirtle, trainer.captured_pokemon.first
   end
 
@@ -182,7 +179,7 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
   # ONBOARDING COMPLETION TESTS
   # ================================================================================
 
-  test "should mark onboarding as completed after selecting starter" do
+  test "should not mark onboarding as completed after selecting starter" do
     trainer = create_trainer_without_onboarding
     log_in_as(trainer)
 
@@ -192,20 +189,35 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
     post onboarding_create_starter_path, params: { pokemon_id: bulbasaur.id }
 
     trainer.reload
+    assert_not trainer.onboarding_completed
+  end
+
+  test "should mark onboarding as completed after completing onboarding" do
+    trainer = create_trainer_without_onboarding
+    log_in_as(trainer)
+
+    bulbasaur = Pokemon.find_by(pokedex_number: 1)
+    post onboarding_create_starter_path, params: { pokemon_id: bulbasaur.id }
+    post onboarding_complete_path
+
+    trainer.reload
     assert trainer.onboarding_completed
   end
 
-  test "should give trainer 1 pokeball after selecting starter" do
+  test "should give trainer 1 pokeball and 100 currency after completing onboarding" do
     trainer = create_trainer_without_onboarding
     log_in_as(trainer)
 
     assert_equal 0, trainer.item_quantity(:pokeball)
+    assert_equal 0, trainer.currency
 
     bulbasaur = Pokemon.find_by(pokedex_number: 1)
     post onboarding_create_starter_path, params: { pokemon_id: bulbasaur.id }
+    post onboarding_complete_path
 
     trainer.reload
     assert_equal 1, trainer.item_quantity(:pokeball)
+    assert_equal 100, trainer.currency
   end
 
   test "should not give other ball types with starter" do
@@ -214,6 +226,7 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
 
     bulbasaur = Pokemon.find_by(pokedex_number: 1)
     post onboarding_create_starter_path, params: { pokemon_id: bulbasaur.id }
+    post onboarding_complete_path
 
     trainer.reload
     assert_equal 1, trainer.item_quantity(:pokeball)
@@ -222,16 +235,17 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
     assert_equal 0, trainer.item_quantity(:master_ball)
   end
 
-  test "should show welcome message after selecting starter" do
+  test "should show welcome message after completing onboarding" do
     trainer = create_trainer_without_onboarding
     log_in_as(trainer)
 
     bulbasaur = Pokemon.find_by(pokedex_number: 1)
     post onboarding_create_starter_path, params: { pokemon_id: bulbasaur.id }
+    post onboarding_complete_path
 
     assert_redirected_to dashboard_path
     follow_redirect!
-    assert_match /Welcome to your journey with Bulbasaur/i, flash[:notice]
+    assert_match /Welcome to your journey/i, flash[:notice]
   end
 
   test "starter should be marked with pokeball as ball_type" do
@@ -277,10 +291,36 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
   end
 
   # ================================================================================
+  # SENDOFF PAGE TESTS
+  # ================================================================================
+
+  test "should display sendoff page after selecting starter" do
+    trainer = create_trainer_without_onboarding
+    log_in_as(trainer)
+
+    bulbasaur = Pokemon.find_by(pokedex_number: 1)
+    post onboarding_create_starter_path, params: { pokemon_id: bulbasaur.id }
+
+    get onboarding_sendoff_path
+    assert_response :success
+    assert_match /Congratulations/i, response.body
+    assert_match /Bulbasaur/i, response.body
+  end
+
+  test "should require starter selection before showing sendoff" do
+    trainer = create_trainer_without_onboarding
+    log_in_as(trainer)
+
+    get onboarding_sendoff_path
+    assert_redirected_to onboarding_choose_starter_path
+    assert_match /choose your starter first/i, flash[:alert]
+  end
+
+  # ================================================================================
   # INTEGRATION TESTS
   # ================================================================================
 
-  test "complete onboarding flow from welcome to starter selection" do
+  test "complete onboarding flow from welcome to dashboard" do
     trainer = create_trainer_without_onboarding
     log_in_as(trainer)
 
@@ -297,20 +337,30 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
     # Step 3: Select Charmander
     charmander = Pokemon.find_by(pokedex_number: 4)
     post onboarding_create_starter_path, params: { pokemon_id: charmander.id }
+    assert_redirected_to onboarding_sendoff_path
 
-    # Verify redirect and completion
+    # Step 4: Visit sendoff page
+    get onboarding_sendoff_path
+    assert_response :success
+    assert_match /Charmander/i, response.body
+
+    # Step 5: Complete onboarding
+    post onboarding_complete_path
     assert_redirected_to dashboard_path
+
+    # Verify completion
     trainer.reload
     assert trainer.onboarding_completed
     assert_equal 1, trainer.captured_pokemon.count
     assert_equal charmander, trainer.captured_pokemon.first
     assert_equal 1, trainer.item_quantity(:pokeball)
+    assert_equal 100, trainer.currency
   end
 
   test "all three starters should work in the complete flow" do
     [1, 4, 7].each_with_index do |pokedex_number, index|
       trainer = Trainer.create!(
-        username: "starter_test_#{index}",
+        username: "starter_test_#{index}_#{rand(10000)}",
         password: "password",
         icon_pokemon_id: pokemons(:pikachu).id,
         onboarding_completed: false
@@ -326,12 +376,16 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
 
       starter = Pokemon.find_by(pokedex_number: pokedex_number)
       post onboarding_create_starter_path, params: { pokemon_id: starter.id }
+      assert_redirected_to onboarding_sendoff_path
 
+      post onboarding_complete_path
       assert_redirected_to dashboard_path
+
       trainer.reload
       assert trainer.onboarding_completed
       assert_equal starter, trainer.captured_pokemon.first
       assert_equal 1, trainer.item_quantity(:pokeball)
+      assert_equal 100, trainer.currency
     end
   end
 

@@ -1,0 +1,45 @@
+<div class="app-layout">
+  <%= render "trainers/sidebar" %>
+
+  <main class="main-content">
+    <div class="onboarding-container">
+      <header class="page-header-authenticated">
+        <h1>Congratulations, <%= @trainer.username %>!</h1>
+        <p>You've chosen <%= @pokemon.name.capitalize %> as your partner!</p>
+      </header>
+
+      <div class="professor-oak-section">
+        <div class="sendoff-sprites">
+          <%= image_tag "trainerSprites/gymLeaders/oak.png", class: "professor-oak" %>
+          <%= image_tag "pokemonSprites/#{@pokemon.pokedex_number.to_s.rjust(3, '0')}.png",
+              alt: @pokemon.name,
+              class: "sendoff-starter-sprite",
+              style: "image-rendering: pixelated;" %>
+        </div>
+        <div class="dialogue-box">
+          <p>Excellent choice, <%= @trainer.username %>!</p>
+          <p>You and <%= @pokemon.name.capitalize %> will make a fine team!</p>
+
+          <div style="margin: 20px 0; padding: 16px; background: linear-gradient(135deg, #FFF4E6 0%, #FFE8CC 100%); border-left: 4px solid #F4A460; border-radius: 8px;">
+            <p style="margin: 0; font-style: italic; color: #6B5537;">
+              "Just as a well-architected codebase stands the test of time, a trainer who follows good practices will achieve greatness. Write clean code, test thoroughly, and remember: premature optimization is the root of all evil, but thoughtful design is the foundation of success."
+            </p>
+          </div>
+
+          <p>To get you started on your journey, here's a Pokéball and some extra money to help you along the way!</p>
+
+          <ul>
+            <li>🎁 <strong>1 Pokéball</strong> - Use it wisely to catch your next Pokémon!</li>
+            <li>💰 <strong>100 Pokédollars</strong> - Stock up on items at the shop!</li>
+          </ul>
+
+          <p>Now get out there and show the world what you and <%= @pokemon.name.capitalize %> can do!</p>
+        </div>
+      </div>
+
+      <%= form_with url: onboarding_complete_path, method: :post do |f| %>
+        <%= f.submit "Begin Your Journey!", class: "btn-primary btn-large" %>
+      <% end %>
+    </div>
+  </main>
+</div>

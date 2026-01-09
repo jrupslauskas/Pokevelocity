@@ -29,16 +29,43 @@ class OnboardingController < ApplicationController
       evolved: false
     )
 
-    # Give starter items
+    # Store the starter Pokemon ID in session for the sendoff page
+    session[:starter_pokemon_id] = pokemon.id
+
+    # Redirect to sendoff page
+    redirect_to onboarding_sendoff_path
+  end
+
+  def sendoff
+    @trainer = current_trainer
+
+    # Get the starter Pokemon from session
+    pokemon_id = session[:starter_pokemon_id]
+    unless pokemon_id
+      redirect_to onboarding_choose_starter_path, alert: "Please choose your starter first"
+      return
+    end
+
+    @pokemon = Pokemon.find(pokemon_id)
+  end
+
+  def complete
+    @trainer = current_trainer
+
+    # Give starter items and currency
     @trainer.add_item(:pokeball, 1)
+    @trainer.increment!(:currency, 100)
 
     # Complete onboarding
     @trainer.complete_onboarding!
 
+    # Clear the session
+    session.delete(:starter_pokemon_id)
+
     # Clear the cached current_trainer so it reloads with updated onboarding status
     @current_trainer = nil
 
-    redirect_to dashboard_path, notice: "Welcome to your journey with #{pokemon.name.capitalize}!"
+    redirect_to dashboard_path, notice: "Welcome to your journey, #{@trainer.username}!"
   end
 
   private

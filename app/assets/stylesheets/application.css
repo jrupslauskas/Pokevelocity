@@ -2788,6 +2788,21 @@ body > div:not(.app-layout) {
   }
 }
 
+/* Sendoff Page - Sprites Container */
+.sendoff-sprites {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.sendoff-starter-sprite {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+
 /* ================================================================================
  * GATE CELEBRATION PAGE
  * ================================================================================ */
