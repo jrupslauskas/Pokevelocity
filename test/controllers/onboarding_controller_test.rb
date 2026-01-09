@@ -303,7 +303,7 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
 
     get onboarding_sendoff_path
     assert_response :success
-    assert_match /Congratulations/i, response.body
+    assert_match /Good Luck,/i, response.body
     assert_match /Bulbasaur/i, response.body
   end
 
