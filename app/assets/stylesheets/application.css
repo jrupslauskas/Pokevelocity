@@ -2328,6 +2328,88 @@ body > div:not(.app-layout) {
   }
 }
 
+/* ==================== Badges Section ==================== */
+
+.badges-section {
+  max-width: 1200px;
+  margin: 32px auto;
+  padding: 24px;
+  background: linear-gradient(135deg, #FFF4E6 0%, #FFE8CC 100%);
+  border-radius: 12px;
+  border: 2px solid #E8D5C4;
+}
+
+.badges-title {
+  text-align: center;
+  color: #2C5F2D;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 24px 0;
+}
+
+.badges-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.badge-slot {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.6);
+  border: 3px solid #E8DCC8;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.badge-slot.badge-earned {
+  background: linear-gradient(135deg, #FFFEF5, #FFF8DC);
+  border-color: #7AC74C;
+  box-shadow: 0 4px 8px rgba(122, 199, 76, 0.2);
+}
+
+.badge-slot:hover {
+  transform: translateY(-2px);
+}
+
+.badge-sprite {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.badge-empty {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #F5F5F5 0%, #E8E8E8 100%);
+  border-radius: 8px;
+  opacity: 0.4;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .badges-container {
+    gap: 12px;
+  }
+
+  .badge-slot {
+    width: 70px;
+    height: 70px;
+  }
+
+  .badge-sprite,
+  .badge-empty {
+    width: 56px;
+    height: 56px;
+  }
+}
+
 /* ==================== Shop Styles ==================== */
 
 .shop-tab {

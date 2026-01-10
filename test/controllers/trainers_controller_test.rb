@@ -1587,6 +1587,212 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
   end
 
   # ================================================================================
+  # BADGES SECTION TESTS
+  # ================================================================================
+
+  test "should display badges section on dashboard" do
+    log_in_as(trainers(:ash))
+    get dashboard_path
+    assert_select "div.badges-section"
+  end
+
+  test "should display badges title" do
+    log_in_as(trainers(:ash))
+    get dashboard_path
+    assert_select "h2.badges-title"
+    assert_match "Gym Badges", response.body
+  end
+
+  test "should display all 8 badge slots" do
+    log_in_as(trainers(:ash))
+    get dashboard_path
+    assert_select "div.badge-slot", count: 8
+  end
+
+  test "should display empty badge slots for trainer with no badges" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+    get dashboard_path
+
+    # Should have 8 empty slots
+    assert_select "div.badge-empty", count: 8
+    # Should have no earned badges
+    assert_select "img.badge-sprite", count: 0
+  end
+
+  test "should display earned badge when trainer unlocks gate 1" do
+    trainer = trainers(:ash)
+    gate_1 = Gate.find_or_create_by!(gate_number: 1) { |g| g.required_difficulty_score = 8 }
+    trainer.gate_unlocks.find_or_create_by!(gate: gate_1)
+
+    log_in_as(trainer)
+    get dashboard_path
+
+    # Should have 1 earned badge
+    assert_select "div.badge-slot.badge-earned", count: 1
+    assert_select "img.badge-sprite", count: 1
+    # Should have Boulder Badge image
+    assert_select "img.badge-sprite[alt='Boulder Badge']"
+    # Should have 7 empty slots
+    assert_select "div.badge-empty", count: 7
+  end
+
+  test "should display correct badge sprite for each gate" do
+    trainer = trainers(:ash)
+    gate_2 = Gate.find_or_create_by!(gate_number: 2) { |g| g.required_difficulty_score = 17 }
+    trainer.gate_unlocks.find_or_create_by!(gate: gate_2)
+
+    log_in_as(trainer)
+    get dashboard_path
+
+    # Should have Cascade Badge for gate 2
+    assert_select "img.badge-sprite[alt='Cascade Badge']"
+    assert_select "img.badge-sprite[title='Cascade Badge']"
+  end
+
+  test "should display multiple earned badges in order" do
+    trainer = trainers(:ash)
+    gate_1 = Gate.find_or_create_by!(gate_number: 1) { |g| g.required_difficulty_score = 8 }
+    gate_2 = Gate.find_or_create_by!(gate_number: 2) { |g| g.required_difficulty_score = 17 }
+    gate_3 = Gate.find_or_create_by!(gate_number: 3) { |g| g.required_difficulty_score = 25 }
+
+    trainer.gate_unlocks.find_or_create_by!(gate: gate_1)
+    trainer.gate_unlocks.find_or_create_by!(gate: gate_2)
+    trainer.gate_unlocks.find_or_create_by!(gate: gate_3)
+
+    log_in_as(trainer)
+    get dashboard_path
+
+    # Should have 3 earned badges
+    assert_select "div.badge-slot.badge-earned", count: 3
+    assert_select "img.badge-sprite", count: 3
+    # Should have 5 empty slots
+    assert_select "div.badge-empty", count: 5
+
+    # Verify all three badges are displayed
+    assert_select "img.badge-sprite[alt='Boulder Badge']"
+    assert_select "img.badge-sprite[alt='Cascade Badge']"
+    assert_select "img.badge-sprite[alt='Thunder Badge']"
+  end
+
+  test "should display all 8 badges when all gyms are beaten" do
+    trainer = trainers(:ash)
+    (1..8).each do |gate_number|
+      gate = Gate.find_or_create_by!(gate_number: gate_number) { |g| g.required_difficulty_score = gate_number * 10 }
+      trainer.gate_unlocks.find_or_create_by!(gate: gate)
+    end
+
+    log_in_as(trainer)
+    get dashboard_path
+
+    # Should have 8 earned badges
+    assert_select "div.badge-slot.badge-earned", count: 8
+    assert_select "img.badge-sprite", count: 8
+    # Should have no empty slots
+    assert_select "div.badge-empty", count: 0
+  end
+
+  test "should display correct badge titles as tooltips" do
+    trainer = trainers(:ash)
+    gate_5 = Gate.find_or_create_by!(gate_number: 5) { |g| g.required_difficulty_score = 40 }
+    trainer.gate_unlocks.find_or_create_by!(gate: gate_5)
+
+    log_in_as(trainer)
+    get dashboard_path
+
+    # Should have title attribute for Soul Badge
+    assert_select "img.badge-sprite[title='Soul Badge']"
+  end
+
+  test "should display badges with data attributes for badge numbers" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+    get dashboard_path
+
+    # Each badge slot should have data-badge-number attribute
+    (1..8).each do |badge_number|
+      assert_select "div.badge-slot[data-badge-number='#{badge_number}']"
+    end
+  end
+
+  test "should not display gate 9 (Elite 4) as a badge" do
+    trainer = trainers(:ash)
+    gate_9 = Gate.find_or_create_by!(gate_number: 9) { |g| g.required_difficulty_score = 75 }
+    trainer.gate_unlocks.find_or_create_by!(gate: gate_9)
+
+    log_in_as(trainer)
+    get dashboard_path
+
+    # Should still only have 8 badge slots, not 9
+    assert_select "div.badge-slot", count: 8
+  end
+
+  test "should display badges section before inventory section" do
+    log_in_as(trainers(:ash))
+    get dashboard_path
+
+    # Extract the HTML and verify badges come before inventory
+    html = response.body
+    badges_index = html.index('badges-section')
+    inventory_index = html.index('Inventory')
+
+    assert_not_nil badges_index, "Badges section should be present"
+    assert_not_nil inventory_index, "Inventory section should be present"
+    assert badges_index < inventory_index, "Badges should appear before inventory"
+  end
+
+  test "should handle trainer with non-sequential badge unlocks" do
+    trainer = trainers(:ash)
+    # Unlock gates 1, 3, and 5 (skipping 2 and 4)
+    gate_1 = Gate.find_or_create_by!(gate_number: 1) { |g| g.required_difficulty_score = 8 }
+    gate_3 = Gate.find_or_create_by!(gate_number: 3) { |g| g.required_difficulty_score = 25 }
+    gate_5 = Gate.find_or_create_by!(gate_number: 5) { |g| g.required_difficulty_score = 40 }
+
+    trainer.gate_unlocks.find_or_create_by!(gate: gate_1)
+    trainer.gate_unlocks.find_or_create_by!(gate: gate_3)
+    trainer.gate_unlocks.find_or_create_by!(gate: gate_5)
+
+    log_in_as(trainer)
+    get dashboard_path
+
+    # Should have 3 earned badges in slots 1, 3, and 5
+    assert_select "div.badge-slot.badge-earned", count: 3
+    assert_select "img.badge-sprite[alt='Boulder Badge']"
+    assert_select "img.badge-sprite[alt='Thunder Badge']"
+    assert_select "img.badge-sprite[alt='Soul Badge']"
+
+    # Slots 2, 4, 6, 7, 8 should be empty
+    assert_select "div.badge-empty", count: 5
+  end
+
+  test "should display all badge types correctly" do
+    trainer = trainers(:ash)
+    badge_gates = [
+      { number: 1, name: "Boulder Badge" },
+      { number: 2, name: "Cascade Badge" },
+      { number: 3, name: "Thunder Badge" },
+      { number: 4, name: "Rainbow Badge" },
+      { number: 5, name: "Soul Badge" },
+      { number: 6, name: "Marsh Badge" },
+      { number: 7, name: "Volcano Badge" },
+      { number: 8, name: "Earth Badge" }
+    ]
+
+    badge_gates.each do |badge_info|
+      gate = Gate.find_or_create_by!(gate_number: badge_info[:number]) { |g| g.required_difficulty_score = badge_info[:number] * 10 }
+      trainer.gate_unlocks.find_or_create_by!(gate: gate)
+    end
+
+    log_in_as(trainer)
+    get dashboard_path
+
+    # Verify all badge names are present
+    badge_gates.each do |badge_info|
+      assert_select "img.badge-sprite[alt='#{badge_info[:name]}']"
+    end
+  end
+
+  # ================================================================================
   # POKEDEX TESTS
   # ================================================================================
 
