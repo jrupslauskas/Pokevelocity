@@ -2124,6 +2124,19 @@ body > div:not(.app-layout) {
   }
 }
 
+.gate-badge-icon {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  transition: transform 0.2s ease;
+}
+
+.gate-badge-icon:hover {
+  transform: scale(1.1);
+}
+
 .gate-description {
   font-size: 16px;
   color: #6B5537;

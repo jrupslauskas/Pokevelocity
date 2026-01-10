@@ -37,6 +37,37 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     post login_path, params: { username: trainer.username, password: "password" }
   end
 
+  # Helper method to give trainer enough difficulty score for a gate
+  def reach_difficulty_score(trainer, target_score)
+    current_score = trainer.difficulty_score
+    return if current_score >= target_score
+
+    needed_score = target_score - current_score
+    # Create Pokemon with difficulty 5 to reach target
+    pokemon_needed = (needed_score / 5.0).ceil
+
+    # Use valid Pokedex numbers (1-151)
+    # Start from a number that won't conflict with already-captured Pokemon
+    base_num = 50 + trainer.captured_pokemon.count
+    pokemon_needed.times do |i|
+      pokedex_num = (base_num + i) % 151 + 1  # Cycle through 1-151
+      pokemon = Pokemon.find_or_create_by!(pokedex_number: pokedex_num) do |p|
+        p.name = "TestPokemon#{pokedex_num}"
+        p.difficulty = 5
+      end
+      # Skip if already captured (avoid duplicate error)
+      next if trainer.captured_pokemon.exists?(id: pokemon.id)
+      trainer.captures.create!(pokemon: pokemon, ball_type: 'pokeball')
+    end
+  end
+
+  # Helper to get or create a gate with required score
+  def get_or_create_gate(gate_number, required_score)
+    Gate.find_or_create_by!(gate_number: gate_number) do |g|
+      g.required_difficulty_score = required_score
+    end
+  end
+
   # ================================================================================
   # ROUTE DISPLAY TESTS (NEW CATCH PAGE)
   # ================================================================================
@@ -547,24 +578,26 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     assert_match @gate_0.name, response.body
   end
 
-  test "should show unlocked status for unlocked gates" do
+  test "should not show 'Unlocked' text for unlocked gates" do
     trainer = trainers(:ash)
     GateUnlock.create!(trainer: trainer, gate: @gate_0, unlocked_at: Time.current)
 
     log_in_as(trainer)
     get catches_path
 
-    assert_match "Unlocked", response.body
+    # Should not show the old "Unlocked" text anymore
+    assert_no_match /✓ Unlocked/, response.body
   end
 
-  test "should show locked status for locked gates" do
+  test "should not show 'Locked' text for locked gates" do
     trainer = trainers(:ash)
     GateUnlock.create!(trainer: trainer, gate: @gate_0, unlocked_at: Time.current)
 
     log_in_as(trainer)
     get catches_path
 
-    assert_match "Locked", response.body
+    # Should not show the old "Locked" text anymore
+    assert_no_match /🔒 Locked/, response.body
   end
 
   test "should auto-unlock gates when trainer meets requirement" do
@@ -625,6 +658,150 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     assert_select "div.gate-progress-bar"
     assert_select "div.gate-progress-fill"
   end
+
+  # ================================================================================
+  # GATE BADGE DISPLAY TESTS
+  # ================================================================================
+
+  test "should show badge icon for unlocked gate 1 (Boulder Badge)" do
+    trainer = trainers(:ash)
+    # Create gate 1 with a reasonable difficulty
+    gate_1 = get_or_create_gate(1, 8)
+    # Give trainer enough score to unlock it
+    reach_difficulty_score(trainer, gate_1.required_difficulty_score)
+    GateUnlock.create!(trainer: trainer, gate: gate_1, unlocked_at: Time.current)
+
+    log_in_as(trainer)
+    get catches_path
+
+    assert_response :success
+    # Should have badge icon with correct class
+    assert_select "img.gate-badge-icon"
+    # Should have correct title attribute for tooltip
+    assert_select "img.gate-badge-icon[title='Boulder Badge']"
+    # Should have correct alt text
+    assert_select "img.gate-badge-icon[alt='Boulder Badge']"
+  end
+
+  test "should show badge icon for unlocked gate 2 (Cascade Badge)" do
+    trainer = trainers(:ash)
+    gate_1 = get_or_create_gate(1, 8)
+    gate_2 = get_or_create_gate(2, 15)
+    reach_difficulty_score(trainer, gate_2.required_difficulty_score)
+    GateUnlock.create!(trainer: trainer, gate: gate_1, unlocked_at: Time.current)
+    GateUnlock.create!(trainer: trainer, gate: gate_2, unlocked_at: Time.current)
+
+    log_in_as(trainer)
+    get catches_path
+
+    assert_select "img.gate-badge-icon[title='Cascade Badge']"
+  end
+
+  test "should show badge icon for unlocked gate 3 (Thunder Badge)" do
+    trainer = trainers(:ash)
+    gate_1 = get_or_create_gate(1, 8)
+    gate_2 = get_or_create_gate(2, 15)
+    gate_3 = get_or_create_gate(3, 25)
+    reach_difficulty_score(trainer, gate_3.required_difficulty_score)
+    GateUnlock.create!(trainer: trainer, gate: gate_1, unlocked_at: Time.current)
+    GateUnlock.create!(trainer: trainer, gate: gate_2, unlocked_at: Time.current)
+    GateUnlock.create!(trainer: trainer, gate: gate_3, unlocked_at: Time.current)
+
+    log_in_as(trainer)
+    get catches_path
+
+    assert_select "img.gate-badge-icon[title='Thunder Badge']"
+  end
+
+  test "should show badge icons for multiple unlocked gates" do
+    trainer = trainers(:ash)
+    gate_1 = get_or_create_gate(1, 8)
+    gate_2 = get_or_create_gate(2, 15)
+    reach_difficulty_score(trainer, gate_2.required_difficulty_score)
+    GateUnlock.create!(trainer: trainer, gate: gate_1, unlocked_at: Time.current)
+    GateUnlock.create!(trainer: trainer, gate: gate_2, unlocked_at: Time.current)
+
+    log_in_as(trainer)
+    get catches_path
+
+    # Should show both badges
+    assert_select "img.gate-badge-icon[title='Boulder Badge']"
+    assert_select "img.gate-badge-icon[title='Cascade Badge']"
+    # Should have 2 badge icons total (only 2 gates visible)
+    assert_select "img.gate-badge-icon", count: 2
+  end
+
+  test "should not show badge icon for locked gates" do
+    trainer = trainers(:ash)
+    # Don't unlock gate 1
+
+    log_in_as(trainer)
+    get catches_path
+
+    # Should not have any badge icons since gate 1 is locked
+    assert_select "img.gate-badge-icon", count: 0
+  end
+
+  test "should show badge for gate 8 (Earth Badge)" do
+    trainer = trainers(:ash)
+    # Unlock gates 1-8
+    (1..8).each do |gate_num|
+      gate = get_or_create_gate(gate_num, gate_num * 10)
+      reach_difficulty_score(trainer, gate.required_difficulty_score)
+      GateUnlock.create!(trainer: trainer, gate: gate, unlocked_at: Time.current)
+    end
+
+    log_in_as(trainer)
+    get catches_path
+
+    assert_select "img.gate-badge-icon[title='Earth Badge']"
+  end
+
+  test "should not show badge for Elite 4 (gate 9)" do
+    trainer = trainers(:ash)
+    # Unlock all gates including Elite 4
+    (1..9).each do |gate_num|
+      gate = get_or_create_gate(gate_num, gate_num * 10)
+      reach_difficulty_score(trainer, gate.required_difficulty_score)
+      GateUnlock.create!(trainer: trainer, gate: gate, unlocked_at: Time.current)
+    end
+
+    log_in_as(trainer)
+    get catches_path
+
+    # Should have 8 badges (gates 1-8), but not gate 9 (Elite 4)
+    assert_select "img.gate-badge-icon", count: 8
+    # Should not have any reference to a 9th badge
+    assert_select "img.gate-badge-icon[title='Elite Four Badge']", count: 0
+  end
+
+  test "should show all 8 gym badges when all gyms are unlocked" do
+    trainer = trainers(:ash)
+    # Unlock gates 1-8
+    (1..8).each do |gate_num|
+      gate = get_or_create_gate(gate_num, gate_num * 10)
+      reach_difficulty_score(trainer, gate.required_difficulty_score)
+      GateUnlock.create!(trainer: trainer, gate: gate, unlocked_at: Time.current)
+    end
+
+    log_in_as(trainer)
+    get catches_path
+
+    # Should show all 8 gym badges
+    assert_select "img.gate-badge-icon[title='Boulder Badge']"
+    assert_select "img.gate-badge-icon[title='Cascade Badge']"
+    assert_select "img.gate-badge-icon[title='Thunder Badge']"
+    assert_select "img.gate-badge-icon[title='Rainbow Badge']"
+    assert_select "img.gate-badge-icon[title='Soul Badge']"
+    assert_select "img.gate-badge-icon[title='Marsh Badge']"
+    assert_select "img.gate-badge-icon[title='Volcano Badge']"
+    assert_select "img.gate-badge-icon[title='Earth Badge']"
+    assert_select "img.gate-badge-icon", count: 8
+  end
+
+  # ================================================================================
+  # END GATE BADGE DISPLAY TESTS
+  # ================================================================================
 
   test "should show routes for newly unlocked gates" do
     trainer = trainers(:ash)

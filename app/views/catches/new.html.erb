@@ -25,6 +25,19 @@
 
     <!-- Gates and Routes -->
     <div class="adventure-container">
+      <%
+        # Badge mapping for gates 1-8
+        badge_map = {
+          1 => { name: "Boulder Badge", sprite: "boulder_badge.png" },
+          2 => { name: "Cascade Badge", sprite: "cascade_badge.png" },
+          3 => { name: "Thunder Badge", sprite: "thunder_badge.png" },
+          4 => { name: "Rainbow Badge", sprite: "rainbow_badge.png" },
+          5 => { name: "Soul Badge", sprite: "soul_badge.png" },
+          6 => { name: "Marsh Badge", sprite: "marsh_badge.png" },
+          7 => { name: "Volcano Badge", sprite: "volcano_badge.png" },
+          8 => { name: "Earth Badge", sprite: "earth_badge.png" }
+        }
+      %>
       <!-- Gates and their routes (newest first) %>
       <% @gates.each do |gate| %>
         <%# Skip gates beyond the next locked gate (in descending order, this means higher gate numbers) %>
@@ -60,10 +73,11 @@
           <div class="gate-info">
             <h2 class="gate-name">
               <%= gate.name %>
-              <% if meets_requirement %>
-                <span class="gate-status unlocked">✓ Unlocked</span>
-              <% else %>
-                <span class="gate-status locked">🔒 Locked</span>
+              <% if meets_requirement && badge_map[gate.gate_number] %>
+                <%= image_tag "badges/#{badge_map[gate.gate_number][:sprite]}",
+                              alt: badge_map[gate.gate_number][:name],
+                              class: "gate-badge-icon",
+                              title: badge_map[gate.gate_number][:name] %>
               <% end %>
             </h2>
             <p class="gate-description"><%= gate.description %></p>
