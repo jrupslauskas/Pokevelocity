@@ -24,7 +24,8 @@
     <div class="encounter-type-selector">
       <% if has_grass_encounters %>
         <button class="encounter-type-btn <%= default_encounter_type == 'grass' ? 'active' : '' %>" data-encounter-type="grass" data-route-id="<%= route.id %>">
-          🌿 Land
+          <%= image_tag "icons/grass.png", alt: "Grass", class: "encounter-type-icon" %>
+          Land
         </button>
       <% end %>
       <% if has_fish_encounters %>
