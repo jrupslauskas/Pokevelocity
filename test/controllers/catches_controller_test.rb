@@ -757,7 +757,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     assert_select "img.gate-badge-icon[title='Earth Badge']"
   end
 
-  test "should not show badge for Elite 4 (gate 9)" do
+  test "should show Elite Four Trophy for gate 9" do
     trainer = trainers(:ash)
     # Unlock all gates including Elite 4
     (1..9).each do |gate_num|
@@ -769,10 +769,10 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     log_in_as(trainer)
     get catches_path
 
-    # Should have 8 badges (gates 1-8), but not gate 9 (Elite 4)
-    assert_select "img.gate-badge-icon", count: 8
-    # Should not have any reference to a 9th badge
-    assert_select "img.gate-badge-icon[title='Elite Four Badge']", count: 0
+    # Should have 9 badges (gates 1-8 plus Elite Four)
+    assert_select "img.gate-badge-icon", count: 9
+    # Should show the Elite Four Trophy
+    assert_select "img.gate-badge-icon[title='Elite Four Trophy']"
   end
 
   test "should show all 8 gym badges when all gyms are unlocked" do

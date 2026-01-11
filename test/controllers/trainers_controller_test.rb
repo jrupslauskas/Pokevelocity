@@ -1603,10 +1603,10 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     assert_match "Gym Badges", response.body
   end
 
-  test "should display all 8 badge slots" do
+  test "should display all 9 badge slots" do
     log_in_as(trainers(:ash))
     get dashboard_path
-    assert_select "div.badge-slot", count: 8
+    assert_select "div.badge-slot", count: 9
   end
 
   test "should display empty badge slots for trainer with no badges" do
@@ -1614,8 +1614,8 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     log_in_as(trainer)
     get dashboard_path
 
-    # Should have 8 empty slots
-    assert_select "div.badge-empty", count: 8
+    # Should have 9 empty slots
+    assert_select "div.badge-empty", count: 9
     # Should have no earned badges
     assert_select "img.badge-sprite", count: 0
   end
@@ -1633,8 +1633,8 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     assert_select "img.badge-sprite", count: 1
     # Should have Boulder Badge image
     assert_select "img.badge-sprite[alt='Boulder Badge']"
-    # Should have 7 empty slots
-    assert_select "div.badge-empty", count: 7
+    # Should have 8 empty slots
+    assert_select "div.badge-empty", count: 8
   end
 
   test "should display correct badge sprite for each gate" do
@@ -1666,8 +1666,8 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     # Should have 3 earned badges
     assert_select "div.badge-slot.badge-earned", count: 3
     assert_select "img.badge-sprite", count: 3
-    # Should have 5 empty slots
-    assert_select "div.badge-empty", count: 5
+    # Should have 6 empty slots
+    assert_select "div.badge-empty", count: 6
 
     # Verify all three badges are displayed
     assert_select "img.badge-sprite[alt='Boulder Badge']"
@@ -1675,9 +1675,9 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     assert_select "img.badge-sprite[alt='Thunder Badge']"
   end
 
-  test "should display all 8 badges when all gyms are beaten" do
+  test "should display all 9 badges when all gyms and Elite Four are beaten" do
     trainer = trainers(:ash)
-    (1..8).each do |gate_number|
+    (1..9).each do |gate_number|
       gate = Gate.find_or_create_by!(gate_number: gate_number) { |g| g.required_difficulty_score = gate_number * 10 }
       trainer.gate_unlocks.find_or_create_by!(gate: gate)
     end
@@ -1685,9 +1685,9 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     log_in_as(trainer)
     get dashboard_path
 
-    # Should have 8 earned badges
-    assert_select "div.badge-slot.badge-earned", count: 8
-    assert_select "img.badge-sprite", count: 8
+    # Should have 9 earned badges
+    assert_select "div.badge-slot.badge-earned", count: 9
+    assert_select "img.badge-sprite", count: 9
     # Should have no empty slots
     assert_select "div.badge-empty", count: 0
   end
@@ -1710,12 +1710,12 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     get dashboard_path
 
     # Each badge slot should have data-badge-number attribute
-    (1..8).each do |badge_number|
+    (1..9).each do |badge_number|
       assert_select "div.badge-slot[data-badge-number='#{badge_number}']"
     end
   end
 
-  test "should not display gate 9 (Elite 4) as a badge" do
+  test "should display Elite Four Trophy for gate 9" do
     trainer = trainers(:ash)
     gate_9 = Gate.find_or_create_by!(gate_number: 9) { |g| g.required_difficulty_score = 75 }
     trainer.gate_unlocks.find_or_create_by!(gate: gate_9)
@@ -1723,8 +1723,11 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     log_in_as(trainer)
     get dashboard_path
 
-    # Should still only have 8 badge slots, not 9
-    assert_select "div.badge-slot", count: 8
+    # Should have 9 badge slots including Elite Four
+    assert_select "div.badge-slot", count: 9
+    # Should have Elite Four Trophy badge
+    assert_select "img.badge-sprite[alt='Elite Four Trophy']"
+    assert_select "img.badge-sprite[title='Elite Four Trophy']"
   end
 
   test "should display badges section before inventory section" do
@@ -1761,8 +1764,8 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     assert_select "img.badge-sprite[alt='Thunder Badge']"
     assert_select "img.badge-sprite[alt='Soul Badge']"
 
-    # Slots 2, 4, 6, 7, 8 should be empty
-    assert_select "div.badge-empty", count: 5
+    # Slots 2, 4, 6, 7, 8, 9 should be empty
+    assert_select "div.badge-empty", count: 6
   end
 
   test "should display all badge types correctly" do

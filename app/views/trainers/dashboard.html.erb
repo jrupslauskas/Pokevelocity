@@ -9,10 +9,10 @@
 
     <!-- Badges Section -->
     <div class="badges-section">
-      <h2 class="badges-title">🏆 Gym Badges</h2>
+      <h2 class="badges-title">🏆 Gym Badges & Elite Four</h2>
       <div class="badges-container">
         <%
-          # Badge mapping for gates 1-8
+          # Badge mapping for gates 1-8 and Elite Four (gate 9)
           badge_map = {
             1 => { name: "Boulder Badge", sprite: "boulder_badge.png" },
             2 => { name: "Cascade Badge", sprite: "cascade_badge.png" },
@@ -21,14 +21,15 @@
             5 => { name: "Soul Badge", sprite: "soul_badge.png" },
             6 => { name: "Marsh Badge", sprite: "marsh_badge.png" },
             7 => { name: "Volcano Badge", sprite: "volcano_badge.png" },
-            8 => { name: "Earth Badge", sprite: "earth_badge.png" }
+            8 => { name: "Earth Badge", sprite: "earth_badge.png" },
+            9 => { name: "Elite Four Trophy", sprite: "elite_four_trophy.png" }
           }
 
           # Get unlocked gates
           unlocked_gate_numbers = @trainer.gate_unlocks.includes(:gate).map { |gu| gu.gate.gate_number }
         %>
 
-        <% (1..8).each do |gate_number| %>
+        <% (1..9).each do |gate_number| %>
           <div class="badge-slot <%= 'badge-earned' if unlocked_gate_numbers.include?(gate_number) %>" data-badge-number="<%= gate_number %>">
             <% if unlocked_gate_numbers.include?(gate_number) %>
               <%= image_tag "badges/#{badge_map[gate_number][:sprite]}",
