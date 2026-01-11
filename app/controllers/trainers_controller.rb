@@ -37,6 +37,9 @@ class TrainersController < ApplicationController
     @pokeball_items = fetch_items_by_type('pokeball')
     @evolution_items = fetch_items_by_type('evolution_stone')
     @adventure_items = fetch_items_by_type('potion', 'key_item')
+
+    # Fetch news feed: recent captures and evolutions from other trainers
+    @news_feed = build_news_feed
   end
 
   def pokedex
@@ -183,5 +186,43 @@ class TrainersController < ApplicationController
     else
       items
     end
+  end
+
+  # Build news feed of recent captures and evolutions from other trainers
+  # @return [Array<Hash>] array of event hashes with :type, :trainer, :pokemon, :timestamp
+  def build_news_feed
+    # Get recent captures (non-evolved) from other trainers
+    recent_catches = Capture.includes(:trainer, :pokemon)
+                            .where(evolved: false)
+                            .where.not(trainer_id: @trainer.id)
+                            .order(created_at: :desc)
+                            .limit(25)
+                            .map { |c| {
+                              type: 'caught',
+                              trainer: c.trainer,
+                              pokemon: c.pokemon,
+                              timestamp: c.created_at,
+                              ball_type: c.ball_type
+                            }}
+
+    # Get recent evolutions from other trainers
+    recent_evolutions = Capture.includes(:trainer, :pokemon)
+                               .where(evolved: true)
+                               .where.not(trainer_id: @trainer.id)
+                               .order(created_at: :desc)
+                               .limit(25)
+                               .map { |c| {
+                                 type: 'evolved',
+                                 trainer: c.trainer,
+                                 pokemon: c.pokemon,
+                                 timestamp: c.created_at,
+                                 ball_type: c.ball_type
+                               }}
+
+    # Merge and sort by timestamp, then take top 50
+    (recent_catches + recent_evolutions)
+      .sort_by { |event| event[:timestamp] }
+      .reverse
+      .take(50)
   end
 end

@@ -1793,6 +1793,644 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
   end
 
   # ================================================================================
+  # NEWS FEED TESTS
+  # ================================================================================
+
+  test "should display news feed on dashboard" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+    get dashboard_path
+
+    assert_response :success
+    assert_select ".news-feed"
+  end
+
+  test "should show recent captures from other trainers" do
+    ash = trainers(:ash)
+    gary = trainers(:gary)
+
+    # Gary catches a Pikachu
+    pikachu = pokemons(:pikachu)
+    capture = Capture.create!(
+      trainer: gary,
+      pokemon: pikachu,
+      ball_type: 'pokeball',
+      created_at: 1.hour.ago
+    )
+
+    log_in_as(ash)
+    get dashboard_path
+
+    assert_response :success
+    # Should show Gary's capture
+    assert_match "gary", response.body.downcase
+    assert_match "caught", response.body.downcase
+    assert_match "Pikachu", response.body
+  end
+
+  test "should show recent evolutions from other trainers" do
+    ash = trainers(:ash)
+    gary = trainers(:gary)
+
+    # Gary evolves Bulbasaur to Ivysaur
+    ivysaur = Pokemon.find_or_create_by!(pokedex_number: 2) do |p|
+      p.name = "Ivysaur"
+      p.difficulty = 5
+    end
+
+    evolution = Capture.create!(
+      trainer: gary,
+      pokemon: ivysaur,
+      ball_type: 'pokeball',
+      evolved: true,
+      created_at: 30.minutes.ago
+    )
+
+    log_in_as(ash)
+    get dashboard_path
+
+    assert_response :success
+    # Should show Gary's evolution
+    assert_match "gary", response.body.downcase
+    assert_match "evolved", response.body.downcase
+    assert_match "Ivysaur", response.body
+  end
+
+  test "should not show current trainer in news feed" do
+    ash = trainers(:ash)
+
+    # Ash catches a Pikachu
+    pikachu = pokemons(:pikachu)
+    Capture.create!(
+      trainer: ash,
+      pokemon: pikachu,
+      ball_type: 'pokeball',
+      created_at: 1.hour.ago
+    )
+
+    log_in_as(ash)
+    get dashboard_path
+
+    assert_response :success
+    # News feed should exist
+    assert_select ".news-feed"
+    # But should not contain Ash's own captures
+    # (unless there are other trainers' activities)
+    news_feed_section = css_select(".news-feed").first.to_s
+    # Check that if "ash" appears, it's not in a news-item context
+    if news_feed_section.include?("ash")
+      # It should only appear in the empty state or header, not in news items
+      assert_select ".news-item .news-trainer", text: "ash", count: 0
+    end
+  end
+
+  test "should show both captures and evolutions in chronological order" do
+    ash = trainers(:ash)
+    gary = trainers(:gary)
+    misty = Trainer.create!(
+      username: "misty_#{rand(10000)}",
+      password: "password",
+      icon_pokemon_id: pokemons(:pikachu).id,
+      onboarding_completed: true
+    )
+
+    # Create events at different times
+    pikachu = pokemons(:pikachu)
+    bulbasaur = pokemons(:bulbasaur)
+    ivysaur = Pokemon.find_or_create_by!(pokedex_number: 2) do |p|
+      p.name = "Ivysaur"
+      p.difficulty = 5
+    end
+
+    # Gary catches Pikachu (most recent)
+    gary_capture = Capture.create!(
+      trainer: gary,
+      pokemon: pikachu,
+      ball_type: 'pokeball',
+      created_at: 10.minutes.ago
+    )
+
+    # Misty evolves Bulbasaur to Ivysaur (older)
+    misty_evolution = Capture.create!(
+      trainer: misty,
+      pokemon: ivysaur,
+      ball_type: 'pokeball',
+      evolved: true,
+      created_at: 1.hour.ago
+    )
+
+    log_in_as(ash)
+    get dashboard_path
+
+    assert_response :success
+    # Both events should appear
+    assert_match "gary", response.body.downcase
+    assert_match "misty", response.body.downcase
+    assert_match "Pikachu", response.body
+    assert_match "Ivysaur", response.body
+  end
+
+  test "should limit news feed to 50 items" do
+    ash = trainers(:ash)
+
+    # Create 60 different trainers who each caught a pokemon
+    60.times do |i|
+      trainer = Trainer.create!(
+        username: "trainer_#{i}_#{rand(10000)}",
+        password: "password",
+        icon_pokemon_id: pokemons(:pikachu).id,
+        onboarding_completed: true
+      )
+
+      pokemon = Pokemon.find_or_create_by!(pokedex_number: (i % 151) + 1) do |p|
+        p.name = "TestPokemon#{(i % 151) + 1}"
+        p.difficulty = 5
+      end
+
+      Capture.create!(
+        trainer: trainer,
+        pokemon: pokemon,
+        ball_type: 'pokeball',
+        created_at: (60 - i).minutes.ago
+      )
+    end
+
+    log_in_as(ash)
+    get dashboard_path
+
+    assert_response :success
+    # Should only show maximum 50 items
+    assert_select ".news-item", maximum: 50
+  end
+
+  test "should show empty state when no other trainer activity" do
+    # Clear all existing captures to ensure empty state
+    Capture.delete_all
+
+    # Create a new trainer with no other trainers having activity
+    trainer = Trainer.create!(
+      username: "lonely_#{rand(10000)}",
+      password: "password",
+      icon_pokemon_id: pokemons(:pikachu).id,
+      onboarding_completed: true
+    )
+
+    log_in_as(trainer)
+    get dashboard_path
+
+    assert_response :success
+    # Should show empty state message
+    assert_select ".news-feed-empty"
+    assert_match /no recent activity/i, response.body
+  end
+
+  test "should display pokemon sprites in news feed" do
+    ash = trainers(:ash)
+    gary = trainers(:gary)
+
+    pikachu = pokemons(:pikachu)
+    Capture.create!(
+      trainer: gary,
+      pokemon: pikachu,
+      ball_type: 'pokeball',
+      created_at: 1.hour.ago
+    )
+
+    log_in_as(ash)
+    get dashboard_path
+
+    assert_response :success
+    # Should have pokemon sprite image
+    assert_select "img.news-pokemon-sprite"
+  end
+
+  test "should show timestamps in news feed" do
+    ash = trainers(:ash)
+    gary = trainers(:gary)
+
+    pikachu = pokemons(:pikachu)
+    Capture.create!(
+      trainer: gary,
+      pokemon: pikachu,
+      ball_type: 'pokeball',
+      created_at: 2.hours.ago
+    )
+
+    log_in_as(ash)
+    get dashboard_path
+
+    assert_response :success
+    # Should show timestamp
+    assert_select ".news-timestamp"
+    assert_match /ago/, response.body.downcase
+  end
+
+  test "should distinguish between caught and evolved events" do
+    ash = trainers(:ash)
+    gary = trainers(:gary)
+
+    # Capture
+    pikachu = pokemons(:pikachu)
+    Capture.create!(
+      trainer: gary,
+      pokemon: pikachu,
+      ball_type: 'pokeball',
+      created_at: 1.hour.ago
+    )
+
+    # Evolution
+    ivysaur = Pokemon.find_or_create_by!(pokedex_number: 2) do |p|
+      p.name = "Ivysaur"
+      p.difficulty = 5
+    end
+    Capture.create!(
+      trainer: gary,
+      pokemon: ivysaur,
+      ball_type: 'pokeball',
+      evolved: true,
+      created_at: 30.minutes.ago
+    )
+
+    log_in_as(ash)
+    get dashboard_path
+
+    assert_response :success
+    # Should have both event types with different styling
+    assert_select ".news-item[data-event-type='caught']"
+    assert_select ".news-item[data-event-type='evolved']"
+  end
+
+  # ================================================================================
+  # NEWS FEED LOGIC TESTS - Deep Testing of build_news_feed
+  # ================================================================================
+
+  test "news feed should display events in correct chronological order (newest first)" do
+    # Clear all captures to have clean state
+    Capture.delete_all
+
+    ash = trainers(:ash)
+    gary = trainers(:gary)
+
+    # Create events with specific timestamps
+    oldest_pokemon = Pokemon.find_or_create_by!(pokedex_number: 10) { |p| p.name = "Caterpie"; p.difficulty = 5 }
+    middle_pokemon = Pokemon.find_or_create_by!(pokedex_number: 11) { |p| p.name = "Metapod"; p.difficulty = 5 }
+    newest_pokemon = Pokemon.find_or_create_by!(pokedex_number: 12) { |p| p.name = "Butterfree"; p.difficulty = 5 }
+
+    # Create in non-chronological order to ensure sorting works
+    Capture.create!(trainer: gary, pokemon: middle_pokemon, ball_type: 'pokeball', created_at: 2.hours.ago)
+    Capture.create!(trainer: gary, pokemon: oldest_pokemon, ball_type: 'pokeball', created_at: 3.hours.ago)
+    Capture.create!(trainer: gary, pokemon: newest_pokemon, ball_type: 'pokeball', created_at: 1.hour.ago)
+
+    log_in_as(ash)
+    get dashboard_path
+
+    # Extract the order of pokemon names from the HTML
+    news_items = css_select(".news-item")
+    pokemon_order = news_items.map { |item| item.to_s.match(/class="news-pokemon">(\w+)<\/span>/)[1] }
+
+    # Should be in reverse chronological order (newest first)
+    assert_equal ["Butterfree", "Metapod", "Caterpie"], pokemon_order
+  end
+
+  test "news feed should select 25 most recent captures when more than 25 exist" do
+    ash = trainers(:ash)
+
+    # Create 30 different trainers who each caught a pokemon
+    30.times do |i|
+      trainer = Trainer.create!(
+        username: "catcher_test_#{i}_#{rand(10000)}",
+        password: "password",
+        icon_pokemon_id: pokemons(:pikachu).id,
+        onboarding_completed: true
+      )
+
+      pokemon = Pokemon.find_or_create_by!(pokedex_number: (i % 151) + 1) do |p|
+        p.name = "Pokemon#{(i % 151) + 1}"
+        p.difficulty = 5
+      end
+
+      Capture.create!(
+        trainer: trainer,
+        pokemon: pokemon,
+        ball_type: 'pokeball',
+        evolved: false,
+        created_at: (30 - i).hours.ago
+      )
+    end
+
+    log_in_as(ash)
+    get dashboard_path
+
+    # Should only show 25 capture events (the most recent 25)
+    assert_select ".news-item[data-event-type='caught']", count: 25
+  end
+
+  test "news feed should select 25 most recent evolutions when more than 25 exist" do
+    ash = trainers(:ash)
+
+    # Create 30 different trainers who each evolved a pokemon
+    30.times do |i|
+      trainer = Trainer.create!(
+        username: "evolver_#{i}_#{rand(10000)}",
+        password: "password",
+        icon_pokemon_id: pokemons(:pikachu).id,
+        onboarding_completed: true
+      )
+
+      pokemon = Pokemon.find_or_create_by!(pokedex_number: (i % 151) + 1) do |p|
+        p.name = "EvolvedPokemon#{(i % 151) + 1}"
+        p.difficulty = 5
+      end
+
+      Capture.create!(
+        trainer: trainer,
+        pokemon: pokemon,
+        ball_type: 'pokeball',
+        evolved: true,
+        created_at: (30 - i).hours.ago
+      )
+    end
+
+    log_in_as(ash)
+    get dashboard_path
+
+    # Should only show 25 evolution events (the most recent 25)
+    assert_select ".news-item[data-event-type='evolved']", count: 25
+  end
+
+  test "news feed should correctly merge 25 captures and 25 evolutions then take top 50" do
+    ash = trainers(:ash)
+
+    # Create 30 captures (should take 25 most recent)
+    30.times do |i|
+      trainer = Trainer.create!(
+        username: "catcher_#{i}_#{rand(10000)}",
+        password: "password",
+        icon_pokemon_id: pokemons(:pikachu).id,
+        onboarding_completed: true
+      )
+
+      pokemon = Pokemon.find_or_create_by!(pokedex_number: (i % 50) + 1) do |p|
+        p.name = "CaughtPokemon#{(i % 50) + 1}"
+        p.difficulty = 5
+      end
+
+      Capture.create!(
+        trainer: trainer,
+        pokemon: pokemon,
+        ball_type: 'pokeball',
+        evolved: false,
+        created_at: (60 - i).hours.ago
+      )
+    end
+
+    # Create 30 evolutions (should take 25 most recent)
+    30.times do |i|
+      trainer = Trainer.create!(
+        username: "evolver_#{i}_#{rand(10000)}",
+        password: "password",
+        icon_pokemon_id: pokemons(:pikachu).id,
+        onboarding_completed: true
+      )
+
+      pokemon = Pokemon.find_or_create_by!(pokedex_number: (i % 50) + 51) do |p|
+        p.name = "EvolvedPokemon#{(i % 50) + 51}"
+        p.difficulty = 5
+      end
+
+      Capture.create!(
+        trainer: trainer,
+        pokemon: pokemon,
+        ball_type: 'pokeball',
+        evolved: true,
+        created_at: (30 - i).hours.ago
+      )
+    end
+
+    log_in_as(ash)
+    get dashboard_path
+
+    # Should show exactly 50 items (25 captures + 25 evolutions)
+    assert_select ".news-item", count: 50
+    # But the split might not be exactly 25/25 in the final 50 due to timestamp ordering
+    # So just verify total is 50
+  end
+
+  test "news feed should not mix evolved flag - captures have evolved false" do
+    ash = trainers(:ash)
+    gary = trainers(:gary)
+
+    # Create a regular capture (evolved: false)
+    pikachu = pokemons(:pikachu)
+    Capture.create!(
+      trainer: gary,
+      pokemon: pikachu,
+      ball_type: 'pokeball',
+      evolved: false,
+      created_at: 1.hour.ago
+    )
+
+    log_in_as(ash)
+    get dashboard_path
+
+    # Should appear as 'caught' type, not 'evolved'
+    assert_select ".news-item[data-event-type='caught']", minimum: 1
+    # The text should say "caught" not "evolved"
+    assert_match /caught/i, response.body
+  end
+
+  test "news feed should not mix evolved flag - evolutions have evolved true" do
+    ash = trainers(:ash)
+    gary = trainers(:gary)
+
+    # Create an evolution (evolved: true)
+    ivysaur = Pokemon.find_or_create_by!(pokedex_number: 2) do |p|
+      p.name = "Ivysaur"
+      p.difficulty = 5
+    end
+    Capture.create!(
+      trainer: gary,
+      pokemon: ivysaur,
+      ball_type: 'pokeball',
+      evolved: true,
+      created_at: 1.hour.ago
+    )
+
+    log_in_as(ash)
+    get dashboard_path
+
+    # Should appear as 'evolved' type, not 'caught'
+    assert_select ".news-item[data-event-type='evolved']", minimum: 1
+    # The text should say "evolved" not "caught"
+    assert_match /evolved/i, response.body
+  end
+
+  test "news feed chronological merge should prioritize newer events regardless of type" do
+    # Clear all captures to have clean state
+    Capture.delete_all
+
+    ash = trainers(:ash)
+    gary = trainers(:gary)
+    misty = Trainer.create!(
+      username: "misty_chrono_#{rand(10000)}",
+      password: "password",
+      icon_pokemon_id: pokemons(:pikachu).id,
+      onboarding_completed: true
+    )
+
+    # Create events interleaved by time
+    # Oldest: Gary catches Pidgey (3 hours ago)
+    pidgey = Pokemon.find_or_create_by!(pokedex_number: 16) { |p| p.name = "Pidgey"; p.difficulty = 5 }
+    Capture.create!(trainer: gary, pokemon: pidgey, ball_type: 'pokeball', evolved: false, created_at: 3.hours.ago)
+
+    # Middle: Misty evolves Rattata (2 hours ago)
+    raticate = Pokemon.find_or_create_by!(pokedex_number: 20) { |p| p.name = "Raticate"; p.difficulty = 5 }
+    Capture.create!(trainer: misty, pokemon: raticate, ball_type: 'pokeball', evolved: true, created_at: 2.hours.ago)
+
+    # Newest: Gary catches Spearow (1 hour ago)
+    spearow = Pokemon.find_or_create_by!(pokedex_number: 21) { |p| p.name = "Spearow"; p.difficulty = 5 }
+    Capture.create!(trainer: gary, pokemon: spearow, ball_type: 'pokeball', evolved: false, created_at: 1.hour.ago)
+
+    log_in_as(ash)
+    get dashboard_path
+
+    # Extract the order of events
+    news_items = css_select(".news-item")
+    pokemon_order = news_items.map { |item| item.to_s.match(/class="news-pokemon">(\w+)<\/span>/)[1] }
+
+    # Should be: Spearow (newest), Raticate (middle), Pidgey (oldest)
+    assert_equal ["Spearow", "Raticate", "Pidgey"], pokemon_order
+  end
+
+  test "news feed should handle identical timestamps gracefully" do
+    # Clear all captures to have clean state
+    Capture.delete_all
+
+    ash = trainers(:ash)
+    gary = trainers(:gary)
+    misty = Trainer.create!(
+      username: "misty_#{rand(10000)}",
+      password: "password",
+      icon_pokemon_id: pokemons(:pikachu).id,
+      onboarding_completed: true
+    )
+
+    same_time = 1.hour.ago
+
+    # Create multiple events at exactly the same timestamp
+    pidgey = Pokemon.find_or_create_by!(pokedex_number: 16) { |p| p.name = "Pidgey"; p.difficulty = 5 }
+    rattata = Pokemon.find_or_create_by!(pokedex_number: 19) { |p| p.name = "Rattata"; p.difficulty = 5 }
+
+    Capture.create!(trainer: gary, pokemon: pidgey, ball_type: 'pokeball', evolved: false, created_at: same_time)
+    Capture.create!(trainer: misty, pokemon: rattata, ball_type: 'pokeball', evolved: false, created_at: same_time)
+
+    log_in_as(ash)
+    get dashboard_path
+
+    # Should not crash and should show both events
+    assert_select ".news-item", count: 2
+  end
+
+  test "news feed should include all required data fields for each event" do
+    ash = trainers(:ash)
+    gary = trainers(:gary)
+
+    pikachu = pokemons(:pikachu)
+    Capture.create!(
+      trainer: gary,
+      pokemon: pikachu,
+      ball_type: 'great_ball',
+      created_at: 1.hour.ago
+    )
+
+    log_in_as(ash)
+    get dashboard_path
+
+    # Verify the HTML contains all required data
+    assert_response :success
+
+    # Should have event type data attribute
+    assert_select ".news-item[data-event-type='caught']"
+
+    # Should have trainer name
+    assert_select ".news-trainer", text: "gary"
+
+    # Should have pokemon name
+    assert_select ".news-pokemon", text: "Pikachu"
+
+    # Should have timestamp
+    assert_select ".news-timestamp"
+    assert_match /ago/, response.body
+
+    # Should have pokemon sprite
+    assert_select "img.news-pokemon-sprite"
+  end
+
+  test "news feed should prioritize most recent when combining 25+25 into top 50" do
+    ash = trainers(:ash)
+
+    # Create 25 very old captures
+    25.times do |i|
+      trainer = Trainer.create!(
+        username: "old_catcher_#{i}_#{rand(10000)}",
+        password: "password",
+        icon_pokemon_id: pokemons(:pikachu).id,
+        onboarding_completed: true
+      )
+
+      pokemon = Pokemon.find_or_create_by!(pokedex_number: (i % 25) + 1) do |p|
+        p.name = "OldPokemon#{(i % 25) + 1}"
+        p.difficulty = 5
+      end
+
+      Capture.create!(
+        trainer: trainer,
+        pokemon: pokemon,
+        ball_type: 'pokeball',
+        evolved: false,
+        created_at: (100 + i).hours.ago
+      )
+    end
+
+    # Create 25 recent evolutions
+    25.times do |i|
+      trainer = Trainer.create!(
+        username: "recent_evolver_#{i}_#{rand(10000)}",
+        password: "password",
+        icon_pokemon_id: pokemons(:pikachu).id,
+        onboarding_completed: true
+      )
+
+      pokemon = Pokemon.find_or_create_by!(pokedex_number: (i % 25) + 26) do |p|
+        p.name = "RecentPokemon#{(i % 25) + 26}"
+        p.difficulty = 5
+      end
+
+      Capture.create!(
+        trainer: trainer,
+        pokemon: pokemon,
+        ball_type: 'pokeball',
+        evolved: true,
+        created_at: (25 - i).hours.ago
+      )
+    end
+
+    log_in_as(ash)
+    get dashboard_path
+
+    # All 50 items should be from the recent evolutions, not old captures
+    # Because when we merge 25 old catches + 25 recent evolutions and take top 50,
+    # the 25 recent evolutions should all appear
+    assert_select ".news-item[data-event-type='evolved']", count: 25
+    # The old captures should appear in the remaining 25 slots
+    assert_select ".news-item[data-event-type='caught']", count: 25
+  end
+
+  # ================================================================================
+  # END NEWS FEED LOGIC TESTS
+  # ================================================================================
+
+  # ================================================================================
   # POKEDEX TESTS
   # ================================================================================
 

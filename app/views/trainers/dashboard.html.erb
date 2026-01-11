@@ -118,6 +118,39 @@
           <p class="progress-text"><%= @trainer.captures.count %> / 151 Pokémon (<%= completion %>%)</p>
         </div>
       </div>
+
+      <!-- News Feed Card -->
+      <div class="card-dashboard news-feed-card">
+        <div class="card-dashboard-header">
+          <span class="card-dashboard-icon">📰</span>
+          <h2 class="card-dashboard-title">News Feed</h2>
+        </div>
+
+        <div class="news-feed">
+          <% if @news_feed.any? %>
+            <% @news_feed.each do |event| %>
+              <div class="news-item" data-event-type="<%= event[:type] %>">
+                <div class="news-item-content">
+                  <%= image_tag "pokemonSprites/#{event[:pokemon].pokedex_number.to_s.rjust(3, '0')}.png",
+                                alt: event[:pokemon].name,
+                                class: "news-pokemon-sprite" %>
+                  <div class="news-item-text">
+                    <span class="news-trainer"><%= event[:trainer].username %></span>
+                    <% if event[:type] == 'caught' %>
+                      caught a <span class="news-pokemon"><%= event[:pokemon].name %></span>!
+                    <% else %>
+                      evolved <span class="news-pokemon"><%= event[:pokemon].name %></span>!
+                    <% end %>
+                    <span class="news-timestamp"><%= time_ago_in_words(event[:timestamp]) %> ago</span>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          <% else %>
+            <p class="news-feed-empty">No recent activity from other trainers.</p>
+          <% end %>
+        </div>
+      </div>
     </div>
   </main>
 </div>

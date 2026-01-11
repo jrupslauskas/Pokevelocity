@@ -233,6 +233,81 @@ body > div:not(.app-layout) {
   text-align: center;
 }
 
+/* News Feed Styles */
+.news-feed {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.news-item {
+  padding: 12px;
+  margin-bottom: 8px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  border: 1px solid #E8DCC8;
+  transition: all 0.2s ease;
+}
+
+.news-item:hover {
+  background-color: rgba(255, 255, 255, 0.8);
+  transform: translateX(2px);
+}
+
+.news-item[data-event-type="caught"] {
+  border-left: 3px solid #7AC74C;
+}
+
+.news-item[data-event-type="evolved"] {
+  border-left: 3px solid #5B9BD5;
+}
+
+.news-item-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.news-pokemon-sprite {
+  width: 40px;
+  height: 40px;
+  image-rendering: pixelated;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.news-item-text {
+  flex: 1;
+  font-size: 14px;
+  color: #6B5537;
+  line-height: 1.5;
+}
+
+.news-trainer {
+  font-weight: 700;
+  color: #2C5F2D;
+}
+
+.news-pokemon {
+  font-weight: 600;
+  color: #5FA777;
+}
+
+.news-timestamp {
+  display: block;
+  font-size: 12px;
+  color: #999;
+  margin-top: 2px;
+}
+
+.news-feed-empty {
+  text-align: center;
+  padding: 32px;
+  color: #888;
+  font-style: italic;
+  font-size: 14px;
+}
+
 /* Pokédex Styles */
 .pokedex-container {
   background: linear-gradient(to bottom, #FFF8DC, #F5F0E8);
