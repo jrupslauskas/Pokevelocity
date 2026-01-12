@@ -150,4 +150,18 @@ class GatesControllerTest < ActionDispatch::IntegrationTest
     get gates_celebration_path
     assert_redirected_to catches_path
   end
+
+  # ================================================================================
+  # BADGE DISPLAY TESTS
+  # ================================================================================
+
+  test "celebration view file contains badge display logic" do
+    # Verify the celebration view template includes badge display markup
+    view_file = File.read(Rails.root.join('app', 'views', 'gates', 'celebration.html.erb'))
+
+    assert_includes view_file, 'celebration-badge'
+    assert_includes view_file, 'celebration-badge-sprite'
+    assert_includes view_file, 'badge_map'
+    assert_includes view_file, 'Elite Four Trophy'
+  end
 end

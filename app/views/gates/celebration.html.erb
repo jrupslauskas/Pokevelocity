@@ -3,6 +3,20 @@
 
   <main class="main-content">
     <div class="celebration-container">
+      <%
+        # Badge mapping for gates 1-8 and Elite Four (gate 9)
+        badge_map = {
+          1 => { name: "Boulder Badge", sprite: "boulder_badge.png" },
+          2 => { name: "Cascade Badge", sprite: "cascade_badge.png" },
+          3 => { name: "Thunder Badge", sprite: "thunder_badge.png" },
+          4 => { name: "Rainbow Badge", sprite: "rainbow_badge.png" },
+          5 => { name: "Soul Badge", sprite: "soul_badge.png" },
+          6 => { name: "Marsh Badge", sprite: "marsh_badge.png" },
+          7 => { name: "Volcano Badge", sprite: "volcano_badge.png" },
+          8 => { name: "Earth Badge", sprite: "earth_badge.png" },
+          9 => { name: "Elite Four Trophy", sprite: "elite_four_trophy.png" }
+        }
+      %>
       <header class="page-header-authenticated">
         <h1>Congratulations!</h1>
         <p>You defeated <%= @gate.description.split(' - ').first %>!</p>
@@ -22,6 +36,14 @@
         </div>
 
         <div class="celebration-message">
+          <% if badge_map[@gate.gate_number] %>
+            <div class="celebration-badge">
+              <%= image_tag "badges/#{badge_map[@gate.gate_number][:sprite]}",
+                            alt: badge_map[@gate.gate_number][:name],
+                            class: "celebration-badge-sprite",
+                            title: badge_map[@gate.gate_number][:name] %>
+            </div>
+          <% end %>
           <h2 class="celebration-title">You earned the <%= @gate.name.split(' - ').last %>!</h2>
           <p class="celebration-text">
             Your difficulty score has reached <%= @trainer.difficulty_score %>★!
