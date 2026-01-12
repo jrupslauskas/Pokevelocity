@@ -3569,7 +3569,8 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "form[action='#{discard_item_path(item_key: pokeball.key)}']"
     assert_select ".btn-discard-item"
-    assert_select ".discard-icon"
+    assert_select "img.discard-icon"
+    assert_select "img[alt='Discard']"
   end
 
   test "dashboard should show discard button for evolution stones" do
@@ -3584,6 +3585,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "form[action='#{discard_item_path(item_key: water_stone.key)}']"
     assert_select ".btn-discard-item"
+    assert_select "img.discard-icon"
   end
 
   test "dashboard should not show discard button for adventure items" do

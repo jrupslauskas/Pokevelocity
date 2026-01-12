@@ -175,7 +175,10 @@ body > div:not(.app-layout) {
 }
 
 .discard-icon {
-  font-size: 18px;
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  image-rendering: pixelated;
   opacity: 0.7;
   transition: opacity 0.2s ease;
 }
