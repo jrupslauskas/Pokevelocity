@@ -3420,6 +3420,411 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     assert_equal "master_ball", raichu_capture.ball_type
   end
 
+  # ================================================================================
+  # DISCARD ITEM TESTS
+  # ================================================================================
+
+  test "should require login for discard_item" do
+    pokeball = Item.find_or_create_by!(key: 'pokeball') { |i| i.item_type = 'pokeball' }
+    delete discard_item_path(item_key: pokeball.key)
+    assert_redirected_to login_path
+  end
+
+  test "should successfully discard a pokeball" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    pokeball = Item.find_or_create_by!(key: 'pokeball') { |i| i.item_type = 'pokeball' }
+
+    # Clear existing items and add fresh
+    trainer.trainer_items.destroy_all
+    trainer.add_item(:pokeball, 5)
+
+    initial_quantity = trainer.ball_count(:pokeball)
+    assert_equal 5, initial_quantity
+
+    delete discard_item_path(item_key: pokeball.key)
+
+    assert_redirected_to dashboard_path
+    assert_equal "Discarded 1 Poké Ball.", flash[:notice]
+
+    trainer.reload
+    assert_equal 4, trainer.ball_count(:pokeball)
+  end
+
+  test "should successfully discard an evolution stone" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    fire_stone = Item.find_or_create_by!(key: 'fire_stone') { |i| i.item_type = 'evolution_stone' }
+
+    # Clear existing items and add fresh
+    trainer.trainer_items.destroy_all
+    trainer.add_item(:fire_stone, 3)
+
+    initial_quantity = trainer.item_quantity(:fire_stone)
+    assert_equal 3, initial_quantity
+
+    delete discard_item_path(item_key: fire_stone.key)
+
+    assert_redirected_to dashboard_path
+    assert_equal "Discarded 1 Fire Stone.", flash[:notice]
+
+    trainer.reload
+    assert_equal 2, trainer.item_quantity(:fire_stone)
+  end
+
+  test "should not allow discarding key items" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    old_rod = Item.find_or_create_by!(key: 'old_rod') { |i| i.item_type = 'key_item' }
+    trainer.add_item(:old_rod, 1)
+
+    delete discard_item_path(item_key: old_rod.key)
+
+    assert_redirected_to dashboard_path
+    assert_equal "You cannot discard this item.", flash[:alert]
+
+    trainer.reload
+    assert_equal 1, trainer.item_quantity(:old_rod)
+  end
+
+  test "should not allow discarding items trainer does not have" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    ultra_ball = Item.find_or_create_by!(key: 'ultra_ball') { |i| i.item_type = 'pokeball' }
+
+    # Clear existing items to ensure trainer doesn't have ultra ball
+    trainer.trainer_items.destroy_all
+
+    delete discard_item_path(item_key: ultra_ball.key)
+
+    assert_redirected_to dashboard_path
+    assert_equal "You don't have any Ultra Ball to discard.", flash[:alert]
+  end
+
+  test "should remove item entirely when discarding last one" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    great_ball = Item.find_or_create_by!(key: 'great_ball') { |i| i.item_type = 'pokeball' }
+
+    # Clear existing items and add only 1
+    trainer.trainer_items.destroy_all
+    trainer.add_item(:great_ball, 1)
+
+    assert_equal 1, trainer.ball_count(:great_ball)
+
+    delete discard_item_path(item_key: great_ball.key)
+
+    assert_redirected_to dashboard_path
+    assert_equal "Discarded 1 Great Ball.", flash[:notice]
+
+    trainer.reload
+    assert_equal 0, trainer.ball_count(:great_ball)
+  end
+
+  test "should decrement by 1 when discarding from multiple" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    pokeball = Item.find_or_create_by!(key: 'pokeball') { |i| i.item_type = 'pokeball' }
+
+    # Clear existing items and add 10
+    trainer.trainer_items.destroy_all
+    trainer.add_item(:pokeball, 10)
+
+    delete discard_item_path(item_key: pokeball.key)
+
+    trainer.reload
+    assert_equal 9, trainer.ball_count(:pokeball)
+
+    delete discard_item_path(item_key: pokeball.key)
+
+    trainer.reload
+    assert_equal 8, trainer.ball_count(:pokeball)
+  end
+
+  test "should return error for non-existent item" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    delete discard_item_path(item_key: 'fake_item')
+
+    assert_redirected_to dashboard_path
+    assert_equal "Item not found.", flash[:alert]
+  end
+
+  test "dashboard should show discard button for pokeballs" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    pokeball = Item.find_or_create_by!(key: 'pokeball') { |i| i.item_type = 'pokeball' }
+    trainer.add_item(:pokeball, 5)
+
+    get dashboard_path
+
+    assert_response :success
+    assert_select "form[action='#{discard_item_path(item_key: pokeball.key)}']"
+    assert_select ".btn-discard-item"
+    assert_select ".discard-icon"
+  end
+
+  test "dashboard should show discard button for evolution stones" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    water_stone = Item.find_or_create_by!(key: 'water_stone') { |i| i.item_type = 'evolution_stone' }
+    trainer.add_item(:water_stone, 2)
+
+    get dashboard_path
+
+    assert_response :success
+    assert_select "form[action='#{discard_item_path(item_key: water_stone.key)}']"
+    assert_select ".btn-discard-item"
+  end
+
+  test "dashboard should not show discard button for adventure items" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    good_rod = Item.find_or_create_by!(key: 'good_rod') { |i| i.item_type = 'key_item' }
+    trainer.add_item(:good_rod, 1)
+
+    get dashboard_path
+
+    assert_response :success
+    # Should not have a discard button for good_rod
+    assert_select "form[action='#{discard_item_path(item_key: good_rod.key)}']", count: 0
+  end
+
+  test "should handle discarding multiple different items" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    pokeball = Item.find_or_create_by!(key: 'pokeball') { |i| i.item_type = 'pokeball' }
+    fire_stone = Item.find_or_create_by!(key: 'fire_stone') { |i| i.item_type = 'evolution_stone' }
+    moon_stone = Item.find_or_create_by!(key: 'moon_stone') { |i| i.item_type = 'evolution_stone' }
+
+    # Clear existing items and add fresh
+    trainer.trainer_items.destroy_all
+    trainer.add_item(:pokeball, 3)
+    trainer.add_item(:fire_stone, 2)
+    trainer.add_item(:moon_stone, 1)
+
+    # Discard pokeball
+    delete discard_item_path(item_key: pokeball.key)
+    trainer.reload
+    assert_equal 2, trainer.ball_count(:pokeball)
+
+    # Discard fire stone
+    delete discard_item_path(item_key: fire_stone.key)
+    trainer.reload
+    assert_equal 1, trainer.item_quantity(:fire_stone)
+
+    # Discard moon stone (last one)
+    delete discard_item_path(item_key: moon_stone.key)
+    trainer.reload
+    assert_equal 0, trainer.item_quantity(:moon_stone)
+
+    # Other items should remain unchanged
+    assert_equal 2, trainer.ball_count(:pokeball)
+    assert_equal 1, trainer.item_quantity(:fire_stone)
+  end
+
+  test "dashboard should display discard confirmation modal" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    pokeball = Item.find_or_create_by!(key: 'pokeball') { |i| i.item_type = 'pokeball' }
+    trainer.add_item(:pokeball, 5)
+
+    get dashboard_path
+
+    assert_response :success
+    # Check that modal exists
+    assert_select "#discardItemModal"
+    assert_select "#discardItemModal .modal-title", text: "Confirm Discard"
+    assert_select "#discardItemModal #itemNameValue"
+    assert_select "#discardYes", text: "Yes"
+    assert_select "#discardNo", text: "No"
+  end
+
+  test "discard button form should have correct data attributes" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    pokeball = Item.find_or_create_by!(key: 'pokeball') { |i| i.item_type = 'pokeball' }
+    trainer.add_item(:pokeball, 5)
+
+    get dashboard_path
+
+    assert_response :success
+    # Check that the form has the correct data attributes
+    assert_select "form.discard-item-form[data-item-name='Poké Ball']"
+  end
+
+  test "modal message should reference item name" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    fire_stone = Item.find_or_create_by!(key: 'fire_stone') { |i| i.item_type = 'evolution_stone' }
+    trainer.add_item(:fire_stone, 2)
+
+    get dashboard_path
+
+    assert_response :success
+    # Check modal message structure
+    assert_select "#discardMessage" do
+      assert_select "#itemNameValue"
+    end
+    assert_match(/Are you sure you want to throw away 1/, response.body)
+  end
+
+  test "modal should have Yes and No buttons" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    get dashboard_path
+
+    assert_response :success
+    assert_select "#discardYes.btn-primary", text: "Yes"
+    assert_select "#discardNo.btn-secondary", text: "No"
+  end
+
+  test "modal should have overlay for closing" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    get dashboard_path
+
+    assert_response :success
+    assert_select "#discardItemModal .modal-overlay"
+  end
+
+  test "JavaScript should be present for modal handling" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    get dashboard_path
+
+    assert_response :success
+    # Check that JavaScript is present
+    assert_match(/discardItemModal/, response.body)
+    assert_match(/addEventListener/, response.body)
+    assert_match(/turbo:load/, response.body)
+  end
+
+  test "modal should be hidden by default" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    pokeball = Item.find_or_create_by!(key: 'pokeball') { |i| i.item_type = 'pokeball' }
+    trainer.add_item(:pokeball, 5)
+
+    get dashboard_path
+
+    assert_response :success
+    # Modal should have display: none by default
+    assert_select "#discardItemModal[style*='display: none']"
+  end
+
+  test "modal should have proper structure for both pokeballs and evolution items" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    pokeball = Item.find_or_create_by!(key: 'pokeball') { |i| i.item_type = 'pokeball' }
+    water_stone = Item.find_or_create_by!(key: 'water_stone') { |i| i.item_type = 'evolution_stone' }
+
+    trainer.add_item(:pokeball, 3)
+    trainer.add_item(:water_stone, 2)
+
+    get dashboard_path
+
+    assert_response :success
+
+    # Both items should have discard forms
+    assert_select "form.discard-item-form[data-item-name='Poké Ball']"
+    assert_select "form.discard-item-form[data-item-name='Water Stone']"
+
+    # Only one modal should exist
+    assert_select "#discardItemModal", count: 1
+  end
+
+  test "modal JavaScript should handle form submission" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    get dashboard_path
+
+    assert_response :success
+    # Check that JavaScript handles the submit event
+    assert_match(/form\.addEventListener\('submit'/, response.body)
+    assert_match(/e\.preventDefault\(\)/, response.body)
+  end
+
+  test "modal should have click handlers for Yes and No buttons" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    get dashboard_path
+
+    assert_response :success
+    # Check that Yes button has click handler
+    assert_match(/discardYes\.addEventListener\('click'/, response.body)
+    # Check that No button has click handler
+    assert_match(/discardNo\.addEventListener\('click'/, response.body)
+  end
+
+  test "modal overlay should close modal when clicked" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    get dashboard_path
+
+    assert_response :success
+    # Check that overlay has click handler
+    assert_match(/modal-overlay.*addEventListener\('click'/, response.body)
+  end
+
+  test "discard forms should not use turbo by default" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    pokeball = Item.find_or_create_by!(key: 'pokeball') { |i| i.item_type = 'pokeball' }
+    trainer.add_item(:pokeball, 5)
+
+    get dashboard_path
+
+    assert_response :success
+    # Forms should have data-turbo="false"
+    assert_select "form[data-turbo='false']"
+  end
+
+  test "modal No button should clear pending form" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    get dashboard_path
+
+    assert_response :success
+    # Check that No button sets pendingForm to null
+    assert_match(/pendingForm = null/, response.body)
+  end
+
+  test "modal should display correct message format" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    get dashboard_path
+
+    assert_response :success
+    # Check exact modal message format
+    assert_select "#discardMessage", text: /Are you sure you want to throw away 1/
+  end
+
   private
 
   # Helper method to log in a trainer

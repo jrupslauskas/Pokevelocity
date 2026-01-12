@@ -1,5 +1,5 @@
 class TrainersController < ApplicationController
-  before_action :require_login, only: [:dashboard, :pokedex, :evolution_lab, :evolve]
+  before_action :require_login, only: [:dashboard, :discard_item, :pokedex, :evolution_lab, :evolve]
 
   def new
     @trainer = Trainer.new
@@ -40,6 +40,43 @@ class TrainersController < ApplicationController
 
     # Fetch news feed: recent captures and evolutions from other trainers
     @news_feed = build_news_feed
+  end
+
+  def discard_item
+    @trainer = current_trainer
+    item_key = params[:item_key]
+
+    # Find the item
+    item = Item.find_by(key: item_key)
+
+    unless item
+      redirect_to dashboard_path, alert: "Item not found."
+      return
+    end
+
+    # Only allow discarding pokeballs and evolution stones
+    unless item.pokeball? || item.evolution_stone?
+      redirect_to dashboard_path, alert: "You cannot discard this item."
+      return
+    end
+
+    # Find the trainer's item
+    trainer_item = @trainer.trainer_items.find_by(item: item)
+
+    unless trainer_item && trainer_item.quantity > 0
+      redirect_to dashboard_path, alert: "You don't have any #{item.name} to discard."
+      return
+    end
+
+    # Decrement quantity by 1
+    if trainer_item.quantity > 1
+      trainer_item.update!(quantity: trainer_item.quantity - 1)
+    else
+      # If quantity is 1, remove the item entirely
+      trainer_item.destroy!
+    end
+
+    redirect_to dashboard_path, notice: "Discarded 1 #{item.name}."
   end
 
   def pokedex

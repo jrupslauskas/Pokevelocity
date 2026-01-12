@@ -36,6 +36,7 @@ Rails.application.routes.draw do
   # Dashboard
   get "/dashboard", to: "trainers#dashboard", as: :dashboard
   post "/dashboard", to: redirect("/dashboard")  # Handle accidental POST requests
+  delete "/dashboard/items/:item_key", to: "trainers#discard_item", as: :discard_item
 
   # Pokedex
   get "/pokedex", to: "trainers#pokedex", as: :pokedex

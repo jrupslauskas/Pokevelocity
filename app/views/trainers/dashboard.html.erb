@@ -61,7 +61,25 @@
                 <%= image_tag "icons/#{item_data[:item].sprite}", alt: item_data[:item].name, class: "inventory-icon" %>
                 <%= item_data[:item].name %>
               </span>
-              <span class="inventory-item-count"><%= item_data[:quantity] %></span>
+              <div class="inventory-item-actions">
+                <span class="inventory-item-count"><%= item_data[:quantity] %></span>
+                <%= button_to discard_item_path(item_key: item_data[:item].key),
+                              method: :delete,
+                              class: "btn-discard-item discard-item-form",
+                              data: {
+                                item_name: item_data[:item].name,
+                                item_key: item_data[:item].key
+                              },
+                              form: {
+                                class: "discard-item-form",
+                                data: {
+                                  turbo: false,
+                                  item_name: item_data[:item].name
+                                }
+                              } do %>
+                  <span class="discard-icon">🗑️</span>
+                <% end %>
+              </div>
             </div>
           <% end %>
         <% end %>
@@ -75,7 +93,25 @@
                 <%= image_tag "icons/#{item_data[:item].sprite}", alt: item_data[:item].name, class: "inventory-icon" %>
                 <%= item_data[:item].name %>
               </span>
-              <span class="inventory-item-count"><%= item_data[:quantity] %></span>
+              <div class="inventory-item-actions">
+                <span class="inventory-item-count"><%= item_data[:quantity] %></span>
+                <%= button_to discard_item_path(item_key: item_data[:item].key),
+                              method: :delete,
+                              class: "btn-discard-item discard-item-form",
+                              data: {
+                                item_name: item_data[:item].name,
+                                item_key: item_data[:item].key
+                              },
+                              form: {
+                                class: "discard-item-form",
+                                data: {
+                                  turbo: false,
+                                  item_name: item_data[:item].name
+                                }
+                              } do %>
+                  <span class="discard-icon">🗑️</span>
+                <% end %>
+              </div>
             </div>
           <% end %>
         <% end %>
@@ -153,5 +189,64 @@
         </div>
       </div>
     </div>
+
+    <!-- Discard Item Confirmation Modal -->
+    <div id="discardItemModal" class="modal" style="display: none;">
+      <div class="modal-overlay"></div>
+      <div class="modal-content">
+        <h3 class="modal-title">Confirm Discard</h3>
+        <p class="modal-message" id="discardMessage">Are you sure you want to throw away 1 <span id="itemNameValue">Item</span>?</p>
+        <div class="modal-actions">
+          <button id="discardYes" class="btn-primary">Yes</button>
+          <button id="discardNo" class="btn-secondary">No</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Discard item confirmation modal functionality
+      document.addEventListener('turbo:load', function() {
+        const modal = document.getElementById('discardItemModal');
+        const discardYes = document.getElementById('discardYes');
+        const discardNo = document.getElementById('discardNo');
+        const itemNameValue = document.getElementById('itemNameValue');
+        let pendingForm = null;
+
+        // Handle discard item forms
+        document.querySelectorAll('.discard-item-form').forEach(form => {
+          form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const itemName = this.dataset.itemName;
+            itemNameValue.textContent = itemName;
+            pendingForm = this;
+            modal.style.display = 'flex';
+          });
+        });
+
+        // Handle Yes button
+        discardYes.addEventListener('click', function() {
+          if (pendingForm) {
+            modal.style.display = 'none';
+            // Submit the form natively (not via Turbo)
+            const nativeForm = pendingForm.cloneNode(true);
+            nativeForm.removeAttribute('data-turbo');
+            document.body.appendChild(nativeForm);
+            nativeForm.submit();
+          }
+        });
+
+        // Handle No button
+        discardNo.addEventListener('click', function() {
+          modal.style.display = 'none';
+          pendingForm = null;
+        });
+
+        // Close modal on overlay click
+        modal.querySelector('.modal-overlay').addEventListener('click', function() {
+          modal.style.display = 'none';
+          pendingForm = null;
+        });
+      });
+    </script>
   </main>
 </div>
