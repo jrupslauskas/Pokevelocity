@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_04_004059) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_16_015716) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -140,6 +140,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_04_004059) do
   end
 
   create_table "trainers", force: :cascade do |t|
+    t.datetime "adventures_allocated_at"
+    t.integer "adventures_remaining", default: 5, null: false
     t.datetime "created_at", null: false
     t.integer "currency", default: 0, null: false
     t.integer "icon_pokemon_id"

@@ -177,18 +177,25 @@
 
   <div class="route-actions">
     <% if available_pokemon.any? %>
-      <%= form_with url: adventure_path(route), method: :post, class: "adventure-form", data: { route_id: route.id } do |f| %>
-        <%= f.hidden_field :encounter_type, value: default_encounter_type, class: "encounter-type-input" %>
-        <%= f.hidden_field :rod_type, value: (has_fish_encounters ? best_rod : ''), class: "rod-type-input" %>
-        <%= f.submit "Adventure", class: "btn-adventure" %>
+      <% if @trainer.has_adventures? %>
+        <%= form_with url: adventure_path(route), method: :post, class: "adventure-form", data: { route_id: route.id } do |f| %>
+          <%= f.hidden_field :encounter_type, value: default_encounter_type, class: "encounter-type-input" %>
+          <%= f.hidden_field :rod_type, value: (has_fish_encounters ? best_rod : ''), class: "rod-type-input" %>
+          <%= f.submit "Adventure", class: "btn-adventure" %>
+        <% end %>
+        <span class="route-available-count">
+          <%
+            # Show count of uncaught Pokemon
+            uncaught_pokemon = available_pokemon.reject { |p| @trainer.captured_pokemon.include?(p) }
+          %>
+          <%= uncaught_pokemon.count %> Pokémon available
+        </span>
+      <% else %>
+        <button class="btn-adventure-disabled" disabled>No More Adventures</button>
+        <span class="route-available-count adventure-refresh-message">
+          Replenishes in <%= @trainer.formatted_time_until_adventure %>
+        </span>
       <% end %>
-      <span class="route-available-count">
-        <%
-          # Show count of uncaught Pokemon
-          uncaught_pokemon = available_pokemon.reject { |p| @trainer.captured_pokemon.include?(p) }
-        %>
-        <%= uncaught_pokemon.count %> Pokémon available
-      </span>
     <% else %>
       <%
         # Check if there are any locked Pokemon among visible encounters

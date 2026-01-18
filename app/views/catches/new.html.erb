@@ -10,6 +10,12 @@
     <!-- Stats Bar -->
     <div class="catch-stats-bar">
       <div class="catch-stat">
+        <span class="catch-stat-label">Adventures</span>
+        <span class="catch-stat-value <%= 'adventure-depleted' if @trainer.adventures_remaining == 0 %>">
+          <%= @trainer.adventures_remaining %> / 10
+        </span>
+      </div>
+      <div class="catch-stat">
         <span class="catch-stat-label">Caught</span>
         <span class="catch-stat-value"><%= @trainer.captures.count %> / 151</span>
       </div>
@@ -21,6 +27,24 @@
         <span class="catch-stat-label">Pokéballs</span>
         <span class="catch-stat-value"><%= @trainer.total_pokeballs %></span>
       </div>
+    </div>
+
+    <!-- Visit Poké Center -->
+    <% available = @trainer.available_adventures_to_claim %>
+    <div class="poke-center-container">
+      <%= form_with url: visit_poke_center_path, method: :post, local: true do |f| %>
+        <% if available > 0 %>
+          <button type="submit" class="btn-poke-center">
+            <%= image_tag "icons/pokecenter.png", alt: "Poké Center", class: "poke-center-icon" %>
+            Visit Poké Center (+<%= available %> available)
+          </button>
+        <% else %>
+          <button type="submit" class="btn-poke-center-disabled" disabled>
+            <%= image_tag "icons/pokecenter.png", alt: "Poké Center", class: "poke-center-icon" %>
+            Visit Poké Center (Next in <%= @trainer.formatted_time_until_adventure %>)
+          </button>
+        <% end %>
+      <% end %>
     </div>
 
     <!-- Gates and Routes -->

@@ -77,6 +77,18 @@ class CatchesController < ApplicationController
     encounter_type = params[:encounter_type] || 'grass'
     rod_type = params[:rod_type]
 
+    # Check if trainer has adventures remaining
+    unless @trainer.has_adventures?
+      redirect_to catches_path, alert: "You're out of adventures! Visit the Poké Center to replenish."
+      return
+    end
+
+    # Use one adventure
+    unless @trainer.use_adventure
+      redirect_to catches_path, alert: "Unable to use adventure. Please try again."
+      return
+    end
+
     # Store adventure parameters in session for "Adventure Again"
     session[:last_adventure] = {
       'route_id' => route.id,
@@ -203,5 +215,16 @@ class CatchesController < ApplicationController
 
   def run
     redirect_to catches_path, notice: "Got Away Safely"
+  end
+
+  def visit_poke_center
+    @trainer = current_trainer
+    result = @trainer.claim_adventures
+
+    if result[:claimed] > 0
+      redirect_to catches_path, notice: "Welcome to the Poké Center! Restored +#{result[:claimed]} adventure#{'s' if result[:claimed] != 1}. (#{result[:new_total]}/10)"
+    else
+      redirect_to catches_path, alert: "No adventures available to claim yet. Next adventure in #{@trainer.formatted_time_until_adventure}."
+    end
   end
 end
