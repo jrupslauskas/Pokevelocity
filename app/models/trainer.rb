@@ -181,6 +181,120 @@ class Trainer < ApplicationRecord
   end
 
   # ================================================================================
+  # ADVENTURE MANAGEMENT
+  # ================================================================================
+
+  # Calculate how many adventures are available to claim
+  # @return [Integer] number of adventures that can be claimed (0 if none available)
+  def available_adventures_to_claim
+    # Initialize if never allocated
+    return 5 if adventures_allocated_at.nil?
+
+    # Already at max, nothing to claim
+    return 0 if adventures_remaining >= 10
+
+    # Calculate how many full 24-hour periods have passed
+    time_elapsed = Time.current - adventures_allocated_at
+    full_periods_passed = (time_elapsed / 24.hours).floor
+
+    # No full periods = nothing to claim
+    return 0 if full_periods_passed == 0
+
+    # Calculate how many adventures would be granted (5 per period)
+    adventures_to_grant = full_periods_passed * 5
+
+    # Return the actual amount that would be added (respecting the cap of 10)
+    potential_total = adventures_remaining + adventures_to_grant
+    if potential_total > 10
+      10 - adventures_remaining  # Only claim up to max
+    else
+      adventures_to_grant
+    end
+  end
+
+  # Claim all available adventures (Visit Poké Center)
+  # @return [Hash] result with :claimed count and :new_total
+  def claim_adventures
+    # Initialize if never allocated
+    if adventures_allocated_at.nil?
+      update!(adventures_remaining: 5, adventures_allocated_at: Time.current)
+      return { claimed: 5, new_total: 5 }
+    end
+
+    # Already at max, nothing to claim
+    if adventures_remaining >= 10
+      return { claimed: 0, new_total: 10 }
+    end
+
+    # Calculate how many full 24-hour periods have passed
+    time_elapsed = Time.current - adventures_allocated_at
+    full_periods_passed = (time_elapsed / 24.hours).floor
+
+    # No full periods = nothing to claim
+    if full_periods_passed == 0
+      return { claimed: 0, new_total: adventures_remaining }
+    end
+
+    # Calculate how many adventures to grant
+    adventures_to_grant = full_periods_passed * 5
+    old_count = adventures_remaining
+    new_adventure_count = [adventures_remaining + adventures_to_grant, 10].min
+
+    # Advance the allocation timestamp by the number of full periods
+    new_allocation_time = adventures_allocated_at + (full_periods_passed * 24.hours)
+
+    update!(
+      adventures_remaining: new_adventure_count,
+      adventures_allocated_at: new_allocation_time
+    )
+
+    { claimed: new_adventure_count - old_count, new_total: new_adventure_count }
+  end
+
+  # Use one adventure (decrement counter)
+  # @return [Boolean] true if adventure was used, false if none remaining
+  def use_adventure
+    return false unless has_adventures?
+    decrement!(:adventures_remaining)
+    true
+  end
+
+  # Check if trainer has adventures remaining
+  # @return [Boolean] true if adventures_remaining > 0
+  def has_adventures?
+    adventures_remaining > 0
+  end
+
+  # Get the time remaining until next adventure is available to claim
+  # @return [Integer] seconds until next period (0 if already claimable)
+  def time_until_next_adventure
+    return 0 if adventures_allocated_at.nil?
+
+    next_refresh = adventures_allocated_at + 24.hours
+    seconds = (next_refresh - Time.current).to_i
+    seconds > 0 ? seconds : 0
+  end
+
+  # Format time until next adventure as a human-readable string
+  # @return [String] formatted time (e.g., "5h 23m", "45m", "2s")
+  def formatted_time_until_adventure
+    seconds = time_until_next_adventure
+    return "now" if seconds <= 0
+
+    hours = seconds / 3600
+    minutes = (seconds % 3600) / 60
+    remaining_seconds = seconds % 60
+
+    if hours > 0
+      "#{hours}h #{minutes}m"
+    elsif minutes > 0
+      "#{minutes}m"
+    else
+      "#{remaining_seconds}s"
+    end
+  end
+
+  # ================================================================================
   # ONBOARDING
   # ================================================================================
 

@@ -7,6 +7,28 @@
       <p>Select a Pokéball to attempt catching this Pokémon.</p>
     </header>
 
+    <!-- Stats Bar -->
+    <div class="catch-stats-bar">
+      <div class="catch-stat">
+        <span class="catch-stat-label">Adventures</span>
+        <span class="catch-stat-value <%= 'adventure-depleted' if @trainer.adventures_remaining == 0 %>">
+          <%= @trainer.adventures_remaining %> / 10
+        </span>
+      </div>
+      <div class="catch-stat">
+        <span class="catch-stat-label">Caught</span>
+        <span class="catch-stat-value"><%= @trainer.captures.count %> / 151</span>
+      </div>
+      <div class="catch-stat">
+        <span class="catch-stat-label">Difficulty Score</span>
+        <span class="catch-stat-value"><%= @trainer.difficulty_score %></span>
+      </div>
+      <div class="catch-stat">
+        <span class="catch-stat-label">Pokéballs</span>
+        <span class="catch-stat-value"><%= @trainer.total_pokeballs %></span>
+      </div>
+    </div>
+
     <!-- Pokemon Info Card -->
     <div class="select-pokemon-card">
       <div class="select-pokemon-image">
@@ -140,18 +162,32 @@
       <% end %>
 
       <% if @last_adventure.present? %>
-        <%= form_with url: adventure_path(@last_adventure['route_id']), method: :post, local: true do |f| %>
-          <%= f.hidden_field :encounter_type, value: @last_adventure['encounter_type'] %>
-          <%= f.hidden_field :rod_type, value: @last_adventure['rod_type'] if @last_adventure['rod_type'].present? %>
-          <button type="submit" class="pokeball-card adventure-again-card">
+        <% if @trainer.has_adventures? %>
+          <%= form_with url: adventure_path(@last_adventure['route_id']), method: :post, local: true do |f| %>
+            <%= f.hidden_field :encounter_type, value: @last_adventure['encounter_type'] %>
+            <%= f.hidden_field :rod_type, value: @last_adventure['rod_type'] if @last_adventure['rod_type'].present? %>
+            <button type="submit" class="pokeball-card adventure-again-card">
+              <div class="pokeball-card-icon adventure-again-icon">🔄</div>
+              <div class="pokeball-card-content">
+                <h4 class="pokeball-card-name">Adventure Again</h4>
+                <p class="pokeball-card-description">Same route & type</p>
+                <p class="pokeball-card-rate">&nbsp;</p>
+              </div>
+              <div class="pokeball-card-count adventure-again-card-footer">
+                <span class="pokeball-count-label">Again</span>
+              </div>
+            </button>
+          <% end %>
+        <% else %>
+          <button type="button" class="pokeball-card pokeball-disabled adventure-again-card-disabled" disabled>
             <div class="pokeball-card-icon adventure-again-icon">🔄</div>
             <div class="pokeball-card-content">
-              <h4 class="pokeball-card-name">Adventure Again</h4>
-              <p class="pokeball-card-description">Same route & type</p>
+              <h4 class="pokeball-card-name">No More Adventures</h4>
+              <p class="pokeball-card-description">Replenishes in <%= @trainer.formatted_time_until_adventure %></p>
               <p class="pokeball-card-rate">&nbsp;</p>
             </div>
             <div class="pokeball-card-count adventure-again-card-footer">
-              <span class="pokeball-count-label">Again</span>
+              <span class="pokeball-count-label">Depleted</span>
             </div>
           </button>
         <% end %>

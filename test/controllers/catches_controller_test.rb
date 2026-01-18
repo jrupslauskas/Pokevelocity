@@ -1456,4 +1456,386 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
       assert failed, "Expected at least one failed capture attempt with pokeball in #{catch_attempts} tries"
     end
   end
+
+  # ================================================================================
+  # ADVENTURE LIMIT TESTS
+  # ================================================================================
+
+  test "new action should display adventure count" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 3,
+      adventures_allocated_at: 1.hour.ago
+    )
+
+    log_in_as(trainer)
+    get catches_path
+
+    assert_response :success
+    assert_match /3 \/ 10/, response.body
+  end
+
+  test "adventure action should consume one adventure" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 5,
+      adventures_allocated_at: 1.hour.ago
+    )
+
+    log_in_as(trainer)
+    post adventure_path(@test_route)
+
+    trainer.reload
+    assert_equal 4, trainer.adventures_remaining
+  end
+
+  test "adventure action should redirect when no adventures remaining" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 0,
+      adventures_allocated_at: 5.hours.ago
+    )
+
+    log_in_as(trainer)
+    post adventure_path(@test_route)
+
+    assert_redirected_to catches_path
+    assert_match /out of adventures/i, flash[:alert]
+    assert_match /Visit the Poké Center/i, flash[:alert]
+  end
+
+  test "adventure action should work with 1 adventure remaining" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 1,
+      adventures_allocated_at: 1.hour.ago
+    )
+
+    log_in_as(trainer)
+    post adventure_path(@test_route)
+
+    trainer.reload
+    assert_equal 0, trainer.adventures_remaining
+    # Should redirect to encounter page, not catches_path
+    assert_response :redirect
+    assert_not_equal catches_path, response.headers["Location"]
+  end
+
+  test "adventure action should consume adventure before picking Pokemon" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 1,
+      adventures_allocated_at: 1.hour.ago
+    )
+
+    log_in_as(trainer)
+
+    # Make the adventure request
+    post adventure_path(@test_route)
+
+    # Adventure should be consumed even though we got redirected to encounter
+    trainer.reload
+    assert_equal 0, trainer.adventures_remaining
+  end
+
+  test "adventure action with fishing should consume adventure" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 3,
+      adventures_allocated_at: 1.hour.ago
+    )
+    trainer.add_item(:old_rod, 1)
+
+    # Create a fishing encounter
+    fishing_route = Route.create!(gate_requirement: 0, order: 200)
+    RouteEncounter.create!(
+      route: fishing_route,
+      pokemon: pokemons(:magikarp),
+      spawn_rate: 100,
+      encounter_type: "fish",
+      required_item_key: "old_rod"
+    )
+
+    log_in_as(trainer)
+    post adventure_path(fishing_route), params: { encounter_type: "fish", rod_type: "old_rod" }
+
+    trainer.reload
+    assert_equal 2, trainer.adventures_remaining
+  end
+
+  test "adventure action with surfing should consume adventure" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 4,
+      adventures_allocated_at: 1.hour.ago
+    )
+    trainer.add_item(:hm_surf, 1)
+
+    # Create a surf encounter
+    surf_route = Route.create!(gate_requirement: 0, order: 201)
+    RouteEncounter.create!(
+      route: surf_route,
+      pokemon: pokemons(:tentacool),
+      spawn_rate: 100,
+      encounter_type: "surf",
+      required_item_key: "hm_surf"
+    )
+
+    log_in_as(trainer)
+    post adventure_path(surf_route), params: { encounter_type: "surf" }
+
+    trainer.reload
+    assert_equal 3, trainer.adventures_remaining
+  end
+
+  test "show action should display adventure count" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 2,
+      adventures_allocated_at: 1.hour.ago
+    )
+
+    log_in_as(trainer)
+    get catch_path(pokemons(:pikachu))
+
+    assert_response :success
+    assert_match /2 \/ 10/, response.body
+  end
+
+  test "show action should display Adventure Again button when adventures available" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 3,
+      adventures_allocated_at: 1.hour.ago
+    )
+
+    log_in_as(trainer)
+
+    # First do an adventure to set last_adventure in session
+    post adventure_path(@test_route)
+    follow_redirect!
+
+    # Now check the encounter page
+    assert_response :success
+    assert_match /Adventure Again/i, response.body
+  end
+
+  test "show action should display No More Adventures when depleted" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 1,
+      adventures_allocated_at: 5.hours.ago
+    )
+
+    log_in_as(trainer)
+
+    # Use the last adventure
+    post adventure_path(@test_route)
+    follow_redirect!
+
+    # Now trainer has 0 adventures
+    trainer.reload
+    assert_equal 0, trainer.adventures_remaining
+
+    # Check the encounter page shows depleted state
+    assert_response :success
+    assert_match /No More Adventures/i, response.body
+    assert_match /Replenishes in/i, response.body
+  end
+
+  test "route cards should show disabled button when no adventures" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 0,
+      adventures_allocated_at: 5.hours.ago
+    )
+
+    log_in_as(trainer)
+    get catches_path
+
+    assert_response :success
+    assert_match /No More Adventures/i, response.body
+    assert_match /Replenishes in/i, response.body
+  end
+
+  test "adventure limit should apply to all encounter types equally" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 2,
+      adventures_allocated_at: 1.hour.ago
+    )
+    trainer.add_item(:old_rod, 1)
+
+    # Create routes for different encounter types
+    grass_route = Route.create!(gate_requirement: 0, order: 300)
+    fish_route = Route.create!(gate_requirement: 0, order: 301)
+
+    RouteEncounter.create!(route: grass_route, pokemon: pokemons(:pidgey), spawn_rate: 100, encounter_type: "grass")
+    RouteEncounter.create!(route: fish_route, pokemon: pokemons(:magikarp), spawn_rate: 100, encounter_type: "fish", required_item_key: "old_rod")
+
+    log_in_as(trainer)
+
+    # First adventure (grass)
+    post adventure_path(grass_route), params: { encounter_type: "grass" }
+    trainer.reload
+    assert_equal 1, trainer.adventures_remaining
+
+    # Second adventure (fish) - should work
+    post adventure_path(fish_route), params: { encounter_type: "fish", rod_type: "old_rod" }
+    trainer.reload
+    assert_equal 0, trainer.adventures_remaining
+
+    # Third adventure should fail
+    post adventure_path(grass_route), params: { encounter_type: "grass" }
+    assert_redirected_to catches_path
+    assert_match /out of adventures/i, flash[:alert]
+  end
+
+  # ================================================================================
+  # VISIT POKÉ CENTER TESTS
+  # ================================================================================
+
+  test "visit_poke_center should claim adventures when available" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 3,
+      adventures_allocated_at: 25.hours.ago
+    )
+
+    log_in_as(trainer)
+    post visit_poke_center_path
+
+    trainer.reload
+    assert_equal 8, trainer.adventures_remaining
+    assert_redirected_to catches_path
+    assert_match /Restored \+5 adventure/, flash[:notice]
+    assert_match /8\/10/, flash[:notice]
+  end
+
+  test "visit_poke_center should show success message with count" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 0,
+      adventures_allocated_at: 25.hours.ago
+    )
+
+    log_in_as(trainer)
+    post visit_poke_center_path
+
+    assert_redirected_to catches_path
+    follow_redirect!
+
+    assert_match /Welcome to the Poké Center/i, response.body
+    assert_match /Restored \+5 adventure/, response.body
+  end
+
+  test "visit_poke_center should not claim when none available" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 5,
+      adventures_allocated_at: 5.hours.ago
+    )
+
+    log_in_as(trainer)
+    post visit_poke_center_path
+
+    trainer.reload
+    assert_equal 5, trainer.adventures_remaining
+    assert_redirected_to catches_path
+    assert_match /No adventures available to claim yet/i, flash[:alert]
+  end
+
+  test "visit_poke_center should show error message when none available" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 5,
+      adventures_allocated_at: 10.hours.ago
+    )
+
+    log_in_as(trainer)
+    post visit_poke_center_path
+
+    assert_redirected_to catches_path
+    follow_redirect!
+
+    assert_match /No adventures available to claim yet/i, response.body
+    assert_match /Next adventure in/i, response.body
+    assert_match /\d+h \d+m/, response.body
+  end
+
+  test "visit_poke_center should work with multiple periods" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 0,
+      adventures_allocated_at: 50.hours.ago
+    )
+
+    log_in_as(trainer)
+    post visit_poke_center_path
+
+    trainer.reload
+    assert_equal 10, trainer.adventures_remaining
+    assert_redirected_to catches_path
+    assert_match /Restored \+10 adventures/, flash[:notice]
+    assert_match /10\/10/, flash[:notice]
+  end
+
+  test "visit_poke_center should handle singular adventure correctly" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 9,
+      adventures_allocated_at: 25.hours.ago
+    )
+
+    log_in_as(trainer)
+    post visit_poke_center_path
+
+    trainer.reload
+    assert_equal 10, trainer.adventures_remaining
+    assert_redirected_to catches_path
+    # Should say "adventure" not "adventures" for count of 1
+    assert_match /Restored \+1 adventure[^s]/, flash[:notice]
+    assert_match /10\/10/, flash[:notice]
+  end
+
+  test "visit_poke_center should cap at 10 adventures" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 8,
+      adventures_allocated_at: 25.hours.ago
+    )
+
+    log_in_as(trainer)
+    post visit_poke_center_path
+
+    trainer.reload
+    # Should cap at 10, not 13
+    assert_equal 10, trainer.adventures_remaining
+    assert_redirected_to catches_path
+    assert_match /Restored \+2 adventure/, flash[:notice]
+    assert_match /10\/10/, flash[:notice]
+  end
+
+  test "visit_poke_center should require login" do
+    post visit_poke_center_path
+    assert_redirected_to login_path
+  end
+
+  test "visit_poke_center should initialize adventures on first visit" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 5,
+      adventures_allocated_at: nil
+    )
+
+    log_in_as(trainer)
+    post visit_poke_center_path
+
+    trainer.reload
+    assert_not_nil trainer.adventures_allocated_at
+    assert_equal 5, trainer.adventures_remaining
+    assert_redirected_to catches_path
+    # First time should claim initial 5
+    assert_match /Restored \+5 adventure/, flash[:notice]
+  end
 end

@@ -62,6 +62,7 @@ Rails.application.routes.draw do
   # Catch Pokemon
   get "/catch", to: "catches#new", as: :catches
   post "/catch/adventure/:id", to: "catches#adventure", as: :adventure
+  post "/catch/poke-center", to: "catches#visit_poke_center", as: :visit_poke_center
   get "/catch/:id", to: "catches#show", as: :catch
   post "/catch/:id", to: "catches#create"
   post "/catch/:id/run", to: "catches#run", as: :run_from_catch

@@ -3,6 +3,13 @@ require "test_helper"
 class CatchesAdventureAgainTest < ActionDispatch::IntegrationTest
   def setup
     @trainer = trainers(:ash)
+
+    # Initialize adventures for the trainer
+    @trainer.update!(
+      adventures_remaining: 100,  # Give plenty of adventures for testing
+      adventures_allocated_at: 1.hour.ago
+    )
+
     post login_path, params: { username: @trainer.username, password: "password" }
 
     # Create test route
