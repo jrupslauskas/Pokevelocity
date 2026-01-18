@@ -227,4 +227,17 @@ class CatchesController < ApplicationController
       redirect_to catches_path, alert: "No adventures available to claim yet. Next adventure in #{@trainer.formatted_time_until_adventure}."
     end
   end
+
+  def use_potion
+    @trainer = current_trainer
+    potion_key = params[:potion_key]
+
+    result = @trainer.use_potion(potion_key)
+
+    if result[:success]
+      redirect_to catches_path, notice: "Used #{result[:potion_name]}! Restored +#{result[:restored]} adventure#{'s' if result[:restored] != 1}. (#{result[:new_total]}/10)"
+    else
+      redirect_to catches_path, alert: result[:error]
+    end
+  end
 end

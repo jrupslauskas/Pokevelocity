@@ -81,19 +81,21 @@
       <!-- Buy Tab Content -->
       <div id="buyContent" class="tab-content">
         <p style="color: #6B5537; margin-bottom: 20px; text-align: center;">
-          Purchase Poké Balls and evolution items!
+          Purchase Poké Balls, potions, and evolution items!
         </p>
         <div style="display: grid; gap: 12px;">
           <%
-            # Get pokeballs and evolution stones
+            # Get pokeballs, potions, and evolution stones
             pokeballs = Item.where(item_type: 'pokeball').to_a.select { |item| item.buy_price.present? }
+            potions = Item.where(item_type: 'potion').to_a.select { |item| item.buy_price.present? }
             evolution_stones = Item.where(item_type: 'evolution_stone').to_a.sort_by { |item| item.key == 'evolution_stone' ? 0 : 1 }
 
-            # Sort pokeballs by buy_price
+            # Sort pokeballs and potions by buy_price
             pokeballs = pokeballs.sort_by { |item| item.buy_price }
+            potions = potions.sort_by { |item| item.buy_price }
 
-            # Combine with pokeballs first
-            all_items = pokeballs + evolution_stones
+            # Combine with pokeballs first, then potions, then evolution stones
+            all_items = pokeballs + potions + evolution_stones
           %>
           <% all_items.each do |item| %>
             <div class="shop-item">
@@ -122,7 +124,7 @@
           Sell your items for Pokedollars!
         </p>
         <div style="display: grid; gap: 12px;">
-          <% (Item.where(item_type: 'evolution_stone') + Item.where(item_type: 'pokeball')).each do |item| %>
+          <% (Item.where(item_type: 'pokeball') + Item.where(item_type: 'potion') + Item.where(item_type: 'evolution_stone')).each do |item| %>
             <% quantity = @trainer.item_quantity(item.key) %>
             <% if quantity > 0 %>
               <div class="shop-item">

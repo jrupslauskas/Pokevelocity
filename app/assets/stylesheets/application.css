@@ -1183,6 +1183,48 @@ body > div:not(.app-layout) {
   width: auto;
 }
 
+/* Potion Buttons Styles */
+.potion-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.btn-potion {
+  background: linear-gradient(135deg, #7AC74C 0%, #5FA777 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-potion:hover {
+  background: linear-gradient(135deg, #7AC74C 0%, #5FA777 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-potion:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.potion-icon {
+  height: 24px;
+  width: auto;
+}
+
 /* Select Pokemon Page Styles */
 .select-pokemon-card {
   background: linear-gradient(to bottom, #FFF8DC, #F5F0E8);

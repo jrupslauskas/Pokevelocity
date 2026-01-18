@@ -259,6 +259,54 @@ class Trainer < ApplicationRecord
     true
   end
 
+  # Use a potion to restore adventures
+  # @param potion_key [Symbol] the key of the potion item (:potion, :super_potion, :hyper_potion)
+  # @return [Hash] result with :success, :restored, :new_total, :error
+  def use_potion(potion_key)
+    item = Item.find_by(key: potion_key.to_s)
+
+    # Validate item exists and is a potion
+    if item.nil?
+      return { success: false, error: "Item not found" }
+    end
+
+    unless item.potion?
+      return { success: false, error: "This item is not a potion" }
+    end
+
+    # Check if trainer has the potion
+    unless has_item?(potion_key, 1)
+      return { success: false, error: "You don't have any #{item.name}" }
+    end
+
+    # Already at max adventures
+    if adventures_remaining >= 10
+      return { success: false, error: "You already have maximum adventures" }
+    end
+
+    # Get restoration amount
+    restore_amount = item.adventure_restore
+    old_count = adventures_remaining
+    new_count = [adventures_remaining + restore_amount, 10].min
+    actual_restored = new_count - old_count
+
+    # Initialize timestamp if needed
+    if adventures_allocated_at.nil?
+      update!(adventures_allocated_at: Time.current)
+    end
+
+    # Restore adventures and consume potion
+    update!(adventures_remaining: new_count)
+    remove_item(potion_key, 1)
+
+    {
+      success: true,
+      restored: actual_restored,
+      new_total: new_count,
+      potion_name: item.name
+    }
+  end
+
   # Check if trainer has adventures remaining
   # @return [Boolean] true if adventures_remaining > 0
   def has_adventures?

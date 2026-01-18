@@ -750,6 +750,159 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 999700, trainer.currency
   end
 
+  # ================================================================================
+  # POTION TESTS
+  # ================================================================================
+
+  test "should successfully buy potion for 100" do
+    trainer = trainers(:ash)
+    trainer.update!(currency: 1000)
+    log_in_as(trainer)
+
+    initial_currency = trainer.currency
+    initial_potions = trainer.item_quantity(:potion)
+
+    post buy_item_rewards_path, params: { item_key: 'potion' }
+
+    assert_redirected_to rewards_path
+    assert_match "Successfully purchased Potion for 100 Pokedollars!", flash[:notice]
+
+    trainer.reload
+    assert_equal initial_currency - 100, trainer.currency
+    assert_equal initial_potions + 1, trainer.item_quantity(:potion)
+  end
+
+  test "should successfully buy super_potion for 200" do
+    trainer = trainers(:ash)
+    trainer.update!(currency: 1000)
+    log_in_as(trainer)
+
+    initial_currency = trainer.currency
+    initial_potions = trainer.item_quantity(:super_potion)
+
+    post buy_item_rewards_path, params: { item_key: 'super_potion' }
+
+    assert_redirected_to rewards_path
+    assert_match "Successfully purchased Super Potion for 200 Pokedollars!", flash[:notice]
+
+    trainer.reload
+    assert_equal initial_currency - 200, trainer.currency
+    assert_equal initial_potions + 1, trainer.item_quantity(:super_potion)
+  end
+
+  test "should successfully buy hyper_potion for 300" do
+    trainer = trainers(:ash)
+    trainer.update!(currency: 1000)
+    log_in_as(trainer)
+
+    initial_currency = trainer.currency
+    initial_potions = trainer.item_quantity(:hyper_potion)
+
+    post buy_item_rewards_path, params: { item_key: 'hyper_potion' }
+
+    assert_redirected_to rewards_path
+    assert_match "Successfully purchased Hyper Potion for 300 Pokedollars!", flash[:notice]
+
+    trainer.reload
+    assert_equal initial_currency - 300, trainer.currency
+    assert_equal initial_potions + 1, trainer.item_quantity(:hyper_potion)
+  end
+
+  test "should successfully sell potion for 100" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    trainer.add_item(:potion, 1)
+    initial_currency = trainer.currency
+    initial_potions = trainer.item_quantity(:potion)
+
+    post sell_item_rewards_path, params: { item_key: 'potion' }
+
+    assert_redirected_to rewards_path
+    assert_match "Successfully sold Potion for 100 Pokedollars!", flash[:notice]
+
+    trainer.reload
+    assert_equal initial_currency + 100, trainer.currency
+    assert_equal initial_potions - 1, trainer.item_quantity(:potion)
+  end
+
+  test "should successfully sell super_potion for 200" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    trainer.add_item(:super_potion, 1)
+    initial_currency = trainer.currency
+    initial_potions = trainer.item_quantity(:super_potion)
+
+    post sell_item_rewards_path, params: { item_key: 'super_potion' }
+
+    assert_redirected_to rewards_path
+    assert_match "Successfully sold Super Potion for 200 Pokedollars!", flash[:notice]
+
+    trainer.reload
+    assert_equal initial_currency + 200, trainer.currency
+    assert_equal initial_potions - 1, trainer.item_quantity(:super_potion)
+  end
+
+  test "should successfully sell hyper_potion for 300" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    trainer.add_item(:hyper_potion, 1)
+    initial_currency = trainer.currency
+    initial_potions = trainer.item_quantity(:hyper_potion)
+
+    post sell_item_rewards_path, params: { item_key: 'hyper_potion' }
+
+    assert_redirected_to rewards_path
+    assert_match "Successfully sold Hyper Potion for 300 Pokedollars!", flash[:notice]
+
+    trainer.reload
+    assert_equal initial_currency + 300, trainer.currency
+    assert_equal initial_potions - 1, trainer.item_quantity(:hyper_potion)
+  end
+
+  test "should not buy potion when trainer has insufficient currency" do
+    trainer = trainers(:ash)
+    trainer.update!(currency: 50)
+    log_in_as(trainer)
+
+    initial_currency = trainer.currency
+    initial_potions = trainer.item_quantity(:potion)
+
+    post buy_item_rewards_path, params: { item_key: 'potion' }
+
+    assert_redirected_to rewards_path
+    assert_match "Not enough money! You need 100 but only have 50", flash[:alert]
+
+    trainer.reload
+    assert_equal initial_currency, trainer.currency
+    assert_equal initial_potions, trainer.item_quantity(:potion)
+  end
+
+  test "should successfully buy multiple different potions in sequence" do
+    trainer = trainers(:ash)
+    trainer.update!(currency: 1000)
+    log_in_as(trainer)
+
+    initial_currency = trainer.currency
+
+    # Buy potion (100)
+    post buy_item_rewards_path, params: { item_key: 'potion' }
+    trainer.reload
+    assert_equal initial_currency - 100, trainer.currency
+
+    # Buy super_potion (200)
+    post buy_item_rewards_path, params: { item_key: 'super_potion' }
+    trainer.reload
+    assert_equal initial_currency - 300, trainer.currency
+
+    # Buy hyper_potion (300)
+    post buy_item_rewards_path, params: { item_key: 'hyper_potion' }
+    trainer.reload
+    assert_equal initial_currency - 600, trainer.currency
+  end
+
   private
 
   # Helper method to log in a trainer

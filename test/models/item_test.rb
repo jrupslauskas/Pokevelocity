@@ -187,4 +187,91 @@ class ItemTest < ActiveSupport::TestCase
     assert_equal "good_rod", Item::ITEMS[:good_rod][:key]
     assert_equal "super_rod", Item::ITEMS[:super_rod][:key]
   end
+
+  # ================================================================================
+  # POTION TESTS
+  # ================================================================================
+
+  test "all potions should exist in ITEMS constant" do
+    assert Item::ITEMS.key?(:potion), "Potion should be defined"
+    assert Item::ITEMS.key?(:super_potion), "Super Potion should be defined"
+    assert Item::ITEMS.key?(:hyper_potion), "Hyper Potion should be defined"
+  end
+
+  test "potions should have correct keys" do
+    assert_equal "potion", Item::ITEMS[:potion][:key]
+    assert_equal "super_potion", Item::ITEMS[:super_potion][:key]
+    assert_equal "hyper_potion", Item::ITEMS[:hyper_potion][:key]
+  end
+
+  test "potions should be potion type" do
+    potion_def = Item::ITEMS[:potion]
+    super_potion_def = Item::ITEMS[:super_potion]
+    hyper_potion_def = Item::ITEMS[:hyper_potion]
+
+    assert_equal Item::TYPES[:potion], potion_def[:item_type]
+    assert_equal Item::TYPES[:potion], super_potion_def[:item_type]
+    assert_equal Item::TYPES[:potion], hyper_potion_def[:item_type]
+  end
+
+  test "potion should have correct prices and adventure restore" do
+    definition = Item::ITEMS[:potion]
+    assert_equal 100, definition[:buy_price]
+    assert_equal 100, definition[:sell_price]
+    assert_equal 3, definition[:adventure_restore]
+  end
+
+  test "super_potion should have correct prices and adventure restore" do
+    definition = Item::ITEMS[:super_potion]
+    assert_equal 200, definition[:buy_price]
+    assert_equal 200, definition[:sell_price]
+    assert_equal 6, definition[:adventure_restore]
+  end
+
+  test "hyper_potion should have correct prices and adventure restore" do
+    definition = Item::ITEMS[:hyper_potion]
+    assert_equal 300, definition[:buy_price]
+    assert_equal 300, definition[:sell_price]
+    assert_equal 10, definition[:adventure_restore]
+  end
+
+  test "potion should have correct name" do
+    item = Item.new(key: "potion", item_type: Item::TYPES[:potion])
+    assert_equal "Potion", item.name
+  end
+
+  test "super_potion should have correct name" do
+    item = Item.new(key: "super_potion", item_type: Item::TYPES[:potion])
+    assert_equal "Super Potion", item.name
+  end
+
+  test "hyper_potion should have correct name" do
+    item = Item.new(key: "hyper_potion", item_type: Item::TYPES[:potion])
+    assert_equal "Hyper Potion", item.name
+  end
+
+  test "potion descriptions should mention adventure restoration" do
+    potion = Item.new(key: "potion", item_type: Item::TYPES[:potion])
+    super_potion = Item.new(key: "super_potion", item_type: Item::TYPES[:potion])
+    hyper_potion = Item.new(key: "hyper_potion", item_type: Item::TYPES[:potion])
+
+    assert_includes potion.description, "3 adventures"
+    assert_includes super_potion.description, "6 adventures"
+    assert_includes hyper_potion.description, "10 adventures"
+  end
+
+  test "adventure_restore should return correct values" do
+    potion = Item.new(key: "potion", item_type: Item::TYPES[:potion])
+    super_potion = Item.new(key: "super_potion", item_type: Item::TYPES[:potion])
+    hyper_potion = Item.new(key: "hyper_potion", item_type: Item::TYPES[:potion])
+
+    assert_equal 3, potion.adventure_restore
+    assert_equal 6, super_potion.adventure_restore
+    assert_equal 10, hyper_potion.adventure_restore
+  end
+
+  test "adventure_restore should return nil for non-potion items" do
+    item = Item.new(key: "fire_stone", item_type: Item::TYPES[:evolution_stone])
+    assert_nil item.adventure_restore
+  end
 end

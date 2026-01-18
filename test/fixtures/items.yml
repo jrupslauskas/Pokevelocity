@@ -55,3 +55,15 @@ good_rod:
 super_rod:
   key: super_rod
   item_type: key_item
+
+potion:
+  key: potion
+  item_type: potion
+
+super_potion:
+  key: super_potion
+  item_type: potion
+
+hyper_potion:
+  key: hyper_potion
+  item_type: potion

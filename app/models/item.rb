@@ -149,6 +149,36 @@ class Item < ApplicationRecord
       sprite: 'hm_surf.png',
       buy_price: nil,
       sell_price: nil
+    },
+    potion: {
+      key: 'potion',
+      name: 'Potion',
+      description: 'A spray-type medicine for treating wounds. It restores up to 3 adventures.',
+      item_type: TYPES[:potion],
+      sprite: 'potion.png',
+      buy_price: 100,
+      sell_price: 100,
+      adventure_restore: 3
+    },
+    super_potion: {
+      key: 'super_potion',
+      name: 'Super Potion',
+      description: 'A strong spray-type medicine for treating wounds. It restores up to 6 adventures.',
+      item_type: TYPES[:potion],
+      sprite: 'super_potion.png',
+      buy_price: 200,
+      sell_price: 200,
+      adventure_restore: 6
+    },
+    hyper_potion: {
+      key: 'hyper_potion',
+      name: 'Hyper Potion',
+      description: 'A powerful spray-type medicine for treating wounds. It restores up to 10 adventures.',
+      item_type: TYPES[:potion],
+      sprite: 'hyper_potion.png',
+      buy_price: 300,
+      sell_price: 300,
+      adventure_restore: 10
     }
   }.freeze
 
@@ -181,6 +211,10 @@ class Item < ApplicationRecord
 
   def sell_price
     definition&.dig(:sell_price)
+  end
+
+  def adventure_restore
+    definition&.dig(:adventure_restore)
   end
 
   # Check if this is a pokeball

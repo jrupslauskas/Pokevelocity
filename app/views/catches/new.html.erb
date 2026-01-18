@@ -29,7 +29,7 @@
       </div>
     </div>
 
-    <!-- Visit Poké Center -->
+    <!-- Visit Poké Center and Use Potions -->
     <% available = @trainer.available_adventures_to_claim %>
     <div class="poke-center-container">
       <%= form_with url: visit_poke_center_path, method: :post, local: true do |f| %>
@@ -45,6 +45,28 @@
           </button>
         <% end %>
       <% end %>
+
+      <!-- Potion Buttons -->
+      <div class="potion-buttons">
+        <%
+          potions = [
+            { key: 'potion', name: 'Potion', restore: 3 },
+            { key: 'super_potion', name: 'Super Potion', restore: 6 },
+            { key: 'hyper_potion', name: 'Hyper Potion', restore: 10 }
+          ]
+        %>
+        <% potions.each do |potion| %>
+          <% if @trainer.has_item?(potion[:key], 1) %>
+            <%= form_with url: use_potion_path, method: :post, local: true do |f| %>
+              <%= hidden_field_tag :potion_key, potion[:key] %>
+              <button type="submit" class="btn-potion">
+                <%= image_tag "icons/#{potion[:key]}.png", alt: potion[:name], class: "potion-icon" %>
+                Use <%= potion[:name] %> (<%= @trainer.item_quantity(potion[:key]) %>)
+              </button>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
     </div>
 
     <!-- Gates and Routes -->

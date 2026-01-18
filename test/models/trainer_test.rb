@@ -710,4 +710,135 @@ class TrainerTest < ActiveSupport::TestCase
     assert_match /\d+s/, formatted
     assert_no_match /h|m/, formatted
   end
+
+  # ================================================================================
+  # USE POTION TESTS
+  # ================================================================================
+
+  test "use_potion should restore adventures and consume potion" do
+    trainer = trainers(:ash)
+    trainer.update!(adventures_remaining: 5, adventures_allocated_at: 1.hour.ago)
+    trainer.add_item(:potion, 1)
+
+    result = trainer.use_potion(:potion)
+
+    assert result[:success]
+    assert_equal 3, result[:restored]
+    assert_equal 8, result[:new_total]
+    assert_equal "Potion", result[:potion_name]
+    assert_equal 8, trainer.reload.adventures_remaining
+    assert_equal 0, trainer.item_quantity(:potion)
+  end
+
+  test "use_potion should cap adventures at 10" do
+    trainer = trainers(:ash)
+    trainer.update!(adventures_remaining: 8, adventures_allocated_at: 1.hour.ago)
+    trainer.add_item(:super_potion, 1)
+
+    result = trainer.use_potion(:super_potion)
+
+    assert result[:success]
+    assert_equal 2, result[:restored]  # 8 + 6 = 14, but capped at 10, so only +2
+    assert_equal 10, result[:new_total]
+    assert_equal 10, trainer.reload.adventures_remaining
+    assert_equal 0, trainer.item_quantity(:super_potion)
+  end
+
+  test "use_potion should fail when trainer doesn't have potion" do
+    trainer = trainers(:ash)
+    trainer.update!(adventures_remaining: 5)
+
+    result = trainer.use_potion(:potion)
+
+    assert_not result[:success]
+    assert_equal "You don't have any Potion", result[:error]
+    assert_equal 5, trainer.reload.adventures_remaining
+  end
+
+  test "use_potion should fail when already at max adventures" do
+    trainer = trainers(:ash)
+    trainer.update!(adventures_remaining: 10, adventures_allocated_at: 1.hour.ago)
+    trainer.add_item(:potion, 1)
+
+    result = trainer.use_potion(:potion)
+
+    assert_not result[:success]
+    assert_equal "You already have maximum adventures", result[:error]
+    assert_equal 10, trainer.reload.adventures_remaining
+    assert_equal 1, trainer.item_quantity(:potion)  # Potion should not be consumed
+  end
+
+  test "use_potion should work with super_potion" do
+    trainer = trainers(:ash)
+    trainer.update!(adventures_remaining: 3, adventures_allocated_at: 1.hour.ago)
+    trainer.add_item(:super_potion, 1)
+
+    result = trainer.use_potion(:super_potion)
+
+    assert result[:success]
+    assert_equal 6, result[:restored]
+    assert_equal 9, result[:new_total]
+    assert_equal "Super Potion", result[:potion_name]
+    assert_equal 9, trainer.reload.adventures_remaining
+    assert_equal 0, trainer.item_quantity(:super_potion)
+  end
+
+  test "use_potion should work with hyper_potion" do
+    trainer = trainers(:ash)
+    trainer.update!(adventures_remaining: 0, adventures_allocated_at: 1.hour.ago)
+    trainer.add_item(:hyper_potion, 1)
+
+    result = trainer.use_potion(:hyper_potion)
+
+    assert result[:success]
+    assert_equal 10, result[:restored]
+    assert_equal 10, result[:new_total]
+    assert_equal "Hyper Potion", result[:potion_name]
+    assert_equal 10, trainer.reload.adventures_remaining
+    assert_equal 0, trainer.item_quantity(:hyper_potion)
+  end
+
+  test "use_potion should fail with non-existent item" do
+    trainer = trainers(:ash)
+    trainer.update!(adventures_remaining: 5)
+
+    result = trainer.use_potion(:nonexistent_item)
+
+    assert_not result[:success]
+    assert_equal "Item not found", result[:error]
+    assert_equal 5, trainer.reload.adventures_remaining
+  end
+
+  test "use_potion should fail with non-potion item" do
+    trainer = trainers(:ash)
+    trainer.update!(adventures_remaining: 5)
+
+    result = trainer.use_potion(:fire_stone)
+
+    assert_not result[:success]
+    assert_equal "This item is not a potion", result[:error]
+    assert_equal 5, trainer.reload.adventures_remaining
+  end
+
+  test "use_potion should initialize adventures_allocated_at if nil" do
+    trainer = trainers(:ash)
+    trainer.update!(adventures_remaining: 5, adventures_allocated_at: nil)
+    trainer.add_item(:potion, 1)
+
+    result = trainer.use_potion(:potion)
+
+    assert result[:success]
+    assert_not_nil trainer.reload.adventures_allocated_at
+  end
+
+  test "use_potion should consume only one potion when multiple are owned" do
+    trainer = trainers(:ash)
+    trainer.update!(adventures_remaining: 5, adventures_allocated_at: 1.hour.ago)
+    trainer.add_item(:potion, 3)
+
+    result = trainer.use_potion(:potion)
+
+    assert result[:success]
+    assert_equal 2, trainer.item_quantity(:potion)  # Should have 2 left
+  end
 end

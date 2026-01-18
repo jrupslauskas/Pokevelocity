@@ -1838,4 +1838,163 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     # First time should claim initial 5
     assert_match /Restored \+5 adventure/, flash[:notice]
   end
+
+  # ================================================================================
+  # USE POTION TESTS
+  # ================================================================================
+
+  test "use_potion should restore adventures with potion" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 5,
+      adventures_allocated_at: 1.hour.ago
+    )
+    trainer.add_item(:potion, 1)
+
+    log_in_as(trainer)
+    post use_potion_path, params: { potion_key: 'potion' }
+
+    trainer.reload
+    assert_equal 8, trainer.adventures_remaining
+    assert_equal 0, trainer.item_quantity(:potion)
+    assert_redirected_to catches_path
+    assert_match /Used Potion! Restored \+3 adventure/, flash[:notice]
+    assert_match /8\/10/, flash[:notice]
+  end
+
+  test "use_potion should restore adventures with super_potion" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 3,
+      adventures_allocated_at: 1.hour.ago
+    )
+    trainer.add_item(:super_potion, 1)
+
+    log_in_as(trainer)
+    post use_potion_path, params: { potion_key: 'super_potion' }
+
+    trainer.reload
+    assert_equal 9, trainer.adventures_remaining
+    assert_equal 0, trainer.item_quantity(:super_potion)
+    assert_redirected_to catches_path
+    assert_match /Used Super Potion! Restored \+6 adventure/, flash[:notice]
+  end
+
+  test "use_potion should restore adventures with hyper_potion" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 0,
+      adventures_allocated_at: 1.hour.ago
+    )
+    trainer.add_item(:hyper_potion, 1)
+
+    log_in_as(trainer)
+    post use_potion_path, params: { potion_key: 'hyper_potion' }
+
+    trainer.reload
+    assert_equal 10, trainer.adventures_remaining
+    assert_equal 0, trainer.item_quantity(:hyper_potion)
+    assert_redirected_to catches_path
+    assert_match /Used Hyper Potion! Restored \+10 adventure/, flash[:notice]
+  end
+
+  test "use_potion should cap adventures at 10" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 8,
+      adventures_allocated_at: 1.hour.ago
+    )
+    trainer.add_item(:super_potion, 1)
+
+    log_in_as(trainer)
+    post use_potion_path, params: { potion_key: 'super_potion' }
+
+    trainer.reload
+    assert_equal 10, trainer.adventures_remaining  # 8 + 6 = 14, capped at 10
+    assert_match /Restored \+2 adventure/, flash[:notice]
+  end
+
+  test "use_potion should fail when trainer doesn't have potion" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 5,
+      adventures_allocated_at: 1.hour.ago
+    )
+
+    log_in_as(trainer)
+    post use_potion_path, params: { potion_key: 'potion' }
+
+    trainer.reload
+    assert_equal 5, trainer.adventures_remaining
+    assert_redirected_to catches_path
+    assert_match /You don't have any Potion/, flash[:alert]
+  end
+
+  test "use_potion should fail when already at max adventures" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 10,
+      adventures_allocated_at: 1.hour.ago
+    )
+    trainer.add_item(:potion, 1)
+
+    log_in_as(trainer)
+    post use_potion_path, params: { potion_key: 'potion' }
+
+    trainer.reload
+    assert_equal 10, trainer.adventures_remaining
+    assert_equal 1, trainer.item_quantity(:potion)  # Potion not consumed
+    assert_redirected_to catches_path
+    assert_match /You already have maximum adventures/, flash[:alert]
+  end
+
+  test "use_potion should require authentication" do
+    post use_potion_path, params: { potion_key: 'potion' }
+    assert_redirected_to login_path
+  end
+
+  test "use_potion should consume only one potion" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 5,
+      adventures_allocated_at: 1.hour.ago
+    )
+    trainer.add_item(:potion, 3)
+
+    log_in_as(trainer)
+    post use_potion_path, params: { potion_key: 'potion' }
+
+    trainer.reload
+    assert_equal 2, trainer.item_quantity(:potion)  # Should have 2 left
+  end
+
+  test "use_potion should use plural 'adventures' when restoring more than 1" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 5,
+      adventures_allocated_at: 1.hour.ago
+    )
+    trainer.add_item(:potion, 1)
+
+    log_in_as(trainer)
+    post use_potion_path, params: { potion_key: 'potion' }
+
+    assert_match /\+3 adventures/, flash[:notice]
+  end
+
+  test "use_potion should use singular 'adventure' when restoring exactly 1" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 9,
+      adventures_allocated_at: 1.hour.ago
+    )
+    trainer.add_item(:potion, 1)
+
+    log_in_as(trainer)
+    post use_potion_path, params: { potion_key: 'potion' }
+
+    # 9 + 3 = 12, capped at 10, so only +1
+    assert_match /\+1 adventure\./, flash[:notice]
+    assert_no_match /\+1 adventures/, flash[:notice]
+  end
 end
