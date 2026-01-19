@@ -952,7 +952,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
   test "should use pokeball when attempting catch" do
     trainer = trainers(:ash)
     log_in_as(trainer)
-    pokemon = pokemons(:bulbasaur)
+    pokemon = pokemons(:mewtwo)
 
     initial_pokeballs = trainer.ball_count(:pokeball)
 

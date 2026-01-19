@@ -126,7 +126,8 @@ class TrainerPlazaControllerTest < ActionDispatch::IntegrationTest
     trainer = Trainer.create!(
       username: "testuser",
       password: "password",
-      icon_pokemon_id: pokemons(:pikachu).id
+      icon_pokemon_id: pokemons(:pikachu).id,
+      onboarding_completed: true
     )
     log_in_as(trainer)
     get trainer_plaza_path
@@ -262,7 +263,8 @@ class TrainerPlazaControllerTest < ActionDispatch::IntegrationTest
     trainer = Trainer.create!(
       username: "evolvedtest",
       password: "password",
-      icon_pokemon_id: pokemons(:pikachu).id
+      icon_pokemon_id: pokemons(:pikachu).id,
+      onboarding_completed: true
     )
 
     # Create an evolved Pokemon for the trainer
@@ -287,7 +289,8 @@ class TrainerPlazaControllerTest < ActionDispatch::IntegrationTest
     trainer = Trainer.create!(
       username: "caughttest",
       password: "password",
-      icon_pokemon_id: pokemons(:pikachu).id
+      icon_pokemon_id: pokemons(:pikachu).id,
+      onboarding_completed: true
     )
 
     # Create a caught (not evolved) Pokemon for the trainer
@@ -312,7 +315,8 @@ class TrainerPlazaControllerTest < ActionDispatch::IntegrationTest
     trainer = Trainer.create!(
       username: "mixedtest",
       password: "password",
-      icon_pokemon_id: pokemons(:pikachu).id
+      icon_pokemon_id: pokemons(:pikachu).id,
+      onboarding_completed: true
     )
 
     # Create both a caught and evolved Pokemon
@@ -424,7 +428,8 @@ class TrainerPlazaControllerTest < ActionDispatch::IntegrationTest
     trainer = Trainer.create!(
       username: "newtrainer",
       password: "password",
-      icon_pokemon_id: pokemons(:pikachu).id
+      icon_pokemon_id: pokemons(:pikachu).id,
+      onboarding_completed: true
     )
     get trainer_path(trainer)
     assert_match "No Pokémon Yet!", response.body
@@ -435,7 +440,8 @@ class TrainerPlazaControllerTest < ActionDispatch::IntegrationTest
     trainer = Trainer.create!(
       username: "emptytrainer",
       password: "password",
-      icon_pokemon_id: pokemons(:pikachu).id
+      icon_pokemon_id: pokemons(:pikachu).id,
+      onboarding_completed: true
     )
     log_in_as(trainer)
     get trainer_path(trainer)
@@ -448,7 +454,8 @@ class TrainerPlazaControllerTest < ActionDispatch::IntegrationTest
     empty_trainer = Trainer.create!(
       username: "emptyuser",
       password: "password",
-      icon_pokemon_id: pokemons(:pikachu).id
+      icon_pokemon_id: pokemons(:pikachu).id,
+      onboarding_completed: true
     )
     get trainer_path(empty_trainer)
     assert_match "emptyuser hasn't caught any Pokémon yet", response.body
@@ -459,7 +466,8 @@ class TrainerPlazaControllerTest < ActionDispatch::IntegrationTest
     trainer = Trainer.create!(
       username: "newuser",
       password: "password",
-      icon_pokemon_id: pokemons(:pikachu).id
+      icon_pokemon_id: pokemons(:pikachu).id,
+      onboarding_completed: true
     )
     log_in_as(trainer)
     get trainer_path(trainer)
@@ -473,7 +481,8 @@ class TrainerPlazaControllerTest < ActionDispatch::IntegrationTest
     empty_trainer = Trainer.create!(
       username: "otherempty",
       password: "password",
-      icon_pokemon_id: pokemons(:pikachu).id
+      icon_pokemon_id: pokemons(:pikachu).id,
+      onboarding_completed: true
     )
     get trainer_path(empty_trainer)
     # Should not have these specific buttons
