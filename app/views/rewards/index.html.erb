@@ -5,11 +5,6 @@
     <header class="page-header-authenticated">
       <h1>Shop</h1>
       <p>Claim rewards and buy or sell items.</p>
-      <div style="text-align: center; margin-top: 16px;">
-        <span style="background: #FFF4E6; color: #2C5F2D; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 18px;">
-          💰 Pokedollars: <%= @trainer.currency %>
-        </span>
-      </div>
     </header>
 
     <!-- Awards Counter Section -->
@@ -67,9 +62,14 @@
 
     <!-- Sales Counter Section -->
     <div class="card-dashboard" style="max-width: 800px; margin: 0 auto 32px;">
-          <div class="card-dashboard-header">
-            <span class="card-dashboard-icon">💳</span>
-            <h2 class="card-dashboard-title">Buy and Sell</h2>
+          <div class="card-dashboard-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span class="card-dashboard-icon">💳</span>
+              <h2 class="card-dashboard-title">Buy and Sell</h2>
+            </div>
+            <span style="background: #FFF4E6; color: #2C5F2D; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 16px;">
+              💰 Pokedollars: <%= @trainer.currency %>
+            </span>
           </div>
 
     <div class="card-dashboard" style="max-width: 800px; margin: 0 auto;">
