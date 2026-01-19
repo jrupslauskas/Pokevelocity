@@ -36,7 +36,8 @@ class TrainersController < ApplicationController
     # Fetch items with quantity > 0, organized by type
     @pokeball_items = fetch_items_by_type('pokeball')
     @evolution_items = fetch_items_by_type('evolution_stone')
-    @adventure_items = fetch_items_by_type('potion', 'key_item')
+    @restoration_items = fetch_items_by_type('potion')
+    @adventure_items = fetch_items_by_type('key_item')
 
     # Fetch news feed: recent captures and evolutions from other trainers
     @news_feed = build_news_feed
@@ -54,8 +55,8 @@ class TrainersController < ApplicationController
       return
     end
 
-    # Only allow discarding pokeballs and evolution stones
-    unless item.pokeball? || item.evolution_stone?
+    # Only allow discarding pokeballs, evolution stones, and potions
+    unless item.pokeball? || item.evolution_stone? || item.potion?
       redirect_to dashboard_path, alert: "You cannot discard this item."
       return
     end

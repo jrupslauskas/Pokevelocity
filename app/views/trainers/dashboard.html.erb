@@ -116,6 +116,38 @@
           <% end %>
         <% end %>
 
+        <!-- Restoration Items Section -->
+        <% if @restoration_items.any? %>
+          <h3 class="inventory-subsection-title">Restoration Items</h3>
+          <% @restoration_items.each do |item_data| %>
+            <div class="inventory-item">
+              <span class="inventory-item-label">
+                <%= image_tag "icons/#{item_data[:item].sprite}", alt: item_data[:item].name, class: "inventory-icon" %>
+                <%= item_data[:item].name %>
+              </span>
+              <div class="inventory-item-actions">
+                <span class="inventory-item-count"><%= item_data[:quantity] %></span>
+                <%= button_to discard_item_path(item_key: item_data[:item].key),
+                              method: :delete,
+                              class: "btn-discard-item discard-item-form",
+                              data: {
+                                item_name: item_data[:item].name,
+                                item_key: item_data[:item].key
+                              },
+                              form: {
+                                class: "discard-item-form",
+                                data: {
+                                  turbo: false,
+                                  item_name: item_data[:item].name
+                                }
+                              } do %>
+                  <%= image_tag "icons/trash_can.png", alt: "Discard", class: "discard-icon" %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+
         <!-- Adventure Items Section -->
         <% if @adventure_items.any? %>
           <h3 class="inventory-subsection-title">Adventure Items</h3>
@@ -131,7 +163,7 @@
         <% end %>
 
         <!-- Empty Inventory Message -->
-        <% if @pokeball_items.empty? && @evolution_items.empty? && @adventure_items.empty? %>
+        <% if @pokeball_items.empty? && @evolution_items.empty? && @restoration_items.empty? && @adventure_items.empty? %>
           <p class="inventory-empty">Your inventory is empty.</p>
         <% end %>
       </div>

@@ -57,7 +57,7 @@
         %>
         <% potions.each do |potion| %>
           <% if @trainer.has_item?(potion[:key], 1) %>
-            <%= form_with url: use_potion_path, method: :post, local: true do |f| %>
+            <%= form_with url: use_potion_path, method: :post, local: true, class: 'potion-form', data: { potion_name: potion[:name], restore_amount: potion[:restore] } do |f| %>
               <%= hidden_field_tag :potion_key, potion[:key] %>
               <button type="submit" class="btn-potion">
                 <%= image_tag "icons/#{potion[:key]}.png", alt: potion[:name], class: "potion-icon" %>
@@ -66,6 +66,23 @@
             <% end %>
           <% end %>
         <% end %>
+      </div>
+    </div>
+
+    <!-- Potion Confirmation Modal -->
+    <div id="potionConfirmationModal" class="modal" style="display: none;">
+      <div class="modal-overlay"></div>
+      <div class="modal-content">
+        <h3 class="modal-title">Confirm Potion Use</h3>
+        <p class="modal-message" id="potionConfirmationMessage">
+          Use a <span id="potionName">Potion</span> to restore <span id="restoreAmount">3</span> adventures?
+          <br><br>
+          <strong>Any adventures restored beyond the maximum of 10 will be lost.</strong>
+        </p>
+        <div class="modal-actions">
+          <button id="potionConfirmYes" class="btn-primary">Yes</button>
+          <button id="potionConfirmNo" class="btn-secondary">No</button>
+        </div>
       </div>
     </div>
 
@@ -375,6 +392,59 @@
     });
 
     console.log('=== Initialization complete ===');
+  });
+
+  // Potion confirmation modal
+  document.addEventListener('turbo:load', function() {
+    const modal = document.getElementById('potionConfirmationModal');
+    const confirmYes = document.getElementById('potionConfirmYes');
+    const confirmNo = document.getElementById('potionConfirmNo');
+    const potionNameSpan = document.getElementById('potionName');
+    const restoreAmountSpan = document.getElementById('restoreAmount');
+    let pendingForm = null;
+
+    // Handle potion form submissions
+    document.querySelectorAll('.potion-form').forEach(form => {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const potionName = this.dataset.potionName;
+        const restoreAmount = this.dataset.restoreAmount;
+
+        potionNameSpan.textContent = potionName;
+        restoreAmountSpan.textContent = restoreAmount;
+        pendingForm = this;
+        modal.style.display = 'flex';
+      });
+    });
+
+    // Handle Yes button
+    confirmYes.addEventListener('click', function() {
+      if (pendingForm) {
+        modal.style.display = 'none';
+        // Submit the form natively (not via Turbo)
+        const nativeForm = pendingForm.cloneNode(true);
+        nativeForm.removeAttribute('data-turbo');
+        document.body.appendChild(nativeForm);
+        nativeForm.submit();
+      }
+    });
+
+    // Handle No button
+    confirmNo.addEventListener('click', function() {
+      modal.style.display = 'none';
+      pendingForm = null;
+    });
+
+    // Close modal on overlay click
+    if (modal) {
+      const overlay = modal.querySelector('.modal-overlay');
+      if (overlay) {
+        overlay.addEventListener('click', function() {
+          modal.style.display = 'none';
+          pendingForm = null;
+        });
+      }
+    }
   });
 </script>
 
