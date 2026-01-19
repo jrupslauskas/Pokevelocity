@@ -8,8 +8,7 @@ class GateUnlock < ApplicationRecord
   before_validation :set_unlocked_at, on: :create
   after_create :award_gate_rewards
 
-  # Gate rewards configuration - easy to update and maintain
-  # Simply add/remove/modify rewards for each gate number
+  # Gate rewards configuration
   GATE_REWARDS = {
     1 => {
       items: [
@@ -19,7 +18,8 @@ class GateUnlock < ApplicationRecord
     2 => {
       currency: 100,
       items: [
-        { key: :old_rod, quantity: 1, name: "Old Rod" }
+        { key: :old_rod, quantity: 1, name: "Old Rod" },
+        { key: :potion, quantity: 1, name: "Potion"}
       ]
     },
     3 => {
@@ -36,7 +36,8 @@ class GateUnlock < ApplicationRecord
     5 => {
       currency: 200,
       items: [
-        { key: :hm_surf, quantity: 1, name: "HM03 Surf" }
+        { key: :hm_surf, quantity: 1, name: "HM03 Surf" },
+        { key: :super_potion, quantity: 1, name: "Super Potion"}
       ]
     },
     6 => {

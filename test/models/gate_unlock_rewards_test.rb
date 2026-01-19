@@ -51,7 +51,7 @@ class GateUnlockRewardsTest < ActiveSupport::TestCase
   end
 
   # ================================================================================
-  # GATE 2: 100 Currency + Old Rod
+  # GATE 2: 100 Currency + Old Rod + Potion
   # ================================================================================
 
   test "Gate 2 should award 100 currency" do
@@ -77,15 +77,29 @@ class GateUnlockRewardsTest < ActiveSupport::TestCase
     assert @trainer.has_item?(:old_rod)
   end
 
-  test "Gate 2 should award both Old Rod and 100 currency" do
+  test "Gate 2 should award 1 Potion" do
+    gate_2 = create_gate(2, 17)
+    Item.find_or_create_by(key: "potion", item_type: "potion")
+    initial_potions = @trainer.item_quantity(:potion)
+
+    reach_difficulty_score(gate_2.required_difficulty_score)
+    @trainer.unlock_gate!(gate_2)
+
+    assert_equal initial_potions + 1, @trainer.item_quantity(:potion)
+  end
+
+  test "Gate 2 should award Old Rod, Potion, and 100 currency" do
     gate_2 = create_gate(2, 17)
     Item.find_or_create_by(key: "old_rod", item_type: "key_item")
+    Item.find_or_create_by(key: "potion", item_type: "potion")
     initial_currency = @trainer.currency
+    initial_potions = @trainer.item_quantity(:potion)
 
     reach_difficulty_score(gate_2.required_difficulty_score)
     @trainer.unlock_gate!(gate_2)
 
     assert @trainer.has_item?(:old_rod)
+    assert_equal initial_potions + 1, @trainer.item_quantity(:potion)
     @trainer.reload
     assert_equal initial_currency + 100, @trainer.currency
   end
@@ -146,7 +160,7 @@ class GateUnlockRewardsTest < ActiveSupport::TestCase
   end
 
   # ================================================================================
-  # GATE 5: 200 Currency + HM Surf
+  # GATE 5: 200 Currency + HM Surf + Super Potion
   # ================================================================================
 
   test "Gate 5 should award 200 currency" do
@@ -172,15 +186,29 @@ class GateUnlockRewardsTest < ActiveSupport::TestCase
     assert @trainer.has_item?(:hm_surf)
   end
 
-  test "Gate 5 should award both HM Surf and 200 currency" do
+  test "Gate 5 should award 1 Super Potion" do
+    gate_5 = create_gate(5, 40)
+    Item.find_or_create_by(key: "super_potion", item_type: "potion")
+    initial_super_potions = @trainer.item_quantity(:super_potion)
+
+    reach_difficulty_score(gate_5.required_difficulty_score)
+    @trainer.unlock_gate!(gate_5)
+
+    assert_equal initial_super_potions + 1, @trainer.item_quantity(:super_potion)
+  end
+
+  test "Gate 5 should award HM Surf, Super Potion, and 200 currency" do
     gate_5 = create_gate(5, 40)
     Item.find_or_create_by(key: "hm_surf", item_type: "key_item")
+    Item.find_or_create_by(key: "super_potion", item_type: "potion")
     initial_currency = @trainer.currency
+    initial_super_potions = @trainer.item_quantity(:super_potion)
 
     reach_difficulty_score(gate_5.required_difficulty_score)
     @trainer.unlock_gate!(gate_5)
 
     assert @trainer.has_item?(:hm_surf)
+    assert_equal initial_super_potions + 1, @trainer.item_quantity(:super_potion)
     @trainer.reload
     assert_equal initial_currency + 200, @trainer.currency
   end
@@ -295,12 +323,14 @@ class GateUnlockRewardsTest < ActiveSupport::TestCase
     gate_3 = create_gate(3, 25)
     Item.find_or_create_by(key: "old_rod", item_type: "key_item")
     Item.find_or_create_by(key: "evolution_stone", item_type: "key_item")
+    Item.find_or_create_by(key: "potion", item_type: "potion")
 
     # Ensure gates aren't already unlocked
     @trainer.gate_unlocks.where(gate: [gate_1, gate_2, gate_3]).destroy_all
 
     initial_pokeballs = @trainer.item_quantity(:pokeball)
     initial_stones = @trainer.item_quantity(:evolution_stone)
+    initial_potions = @trainer.item_quantity(:potion)
     initial_currency = @trainer.currency
 
     # Reach difficulty for Gate 3 (which unlocks 1, 2, and 3)
@@ -313,10 +343,11 @@ class GateUnlockRewardsTest < ActiveSupport::TestCase
     assert_equal 3, newly_unlocked.length
 
     # Gate 1: 1 pokeball
-    # Gate 2: 100 currency + Old Rod
+    # Gate 2: 100 currency + Old Rod + 1 Potion
     # Gate 3: 1 evolution stone
     assert_equal initial_pokeballs + 1, @trainer.item_quantity(:pokeball)
     assert_equal initial_stones + 1, @trainer.item_quantity(:evolution_stone)
+    assert_equal initial_potions + 1, @trainer.item_quantity(:potion)
     @trainer.reload
     assert_equal initial_currency + 100, @trainer.currency
     assert @trainer.has_item?(:old_rod)
@@ -345,6 +376,8 @@ class GateUnlockRewardsTest < ActiveSupport::TestCase
     Item.find_or_create_by(key: "great_ball", item_type: "pokeball")
     Item.find_or_create_by(key: "ultra_ball", item_type: "pokeball")
     Item.find_or_create_by(key: "master_ball", item_type: "pokeball")
+    Item.find_or_create_by(key: "potion", item_type: "potion")
+    Item.find_or_create_by(key: "super_potion", item_type: "potion")
 
     # Ensure gates aren't already unlocked
     @trainer.gate_unlocks.destroy_all
@@ -354,6 +387,8 @@ class GateUnlockRewardsTest < ActiveSupport::TestCase
     initial_ultra_balls = @trainer.item_quantity(:ultra_ball)
     initial_master_balls = @trainer.item_quantity(:master_ball)
     initial_stones = @trainer.item_quantity(:evolution_stone)
+    initial_potions = @trainer.item_quantity(:potion)
+    initial_super_potions = @trainer.item_quantity(:super_potion)
     initial_currency = @trainer.currency
 
     # Reach difficulty for Gate 9 (unlocks all gates)
@@ -367,10 +402,10 @@ class GateUnlockRewardsTest < ActiveSupport::TestCase
 
     # Check all rewards:
     # Gate 1: 1 pokeball
-    # Gate 2: 100 currency + Old Rod
+    # Gate 2: 100 currency + Old Rod + 1 Potion
     # Gate 3: 1 evolution stone
     # Gate 4: 1 great ball + Good Rod
-    # Gate 5: 200 currency + HM Surf
+    # Gate 5: 200 currency + HM Surf + 1 Super Potion
     # Gate 6: 2 evolution stones + Super Rod
     # Gate 7: 1 ultra ball
     # Gate 8: 500 currency
@@ -381,6 +416,8 @@ class GateUnlockRewardsTest < ActiveSupport::TestCase
     assert_equal initial_ultra_balls + 1, @trainer.item_quantity(:ultra_ball)
     assert_equal initial_master_balls + 1, @trainer.item_quantity(:master_ball)
     assert_equal initial_stones + 3, @trainer.item_quantity(:evolution_stone) # 1 + 2 = 3
+    assert_equal initial_potions + 1, @trainer.item_quantity(:potion)
+    assert_equal initial_super_potions + 1, @trainer.item_quantity(:super_potion)
 
     @trainer.reload
     assert_equal initial_currency + 800, @trainer.currency # 100 + 200 + 500 = 800
