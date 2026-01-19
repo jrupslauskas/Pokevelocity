@@ -25,6 +25,10 @@ class SettingsController < ApplicationController
       @trainer.show_encounter_animation = (params[:show_encounter_animation] == "1")
     end
 
+    if params.key?(:play_pokecenter_audio)
+      @trainer.play_pokecenter_audio = (params[:play_pokecenter_audio] == "1")
+    end
+
     if @trainer.save
       redirect_to edit_settings_path, notice: "Settings updated successfully!"
     else

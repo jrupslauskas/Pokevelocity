@@ -32,7 +32,7 @@
     <!-- Visit Poké Center and Use Potions -->
     <% available = @trainer.available_adventures_to_claim %>
     <div class="poke-center-container">
-      <%= form_with url: visit_poke_center_path, method: :post, local: true do |f| %>
+      <%= form_with url: visit_poke_center_path, method: :post, local: true, id: 'poke-center-form' do |f| %>
         <% if available > 0 %>
           <button type="submit" class="btn-poke-center">
             <%= image_tag "icons/pokecenter.png", alt: "Poké Center", class: "poke-center-icon" %>
@@ -45,6 +45,9 @@
           </button>
         <% end %>
       <% end %>
+
+      <!-- Poké Center Audio (hidden) -->
+      <audio id="poke-center-audio" src="/audio/pokecenter.mp3" preload="auto" data-enabled="<%= @trainer.play_pokecenter_audio %>"></audio>
 
       <!-- Potion Buttons -->
       <div class="potion-buttons">
@@ -444,6 +447,74 @@
           pendingForm = null;
         });
       }
+    }
+  });
+
+  // Poké Center audio
+  document.addEventListener('turbo:load', function() {
+    const pokeCenterForm = document.getElementById('poke-center-form');
+    const pokeCenterAudio = document.getElementById('poke-center-audio');
+    let audioPlaying = false;
+
+    if (pokeCenterForm && pokeCenterAudio) {
+      pokeCenterForm.addEventListener('submit', function(e) {
+        // Check if audio is enabled in user settings
+        const audioEnabled = pokeCenterAudio.dataset.enabled === 'true';
+
+        // Only play if button is enabled (not disabled)
+        const submitButton = this.querySelector('button[type="submit"]:not(:disabled)');
+
+        if (submitButton && !audioPlaying && audioEnabled) {
+          e.preventDefault(); // Prevent form submission
+          audioPlaying = true;
+
+          // Change button to loading state
+          const originalHTML = submitButton.innerHTML;
+          submitButton.disabled = true;
+          submitButton.innerHTML = `
+            <svg class="spinner" style="width: 24px; height: 24px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" opacity="0.25"></circle>
+              <path d="M12 2a10 10 0 0 1 10 10" opacity="0.75"></path>
+            </svg>
+            <span style="margin-left: 8px;">Restoring...</span>
+          `;
+
+          // Add spinner animation
+          if (!document.getElementById('spinner-style')) {
+            const style = document.createElement('style');
+            style.id = 'spinner-style';
+            style.textContent = '@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }';
+            document.head.appendChild(style);
+          }
+
+          // Play the audio and wait for it to finish
+          pokeCenterAudio.currentTime = 0; // Reset to start
+
+          const submitFormAfterAudio = () => {
+            console.log('Audio finished, submitting form');
+            audioPlaying = false;
+            pokeCenterForm.submit();
+          };
+
+          // Listen for audio to finish
+          pokeCenterAudio.onended = submitFormAfterAudio;
+
+          // Start playing
+          pokeCenterAudio.play()
+            .then(() => {
+              console.log('✓ Poké Center audio playing');
+            })
+            .catch(err => {
+              console.error('✗ Audio playback failed:', err);
+              // Submit anyway if audio fails
+              audioPlaying = false;
+              submitButton.disabled = false;
+              submitButton.innerHTML = originalHTML;
+              pokeCenterForm.submit();
+            });
+        }
+        // If audio is disabled, form submits normally (no e.preventDefault())
+      });
     }
   });
 </script>

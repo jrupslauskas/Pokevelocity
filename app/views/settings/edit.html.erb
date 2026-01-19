@@ -135,6 +135,19 @@
             </p>
           </div>
 
+          <div class="form-group" style="margin-top: 16px;">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 16px; background: #F9F9F9; border-radius: 8px;">
+              <%= hidden_field_tag :play_pokecenter_audio, "0" %>
+              <%= check_box_tag :play_pokecenter_audio, "1", @trainer.play_pokecenter_audio,
+                  class: "settings-checkbox",
+                  id: "play_pokecenter_audio" %>
+              <%= label_tag :play_pokecenter_audio, "Play Poké Center Audio", class: "settings-checkbox-label" %>
+            </div>
+            <p style="color: #888; font-size: 13px; margin-top: 8px; margin-left: 4px;">
+              Play the Poké Center music when visiting to restore adventures
+            </p>
+          </div>
+
           <div style="margin-top: 24px;">
             <%= submit_tag "Save Changes", class: "btn-primary" %>
           </div>
