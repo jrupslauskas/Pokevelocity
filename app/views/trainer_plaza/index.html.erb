@@ -37,7 +37,7 @@
 
               <div class="trainer-plaza-info">
                 <h3 class="trainer-plaza-username">
-                  <%= trainer.username %>
+                  <%= display_trainer_name(trainer) %>
                   <% if trainer.id == current_trainer.id %>
                     <span class="you-badge">You</span>
                   <% end %>

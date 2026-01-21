@@ -64,7 +64,7 @@
         </div>
       <% end %>
       <div style="display: flex; align-items: center; gap: 8px;">
-        <span class="sidebar-username"><%= current_trainer.username %></span>
+        <span class="sidebar-username"><%= display_trainer_name(current_trainer) %></span>
         <%= link_to edit_settings_path, class: "sidebar-settings-link", title: "Settings" do %>
           ⚙️
         <% end %>

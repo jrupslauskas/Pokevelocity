@@ -87,12 +87,12 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
     assert_match /Squirtle/i, response.body
   end
 
-  test "should redirect to dashboard if onboarding already completed on choose starter" do
+  test "should allow access to choose starter even if onboarding completed (for Elite Trainer restart)" do
     trainer = create_trainer_with_onboarding
     log_in_as(trainer)
 
     get onboarding_choose_starter_path
-    assert_redirected_to dashboard_path
+    assert_response :success
   end
 
   # ================================================================================
@@ -276,17 +276,17 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
   # ALREADY COMPLETED TESTS
   # ================================================================================
 
-  test "completed trainer cannot create another starter" do
+  test "completed trainer can create starter for Elite Trainer restart" do
     trainer = create_trainer_with_onboarding
     log_in_as(trainer)
 
-    # Try to get another starter
+    # Elite Trainers can get a new starter
     bulbasaur = Pokemon.find_by(pokedex_number: 1)
-    assert_no_difference "trainer.captures.count" do
+    assert_difference "trainer.captures.count", 1 do
       post onboarding_create_starter_path, params: { pokemon_id: bulbasaur.id }
     end
 
-    # Should be redirected to dashboard, not allowed to get starter
+    # Should be redirected to dashboard (not sendoff, since onboarding already completed)
     assert_redirected_to dashboard_path
   end
 

@@ -1,6 +1,6 @@
 class OnboardingController < ApplicationController
   before_action :require_login
-  before_action :redirect_if_completed
+  before_action :redirect_if_completed, except: [:choose_starter, :create_starter]
 
   def welcome
     @trainer = current_trainer
@@ -29,11 +29,15 @@ class OnboardingController < ApplicationController
       evolved: false
     )
 
-    # Store the starter Pokemon ID in session for the sendoff page
-    session[:starter_pokemon_id] = pokemon.id
-
-    # Redirect to sendoff page
-    redirect_to onboarding_sendoff_path
+    # Check if this is an Elite Trainer restart (already completed onboarding)
+    if @trainer.onboarding_completed
+      # Elite Trainer: skip sendoff, go straight to dashboard
+      redirect_to dashboard_path, notice: "Welcome back, Elite Trainer! You chose #{pokemon.name}!"
+    else
+      # New player: continue to sendoff
+      session[:starter_pokemon_id] = pokemon.id
+      redirect_to onboarding_sendoff_path
+    end
   end
 
   def sendoff

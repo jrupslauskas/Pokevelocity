@@ -15,7 +15,7 @@
         <p class="explanation-text">
           Trainers are ranked by their <strong>Total Difficulty Score</strong> — the sum of difficulty ratings of all Pokémon they've caught.
           Each Pokémon has a difficulty rating from 1 to 5 stars. For example, catching only Mewtwo (5★) and Charizard (4★) gives you a score of 9,
-          which ranks higher than catching 8 common Pokémon (1★ each) with a score of 8. Balance quantity and quality on your journey!
+          which ranks higher than catching 8 common Pokémon (1★ each) with a score of 8. Balance quantity and quality on your journey! Some trainers might even achieve Elite Trainer status by catching all 151 pokemon and rolling into a new adventure! Those trainers will have a special designation next to their name along with a high Difficulty Score.
         </p>
       </div>
     </div>
@@ -72,7 +72,7 @@
 
                   <div class="leaderboard-trainer-info">
                     <span class="leaderboard-username">
-                      <%= entry[:trainer].username %>
+                      <%= display_trainer_name(entry[:trainer]) %>
                       <% if entry[:trainer].id == current_trainer.id %>
                         <span class="you-badge">You</span>
                       <% end %>

@@ -1,0 +1,41 @@
+<div class="app-layout">
+  <%= render "trainers/sidebar" %>
+
+  <main class="main-content">
+    <div class="onboarding-container">
+      <header class="page-header-authenticated">
+        <h1>Congratulations, <%= @trainer.username %>!</h1>
+        <p>You've completed your Pokédex with all 151 Pokémon!</p>
+      </header>
+
+      <div class="professor-oak-section">
+        <%= image_tag "trainerSprites/gymLeaders/oak.png", class: "professor-oak" %>
+        <div class="dialogue-box">
+          <p>Incredible work, <%= @trainer.username %>! You've caught all 151 Pokémon!</p>
+          <p>You've proven yourself to be a true Pokémon Master!</p>
+          <p>Now, I have a special opportunity for you...</p>
+          <p><strong>Would you like to become an Elite Trainer?</strong></p>
+          <p>As an Elite Trainer, you'll embark on a fresh journey with new challenges:</p>
+          <ul>
+            <li>📖 Your Pokédex will be cleared for a new adventure</li>
+            <li>🏅 Your gym badges will be reset</li>
+            <li>💰 Your currency and items will reset to starting values</li>
+            <li>⭐ You'll earn Elite Trainer status (Level <%= @trainer.elite_trainer_level + 1 %>)</li>
+            <li>🏆 Your leaderboard score will roll the score from your first adventure into the next</li>
+          </ul>
+          <p>This is your chance to experience the thrill of the journey once again!</p>
+          <p><strong>Are you ready to begin your Elite Trainer adventure?</strong></p>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 16px; justify-content: center; margin-top: 24px;">
+        <%= form_with url: elite_trainer_confirm_path, method: :post, local: true do |f| %>
+          <%= submit_tag "Yes, Become Elite Trainer!", class: "btn-primary btn-large" %>
+        <% end %>
+        <%= form_with url: elite_trainer_decline_path, method: :post, local: true do |f| %>
+          <%= submit_tag "Not Yet", class: "btn-secondary btn-large" %>
+        <% end %>
+      </div>
+    </div>
+  </main>
+</div>
