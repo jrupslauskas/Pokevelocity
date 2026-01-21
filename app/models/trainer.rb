@@ -72,10 +72,15 @@ class Trainer < ApplicationRecord
   # Get the leaderboard score hash for this trainer
   # @return [Hash] containing trainer, pokemon_count, and difficulty_score
   def leaderboard_score
+    # Calculate total score including Elite Trainer bonus
+    # Formula: Current Difficulty + (377 × Elite Trainer Level)
+    elite_bonus = elite_trainer_level * 377
+    total_score = difficulty_score + elite_bonus
+
     {
       trainer: self,
       pokemon_count: captured_pokemon.count,
-      difficulty_score: difficulty_score
+      difficulty_score: total_score
     }
   end
 

@@ -182,6 +182,14 @@ class CatchesController < ApplicationController
           redirect_to pokedex_path, notice: message
         else
           # New capture
+          # Check if trainer has now caught all 151 Pokemon (distinct)
+          distinct_pokemon_count = @trainer.captures.select(:pokemon_id).distinct.count
+
+          if distinct_pokemon_count >= 151
+            # Trainer completed the Pokedex! Offer Elite Trainer status
+            redirect_to elite_trainer_congratulations_path and return
+          end
+
           # Auto-unlock gates after catching (difficulty score increased)
           newly_unlocked = @trainer.auto_unlock_gates!
 

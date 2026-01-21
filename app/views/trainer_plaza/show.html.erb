@@ -23,7 +23,7 @@
         <% end %>
         <div>
           <h1>
-            <%= @trainer.username %>'s Pokédex
+            <%= display_trainer_name(@trainer) %>'s Pokédex
             <% if @trainer.id == current_trainer.id %>
               <span class="you-badge">You</span>
             <% end %>
@@ -75,7 +75,7 @@
           <% if @trainer.id == current_trainer.id %>
             You haven't caught any Pokémon yet. Complete tickets to earn Pokéballs and start your collection!
           <% else %>
-            <%= @trainer.username %> hasn't caught any Pokémon yet.
+            <%= display_trainer_name(@trainer) %> hasn't caught any Pokémon yet.
           <% end %>
         </p>
         <% if @trainer.id == current_trainer.id %>

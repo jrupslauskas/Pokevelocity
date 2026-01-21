@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  # Elite Trainer
+  get "/elite-trainer/congratulations", to: "elite_trainer#congratulations", as: :elite_trainer_congratulations
+  post "/elite-trainer/confirm", to: "elite_trainer#confirm", as: :elite_trainer_confirm
+  post "/elite-trainer/decline", to: "elite_trainer#decline", as: :elite_trainer_decline
   get "gates/celebration"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

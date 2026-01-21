@@ -7,6 +7,25 @@
       <p>Welcome back, <%= @trainer.username %>! Here's your progress overview.</p>
     </header>
 
+    <!-- Elite Trainer Offer (only show if all 151 caught) -->
+    <% if @trainer.captures.select(:pokemon_id).distinct.count >= 151 %>
+      <div class="card-dashboard" style="max-width: 500px; margin: 0 auto 24px; background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); border: 3px solid #DAA520;">
+        <div class="card-dashboard-header" style="border-bottom: 2px solid #DAA520;">
+          <span class="card-dashboard-icon">⭐</span>
+          <h2 class="card-dashboard-title" style="color: #2C5F2D;">Pokédex Complete!</h2>
+        </div>
+        <div style="padding: 12px 16px; text-align: center;">
+          <p style="color: #2C5F2D; font-size: 15px; margin-bottom: 8px; font-weight: 600;">
+            Congratulations! You've caught all 151 Pokémon!
+          </p>
+          <p style="color: #2C5F2D; font-size: 13px; margin-bottom: 12px;">
+            Ready to start a new adventure as an Elite Trainer?
+          </p>
+          <%= link_to "Become Elite Trainer!", elite_trainer_congratulations_path, class: "btn-primary" %>
+        </div>
+      </div>
+    <% end %>
+
     <!-- Badges Section -->
     <div class="badges-section">
       <h2 class="badges-title">🏆 Gym Badges & Elite Four</h2>

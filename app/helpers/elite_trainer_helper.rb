@@ -1,0 +1,2 @@
+module EliteTrainerHelper
+end
