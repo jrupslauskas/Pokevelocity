@@ -37,6 +37,28 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     post login_path, params: { username: trainer.username, password: "password" }
   end
 
+  # Helper method to set up a valid encounter session
+  def set_encounter_session(pokemon)
+    session[:current_encounter] = pokemon.id
+  end
+
+  # Wrap get/post to auto-set encounter session for catch paths (backward compatibility)
+  [:get, :post].each do |method|
+    define_method(method) do |path, **options|
+      # Extract pokemon ID from URL
+      url_string = path.is_a?(String) ? path : path.to_s
+
+      if match = url_string.match(/\/catch\/(\d+)/)
+        pokemon_id = match[1].to_i
+        # Only set if not already set (to allow explicit overrides)
+        session[:current_encounter] ||= pokemon_id
+      end
+
+      # Call original method
+      super(path, **options)
+    end
+  end
+
   # Helper method to give trainer enough difficulty score for a gate
   def reach_difficulty_score(trainer, target_score)
     current_score = trainer.difficulty_score
@@ -240,6 +262,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     pokemon = pokemons(:bulbasaur)
 
     log_in_as(trainer)
+    set_encounter_session(pokemon)
     get catch_path(pokemon)
 
     assert_response :success
@@ -251,6 +274,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     pokemon = pokemons(:bulbasaur)
 
     log_in_as(trainer)
+    set_encounter_session(pokemon)
     get catch_path(pokemon)
 
     assert_match "Pokéball", response.body
@@ -1996,5 +2020,143 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     # 9 + 3 = 12, capped at 10, so only +1
     assert_match /\+1 adventure\./, flash[:notice]
     assert_no_match /\+1 adventures/, flash[:notice]
+  end
+
+  # ================================================================================
+  # ENCOUNTER VALIDATION TESTS (URL MANIPULATION PREVENTION)
+  # ================================================================================
+
+  test "should reject encounter show page without valid session" do
+    trainer = trainers(:ash)
+    pokemon = pokemons(:bulbasaur)
+
+    log_in_as(trainer)
+    # Try to access encounter without going through adventure (no session set)
+    get catch_path(pokemon)
+
+    assert_redirected_to catches_path
+    assert_match /cheating/, flash[:alert]
+  end
+
+  test "should reject encounter with mismatched pokemon ID" do
+    trainer = trainers(:ash)
+    bulbasaur = pokemons(:bulbasaur)
+    charmander = pokemons(:charmander)
+
+    log_in_as(trainer)
+    # Set session for Bulbasaur
+    set_encounter_session(bulbasaur)
+    # Try to access Charmander instead
+    get catch_path(charmander)
+
+    assert_redirected_to catches_path
+    assert_match /cheating/, flash[:alert]
+  end
+
+  test "should allow encounter with valid session" do
+    trainer = trainers(:ash)
+    pokemon = pokemons(:bulbasaur)
+
+    log_in_as(trainer)
+    set_encounter_session(pokemon)
+    get catch_path(pokemon)
+
+    assert_response :success
+    assert_match pokemon.name, response.body
+  end
+
+  test "should reject catch attempt without valid session" do
+    trainer = trainers(:ash)
+    pokemon = pokemons(:bulbasaur)
+    trainer.add_item(:master_ball, 1)
+
+    log_in_as(trainer)
+    # Try to catch without valid session
+    post catch_path(pokemon), params: { ball_type: "master_ball" }
+
+    assert_redirected_to catches_path
+    assert_match /cheating/, flash[:alert]
+  end
+
+  test "should reject catch attempt with mismatched pokemon ID" do
+    trainer = trainers(:ash)
+    bulbasaur = pokemons(:bulbasaur)
+    charmander = pokemons(:charmander)
+    trainer.add_item(:master_ball, 1)
+
+    log_in_as(trainer)
+    # Set session for Bulbasaur
+    set_encounter_session(bulbasaur)
+    # Try to catch Charmander instead
+    post catch_path(charmander), params: { ball_type: "master_ball" }
+
+    assert_redirected_to catches_path
+    assert_match /cheating/, flash[:alert]
+  end
+
+  test "should clear encounter session after successful catch" do
+    trainer = trainers(:ash)
+    pokemon = pokemons(:bulbasaur)
+    trainer.add_item(:master_ball, 1)
+
+    log_in_as(trainer)
+    set_encounter_session(pokemon)
+    post catch_path(pokemon), params: { ball_type: "master_ball" }
+
+    # Session should be cleared
+    assert_nil session[:current_encounter]
+  end
+
+  test "should reject run attempt without valid session" do
+    trainer = trainers(:ash)
+    pokemon = pokemons(:bulbasaur)
+
+    log_in_as(trainer)
+    # Try to run without valid session
+    post run_from_catch_path(pokemon)
+
+    assert_redirected_to catches_path
+    assert_match /cheating/, flash[:alert]
+  end
+
+  test "should reject run attempt with mismatched pokemon ID" do
+    trainer = trainers(:ash)
+    bulbasaur = pokemons(:bulbasaur)
+    charmander = pokemons(:charmander)
+
+    log_in_as(trainer)
+    # Set session for Bulbasaur
+    set_encounter_session(bulbasaur)
+    # Try to run from Charmander instead
+    post run_from_catch_path(charmander)
+
+    assert_redirected_to catches_path
+    assert_match /cheating/, flash[:alert]
+  end
+
+  test "should clear encounter session after running away" do
+    trainer = trainers(:ash)
+    pokemon = pokemons(:bulbasaur)
+
+    log_in_as(trainer)
+    set_encounter_session(pokemon)
+    post run_from_catch_path(pokemon)
+
+    # Session should be cleared
+    assert_nil session[:current_encounter]
+  end
+
+  test "adventure action should set encounter session" do
+    trainer = trainers(:ash)
+    trainer.update!(adventures_remaining: 5)
+
+    log_in_as(trainer)
+    post adventure_path(@test_route)
+
+    # Session should be set to the encountered pokemon
+    assert_not_nil session[:current_encounter]
+    # Verify it's one of the pokemon on the route
+    route_pokemon_ids = @test_route.pokemon.pluck(:id)
+    assert_includes route_pokemon_ids, session[:current_encounter]
   end
 end

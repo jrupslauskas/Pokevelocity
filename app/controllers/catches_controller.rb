@@ -141,6 +141,9 @@ class CatchesController < ApplicationController
       end
     end
 
+    # Store the encountered Pokemon ID in session to prevent URL manipulation
+    session[:current_encounter] = encountered_pokemon.id
+
     # Redirect to the encounter page for this Pokemon
     redirect_to catch_path(encountered_pokemon)
   end
@@ -148,6 +151,12 @@ class CatchesController < ApplicationController
   def show
     @trainer = current_trainer
     @pokemon = Pokemon.find(params[:id])
+
+    # Validate this is the current encounter (prevent URL manipulation)
+    unless params[:id].to_i == session[:current_encounter]
+      redirect_to catches_path, alert: "That's cheating. Please start a new adventure."
+      return
+    end
 
     # Check if already caught
     @already_caught = @trainer.captured_pokemon.include?(@pokemon)
@@ -170,12 +179,22 @@ class CatchesController < ApplicationController
   def create
     @trainer = current_trainer
     @pokemon = Pokemon.find(params[:id])
+
+    # Validate this is the current encounter (prevent URL manipulation)
+    unless params[:id].to_i == session[:current_encounter]
+      redirect_to catches_path, alert: "That's cheating. Please start a new adventure."
+      return
+    end
+
     ball_type = params[:ball_type]
 
     result = PokemonCatchService.new(@trainer, ball_type, @pokemon).catch!
 
     if result[:success]
       if result[:caught]
+        # Clear the current encounter from session
+        session.delete(:current_encounter)
+
         if result[:duplicate]
           # Duplicate capture - gave Evolution Stone
           message = "Success! You caught #{@pokemon.name} (##{@pokemon.pokedex_number}) with a #{result[:ball_type].humanize}! Since #{@pokemon.name} is already in your Pokédex, you received an Evolution Stone!"
@@ -222,6 +241,15 @@ class CatchesController < ApplicationController
   end
 
   def run
+    # Validate this is the current encounter (prevent URL manipulation)
+    unless params[:id].to_i == session[:current_encounter]
+      redirect_to catches_path, alert: "That's cheating. Please start a new adventure."
+      return
+    end
+
+    # Clear the current encounter from session
+    session.delete(:current_encounter)
+
     redirect_to catches_path, notice: "Got Away Safely"
   end
 
