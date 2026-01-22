@@ -1225,6 +1225,167 @@ body > div:not(.app-layout) {
   width: auto;
 }
 
+/* Adventures Panel - Horizontal Layout */
+.adventures-panel {
+  background: linear-gradient(to bottom, #FFF8DC, #F5F0E8);
+  border: 2px solid #E8DCC8;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.adventures-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.adventures-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6B5537;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Adventures Count Section */
+.adventures-count-section {
+  min-width: 120px;
+}
+
+.adventures-count {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.adventures-count-number {
+  font-size: 36px;
+  font-weight: 700;
+  color: #2C5F2D;
+  line-height: 1;
+}
+
+.adventures-count.adventures-depleted .adventures-count-number {
+  color: #DC3545;
+}
+
+.adventures-count-max {
+  font-size: 18px;
+  font-weight: 600;
+  color: #6B5537;
+}
+
+/* Poké Center Section */
+.pokecenter-section {
+  flex: 0 0 auto;
+  width: 220px;
+  display: flex;
+  justify-content: center;
+}
+
+.pokecenter-section form {
+  width: 100%;
+}
+
+.adventures-panel .btn-poke-center,
+.adventures-panel .btn-poke-center-disabled {
+  width: 100%;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+}
+
+.adventures-panel .poke-center-icon {
+  height: 36px;
+  width: auto;
+  flex-shrink: 0;
+}
+
+.btn-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.btn-primary-text {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.btn-secondary-text {
+  font-size: 11px;
+  font-weight: 400;
+  opacity: 0.9;
+  margin-top: 2px;
+}
+
+/* Potions Section */
+.potions-section {
+  min-width: 150px;
+}
+
+.potions-row {
+  display: flex;
+  gap: 8px;
+}
+
+.adventures-panel .btn-potion {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #7AC74C 0%, #5FA777 100%);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.adventures-panel .btn-potion:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.adventures-panel .btn-potion:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.adventures-panel .potion-icon {
+  height: 28px;
+  width: auto;
+  flex-shrink: 0;
+}
+
+.potion-count {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 4px;
+  border-radius: 4px;
+  line-height: 1;
+  min-width: 16px;
+  text-align: center;
+}
+
 /* Select Pokemon Page Styles */
 .select-pokemon-card {
   background: linear-gradient(to bottom, #FFF8DC, #F5F0E8);

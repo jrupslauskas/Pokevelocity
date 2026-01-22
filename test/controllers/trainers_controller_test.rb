@@ -1066,38 +1066,16 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
   end
 
   # ================================================================================
-  # CATCH PAGE (NEW) - STATS BAR TESTS
+  # CATCH PAGE (NEW) - ADVENTURES PANEL TESTS
   # ================================================================================
 
-  test "should display caught count stat on catch page" do
+  test "should display adventures panel with adventure count" do
     trainer = trainers(:gary)
     log_in_as(trainer)
     get catches_path
-    # Gary has 2 captures
-    assert_match "2 / 151", response.body
-  end
-
-  test "should display available pokemon count stat" do
-    trainer = trainers(:gary)
-    log_in_as(trainer)
-    get catches_path
-    # Gary caught 2, so 4 available in fixtures (6 total - 2 caught)
-    uncaught_count = Pokemon.count - trainer.captures.count
-    assert_match "#{uncaught_count}", response.body
-  end
-
-  test "should display total pokeballs stat" do
-    trainer = trainers(:ash)
-    log_in_as(trainer)
-    get catches_path
-    assert_match trainer.total_pokeballs.to_s, response.body
-  end
-
-  test "should display zero caught for new trainer" do
-    trainer = trainers(:ash)
-    log_in_as(trainer)
-    get catches_path
-    assert_match "0 / 151", response.body
+    assert_select "div.adventures-panel"
+    assert_match "/ 10", response.body
+    assert_match "Adventures", response.body
   end
 
   # ================================================================================

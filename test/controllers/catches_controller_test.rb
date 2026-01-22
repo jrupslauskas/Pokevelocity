@@ -148,13 +148,13 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     assert_select "input.btn-adventure", minimum: 1
   end
 
-  test "should display stats bar with caught count and pokeballs" do
+  test "should display adventures panel with adventure count" do
     trainer = trainers(:ash)
     log_in_as(trainer)
     get catches_path
-    assert_select "div.catch-stats-bar"
-    assert_match "/ 151", response.body
-    assert_match "Pokéballs", response.body
+    assert_select "div.adventures-panel"
+    assert_match "/ 10", response.body
+    assert_match "Adventures", response.body
   end
 
   test "should redirect when no routes exist" do
@@ -643,16 +643,6 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
 
     # Should NOT show locked route (gate 1)
     assert_no_match "Route 101", response.body
-  end
-
-  test "should display difficulty score in stats bar" do
-    trainer = trainers(:ash)
-    GateUnlock.create!(trainer: trainer, gate: @gate_0, unlocked_at: Time.current)
-
-    log_in_as(trainer)
-    get catches_path
-
-    assert_match "Difficulty Score", response.body
   end
 
   test "should show gate progress bars" do
@@ -1699,7 +1689,8 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     get catches_path
 
     assert_response :success
-    assert_match /3 \/ 10/, response.body
+    assert_match "3", response.body
+    assert_match "/ 10", response.body
   end
 
   test "adventure action should consume one adventure" do

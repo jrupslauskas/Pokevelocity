@@ -7,69 +7,70 @@
       <p>Choose a route to explore and encounter wild Pokémon!</p>
     </header>
 
-    <!-- Stats Bar -->
-    <div class="catch-stats-bar">
-      <div class="catch-stat">
-        <span class="catch-stat-label">Adventures</span>
-        <span class="catch-stat-value <%= 'adventure-depleted' if @trainer.adventures_remaining == 0 %>">
-          <%= @trainer.adventures_remaining %> / 10
-        </span>
-      </div>
-      <div class="catch-stat">
-        <span class="catch-stat-label">Caught</span>
-        <span class="catch-stat-value"><%= @trainer.captures.count %> / 151</span>
-      </div>
-      <div class="catch-stat">
-        <span class="catch-stat-label">Difficulty Score</span>
-        <span class="catch-stat-value"><%= @trainer.difficulty_score %></span>
-      </div>
-      <div class="catch-stat">
-        <span class="catch-stat-label">Pokéballs</span>
-        <span class="catch-stat-value"><%= @trainer.total_pokeballs %></span>
-      </div>
-    </div>
-
-    <!-- Visit Poké Center and Use Potions -->
+    <!-- Adventures Panel -->
     <% available = @trainer.available_adventures_to_claim %>
-    <div class="poke-center-container">
-      <%= form_with url: visit_poke_center_path, method: :post, local: true, id: 'poke-center-form' do |f| %>
-        <% if available > 0 %>
-          <button type="submit" class="btn-poke-center">
-            <%= image_tag "icons/pokecenter.png", alt: "Poké Center", class: "poke-center-icon" %>
-            Visit Poké Center (+<%= available %> available)
-          </button>
-        <% else %>
-          <button type="submit" class="btn-poke-center-disabled" disabled>
-            <%= image_tag "icons/pokecenter.png", alt: "Poké Center", class: "poke-center-icon" %>
-            Visit Poké Center (Next in <%= @trainer.formatted_time_until_adventure %>)
-          </button>
-        <% end %>
-      <% end %>
+    <%
+      potions = [
+        { key: 'potion', name: 'Potion', restore: 3 },
+        { key: 'super_potion', name: 'Super Potion', restore: 6 },
+        { key: 'hyper_potion', name: 'Hyper Potion', restore: 10 }
+      ]
+      has_potions = potions.any? { |p| @trainer.has_item?(p[:key], 1) }
+    %>
+    <div class="adventures-panel">
+      <!-- Adventures Count -->
+      <div class="adventures-section adventures-count-section">
+        <span class="adventures-label">Adventures</span>
+        <div class="adventures-count <%= 'adventures-depleted' if @trainer.adventures_remaining == 0 %>">
+          <span class="adventures-count-number"><%= @trainer.adventures_remaining %></span>
+          <span class="adventures-count-max">/ 10</span>
+        </div>
+      </div>
 
-      <!-- Poké Center Audio (hidden) -->
-      <audio id="poke-center-audio" src="/audio/pokecenter.mp3" preload="auto" data-enabled="<%= @trainer.play_pokecenter_audio %>"></audio>
-
-      <!-- Potion Buttons -->
-      <div class="potion-buttons">
-        <%
-          potions = [
-            { key: 'potion', name: 'Potion', restore: 3 },
-            { key: 'super_potion', name: 'Super Potion', restore: 6 },
-            { key: 'hyper_potion', name: 'Hyper Potion', restore: 10 }
-          ]
-        %>
-        <% potions.each do |potion| %>
-          <% if @trainer.has_item?(potion[:key], 1) %>
-            <%= form_with url: use_potion_path, method: :post, local: true, class: 'potion-form', data: { potion_name: potion[:name], restore_amount: potion[:restore] } do |f| %>
-              <%= hidden_field_tag :potion_key, potion[:key] %>
-              <button type="submit" class="btn-potion">
-                <%= image_tag "icons/#{potion[:key]}.png", alt: potion[:name], class: "potion-icon" %>
-                Use <%= potion[:name] %> (<%= @trainer.item_quantity(potion[:key]) %>)
-              </button>
-            <% end %>
+      <!-- Poké Center -->
+      <div class="adventures-section pokecenter-section">
+        <%= form_with url: visit_poke_center_path, method: :post, local: true, id: 'poke-center-form' do |f| %>
+          <% if available > 0 %>
+            <button type="submit" class="btn-poke-center">
+              <%= image_tag "icons/pokecenter.png", alt: "Poké Center", class: "poke-center-icon" %>
+              <span class="btn-text">
+                <span class="btn-primary-text">Poké Center</span>
+                <span class="btn-secondary-text">+<%= available %> available</span>
+              </span>
+            </button>
+          <% else %>
+            <button type="submit" class="btn-poke-center-disabled" disabled>
+              <%= image_tag "icons/pokecenter.png", alt: "Poké Center", class: "poke-center-icon" %>
+              <span class="btn-text">
+                <span class="btn-primary-text">Poké Center</span>
+                <span class="btn-secondary-text"><%= @trainer.formatted_time_until_adventure %></span>
+              </span>
+            </button>
           <% end %>
         <% end %>
+        <!-- Poké Center Audio (hidden) -->
+        <audio id="poke-center-audio" src="/audio/pokecenter.mp3" preload="auto" data-enabled="<%= @trainer.play_pokecenter_audio %>"></audio>
       </div>
+
+      <!-- Potions -->
+      <% if has_potions %>
+        <div class="adventures-section potions-section">
+          <span class="adventures-label">Potions</span>
+          <div class="potions-row">
+            <% potions.each do |potion| %>
+              <% if @trainer.has_item?(potion[:key], 1) %>
+                <%= form_with url: use_potion_path, method: :post, local: true, class: 'potion-form', data: { potion_name: potion[:name], restore_amount: potion[:restore] } do |f| %>
+                  <%= hidden_field_tag :potion_key, potion[:key] %>
+                  <button type="submit" class="btn-potion" title="<%= potion[:name] %> (+<%= potion[:restore] %> adventures)">
+                    <%= image_tag "icons/#{potion[:key]}.png", alt: potion[:name], class: "potion-icon" %>
+                    <span class="potion-count"><%= @trainer.item_quantity(potion[:key]) %></span>
+                  </button>
+                <% end %>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
     </div>
 
     <!-- Potion Confirmation Modal -->
