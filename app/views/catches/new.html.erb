@@ -10,6 +10,15 @@
     <!-- Adventures Panel -->
     <% available = @trainer.available_adventures_to_claim %>
     <%
+      # Calculate total adventures to restore (uncapped)
+      if @trainer.adventures_allocated_at.nil?
+        restore_amount = 5
+      else
+        time_elapsed = Time.current - @trainer.adventures_allocated_at
+        full_periods_passed = (time_elapsed / 24.hours).floor
+        restore_amount = full_periods_passed * 5
+      end
+
       potions = [
         { key: 'potion', name: 'Potion', restore: 3 },
         { key: 'super_potion', name: 'Super Potion', restore: 6 },
@@ -35,7 +44,7 @@
               <%= image_tag "icons/pokecenter.png", alt: "Poké Center", class: "poke-center-icon" %>
               <span class="btn-text">
                 <span class="btn-primary-text">Poké Center</span>
-                <span class="btn-secondary-text">+<%= available %> available</span>
+                <span class="btn-secondary-text">+<%= restore_amount %> Adventures</span>
               </span>
             </button>
           <% else %>
