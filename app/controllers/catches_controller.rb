@@ -49,19 +49,27 @@ class CatchesController < ApplicationController
                            .includes(route_encounters: :pokemon)
     end
 
+    # Pre-load trainer data to avoid N+1 queries
+    captured_pokemon_ids = @trainer.captures.pluck(:pokemon_id).to_set
+    unlocked_gate_numbers = @trainer.gate_unlocks.joins(:gate).pluck('gates.gate_number').to_set
+    trainer_items = @trainer.trainer_items.joins(:item).pluck('items.key', :quantity).to_h
+
     # Track which encounter types the trainer can access based on items
-    @has_old_rod = @trainer.has_item?(:old_rod)
-    @has_good_rod = @trainer.has_item?(:good_rod)
-    @has_super_rod = @trainer.has_item?(:super_rod)
+    @has_old_rod = (trainer_items['old_rod'] || 0) > 0
+    @has_good_rod = (trainer_items['good_rod'] || 0) > 0
+    @has_super_rod = (trainer_items['super_rod'] || 0) > 0
     @has_any_fishing_rod = @has_old_rod || @has_good_rod || @has_super_rod
-    @has_surf = @trainer.has_item?(:hm_surf)
+    @has_surf = (trainer_items['hm_surf'] || 0) > 0
 
     # For each route, show all Pokemon (including already caught) that meet appearance requirements
     @route_available_pokemon = {}
     @route_available_by_type = {}
     (@always_accessible_routes + @gated_routes).each do |route|
       # Get all Pokemon from encounters that are available for this trainer
-      available_encounters = route.route_encounters.select { |encounter| encounter.available_for?(@trainer) }
+      # Using optimized method that doesn't trigger N+1 queries
+      available_encounters = route.route_encounters.select do |encounter|
+        encounter_available_optimized?(encounter, captured_pokemon_ids, unlocked_gate_numbers, trainer_items)
+      end
       @route_available_pokemon[route.id] = available_encounters.map(&:pokemon)
 
       # Track which encounter types have available Pokemon
@@ -114,10 +122,15 @@ class CatchesController < ApplicationController
       end
     end
 
+    # Pre-load trainer data to avoid N+1 queries
+    captured_pokemon_ids = @trainer.captures.pluck(:pokemon_id).to_set
+    unlocked_gate_numbers = @trainer.gate_unlocks.joins(:gate).pluck('gates.gate_number').to_set
+    trainer_items = @trainer.trainer_items.joins(:item).pluck('items.key', :quantity).to_h
+
     # Get all Pokemon on this route that meet appearance requirements (including already caught)
     # Filter by encounter type
     available_encounters = route.route_encounters.select do |encounter|
-      next false unless encounter.available_for?(@trainer)
+      next false unless encounter_available_optimized?(encounter, captured_pokemon_ids, unlocked_gate_numbers, trainer_items)
       next false unless encounter.encounter_type == encounter_type
 
       # For fish encounters, filter by rod type if specified
@@ -282,5 +295,45 @@ class CatchesController < ApplicationController
     else
       redirect_to catches_path, alert: result[:error]
     end
+  end
+
+  private
+
+  # Optimized version of RouteEncounter#available_for? that uses pre-loaded data
+  # to avoid N+1 queries when checking many encounters
+  def encounter_available_optimized?(encounter, captured_pokemon_ids, unlocked_gate_numbers, trainer_items)
+    # Check Pokemon requirement (OR logic if alternative exists)
+    if encounter.required_pokemon_id.present?
+      has_required = captured_pokemon_ids.include?(encounter.required_pokemon_id)
+
+      if encounter.alternative_required_pokemon_id.present?
+        has_alternative = captured_pokemon_ids.include?(encounter.alternative_required_pokemon_id)
+        return false unless (has_required || has_alternative)
+      else
+        return false unless has_required
+      end
+    end
+
+    # Check gate requirement
+    if encounter.required_gate_number.present?
+      return false unless unlocked_gate_numbers.include?(encounter.required_gate_number)
+    end
+
+    # Check item requirement (for fishing rods, etc.)
+    if encounter.required_item_key.present?
+      case encounter.required_item_key
+      when 'old_rod'
+        return false unless (trainer_items['old_rod'] || 0) > 0 || (trainer_items['good_rod'] || 0) > 0 || (trainer_items['super_rod'] || 0) > 0
+      when 'good_rod'
+        return false unless (trainer_items['good_rod'] || 0) > 0 || (trainer_items['super_rod'] || 0) > 0
+      when 'super_rod'
+        return false unless (trainer_items['super_rod'] || 0) > 0
+      else
+        # For other items (like hm_surf), require exact match
+        return false unless (trainer_items[encounter.required_item_key] || 0) > 0
+      end
+    end
+
+    true
   end
 end
