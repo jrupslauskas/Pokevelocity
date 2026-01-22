@@ -27,6 +27,8 @@
     <%= render "layouts/flash_messages" if flash.any? %>
     <%= yield %>
     <canvas id="animation-overlay" class="hidden" />
+    <!-- Encounter Animation Audio (hidden) -->
+    <audio id="encounter-audio" src="/audio/encounter.mp3" preload="auto"></audio>
     <script>
       window.assetPaths = {
         horizontalStripes: "<%= asset_path 'horizontal-stripes.png' %>",

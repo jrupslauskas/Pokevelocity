@@ -286,7 +286,7 @@ class SettingsControllerTest < ActionDispatch::IntegrationTest
     get edit_settings_path
     assert_response :success
     assert_select "input#show_encounter_animation[type='checkbox']"
-    assert_select "label[for='show_encounter_animation']", text: "Display Encounter Animation"
+    assert_select "label[for='show_encounter_animation']", text: "Enable Retro Encounter Experience"
   end
 
   test "encounter animation checkbox should be unchecked when preference is false" do

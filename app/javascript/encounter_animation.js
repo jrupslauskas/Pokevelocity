@@ -147,6 +147,19 @@ document.addEventListener('turbo:load', function () {
       poke.animationStartTime = undefined; // Reset animation start time
       requestAnimationFrame(startAnimation);
 
+      // Play encounter audio if animation is enabled
+      const encounterAudio = document.getElementById('encounter-audio');
+      if (encounterAudio) {
+        encounterAudio.currentTime = 0; // Reset to start
+        encounterAudio.play()
+          .then(() => {
+            console.log('✓ Encounter audio playing');
+          })
+          .catch(err => {
+            console.error('✗ Encounter audio playback failed:', err);
+          });
+      }
+
       setTimeout(function () {
         document.getElementById("animation-overlay").classList.add('hidden');
         // Submit the form after animation completes (this will bypass the event listener)
