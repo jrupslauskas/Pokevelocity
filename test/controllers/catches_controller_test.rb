@@ -116,13 +116,6 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     assert_select "input.btn-adventure"
   end
 
-  test "should show pokemon available count for each route" do
-    trainer = trainers(:ash)
-    log_in_as(trainer)
-    get catches_path
-    assert_match "Pokémon available", response.body
-  end
-
   test "should mark caught pokemon as caught on route display" do
     trainer = trainers(:ash)
     # Catch Bulbasaur
@@ -998,38 +991,6 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to catch_path(pokemons(:pikachu))  # Now succeeds
   end
 
-  test "should correctly count available pokemon excluding locked encounters" do
-    trainer = trainers(:ash)
-    log_in_as(trainer)
-
-    # Create a route with 2 pokemon: one always available, one requires Bulbasaur
-    test_route = Route.create!(gate_requirement: 0, order: 200)
-    RouteEncounter.create!(
-      route: test_route,
-      pokemon: pokemons(:charmander),
-      spawn_rate: 50
-    )
-    RouteEncounter.create!(
-      route: test_route,
-      pokemon: pokemons(:pikachu),
-      spawn_rate: 50,
-      required_pokemon_id: pokemons(:bulbasaur).id
-    )
-
-    get catches_path
-
-    # Should show 1 pokemon available (only Charmander)
-    assert_match "1 Pokémon available", response.body
-
-    # Catch Bulbasaur
-    Capture.create!(trainer: trainer, pokemon: pokemons(:bulbasaur), ball_type: "pokeball")
-
-    get catches_path
-
-    # Should now show 2 pokemon available
-    assert_match "2 Pokémon available", response.body
-  end
-
   test "should show pokemon locked when required pokemon not caught" do
     trainer = trainers(:ash)
     log_in_as(trainer)
@@ -1070,8 +1031,8 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
 
     # Should show Pikachu as available
     assert_match "Pikachu", response.body
-    # Should not show lock icon since requirement is met
-    assert_match "1 Pokémon available", response.body
+    # Should have adventure button available
+    assert_select "input.btn-adventure", minimum: 1
   end
 
   test "should show pokemon locked when neither required nor alternative pokemon caught" do
@@ -1116,7 +1077,8 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
 
     # Should show Pikachu as available
     assert_match "Pikachu", response.body
-    assert_match "1 Pokémon available", response.body
+    # Should have adventure button available
+    assert_select "input.btn-adventure", minimum: 1
   end
 
   test "should allow encountering pokemon when alternative requirement met" do
@@ -1873,7 +1835,6 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_match /No More Adventures/i, response.body
-    assert_match /Replenishes in/i, response.body
   end
 
   test "adventure limit should apply to all encounter types equally" do

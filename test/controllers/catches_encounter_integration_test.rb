@@ -312,26 +312,6 @@ class CatchesEncounterIntegrationTest < ActionDispatch::IntegrationTest
   # AVAILABLE POKEMON COUNT
   # ================================================================================
 
-  test "should show correct count of available grass pokemon" do
-    get catches_path
-    assert_response :success
-
-    # Should show count of uncaught grass pokemon
-    # Both grass pokemon are uncaught, so should show 2
-    assert_select "div.route-card[data-route-id='#{@mixed_route.id}'] .route-available-count", text: /2 Pokémon available/
-  end
-
-  test "should exclude caught pokemon from available count" do
-    # Catch one of the grass pokemon
-    @trainer.captures.create!(pokemon: @grass_pokemon_1, ball_type: 'pokeball')
-
-    get catches_path
-    assert_response :success
-
-    # Should show 1 available (only Metapod uncaught)
-    assert_select "div.route-card[data-route-id='#{@mixed_route.id}'] .route-available-count", text: /1 Pokémon available/
-  end
-
   test "should still show route when all pokemon are caught since duplicates can be caught" do
     # Catch all grass pokemon
     @trainer.captures.create!(pokemon: @grass_pokemon_1, ball_type: 'pokeball')

@@ -279,40 +279,6 @@ class CatchesSurfComprehensiveTest < ActionDispatch::IntegrationTest
   # AVAILABLE POKEMON COUNT WITH SURF
   # ================================================================================
 
-  test "should count surf pokemon in available count" do
-    route = Route.create!(order: 966, gate_requirement: nil)
-
-    surf_pokemon_2 = Pokemon.find_or_create_by!(pokedex_number: 120) { |p| p.name = "Staryu"; p.difficulty = 2 }
-
-    RouteEncounter.create!(route: route, pokemon: @grass_pokemon, spawn_rate: 100, encounter_type: "grass")
-    RouteEncounter.create!(route: route, pokemon: @surf_pokemon, spawn_rate: 100, encounter_type: "surf", required_item_key: "hm_surf")
-    RouteEncounter.create!(route: route, pokemon: surf_pokemon_2, spawn_rate: 50, encounter_type: "surf", required_item_key: "hm_surf")
-
-    @trainer.add_item(:hm_surf, 1)
-
-    get catches_path
-    assert_response :success
-
-    # Should count all uncaught Pokemon (1 grass + 2 surf = 3)
-    assert_select "div.route-card[data-route-id='#{route.id}'] .route-available-count", text: /3 Pokémon available/
-  end
-
-  test "should exclude caught surf pokemon from count" do
-    route = Route.create!(order: 965, gate_requirement: nil)
-    RouteEncounter.create!(route: route, pokemon: @surf_pokemon, spawn_rate: 100, encounter_type: "surf", required_item_key: "hm_surf")
-
-    @trainer.add_item(:hm_surf, 1)
-
-    # Catch the surf Pokemon
-    @trainer.captures.create!(pokemon: @surf_pokemon, ball_type: 'pokeball')
-
-    get catches_path
-    assert_response :success
-
-    # Should show 0 available
-    assert_select "div.route-card[data-route-id='#{route.id}'] .route-available-count", text: /0 Pokémon available/
-  end
-
   # ================================================================================
   # DATA ATTRIBUTES FOR SURF POKEMON
   # ================================================================================

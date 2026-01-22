@@ -204,19 +204,8 @@
                 style="<%= current_type_has_pokemon ? 'display: none;' : '' %>">
           Locked
         </button>
-
-        <span class="route-available-count" style="<%= current_type_has_pokemon ? '' : 'display: none;' %>">
-          <%
-            # Show count of uncaught Pokemon
-            uncaught_pokemon = available_pokemon.reject { |p| @trainer.captured_pokemon.include?(p) }
-          %>
-          <%= uncaught_pokemon.count %> Pokémon available
-        </span>
       <% else %>
         <button class="btn-adventure-disabled" disabled>No More Adventures</button>
-        <span class="route-available-count adventure-refresh-message">
-          Replenishes in <%= @trainer.formatted_time_until_adventure %>
-        </span>
       <% end %>
     <% else %>
       <%

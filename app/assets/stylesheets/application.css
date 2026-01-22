@@ -1122,12 +1122,6 @@ body > div:not(.app-layout) {
   color: #DC3545;
 }
 
-.adventure-refresh-message {
-  color: #6B5537;
-  font-size: 0.9rem;
-  font-style: italic;
-}
-
 /* Poké Center Button Styles */
 .poke-center-container {
   text-align: center;
@@ -2368,12 +2362,6 @@ body > div:not(.app-layout) {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 250px;
-}
-
-.route-available-count {
-  font-size: 13px;
-  color: #6B5537;
-  font-weight: 500;
 }
 
 @media (max-width: 768px) {
