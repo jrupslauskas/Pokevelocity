@@ -233,6 +233,61 @@
       console.log(`Route ${routeId}: Filtered to ${encounterType}, ${visibleCount} available`);
     }
 
+    // Function to update Adventure button based on encounter type availability
+    function updateAdventureButton(routeId, encounterType) {
+      console.log(`updateAdventureButton called: route=${routeId}, type=${encounterType}`);
+
+      // Get encounter availability data
+      const availabilityData = document.querySelector(`.encounter-availability-data[data-route-id="${routeId}"]`);
+      if (!availabilityData) {
+        console.warn(`No availability data found for route ${routeId}`);
+        return;
+      }
+
+      // Check if current encounter type has available Pokemon
+      const isAvailable = availabilityData.dataset[`${encounterType}Available`] === 'true';
+      console.log(`${encounterType} encounters available: ${isAvailable}`);
+
+      // Find the route card's action area
+      const routeCard = document.querySelector(`.route-card[data-route-id="${routeId}"]`);
+      if (!routeCard) {
+        console.warn(`No route card found for route ${routeId}`);
+        return;
+      }
+
+      const routeActions = routeCard.querySelector('.route-actions');
+      const adventureForm = routeActions.querySelector('.adventure-form');
+      const lockedButton = routeActions.querySelector(`.btn-adventure-disabled[data-route-id="${routeId}"]`);
+
+      if (isAvailable) {
+        // Show adventure form if trainer has adventures
+        if (adventureForm) {
+          adventureForm.style.display = '';
+          const countSpan = routeActions.querySelector('.route-available-count');
+          if (countSpan) {
+            countSpan.style.display = '';
+          }
+        }
+        if (lockedButton) {
+          lockedButton.style.display = 'none';
+        }
+      } else {
+        // Show locked button
+        if (adventureForm) {
+          adventureForm.style.display = 'none';
+          const countSpan = routeActions.querySelector('.route-available-count');
+          if (countSpan) {
+            countSpan.style.display = 'none';
+          }
+        }
+        if (lockedButton) {
+          lockedButton.style.display = '';
+        }
+      }
+
+      console.log(`Updated adventure button for route ${routeId}: ${isAvailable ? 'enabled' : 'locked'}`);
+    }
+
     // Find all encounter type buttons
     const allButtons = document.querySelectorAll('.encounter-type-btn');
     console.log(`Found ${allButtons.length} encounter type buttons on page`);
@@ -296,6 +351,9 @@
             rodSelector.style.display = 'none';
           }
         }
+
+        // Update Adventure button based on encounter type availability
+        updateAdventureButton(routeId, encounterType);
       }, { passive: false });
 
       console.log(`✓ Attached click handler to button ${index}`);

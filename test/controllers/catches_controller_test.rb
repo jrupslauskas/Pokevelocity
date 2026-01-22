@@ -1152,6 +1152,226 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
   end
 
   # ================================================================================
+  # MIXED ENCOUNTER TYPE LOCKING TESTS
+  # ================================================================================
+
+  test "should allow fishing when land encounters are locked but fish encounters are available" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer old rod
+    trainer.add_item(:old_rod, 1)
+
+    # Create a route with locked grass encounter and available fish encounter
+    test_route = Route.create!(gate_requirement: 0, order: 500)
+
+    # Grass encounter locked behind Spearow requirement
+    RouteEncounter.create!(
+      route: test_route,
+      pokemon: pokemons(:pikachu),
+      spawn_rate: 100,
+      encounter_type: "grass",
+      required_pokemon_id: pokemons(:charmander).id # Trainer doesn't have this
+    )
+
+    # Fish encounter available (no requirement)
+    RouteEncounter.create!(
+      route: test_route,
+      pokemon: pokemons(:magikarp),
+      spawn_rate: 100,
+      encounter_type: "fish",
+      required_item_key: "old_rod"
+    )
+
+    get catches_path
+
+    # Should render both the adventure form and locked button (controlled by CSS)
+    assert_match "adventure-form", response.body
+    assert_match "btn-adventure-disabled", response.body
+
+    # Should have encounter availability data
+    assert_match "data-grass-available=\"false\"", response.body
+    assert_match "data-fish-available=\"true\"", response.body
+
+    # Should be able to adventure with fish encounter type
+    trainer.update!(adventures_remaining: 5)
+    post adventure_path(test_route), params: { encounter_type: "fish", rod_type: "old_rod" }
+
+    # Should successfully encounter Magikarp
+    assert_redirected_to catch_path(pokemons(:magikarp))
+  end
+
+  test "should not allow grass adventure when grass encounters are locked even if fish is available" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer old rod
+    trainer.add_item(:old_rod, 1)
+    trainer.update!(adventures_remaining: 5)
+
+    # Create a route with locked grass encounter and available fish encounter
+    test_route = Route.create!(gate_requirement: 0, order: 504)
+
+    # Grass encounter locked
+    RouteEncounter.create!(
+      route: test_route,
+      pokemon: pokemons(:pikachu),
+      spawn_rate: 100,
+      encounter_type: "grass",
+      required_pokemon_id: pokemons(:charmander).id
+    )
+
+    # Fish encounter available
+    RouteEncounter.create!(
+      route: test_route,
+      pokemon: pokemons(:magikarp),
+      spawn_rate: 100,
+      encounter_type: "fish",
+      required_item_key: "old_rod"
+    )
+
+    # Try to adventure with grass encounter type (should fail)
+    post adventure_path(test_route), params: { encounter_type: "grass" }
+
+    # Should redirect with no pokemon message
+    assert_redirected_to catches_path
+    assert_match "No Pokémon available on this route!", flash[:notice]
+  end
+
+  test "should show locked button for surf when only surf encounters locked but grass available" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer surf
+    trainer.add_item(:hm_surf, 1)
+
+    # Create a route with available grass and locked surf
+    test_route = Route.create!(gate_requirement: 0, order: 501)
+
+    # Grass encounter available (no requirement)
+    RouteEncounter.create!(
+      route: test_route,
+      pokemon: pokemons(:pikachu),
+      spawn_rate: 100,
+      encounter_type: "grass"
+    )
+
+    # Surf encounter locked behind requirement
+    RouteEncounter.create!(
+      route: test_route,
+      pokemon: pokemons(:tentacool),
+      spawn_rate: 100,
+      encounter_type: "surf",
+      required_item_key: "hm_surf",
+      required_pokemon_id: pokemons(:charmander).id
+    )
+
+    get catches_path
+
+    # Should have both buttons rendered
+    assert_match "adventure-form", response.body
+    assert_match "btn-adventure-disabled", response.body
+
+    # Should have correct availability data
+    assert_match "data-grass-available=\"true\"", response.body
+    assert_match "data-surf-available=\"false\"", response.body
+
+    # Should be able to adventure on grass
+    trainer.update!(adventures_remaining: 5)
+    post adventure_path(test_route), params: { encounter_type: "grass" }
+    assert_redirected_to catch_path(pokemons(:pikachu))
+  end
+
+  test "should allow adventure when requirement is met for one encounter type" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer old rod and catch required pokemon
+    trainer.add_item(:old_rod, 1)
+    Capture.create!(trainer: trainer, pokemon: pokemons(:charmander), ball_type: "pokeball")
+    trainer.update!(adventures_remaining: 5)
+
+    # Create a route with both grass and fish locked, but grass requirement is met
+    test_route = Route.create!(gate_requirement: 0, order: 502)
+
+    # Grass encounter - requirement met (has Charmander)
+    RouteEncounter.create!(
+      route: test_route,
+      pokemon: pokemons(:pikachu),
+      spawn_rate: 100,
+      encounter_type: "grass",
+      required_pokemon_id: pokemons(:charmander).id
+    )
+
+    # Fish encounter - requirement not met (doesn't have Bulbasaur)
+    RouteEncounter.create!(
+      route: test_route,
+      pokemon: pokemons(:magikarp),
+      spawn_rate: 100,
+      encounter_type: "fish",
+      required_item_key: "old_rod",
+      required_pokemon_id: pokemons(:bulbasaur).id
+    )
+
+    get catches_path
+
+    # Should have correct availability data
+    assert_match "data-grass-available=\"true\"", response.body
+    assert_match "data-fish-available=\"false\"", response.body
+
+    # Should be able to adventure on grass
+    post adventure_path(test_route), params: { encounter_type: "grass" }
+    assert_redirected_to catch_path(pokemons(:pikachu))
+  end
+
+  test "should show all locked when all encounter types are locked" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Give trainer fishing rod and surf
+    trainer.add_item(:old_rod, 1)
+    trainer.add_item(:hm_surf, 1)
+
+    # Create a route where ALL encounters are locked
+    test_route = Route.create!(gate_requirement: 0, order: 503)
+
+    # All encounter types locked
+    RouteEncounter.create!(
+      route: test_route,
+      pokemon: pokemons(:pikachu),
+      spawn_rate: 100,
+      encounter_type: "grass",
+      required_pokemon_id: pokemons(:charmander).id
+    )
+    RouteEncounter.create!(
+      route: test_route,
+      pokemon: pokemons(:magikarp),
+      spawn_rate: 100,
+      encounter_type: "fish",
+      required_item_key: "old_rod",
+      required_pokemon_id: pokemons(:bulbasaur).id
+    )
+    RouteEncounter.create!(
+      route: test_route,
+      pokemon: pokemons(:tentacool),
+      spawn_rate: 100,
+      encounter_type: "surf",
+      required_item_key: "hm_surf",
+      required_pokemon_id: pokemons(:squirtle).id
+    )
+
+    get catches_path
+
+    # Should show all locked
+    assert_match "data-grass-available=\"false\"", response.body
+    assert_match "data-fish-available=\"false\"", response.body
+    assert_match "data-surf-available=\"false\"", response.body
+
+    # Should show locked button
+    assert_match "Locked", response.body
+  end
+
+  # ================================================================================
   # MULTI-ATTEMPT CATCH WORKFLOW TESTS
   # ================================================================================
 

@@ -176,14 +176,36 @@
   </div>
 
   <div class="route-actions">
+    <%
+      # Check if current encounter type has available Pokemon
+      available_by_type = @route_available_by_type[route.id] || {}
+      current_type_has_pokemon = available_by_type[default_encounter_type]
+
+      # Check if ANY encounter type has available Pokemon
+      any_type_has_pokemon = available_by_type.values.any?
+    %>
     <% if available_pokemon.any? %>
       <% if @trainer.has_adventures? %>
-        <%= form_with url: adventure_path(route), method: :post, class: "adventure-form", data: { route_id: route.id } do |f| %>
+        <!-- Always render adventure form if ANY encounter type has Pokemon (hide with CSS if current type locked) -->
+        <%= form_with url: adventure_path(route),
+                      method: :post,
+                      class: "adventure-form",
+                      data: { route_id: route.id },
+                      html: { style: (current_type_has_pokemon ? '' : 'display: none;') } do |f| %>
           <%= f.hidden_field :encounter_type, value: default_encounter_type, class: "encounter-type-input" %>
           <%= f.hidden_field :rod_type, value: (has_fish_encounters ? best_rod : ''), class: "rod-type-input" %>
           <%= f.submit "Adventure", class: "btn-adventure" %>
         <% end %>
-        <span class="route-available-count">
+
+        <!-- Locked button for when current encounter type has no available Pokemon -->
+        <button class="btn-adventure-disabled"
+                disabled
+                data-route-id="<%= route.id %>"
+                style="<%= current_type_has_pokemon ? 'display: none;' : '' %>">
+          Locked
+        </button>
+
+        <span class="route-available-count" style="<%= current_type_has_pokemon ? '' : 'display: none;' %>">
           <%
             # Show count of uncaught Pokemon
             uncaught_pokemon = available_pokemon.reject { |p| @trainer.captured_pokemon.include?(p) }
@@ -204,5 +226,11 @@
       %>
       <button class="btn-adventure-disabled" disabled><%= button_text %></button>
     <% end %>
+    <!-- Store encounter type availability as data attributes -->
+    <div class="encounter-availability-data" data-route-id="<%= route.id %>" style="display: none;"
+         data-grass-available="<%= available_by_type['grass'] %>"
+         data-fish-available="<%= available_by_type['fish'] %>"
+         data-surf-available="<%= available_by_type['surf'] %>">
+    </div>
   </div>
 </div>

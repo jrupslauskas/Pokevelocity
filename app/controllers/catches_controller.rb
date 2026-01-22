@@ -58,10 +58,18 @@ class CatchesController < ApplicationController
 
     # For each route, show all Pokemon (including already caught) that meet appearance requirements
     @route_available_pokemon = {}
+    @route_available_by_type = {}
     (@always_accessible_routes + @gated_routes).each do |route|
       # Get all Pokemon from encounters that are available for this trainer
       available_encounters = route.route_encounters.select { |encounter| encounter.available_for?(@trainer) }
       @route_available_pokemon[route.id] = available_encounters.map(&:pokemon)
+
+      # Track which encounter types have available Pokemon
+      @route_available_by_type[route.id] = {
+        'grass' => available_encounters.any? { |e| e.grass? },
+        'fish' => available_encounters.any? { |e| e.fish? },
+        'surf' => available_encounters.any? { |e| e.surf? }
+      }
     end
 
     # Check if trainer has any pokeballs (show message but don't redirect)
