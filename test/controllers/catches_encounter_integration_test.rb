@@ -190,8 +190,8 @@ class CatchesEncounterIntegrationTest < ActionDispatch::IntegrationTest
 
     # Should encounter one of the grass pokemon
     assert_response :redirect
-    encountered_pokemon_id = @response.location.split('/').last.to_i
-    assert_includes [@grass_pokemon_1.id, @grass_pokemon_2.id], encountered_pokemon_id
+    encountered_pokemon_id = @response.location.split("/").last.to_i
+    assert_includes [ @grass_pokemon_1.id, @grass_pokemon_2.id ], encountered_pokemon_id
   end
 
   test "should successfully adventure with fish encounter type and old rod" do
@@ -210,8 +210,8 @@ class CatchesEncounterIntegrationTest < ActionDispatch::IntegrationTest
 
     # Should encounter one of the surf pokemon
     assert_response :redirect
-    encountered_pokemon_id = @response.location.split('/').last.to_i
-    assert_includes [@surf_pokemon_1.id, @surf_pokemon_2.id], encountered_pokemon_id
+    encountered_pokemon_id = @response.location.split("/").last.to_i
+    assert_includes [ @surf_pokemon_1.id, @surf_pokemon_2.id ], encountered_pokemon_id
   end
 
   test "should fail when trying to fish without any rod" do
@@ -314,8 +314,8 @@ class CatchesEncounterIntegrationTest < ActionDispatch::IntegrationTest
 
   test "should still show route when all pokemon are caught since duplicates can be caught" do
     # Catch all grass pokemon
-    @trainer.captures.create!(pokemon: @grass_pokemon_1, ball_type: 'pokeball')
-    @trainer.captures.create!(pokemon: @grass_pokemon_2, ball_type: 'pokeball')
+    @trainer.captures.create!(pokemon: @grass_pokemon_1, ball_type: "pokeball")
+    @trainer.captures.create!(pokemon: @grass_pokemon_2, ball_type: "pokeball")
 
     get catches_path
     assert_response :success
@@ -401,7 +401,7 @@ class CatchesEncounterIntegrationTest < ActionDispatch::IntegrationTest
     grass_items = response_body.scan(/data-encounter-type="grass".*?(?=<\/div>)/m)
 
     grass_items.each do |item|
-      assert_not item.include?('data-required-item'), "Grass pokemon should not have data-required-item attribute"
+      assert_not item.include?("data-required-item"), "Grass pokemon should not have data-required-item attribute"
     end
   end
 end

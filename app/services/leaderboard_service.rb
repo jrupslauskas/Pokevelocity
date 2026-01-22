@@ -35,7 +35,7 @@ class LeaderboardService
     trainers = Trainer.includes(:captured_pokemon, :icon_pokemon).all.map(&:leaderboard_score)
 
     # Sort by difficulty score (descending), then by pokemon count (descending)
-    trainers.sort_by { |t| [-t[:difficulty_score], -t[:pokemon_count]] }
+    trainers.sort_by { |t| [ -t[:difficulty_score], -t[:pokemon_count] ] }
   end
 
   def assign_trainers_to_slots(ranked_trainers)
@@ -45,7 +45,7 @@ class LeaderboardService
 
     while current_slot <= 14 && i < ranked_trainers.length
       current_entry = ranked_trainers[i]
-      tied_trainers = [current_entry]
+      tied_trainers = [ current_entry ]
 
       # Find all trainers with the same score
       j = i + 1

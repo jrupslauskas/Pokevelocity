@@ -51,15 +51,15 @@ class CatchesController < ApplicationController
 
     # Pre-load trainer data to avoid N+1 queries
     captured_pokemon_ids = @trainer.captures.pluck(:pokemon_id).to_set
-    unlocked_gate_numbers = @trainer.gate_unlocks.joins(:gate).pluck('gates.gate_number').to_set
-    trainer_items = @trainer.trainer_items.joins(:item).pluck('items.key', :quantity).to_h
+    unlocked_gate_numbers = @trainer.gate_unlocks.joins(:gate).pluck("gates.gate_number").to_set
+    trainer_items = @trainer.trainer_items.joins(:item).pluck("items.key", :quantity).to_h
 
     # Track which encounter types the trainer can access based on items
-    @has_old_rod = (trainer_items['old_rod'] || 0) > 0
-    @has_good_rod = (trainer_items['good_rod'] || 0) > 0
-    @has_super_rod = (trainer_items['super_rod'] || 0) > 0
+    @has_old_rod = (trainer_items["old_rod"] || 0) > 0
+    @has_good_rod = (trainer_items["good_rod"] || 0) > 0
+    @has_super_rod = (trainer_items["super_rod"] || 0) > 0
     @has_any_fishing_rod = @has_old_rod || @has_good_rod || @has_super_rod
-    @has_surf = (trainer_items['hm_surf'] || 0) > 0
+    @has_surf = (trainer_items["hm_surf"] || 0) > 0
 
     # For each route, show all Pokemon (including already caught) that meet appearance requirements
     @route_available_pokemon = {}
@@ -74,9 +74,9 @@ class CatchesController < ApplicationController
 
       # Track which encounter types have available Pokemon
       @route_available_by_type[route.id] = {
-        'grass' => available_encounters.any? { |e| e.grass? },
-        'fish' => available_encounters.any? { |e| e.fish? },
-        'surf' => available_encounters.any? { |e| e.surf? }
+        "grass" => available_encounters.any? { |e| e.grass? },
+        "fish" => available_encounters.any? { |e| e.fish? },
+        "surf" => available_encounters.any? { |e| e.surf? }
       }
     end
 
@@ -90,7 +90,7 @@ class CatchesController < ApplicationController
   def adventure
     @trainer = current_trainer
     route = Route.find(params[:id])
-    encounter_type = params[:encounter_type] || 'grass'
+    encounter_type = params[:encounter_type] || "grass"
     rod_type = params[:rod_type]
 
     # Check if trainer has adventures remaining
@@ -107,9 +107,9 @@ class CatchesController < ApplicationController
 
     # Store adventure parameters in session for "Adventure Again"
     session[:last_adventure] = {
-      'route_id' => route.id,
-      'encounter_type' => encounter_type,
-      'rod_type' => rod_type
+      "route_id" => route.id,
+      "encounter_type" => encounter_type,
+      "rod_type" => rod_type
     }
 
     # Validate trainer has the exact rod they're trying to use
@@ -124,8 +124,8 @@ class CatchesController < ApplicationController
 
     # Pre-load trainer data to avoid N+1 queries
     captured_pokemon_ids = @trainer.captures.pluck(:pokemon_id).to_set
-    unlocked_gate_numbers = @trainer.gate_unlocks.joins(:gate).pluck('gates.gate_number').to_set
-    trainer_items = @trainer.trainer_items.joins(:item).pluck('items.key', :quantity).to_h
+    unlocked_gate_numbers = @trainer.gate_unlocks.joins(:gate).pluck("gates.gate_number").to_set
+    trainer_items = @trainer.trainer_items.joins(:item).pluck("items.key", :quantity).to_h
 
     # Get all Pokemon on this route that meet appearance requirements (including already caught)
     # Filter by encounter type
@@ -134,7 +134,7 @@ class CatchesController < ApplicationController
       next false unless encounter.encounter_type == encounter_type
 
       # For fish encounters, filter by rod type if specified
-      if encounter_type == 'fish' && rod_type.present?
+      if encounter_type == "fish" && rod_type.present?
         # Exclusive rod selection: each rod uses only its own encounter table
         encounter.required_item_key == rod_type
       else
@@ -308,7 +308,7 @@ class CatchesController < ApplicationController
 
       if encounter.alternative_required_pokemon_id.present?
         has_alternative = captured_pokemon_ids.include?(encounter.alternative_required_pokemon_id)
-        return false unless (has_required || has_alternative)
+        return false unless has_required || has_alternative
       else
         return false unless has_required
       end
@@ -322,12 +322,12 @@ class CatchesController < ApplicationController
     # Check item requirement (for fishing rods, etc.)
     if encounter.required_item_key.present?
       case encounter.required_item_key
-      when 'old_rod'
-        return false unless (trainer_items['old_rod'] || 0) > 0 || (trainer_items['good_rod'] || 0) > 0 || (trainer_items['super_rod'] || 0) > 0
-      when 'good_rod'
-        return false unless (trainer_items['good_rod'] || 0) > 0 || (trainer_items['super_rod'] || 0) > 0
-      when 'super_rod'
-        return false unless (trainer_items['super_rod'] || 0) > 0
+      when "old_rod"
+        return false unless (trainer_items["old_rod"] || 0) > 0 || (trainer_items["good_rod"] || 0) > 0 || (trainer_items["super_rod"] || 0) > 0
+      when "good_rod"
+        return false unless (trainer_items["good_rod"] || 0) > 0 || (trainer_items["super_rod"] || 0) > 0
+      when "super_rod"
+        return false unless (trainer_items["super_rod"] || 0) > 0
       else
         # For other items (like hm_surf), require exact match
         return false unless (trainer_items[encounter.required_item_key] || 0) > 0

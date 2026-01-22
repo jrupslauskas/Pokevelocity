@@ -62,7 +62,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
       end
       # Skip if already captured (avoid duplicate error)
       next if trainer.captured_pokemon.exists?(id: pokemon.id)
-      trainer.captures.create!(pokemon: pokemon, ball_type: 'pokeball')
+      trainer.captures.create!(pokemon: pokemon, ball_type: "pokeball")
     end
   end
 
@@ -439,7 +439,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
 
     # Test with different difficulty pokemon
-    [pokemons(:bulbasaur), pokemons(:pikachu), pokemons(:mewtwo)].each do |pokemon|
+    [ pokemons(:bulbasaur), pokemons(:pikachu), pokemons(:mewtwo) ].each do |pokemon|
       Capture.create!(trainer: trainer, pokemon: pokemon, ball_type: "pokeball")
 
       log_in_as(trainer)
@@ -2031,7 +2031,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     trainer.add_item(:potion, 1)
 
     log_in_as(trainer)
-    post use_potion_path, params: { potion_key: 'potion' }
+    post use_potion_path, params: { potion_key: "potion" }
 
     trainer.reload
     assert_equal 8, trainer.adventures_remaining
@@ -2050,7 +2050,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     trainer.add_item(:super_potion, 1)
 
     log_in_as(trainer)
-    post use_potion_path, params: { potion_key: 'super_potion' }
+    post use_potion_path, params: { potion_key: "super_potion" }
 
     trainer.reload
     assert_equal 9, trainer.adventures_remaining
@@ -2068,7 +2068,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     trainer.add_item(:hyper_potion, 1)
 
     log_in_as(trainer)
-    post use_potion_path, params: { potion_key: 'hyper_potion' }
+    post use_potion_path, params: { potion_key: "hyper_potion" }
 
     trainer.reload
     assert_equal 10, trainer.adventures_remaining
@@ -2086,7 +2086,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     trainer.add_item(:super_potion, 1)
 
     log_in_as(trainer)
-    post use_potion_path, params: { potion_key: 'super_potion' }
+    post use_potion_path, params: { potion_key: "super_potion" }
 
     trainer.reload
     assert_equal 10, trainer.adventures_remaining  # 8 + 6 = 14, capped at 10
@@ -2101,7 +2101,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     )
 
     log_in_as(trainer)
-    post use_potion_path, params: { potion_key: 'potion' }
+    post use_potion_path, params: { potion_key: "potion" }
 
     trainer.reload
     assert_equal 5, trainer.adventures_remaining
@@ -2118,7 +2118,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     trainer.add_item(:potion, 1)
 
     log_in_as(trainer)
-    post use_potion_path, params: { potion_key: 'potion' }
+    post use_potion_path, params: { potion_key: "potion" }
 
     trainer.reload
     assert_equal 10, trainer.adventures_remaining
@@ -2128,7 +2128,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "use_potion should require authentication" do
-    post use_potion_path, params: { potion_key: 'potion' }
+    post use_potion_path, params: { potion_key: "potion" }
     assert_redirected_to login_path
   end
 
@@ -2141,7 +2141,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     trainer.add_item(:potion, 3)
 
     log_in_as(trainer)
-    post use_potion_path, params: { potion_key: 'potion' }
+    post use_potion_path, params: { potion_key: "potion" }
 
     trainer.reload
     assert_equal 2, trainer.item_quantity(:potion)  # Should have 2 left
@@ -2156,7 +2156,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     trainer.add_item(:potion, 1)
 
     log_in_as(trainer)
-    post use_potion_path, params: { potion_key: 'potion' }
+    post use_potion_path, params: { potion_key: "potion" }
 
     assert_match /\+3 adventures/, flash[:notice]
   end
@@ -2170,7 +2170,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     trainer.add_item(:potion, 1)
 
     log_in_as(trainer)
-    post use_potion_path, params: { potion_key: 'potion' }
+    post use_potion_path, params: { potion_key: "potion" }
 
     # 9 + 3 = 12, capped at 10, so only +1
     assert_match /\+1 adventure\./, flash[:notice]

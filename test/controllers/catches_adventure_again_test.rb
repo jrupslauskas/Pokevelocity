@@ -43,17 +43,17 @@ class CatchesAdventureAgainTest < ActionDispatch::IntegrationTest
     post adventure_path(@route), params: { encounter_type: "grass" }
 
     assert session[:last_adventure].present?
-    assert_equal @route.id, session[:last_adventure]['route_id']
-    assert_equal "grass", session[:last_adventure]['encounter_type']
+    assert_equal @route.id, session[:last_adventure]["route_id"]
+    assert_equal "grass", session[:last_adventure]["encounter_type"]
   end
 
   test "should store rod type in session for fishing adventures" do
     post adventure_path(@route), params: { encounter_type: "fish", rod_type: "good_rod" }
 
     assert session[:last_adventure].present?
-    assert_equal @route.id, session[:last_adventure]['route_id']
-    assert_equal "fish", session[:last_adventure]['encounter_type']
-    assert_equal "good_rod", session[:last_adventure]['rod_type']
+    assert_equal @route.id, session[:last_adventure]["route_id"]
+    assert_equal "fish", session[:last_adventure]["encounter_type"]
+    assert_equal "good_rod", session[:last_adventure]["rod_type"]
   end
 
   test "should display Adventure Again button when last_adventure exists" do
@@ -163,11 +163,11 @@ class CatchesAdventureAgainTest < ActionDispatch::IntegrationTest
     follow_redirect!
 
     # Adventure Again - should preserve good_rod
-    assert_equal "good_rod", session[:last_adventure]['rod_type']
+    assert_equal "good_rod", session[:last_adventure]["rod_type"]
 
     post adventure_path(@route), params: {
-      encounter_type: session[:last_adventure]['encounter_type'],
-      rod_type: session[:last_adventure]['rod_type']
+      encounter_type: session[:last_adventure]["encounter_type"],
+      rod_type: session[:last_adventure]["rod_type"]
     }
     follow_redirect!
 
@@ -215,8 +215,8 @@ class CatchesAdventureAgainTest < ActionDispatch::IntegrationTest
 
     # Session should still have last_adventure
     assert session[:last_adventure].present?
-    assert_equal @route.id, session[:last_adventure]['route_id']
-    assert_equal "grass", session[:last_adventure]['encounter_type']
+    assert_equal @route.id, session[:last_adventure]["route_id"]
+    assert_equal "grass", session[:last_adventure]["encounter_type"]
 
     # Adventure Again one more time
     post adventure_path(@route), params: { encounter_type: "grass" }
@@ -229,12 +229,12 @@ class CatchesAdventureAgainTest < ActionDispatch::IntegrationTest
   test "new adventure should update session parameters" do
     # First adventure on grass
     post adventure_path(@route), params: { encounter_type: "grass" }
-    assert_equal "grass", session[:last_adventure]['encounter_type']
+    assert_equal "grass", session[:last_adventure]["encounter_type"]
 
     # New adventure on fish
     post adventure_path(@route), params: { encounter_type: "fish", rod_type: "old_rod" }
-    assert_equal "fish", session[:last_adventure]['encounter_type']
-    assert_equal "old_rod", session[:last_adventure]['rod_type']
+    assert_equal "fish", session[:last_adventure]["encounter_type"]
+    assert_equal "old_rod", session[:last_adventure]["rod_type"]
   end
 
   # ================================================================================
@@ -303,7 +303,7 @@ class CatchesAdventureAgainTest < ActionDispatch::IntegrationTest
     follow_redirect!
 
     # Extract Pokemon ID from the URL (catch_path returns /catches/:id)
-    pokemon_id = request.path.split('/').last.to_i
+    pokemon_id = request.path.split("/").last.to_i
 
     # Catch the Pokemon
     post catch_path(pokemon_id), params: { ball_type: "pokeball" }
@@ -318,7 +318,7 @@ class CatchesAdventureAgainTest < ActionDispatch::IntegrationTest
     follow_redirect!
 
     # Extract Pokemon ID from the URL
-    pokemon_id = request.path.split('/').last.to_i
+    pokemon_id = request.path.split("/").last.to_i
 
     # Run
     post run_from_catch_path(pokemon_id)
@@ -343,7 +343,7 @@ class CatchesAdventureAgainTest < ActionDispatch::IntegrationTest
   test "multiple trainers should have separate adventure sessions" do
     # Trainer 1 adventures on grass
     post adventure_path(@route), params: { encounter_type: "grass" }
-    assert_equal "grass", session[:last_adventure]['encounter_type']
+    assert_equal "grass", session[:last_adventure]["encounter_type"]
 
     # Session data persists for the same user session
     assert session[:last_adventure].present?

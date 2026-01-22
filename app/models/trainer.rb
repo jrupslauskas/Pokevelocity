@@ -243,7 +243,7 @@ class Trainer < ApplicationRecord
     # Calculate how many adventures to grant
     adventures_to_grant = full_periods_passed * 5
     old_count = adventures_remaining
-    new_adventure_count = [adventures_remaining + adventures_to_grant, 10].min
+    new_adventure_count = [ adventures_remaining + adventures_to_grant, 10 ].min
 
     # Advance the allocation timestamp by the number of full periods
     new_allocation_time = adventures_allocated_at + (full_periods_passed * 24.hours)
@@ -292,7 +292,7 @@ class Trainer < ApplicationRecord
     # Get restoration amount
     restore_amount = item.adventure_restore
     old_count = adventures_remaining
-    new_count = [adventures_remaining + restore_amount, 10].min
+    new_count = [ adventures_remaining + restore_amount, 10 ].min
     actual_restored = new_count - old_count
 
     # Initialize timestamp if needed

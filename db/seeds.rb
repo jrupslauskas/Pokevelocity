@@ -156,10 +156,10 @@ evolutions_data.each do |evo_data|
     # Calculate required quantity
     # Elemental stones (fire, water, thunder, moon, leaf) and transfer cable always require 1
     # Generic evolution stones use difficulty formula: max(1, to_pokemon.difficulty - 1)
-    if ['fire_stone', 'water_stone', 'thunder_stone', 'moon_stone', 'leaf_stone', 'transfer_cable'].include?(evo_data["item"])
+    if [ 'fire_stone', 'water_stone', 'thunder_stone', 'moon_stone', 'leaf_stone', 'transfer_cable' ].include?(evo_data["item"])
       required_quantity = 1
     else
-      required_quantity = [to_pokemon.difficulty - 1, 1].max
+      required_quantity = [ to_pokemon.difficulty - 1, 1 ].max
     end
 
     evolution = Evolution.find_or_initialize_by(

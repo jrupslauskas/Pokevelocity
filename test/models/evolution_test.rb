@@ -14,7 +14,7 @@ class EvolutionTest < ActiveSupport::TestCase
   test "should require from_pokemon_id" do
     evolution = Evolution.new(
       to_pokemon: pokemons(:raichu),
-      required_item_key: 'thunder_stone',
+      required_item_key: "thunder_stone",
       required_item_quantity: 1
     )
     assert_not evolution.valid?
@@ -24,7 +24,7 @@ class EvolutionTest < ActiveSupport::TestCase
   test "should require to_pokemon_id" do
     evolution = Evolution.new(
       from_pokemon: pokemons(:pikachu),
-      required_item_key: 'thunder_stone',
+      required_item_key: "thunder_stone",
       required_item_quantity: 1
     )
     assert_not evolution.valid?
@@ -45,7 +45,7 @@ class EvolutionTest < ActiveSupport::TestCase
     evolution = Evolution.new(
       from_pokemon: pokemons(:pikachu),
       to_pokemon: pokemons(:raichu),
-      required_item_key: 'thunder_stone'
+      required_item_key: "thunder_stone"
     )
     assert_not evolution.valid?
     assert_includes evolution.errors[:required_item_quantity], "can't be blank"
@@ -55,7 +55,7 @@ class EvolutionTest < ActiveSupport::TestCase
     evolution = Evolution.new(
       from_pokemon: pokemons(:pikachu),
       to_pokemon: pokemons(:raichu),
-      required_item_key: 'thunder_stone',
+      required_item_key: "thunder_stone",
       required_item_quantity: 0
     )
     assert_not evolution.valid?
@@ -74,7 +74,7 @@ class EvolutionTest < ActiveSupport::TestCase
     evolution = evolutions(:pikachu_to_raichu)
     item = evolution.required_item
     assert_not_nil item
-    assert_equal 'thunder_stone', item.key
+    assert_equal "thunder_stone", item.key
   end
 
   test "can_trainer_evolve? returns true when trainer has enough items" do

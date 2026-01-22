@@ -1714,8 +1714,8 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
 
     # Extract the HTML and verify badges come before inventory
     html = response.body
-    badges_index = html.index('badges-section')
-    inventory_index = html.index('Inventory')
+    badges_index = html.index("badges-section")
+    inventory_index = html.index("Inventory")
 
     assert_not_nil badges_index, "Badges section should be present"
     assert_not_nil inventory_index, "Inventory section should be present"
@@ -1795,7 +1795,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     capture = Capture.create!(
       trainer: gary,
       pokemon: pikachu,
-      ball_type: 'pokeball',
+      ball_type: "pokeball",
       created_at: 1.hour.ago
     )
 
@@ -1822,7 +1822,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     evolution = Capture.create!(
       trainer: gary,
       pokemon: ivysaur,
-      ball_type: 'pokeball',
+      ball_type: "pokeball",
       evolved: true,
       created_at: 30.minutes.ago
     )
@@ -1845,7 +1845,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     Capture.create!(
       trainer: ash,
       pokemon: pikachu,
-      ball_type: 'pokeball',
+      ball_type: "pokeball",
       created_at: 1.hour.ago
     )
 
@@ -1887,7 +1887,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     gary_capture = Capture.create!(
       trainer: gary,
       pokemon: pikachu,
-      ball_type: 'pokeball',
+      ball_type: "pokeball",
       created_at: 10.minutes.ago
     )
 
@@ -1895,7 +1895,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     misty_evolution = Capture.create!(
       trainer: misty,
       pokemon: ivysaur,
-      ball_type: 'pokeball',
+      ball_type: "pokeball",
       evolved: true,
       created_at: 1.hour.ago
     )
@@ -1931,7 +1931,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
       Capture.create!(
         trainer: trainer,
         pokemon: pokemon,
-        ball_type: 'pokeball',
+        ball_type: "pokeball",
         created_at: (60 - i).minutes.ago
       )
     end
@@ -1973,7 +1973,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     Capture.create!(
       trainer: gary,
       pokemon: pikachu,
-      ball_type: 'pokeball',
+      ball_type: "pokeball",
       created_at: 1.hour.ago
     )
 
@@ -1993,7 +1993,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     Capture.create!(
       trainer: gary,
       pokemon: pikachu,
-      ball_type: 'pokeball',
+      ball_type: "pokeball",
       created_at: 2.hours.ago
     )
 
@@ -2015,7 +2015,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     Capture.create!(
       trainer: gary,
       pokemon: pikachu,
-      ball_type: 'pokeball',
+      ball_type: "pokeball",
       created_at: 1.hour.ago
     )
 
@@ -2027,7 +2027,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     Capture.create!(
       trainer: gary,
       pokemon: ivysaur,
-      ball_type: 'pokeball',
+      ball_type: "pokeball",
       evolved: true,
       created_at: 30.minutes.ago
     )
@@ -2058,9 +2058,9 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     newest_pokemon = Pokemon.find_or_create_by!(pokedex_number: 12) { |p| p.name = "Butterfree"; p.difficulty = 5 }
 
     # Create in non-chronological order to ensure sorting works
-    Capture.create!(trainer: gary, pokemon: middle_pokemon, ball_type: 'pokeball', created_at: 2.hours.ago)
-    Capture.create!(trainer: gary, pokemon: oldest_pokemon, ball_type: 'pokeball', created_at: 3.hours.ago)
-    Capture.create!(trainer: gary, pokemon: newest_pokemon, ball_type: 'pokeball', created_at: 1.hour.ago)
+    Capture.create!(trainer: gary, pokemon: middle_pokemon, ball_type: "pokeball", created_at: 2.hours.ago)
+    Capture.create!(trainer: gary, pokemon: oldest_pokemon, ball_type: "pokeball", created_at: 3.hours.ago)
+    Capture.create!(trainer: gary, pokemon: newest_pokemon, ball_type: "pokeball", created_at: 1.hour.ago)
 
     log_in_as(ash)
     get dashboard_path
@@ -2070,7 +2070,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     pokemon_order = news_items.map { |item| item.to_s.match(/class="news-pokemon">(\w+)<\/span>/)[1] }
 
     # Should be in reverse chronological order (newest first)
-    assert_equal ["Butterfree", "Metapod", "Caterpie"], pokemon_order
+    assert_equal [ "Butterfree", "Metapod", "Caterpie" ], pokemon_order
   end
 
   test "news feed should select 25 most recent captures when more than 25 exist" do
@@ -2093,7 +2093,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
       Capture.create!(
         trainer: trainer,
         pokemon: pokemon,
-        ball_type: 'pokeball',
+        ball_type: "pokeball",
         evolved: false,
         created_at: (30 - i).hours.ago
       )
@@ -2126,7 +2126,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
       Capture.create!(
         trainer: trainer,
         pokemon: pokemon,
-        ball_type: 'pokeball',
+        ball_type: "pokeball",
         evolved: true,
         created_at: (30 - i).hours.ago
       )
@@ -2159,7 +2159,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
       Capture.create!(
         trainer: trainer,
         pokemon: pokemon,
-        ball_type: 'pokeball',
+        ball_type: "pokeball",
         evolved: false,
         created_at: (60 - i).hours.ago
       )
@@ -2182,7 +2182,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
       Capture.create!(
         trainer: trainer,
         pokemon: pokemon,
-        ball_type: 'pokeball',
+        ball_type: "pokeball",
         evolved: true,
         created_at: (30 - i).hours.ago
       )
@@ -2206,7 +2206,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     Capture.create!(
       trainer: gary,
       pokemon: pikachu,
-      ball_type: 'pokeball',
+      ball_type: "pokeball",
       evolved: false,
       created_at: 1.hour.ago
     )
@@ -2232,7 +2232,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     Capture.create!(
       trainer: gary,
       pokemon: ivysaur,
-      ball_type: 'pokeball',
+      ball_type: "pokeball",
       evolved: true,
       created_at: 1.hour.ago
     )
@@ -2262,15 +2262,15 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     # Create events interleaved by time
     # Oldest: Gary catches Pidgey (3 hours ago)
     pidgey = Pokemon.find_or_create_by!(pokedex_number: 16) { |p| p.name = "Pidgey"; p.difficulty = 5 }
-    Capture.create!(trainer: gary, pokemon: pidgey, ball_type: 'pokeball', evolved: false, created_at: 3.hours.ago)
+    Capture.create!(trainer: gary, pokemon: pidgey, ball_type: "pokeball", evolved: false, created_at: 3.hours.ago)
 
     # Middle: Misty evolves Rattata (2 hours ago)
     raticate = Pokemon.find_or_create_by!(pokedex_number: 20) { |p| p.name = "Raticate"; p.difficulty = 5 }
-    Capture.create!(trainer: misty, pokemon: raticate, ball_type: 'pokeball', evolved: true, created_at: 2.hours.ago)
+    Capture.create!(trainer: misty, pokemon: raticate, ball_type: "pokeball", evolved: true, created_at: 2.hours.ago)
 
     # Newest: Gary catches Spearow (1 hour ago)
     spearow = Pokemon.find_or_create_by!(pokedex_number: 21) { |p| p.name = "Spearow"; p.difficulty = 5 }
-    Capture.create!(trainer: gary, pokemon: spearow, ball_type: 'pokeball', evolved: false, created_at: 1.hour.ago)
+    Capture.create!(trainer: gary, pokemon: spearow, ball_type: "pokeball", evolved: false, created_at: 1.hour.ago)
 
     log_in_as(ash)
     get dashboard_path
@@ -2280,7 +2280,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     pokemon_order = news_items.map { |item| item.to_s.match(/class="news-pokemon">(\w+)<\/span>/)[1] }
 
     # Should be: Spearow (newest), Raticate (middle), Pidgey (oldest)
-    assert_equal ["Spearow", "Raticate", "Pidgey"], pokemon_order
+    assert_equal [ "Spearow", "Raticate", "Pidgey" ], pokemon_order
   end
 
   test "news feed should handle identical timestamps gracefully" do
@@ -2302,8 +2302,8 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     pidgey = Pokemon.find_or_create_by!(pokedex_number: 16) { |p| p.name = "Pidgey"; p.difficulty = 5 }
     rattata = Pokemon.find_or_create_by!(pokedex_number: 19) { |p| p.name = "Rattata"; p.difficulty = 5 }
 
-    Capture.create!(trainer: gary, pokemon: pidgey, ball_type: 'pokeball', evolved: false, created_at: same_time)
-    Capture.create!(trainer: misty, pokemon: rattata, ball_type: 'pokeball', evolved: false, created_at: same_time)
+    Capture.create!(trainer: gary, pokemon: pidgey, ball_type: "pokeball", evolved: false, created_at: same_time)
+    Capture.create!(trainer: misty, pokemon: rattata, ball_type: "pokeball", evolved: false, created_at: same_time)
 
     log_in_as(ash)
     get dashboard_path
@@ -2320,7 +2320,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     Capture.create!(
       trainer: gary,
       pokemon: pikachu,
-      ball_type: 'great_ball',
+      ball_type: "great_ball",
       created_at: 1.hour.ago
     )
 
@@ -2367,7 +2367,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
       Capture.create!(
         trainer: trainer,
         pokemon: pokemon,
-        ball_type: 'pokeball',
+        ball_type: "pokeball",
         evolved: false,
         created_at: (100 + i).hours.ago
       )
@@ -2390,7 +2390,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
       Capture.create!(
         trainer: trainer,
         pokemon: pokemon,
-        ball_type: 'pokeball',
+        ball_type: "pokeball",
         evolved: true,
         created_at: (25 - i).hours.ago
       )
@@ -3403,7 +3403,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
   # ================================================================================
 
   test "should require login for discard_item" do
-    pokeball = Item.find_or_create_by!(key: 'pokeball') { |i| i.item_type = 'pokeball' }
+    pokeball = Item.find_or_create_by!(key: "pokeball") { |i| i.item_type = "pokeball" }
     delete discard_item_path(item_key: pokeball.key)
     assert_redirected_to login_path
   end
@@ -3412,7 +3412,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
 
-    pokeball = Item.find_or_create_by!(key: 'pokeball') { |i| i.item_type = 'pokeball' }
+    pokeball = Item.find_or_create_by!(key: "pokeball") { |i| i.item_type = "pokeball" }
 
     # Clear existing items and add fresh
     trainer.trainer_items.destroy_all
@@ -3434,7 +3434,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
 
-    fire_stone = Item.find_or_create_by!(key: 'fire_stone') { |i| i.item_type = 'evolution_stone' }
+    fire_stone = Item.find_or_create_by!(key: "fire_stone") { |i| i.item_type = "evolution_stone" }
 
     # Clear existing items and add fresh
     trainer.trainer_items.destroy_all
@@ -3456,7 +3456,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
 
-    old_rod = Item.find_or_create_by!(key: 'old_rod') { |i| i.item_type = 'key_item' }
+    old_rod = Item.find_or_create_by!(key: "old_rod") { |i| i.item_type = "key_item" }
     trainer.add_item(:old_rod, 1)
 
     delete discard_item_path(item_key: old_rod.key)
@@ -3472,7 +3472,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
 
-    ultra_ball = Item.find_or_create_by!(key: 'ultra_ball') { |i| i.item_type = 'pokeball' }
+    ultra_ball = Item.find_or_create_by!(key: "ultra_ball") { |i| i.item_type = "pokeball" }
 
     # Clear existing items to ensure trainer doesn't have ultra ball
     trainer.trainer_items.destroy_all
@@ -3487,7 +3487,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
 
-    great_ball = Item.find_or_create_by!(key: 'great_ball') { |i| i.item_type = 'pokeball' }
+    great_ball = Item.find_or_create_by!(key: "great_ball") { |i| i.item_type = "pokeball" }
 
     # Clear existing items and add only 1
     trainer.trainer_items.destroy_all
@@ -3508,7 +3508,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
 
-    pokeball = Item.find_or_create_by!(key: 'pokeball') { |i| i.item_type = 'pokeball' }
+    pokeball = Item.find_or_create_by!(key: "pokeball") { |i| i.item_type = "pokeball" }
 
     # Clear existing items and add 10
     trainer.trainer_items.destroy_all
@@ -3529,7 +3529,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
 
-    delete discard_item_path(item_key: 'fake_item')
+    delete discard_item_path(item_key: "fake_item")
 
     assert_redirected_to dashboard_path
     assert_equal "Item not found.", flash[:alert]
@@ -3539,7 +3539,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
 
-    pokeball = Item.find_or_create_by!(key: 'pokeball') { |i| i.item_type = 'pokeball' }
+    pokeball = Item.find_or_create_by!(key: "pokeball") { |i| i.item_type = "pokeball" }
     trainer.add_item(:pokeball, 5)
 
     get dashboard_path
@@ -3555,7 +3555,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
 
-    water_stone = Item.find_or_create_by!(key: 'water_stone') { |i| i.item_type = 'evolution_stone' }
+    water_stone = Item.find_or_create_by!(key: "water_stone") { |i| i.item_type = "evolution_stone" }
     trainer.add_item(:water_stone, 2)
 
     get dashboard_path
@@ -3570,7 +3570,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
 
-    good_rod = Item.find_or_create_by!(key: 'good_rod') { |i| i.item_type = 'key_item' }
+    good_rod = Item.find_or_create_by!(key: "good_rod") { |i| i.item_type = "key_item" }
     trainer.add_item(:good_rod, 1)
 
     get dashboard_path
@@ -3584,9 +3584,9 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
 
-    pokeball = Item.find_or_create_by!(key: 'pokeball') { |i| i.item_type = 'pokeball' }
-    fire_stone = Item.find_or_create_by!(key: 'fire_stone') { |i| i.item_type = 'evolution_stone' }
-    moon_stone = Item.find_or_create_by!(key: 'moon_stone') { |i| i.item_type = 'evolution_stone' }
+    pokeball = Item.find_or_create_by!(key: "pokeball") { |i| i.item_type = "pokeball" }
+    fire_stone = Item.find_or_create_by!(key: "fire_stone") { |i| i.item_type = "evolution_stone" }
+    moon_stone = Item.find_or_create_by!(key: "moon_stone") { |i| i.item_type = "evolution_stone" }
 
     # Clear existing items and add fresh
     trainer.trainer_items.destroy_all
@@ -3618,7 +3618,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
 
-    pokeball = Item.find_or_create_by!(key: 'pokeball') { |i| i.item_type = 'pokeball' }
+    pokeball = Item.find_or_create_by!(key: "pokeball") { |i| i.item_type = "pokeball" }
     trainer.add_item(:pokeball, 5)
 
     get dashboard_path
@@ -3636,7 +3636,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
 
-    pokeball = Item.find_or_create_by!(key: 'pokeball') { |i| i.item_type = 'pokeball' }
+    pokeball = Item.find_or_create_by!(key: "pokeball") { |i| i.item_type = "pokeball" }
     trainer.add_item(:pokeball, 5)
 
     get dashboard_path
@@ -3650,7 +3650,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
 
-    fire_stone = Item.find_or_create_by!(key: 'fire_stone') { |i| i.item_type = 'evolution_stone' }
+    fire_stone = Item.find_or_create_by!(key: "fire_stone") { |i| i.item_type = "evolution_stone" }
     trainer.add_item(:fire_stone, 2)
 
     get dashboard_path
@@ -3701,7 +3701,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
 
-    pokeball = Item.find_or_create_by!(key: 'pokeball') { |i| i.item_type = 'pokeball' }
+    pokeball = Item.find_or_create_by!(key: "pokeball") { |i| i.item_type = "pokeball" }
     trainer.add_item(:pokeball, 5)
 
     get dashboard_path
@@ -3715,8 +3715,8 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
 
-    pokeball = Item.find_or_create_by!(key: 'pokeball') { |i| i.item_type = 'pokeball' }
-    water_stone = Item.find_or_create_by!(key: 'water_stone') { |i| i.item_type = 'evolution_stone' }
+    pokeball = Item.find_or_create_by!(key: "pokeball") { |i| i.item_type = "pokeball" }
+    water_stone = Item.find_or_create_by!(key: "water_stone") { |i| i.item_type = "evolution_stone" }
 
     trainer.add_item(:pokeball, 3)
     trainer.add_item(:water_stone, 2)
@@ -3773,7 +3773,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
 
-    pokeball = Item.find_or_create_by!(key: 'pokeball') { |i| i.item_type = 'pokeball' }
+    pokeball = Item.find_or_create_by!(key: "pokeball") { |i| i.item_type = "pokeball" }
     trainer.add_item(:pokeball, 5)
 
     get dashboard_path

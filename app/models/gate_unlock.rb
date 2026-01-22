@@ -19,7 +19,7 @@ class GateUnlock < ApplicationRecord
       currency: 100,
       items: [
         { key: :old_rod, quantity: 1, name: "Old Rod" },
-        { key: :potion, quantity: 1, name: "Potion"}
+        { key: :potion, quantity: 1, name: "Potion" }
       ]
     },
     3 => {
@@ -37,7 +37,7 @@ class GateUnlock < ApplicationRecord
       currency: 200,
       items: [
         { key: :hm_surf, quantity: 1, name: "HM03 Surf" },
-        { key: :super_potion, quantity: 1, name: "Super Potion"}
+        { key: :super_potion, quantity: 1, name: "Super Potion" }
       ]
     },
     6 => {

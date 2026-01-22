@@ -19,7 +19,7 @@ class EliteTrainerControllerTest < ActionDispatch::IntegrationTest
         p.name = "Pokemon#{i + 1}"
         p.difficulty = 1
       end
-      trainer.captures.create!(pokemon: pokemon, ball_type: 'pokeball', captured_at: Time.current, evolved: false)
+      trainer.captures.create!(pokemon: pokemon, ball_type: "pokeball", captured_at: Time.current, evolved: false)
     end
 
     # Verify we have 151 distinct Pokemon
@@ -40,7 +40,7 @@ class EliteTrainerControllerTest < ActionDispatch::IntegrationTest
         p.name = "Pokemon#{i + 1}"
         p.difficulty = 1
       end
-      trainer.captures.create!(pokemon: pokemon, ball_type: 'pokeball', captured_at: Time.current, evolved: false)
+      trainer.captures.create!(pokemon: pokemon, ball_type: "pokeball", captured_at: Time.current, evolved: false)
     end
 
     initial_level = trainer.elite_trainer_level

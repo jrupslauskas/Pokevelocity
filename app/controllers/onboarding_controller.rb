@@ -1,6 +1,6 @@
 class OnboardingController < ApplicationController
   before_action :require_login
-  before_action :redirect_if_completed, except: [:choose_starter, :create_starter]
+  before_action :redirect_if_completed, except: [ :choose_starter, :create_starter ]
 
   def welcome
     @trainer = current_trainer
@@ -8,7 +8,7 @@ class OnboardingController < ApplicationController
 
   def choose_starter
     @trainer = current_trainer
-    @starters = Pokemon.where(pokedex_number: [1, 4, 7]).order(:pokedex_number)
+    @starters = Pokemon.where(pokedex_number: [ 1, 4, 7 ]).order(:pokedex_number)
   end
 
   def create_starter
@@ -16,7 +16,7 @@ class OnboardingController < ApplicationController
     pokemon = Pokemon.find(params[:pokemon_id])
 
     # Validate it's actually a starter
-    unless [1, 4, 7].include?(pokemon.pokedex_number)
+    unless [ 1, 4, 7 ].include?(pokemon.pokedex_number)
       redirect_to onboarding_choose_starter_path, alert: "Please choose a valid starter Pokémon"
       return
     end
@@ -24,7 +24,7 @@ class OnboardingController < ApplicationController
     # Give them their starter
     @trainer.captures.create!(
       pokemon: pokemon,
-      ball_type: 'pokeball',
+      ball_type: "pokeball",
       captured_at: Time.current,
       evolved: false
     )

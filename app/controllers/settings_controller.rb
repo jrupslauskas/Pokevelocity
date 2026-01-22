@@ -63,6 +63,6 @@ class SettingsController < ApplicationController
     ]
 
     # Sort alphabetically by display name (last part after '/')
-    (regular_trainers + gym_leaders).sort_by { |sprite| sprite.split('/').last }
+    (regular_trainers + gym_leaders).sort_by { |sprite| sprite.split("/").last }
   end
 end

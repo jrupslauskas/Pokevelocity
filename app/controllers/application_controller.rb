@@ -27,8 +27,8 @@ class ApplicationController < ActionController::Base
 
   def enforce_onboarding
     # Skip enforcement for onboarding and session pages
-    return if controller_name == 'onboarding'
-    return if controller_name == 'sessions'
+    return if controller_name == "onboarding"
+    return if controller_name == "sessions"
 
     if current_trainer&.needs_onboarding?
       redirect_to onboarding_welcome_path

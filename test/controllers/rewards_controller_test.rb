@@ -13,7 +13,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_stones = trainer.item_quantity(:fire_stone)
 
-    post buy_item_rewards_path, params: { item_key: 'fire_stone' }
+    post buy_item_rewards_path, params: { item_key: "fire_stone" }
 
     assert_redirected_to rewards_path
     assert_match "Successfully purchased Fire Stone for 300 Pokedollars!", flash[:notice]
@@ -31,7 +31,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_stones = trainer.item_quantity(:thunder_stone)
 
-    post buy_item_rewards_path, params: { item_key: 'thunder_stone' }
+    post buy_item_rewards_path, params: { item_key: "thunder_stone" }
 
     assert_redirected_to rewards_path
     trainer.reload
@@ -47,7 +47,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_stones = trainer.item_quantity(:water_stone)
 
-    post buy_item_rewards_path, params: { item_key: 'water_stone' }
+    post buy_item_rewards_path, params: { item_key: "water_stone" }
 
     assert_redirected_to rewards_path
     trainer.reload
@@ -63,7 +63,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_stones = trainer.item_quantity(:moon_stone)
 
-    post buy_item_rewards_path, params: { item_key: 'moon_stone' }
+    post buy_item_rewards_path, params: { item_key: "moon_stone" }
 
     assert_redirected_to rewards_path
     trainer.reload
@@ -79,7 +79,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_stones = trainer.item_quantity(:leaf_stone)
 
-    post buy_item_rewards_path, params: { item_key: 'leaf_stone' }
+    post buy_item_rewards_path, params: { item_key: "leaf_stone" }
 
     assert_redirected_to rewards_path
     trainer.reload
@@ -95,7 +95,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_cables = trainer.item_quantity(:transfer_cable)
 
-    post buy_item_rewards_path, params: { item_key: 'transfer_cable' }
+    post buy_item_rewards_path, params: { item_key: "transfer_cable" }
 
     assert_redirected_to rewards_path
     trainer.reload
@@ -111,7 +111,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_stones = trainer.item_quantity(:evolution_stone)
 
-    post buy_item_rewards_path, params: { item_key: 'evolution_stone' }
+    post buy_item_rewards_path, params: { item_key: "evolution_stone" }
 
     assert_redirected_to rewards_path
     trainer.reload
@@ -127,17 +127,17 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
 
     # Buy fire stone (300)
-    post buy_item_rewards_path, params: { item_key: 'fire_stone' }
+    post buy_item_rewards_path, params: { item_key: "fire_stone" }
     trainer.reload
     assert_equal initial_currency - 300, trainer.currency
 
     # Buy water stone (300)
-    post buy_item_rewards_path, params: { item_key: 'water_stone' }
+    post buy_item_rewards_path, params: { item_key: "water_stone" }
     trainer.reload
     assert_equal initial_currency - 600, trainer.currency
 
     # Buy thunder stone (300)
-    post buy_item_rewards_path, params: { item_key: 'thunder_stone' }
+    post buy_item_rewards_path, params: { item_key: "thunder_stone" }
     trainer.reload
     assert_equal initial_currency - 900, trainer.currency
   end
@@ -151,7 +151,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
     # Buy fire stone 3 times
     3.times do
-      post buy_item_rewards_path, params: { item_key: 'fire_stone' }
+      post buy_item_rewards_path, params: { item_key: "fire_stone" }
     end
 
     trainer.reload
@@ -171,7 +171,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_stones = trainer.item_quantity(:fire_stone)
 
-    post buy_item_rewards_path, params: { item_key: 'fire_stone' }
+    post buy_item_rewards_path, params: { item_key: "fire_stone" }
 
     assert_redirected_to rewards_path
     assert_match "Not enough money! You need 300 but only have 50", flash[:alert]
@@ -188,7 +188,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     trainer.update!(currency: 0)
     initial_stones = trainer.item_quantity(:fire_stone)
 
-    post buy_item_rewards_path, params: { item_key: 'fire_stone' }
+    post buy_item_rewards_path, params: { item_key: "fire_stone" }
 
     assert_redirected_to rewards_path
     assert_match "Not enough money!", flash[:alert]
@@ -206,7 +206,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_pokeballs = trainer.item_quantity(:pokeball)
 
-    post buy_item_rewards_path, params: { item_key: 'pokeball' }
+    post buy_item_rewards_path, params: { item_key: "pokeball" }
 
     assert_redirected_to rewards_path
     assert_match "Successfully purchased Poké Ball for 200 Pokedollars!", flash[:notice]
@@ -224,7 +224,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_great_balls = trainer.item_quantity(:great_ball)
 
-    post buy_item_rewards_path, params: { item_key: 'great_ball' }
+    post buy_item_rewards_path, params: { item_key: "great_ball" }
 
     assert_redirected_to rewards_path
     assert_match "Successfully purchased Great Ball for 300 Pokedollars!", flash[:notice]
@@ -242,7 +242,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_ultra_balls = trainer.item_quantity(:ultra_ball)
 
-    post buy_item_rewards_path, params: { item_key: 'ultra_ball' }
+    post buy_item_rewards_path, params: { item_key: "ultra_ball" }
 
     assert_redirected_to rewards_path
     assert_match "Successfully purchased Ultra Ball for 400 Pokedollars!", flash[:notice]
@@ -260,7 +260,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_master_balls = trainer.item_quantity(:master_ball)
 
-    post buy_item_rewards_path, params: { item_key: 'master_ball' }
+    post buy_item_rewards_path, params: { item_key: "master_ball" }
 
     assert_redirected_to rewards_path
     assert_match "Successfully purchased Master Ball for 700 Pokedollars!", flash[:notice]
@@ -278,7 +278,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_pokeballs = trainer.item_quantity(:pokeball)
 
-    post buy_item_rewards_path, params: { item_key: 'pokeball' }
+    post buy_item_rewards_path, params: { item_key: "pokeball" }
 
     assert_redirected_to rewards_path
     assert_match "Not enough money! You need 200 but only have 50", flash[:alert]
@@ -296,22 +296,22 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
 
     # Buy pokeball (200)
-    post buy_item_rewards_path, params: { item_key: 'pokeball' }
+    post buy_item_rewards_path, params: { item_key: "pokeball" }
     trainer.reload
     assert_equal initial_currency - 200, trainer.currency
 
     # Buy great ball (300)
-    post buy_item_rewards_path, params: { item_key: 'great_ball' }
+    post buy_item_rewards_path, params: { item_key: "great_ball" }
     trainer.reload
     assert_equal initial_currency - 500, trainer.currency
 
     # Buy ultra ball (400)
-    post buy_item_rewards_path, params: { item_key: 'ultra_ball' }
+    post buy_item_rewards_path, params: { item_key: "ultra_ball" }
     trainer.reload
     assert_equal initial_currency - 900, trainer.currency
 
     # Buy master ball (500)
-    post buy_item_rewards_path, params: { item_key: 'master_ball' }
+    post buy_item_rewards_path, params: { item_key: "master_ball" }
     trainer.reload
     assert_equal initial_currency - 1600, trainer.currency
   end
@@ -322,7 +322,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
     initial_currency = trainer.currency
 
-    post buy_item_rewards_path, params: { item_key: 'nonexistent_item' }
+    post buy_item_rewards_path, params: { item_key: "nonexistent_item" }
 
     assert_redirected_to rewards_path
     assert_match "Item not found", flash[:alert]
@@ -332,7 +332,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should redirect to login when buying without authentication" do
-    post buy_item_rewards_path, params: { item_key: 'fire_stone' }
+    post buy_item_rewards_path, params: { item_key: "fire_stone" }
     assert_redirected_to login_path
     assert_equal "You must be logged in to access this page", flash[:alert]
   end
@@ -345,7 +345,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     trainer.update!(currency: 300)
     initial_stones = trainer.item_quantity(:fire_stone)
 
-    post buy_item_rewards_path, params: { item_key: 'fire_stone' }
+    post buy_item_rewards_path, params: { item_key: "fire_stone" }
 
     assert_redirected_to rewards_path
     assert_match "Successfully purchased", flash[:notice]
@@ -368,7 +368,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_stones = trainer.item_quantity(:fire_stone)
 
-    post sell_item_rewards_path, params: { item_key: 'fire_stone' }
+    post sell_item_rewards_path, params: { item_key: "fire_stone" }
 
     assert_redirected_to rewards_path
     assert_match "Successfully sold Fire Stone for 200 Pokedollars!", flash[:notice]
@@ -386,7 +386,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_stones = trainer.item_quantity(:thunder_stone)
 
-    post sell_item_rewards_path, params: { item_key: 'thunder_stone' }
+    post sell_item_rewards_path, params: { item_key: "thunder_stone" }
 
     assert_redirected_to rewards_path
     trainer.reload
@@ -402,7 +402,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_stones = trainer.item_quantity(:water_stone)
 
-    post sell_item_rewards_path, params: { item_key: 'water_stone' }
+    post sell_item_rewards_path, params: { item_key: "water_stone" }
 
     assert_redirected_to rewards_path
     trainer.reload
@@ -417,7 +417,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_pokeballs = trainer.item_quantity(:pokeball)
 
-    post sell_item_rewards_path, params: { item_key: 'pokeball' }
+    post sell_item_rewards_path, params: { item_key: "pokeball" }
 
     assert_redirected_to rewards_path
     assert_match "Successfully sold Poké Ball for 100 Pokedollars!", flash[:notice]
@@ -434,7 +434,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_great_balls = trainer.item_quantity(:great_ball)
 
-    post sell_item_rewards_path, params: { item_key: 'great_ball' }
+    post sell_item_rewards_path, params: { item_key: "great_ball" }
 
     assert_redirected_to rewards_path
     trainer.reload
@@ -449,7 +449,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_ultra_balls = trainer.item_quantity(:ultra_ball)
 
-    post sell_item_rewards_path, params: { item_key: 'ultra_ball' }
+    post sell_item_rewards_path, params: { item_key: "ultra_ball" }
 
     assert_redirected_to rewards_path
     trainer.reload
@@ -464,7 +464,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_master_balls = trainer.item_quantity(:master_ball)
 
-    post sell_item_rewards_path, params: { item_key: 'master_ball' }
+    post sell_item_rewards_path, params: { item_key: "master_ball" }
 
     assert_redirected_to rewards_path
     trainer.reload
@@ -484,15 +484,15 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
 
     # Sell all three (each worth 200)
-    post sell_item_rewards_path, params: { item_key: 'fire_stone' }
+    post sell_item_rewards_path, params: { item_key: "fire_stone" }
     trainer.reload
     assert_equal initial_currency + 200, trainer.currency
 
-    post sell_item_rewards_path, params: { item_key: 'water_stone' }
+    post sell_item_rewards_path, params: { item_key: "water_stone" }
     trainer.reload
     assert_equal initial_currency + 400, trainer.currency
 
-    post sell_item_rewards_path, params: { item_key: 'thunder_stone' }
+    post sell_item_rewards_path, params: { item_key: "thunder_stone" }
     trainer.reload
     assert_equal initial_currency + 600, trainer.currency
   end
@@ -507,7 +507,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
     # Sell 3 fire stones (each worth 200)
     3.times do
-      post sell_item_rewards_path, params: { item_key: 'fire_stone' }
+      post sell_item_rewards_path, params: { item_key: "fire_stone" }
     end
 
     trainer.reload
@@ -526,7 +526,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     # Broke trainer has no items
     initial_currency = trainer.currency
 
-    post sell_item_rewards_path, params: { item_key: 'fire_stone' }
+    post sell_item_rewards_path, params: { item_key: "fire_stone" }
 
     assert_redirected_to rewards_path
     assert_match "You don't have any Fire Stone to sell", flash[:alert]
@@ -541,7 +541,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
     initial_currency = trainer.currency
 
-    post sell_item_rewards_path, params: { item_key: 'pokeball' }
+    post sell_item_rewards_path, params: { item_key: "pokeball" }
 
     assert_redirected_to rewards_path
     assert_match "You don't have any Poké Ball to sell", flash[:alert]
@@ -556,7 +556,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
     initial_currency = trainer.currency
 
-    post sell_item_rewards_path, params: { item_key: 'nonexistent_item' }
+    post sell_item_rewards_path, params: { item_key: "nonexistent_item" }
 
     assert_redirected_to rewards_path
     assert_match "Item not found", flash[:alert]
@@ -566,7 +566,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should redirect to login when selling without authentication" do
-    post sell_item_rewards_path, params: { item_key: 'pokeball' }
+    post sell_item_rewards_path, params: { item_key: "pokeball" }
     assert_redirected_to login_path
     assert_equal "You must be logged in to access this page", flash[:alert]
   end
@@ -578,7 +578,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     # Sell all but 1 pokeball
     initial_pokeballs = trainer.item_quantity(:pokeball)
     (initial_pokeballs - 1).times do
-      post sell_item_rewards_path, params: { item_key: 'pokeball' }
+      post sell_item_rewards_path, params: { item_key: "pokeball" }
     end
 
     trainer.reload
@@ -586,7 +586,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
     # Should still be able to sell the last one
     initial_currency = trainer.currency
-    post sell_item_rewards_path, params: { item_key: 'pokeball' }
+    post sell_item_rewards_path, params: { item_key: "pokeball" }
 
     trainer.reload
     assert_equal 0, trainer.item_quantity(:pokeball)
@@ -605,13 +605,13 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
 
     # Buy fire stone (costs 300)
-    post buy_item_rewards_path, params: { item_key: 'fire_stone' }
+    post buy_item_rewards_path, params: { item_key: "fire_stone" }
     trainer.reload
     assert_equal initial_currency - 300, trainer.currency
     assert_equal 1, trainer.item_quantity(:fire_stone)
 
     # Sell it back (sells for 200)
-    post sell_item_rewards_path, params: { item_key: 'fire_stone' }
+    post sell_item_rewards_path, params: { item_key: "fire_stone" }
     trainer.reload
     assert_equal initial_currency - 100, trainer.currency
     assert_equal 0, trainer.item_quantity(:fire_stone)
@@ -626,7 +626,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
     # Sell all pokeballs
     initial_pokeballs.times do
-      post sell_item_rewards_path, params: { item_key: 'pokeball' }
+      post sell_item_rewards_path, params: { item_key: "pokeball" }
     end
 
     trainer.reload
@@ -639,11 +639,11 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     log_in_as(trainer)
 
     # Buy an item
-    post buy_item_rewards_path, params: { item_key: 'fire_stone' }
+    post buy_item_rewards_path, params: { item_key: "fire_stone" }
     assert_equal trainer.id, session[:trainer_id]
 
     # Sell an item
-    post sell_item_rewards_path, params: { item_key: 'pokeball' }
+    post sell_item_rewards_path, params: { item_key: "pokeball" }
     assert_equal trainer.id, session[:trainer_id]
   end
 
@@ -654,7 +654,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     # Set currency to 99 (1 less than needed)
     trainer.update!(currency: 99)
 
-    post buy_item_rewards_path, params: { item_key: 'fire_stone' }
+    post buy_item_rewards_path, params: { item_key: "fire_stone" }
 
     assert_redirected_to rewards_path
     assert_match "Not enough money!", flash[:alert]
@@ -677,7 +677,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
     # Sell pokeballs
     trainer.item_quantity(:pokeball).times do
-      post sell_item_rewards_path, params: { item_key: 'pokeball' }
+      post sell_item_rewards_path, params: { item_key: "pokeball" }
     end
 
     trainer.reload
@@ -697,7 +697,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
     # Buy 10 fire stones rapidly (each costs 300)
     10.times do
-      post buy_item_rewards_path, params: { item_key: 'fire_stone' }
+      post buy_item_rewards_path, params: { item_key: "fire_stone" }
     end
 
     trainer.reload
@@ -715,7 +715,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
 
     # Sell 10 fire stones rapidly (each sells for 200)
     10.times do
-      post sell_item_rewards_path, params: { item_key: 'fire_stone' }
+      post sell_item_rewards_path, params: { item_key: "fire_stone" }
     end
 
     trainer.reload
@@ -729,11 +729,11 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     log_in_as(trainer)
 
     # Buy
-    post buy_item_rewards_path, params: { item_key: 'fire_stone' }
+    post buy_item_rewards_path, params: { item_key: "fire_stone" }
     assert_match "Successfully purchased", flash[:notice]
 
     # Sell
-    post sell_item_rewards_path, params: { item_key: 'pokeball' }
+    post sell_item_rewards_path, params: { item_key: "pokeball" }
     assert_match "Successfully sold", flash[:notice]
   end
 
@@ -744,7 +744,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     # Set very high currency
     trainer.update!(currency: 1000000)
 
-    post buy_item_rewards_path, params: { item_key: 'fire_stone' }
+    post buy_item_rewards_path, params: { item_key: "fire_stone" }
 
     trainer.reload
     assert_equal 999700, trainer.currency
@@ -762,7 +762,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_potions = trainer.item_quantity(:potion)
 
-    post buy_item_rewards_path, params: { item_key: 'potion' }
+    post buy_item_rewards_path, params: { item_key: "potion" }
 
     assert_redirected_to rewards_path
     assert_match "Successfully purchased Potion for 100 Pokedollars!", flash[:notice]
@@ -780,7 +780,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_potions = trainer.item_quantity(:super_potion)
 
-    post buy_item_rewards_path, params: { item_key: 'super_potion' }
+    post buy_item_rewards_path, params: { item_key: "super_potion" }
 
     assert_redirected_to rewards_path
     assert_match "Successfully purchased Super Potion for 200 Pokedollars!", flash[:notice]
@@ -798,7 +798,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_potions = trainer.item_quantity(:hyper_potion)
 
-    post buy_item_rewards_path, params: { item_key: 'hyper_potion' }
+    post buy_item_rewards_path, params: { item_key: "hyper_potion" }
 
     assert_redirected_to rewards_path
     assert_match "Successfully purchased Hyper Potion for 300 Pokedollars!", flash[:notice]
@@ -816,7 +816,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_potions = trainer.item_quantity(:potion)
 
-    post sell_item_rewards_path, params: { item_key: 'potion' }
+    post sell_item_rewards_path, params: { item_key: "potion" }
 
     assert_redirected_to rewards_path
     assert_match "Successfully sold Potion for 100 Pokedollars!", flash[:notice]
@@ -834,7 +834,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_potions = trainer.item_quantity(:super_potion)
 
-    post sell_item_rewards_path, params: { item_key: 'super_potion' }
+    post sell_item_rewards_path, params: { item_key: "super_potion" }
 
     assert_redirected_to rewards_path
     assert_match "Successfully sold Super Potion for 200 Pokedollars!", flash[:notice]
@@ -852,7 +852,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_potions = trainer.item_quantity(:hyper_potion)
 
-    post sell_item_rewards_path, params: { item_key: 'hyper_potion' }
+    post sell_item_rewards_path, params: { item_key: "hyper_potion" }
 
     assert_redirected_to rewards_path
     assert_match "Successfully sold Hyper Potion for 300 Pokedollars!", flash[:notice]
@@ -870,7 +870,7 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
     initial_potions = trainer.item_quantity(:potion)
 
-    post buy_item_rewards_path, params: { item_key: 'potion' }
+    post buy_item_rewards_path, params: { item_key: "potion" }
 
     assert_redirected_to rewards_path
     assert_match "Not enough money! You need 100 but only have 50", flash[:alert]
@@ -888,17 +888,17 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     initial_currency = trainer.currency
 
     # Buy potion (100)
-    post buy_item_rewards_path, params: { item_key: 'potion' }
+    post buy_item_rewards_path, params: { item_key: "potion" }
     trainer.reload
     assert_equal initial_currency - 100, trainer.currency
 
     # Buy super_potion (200)
-    post buy_item_rewards_path, params: { item_key: 'super_potion' }
+    post buy_item_rewards_path, params: { item_key: "super_potion" }
     trainer.reload
     assert_equal initial_currency - 300, trainer.currency
 
     # Buy hyper_potion (300)
-    post buy_item_rewards_path, params: { item_key: 'hyper_potion' }
+    post buy_item_rewards_path, params: { item_key: "hyper_potion" }
     trainer.reload
     assert_equal initial_currency - 600, trainer.currency
   end

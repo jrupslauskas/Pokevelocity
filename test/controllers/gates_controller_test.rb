@@ -70,7 +70,7 @@ class GatesControllerTest < ActionDispatch::IntegrationTest
     low_difficulty_pokemon = Pokemon.where("difficulty >= ?", 1).first
     trainer.captures.create!(
       pokemon: low_difficulty_pokemon,
-      ball_type: 'pokeball'
+      ball_type: "pokeball"
     )
 
     # Now trigger auto_unlock_gates! which should unlock Gate 1
@@ -106,7 +106,7 @@ class GatesControllerTest < ActionDispatch::IntegrationTest
       # Give trainer the pre-evolution Pokemon
       trainer.captures.create!(
         pokemon: evolution.from_pokemon,
-        ball_type: 'pokeball'
+        ball_type: "pokeball"
       )
 
       # Give trainer required items
@@ -117,7 +117,7 @@ class GatesControllerTest < ActionDispatch::IntegrationTest
       # Add some more Pokemon to push difficulty high enough
       Pokemon.limit(3).each do |p|
         unless trainer.captured_pokemon.include?(p)
-          trainer.captures.create!(pokemon: p, ball_type: 'pokeball')
+          trainer.captures.create!(pokemon: p, ball_type: "pokeball")
         end
       end
 
@@ -157,11 +157,11 @@ class GatesControllerTest < ActionDispatch::IntegrationTest
 
   test "celebration view file contains badge display logic" do
     # Verify the celebration view template includes badge display markup
-    view_file = File.read(Rails.root.join('app', 'views', 'gates', 'celebration.html.erb'))
+    view_file = File.read(Rails.root.join("app", "views", "gates", "celebration.html.erb"))
 
-    assert_includes view_file, 'celebration-badge'
-    assert_includes view_file, 'celebration-badge-sprite'
-    assert_includes view_file, 'badge_map'
-    assert_includes view_file, 'Elite Four Trophy'
+    assert_includes view_file, "celebration-badge"
+    assert_includes view_file, "celebration-badge-sprite"
+    assert_includes view_file, "badge_map"
+    assert_includes view_file, "Elite Four Trophy"
   end
 end

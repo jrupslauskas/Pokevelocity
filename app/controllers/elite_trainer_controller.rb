@@ -1,6 +1,6 @@
 class EliteTrainerController < ApplicationController
   before_action :require_login
-  before_action :check_eligibility, only: [:congratulations]
+  before_action :check_eligibility, only: [ :congratulations ]
 
   def congratulations
     @trainer = current_trainer

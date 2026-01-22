@@ -1,5 +1,5 @@
 class TrainersController < ApplicationController
-  before_action :require_login, only: [:dashboard, :discard_item, :pokedex, :evolution_lab, :evolve]
+  before_action :require_login, only: [ :dashboard, :discard_item, :pokedex, :evolution_lab, :evolve ]
 
   def new
     @trainer = Trainer.new
@@ -34,10 +34,10 @@ class TrainersController < ApplicationController
     @trainer = current_trainer
 
     # Fetch items with quantity > 0, organized by type
-    @pokeball_items = fetch_items_by_type('pokeball')
-    @evolution_items = fetch_items_by_type('evolution_stone')
-    @restoration_items = fetch_items_by_type('potion')
-    @adventure_items = fetch_items_by_type('key_item')
+    @pokeball_items = fetch_items_by_type("pokeball")
+    @evolution_items = fetch_items_by_type("evolution_stone")
+    @restoration_items = fetch_items_by_type("potion")
+    @adventure_items = fetch_items_by_type("key_item")
 
     # Fetch news feed: recent captures and evolutions from other trainers
     @news_feed = build_news_feed
@@ -91,7 +91,7 @@ class TrainersController < ApplicationController
                                      .select(:pokemon_id)
                                      .group(:pokemon_id)
                                      .distinct
-                                     .count('DISTINCT trainer_id')
+                                     .count("DISTINCT trainer_id")
   end
 
   def evolution_lab
@@ -157,7 +157,7 @@ class TrainersController < ApplicationController
     original_capture = @trainer.captures.find_by(pokemon_id: evolution.from_pokemon_id)
     @trainer.captures.create!(
       pokemon_id: evolution.to_pokemon_id,
-      ball_type: original_capture&.ball_type || 'pokeball',
+      ball_type: original_capture&.ball_type || "pokeball",
       captured_at: Time.current,
       evolved: true
     )
@@ -204,7 +204,7 @@ class TrainersController < ApplicationController
     ]
 
     # Sort alphabetically by display name (last part after '/')
-    (regular_trainers + gym_leaders).sort_by { |sprite| sprite.split('/').last }
+    (regular_trainers + gym_leaders).sort_by { |sprite| sprite.split("/").last }
   end
 
   # Fetch items of specific type(s) that the trainer has (quantity > 0)
@@ -218,8 +218,8 @@ class TrainersController < ApplicationController
       .map { |ti| { item: ti.item, quantity: ti.quantity } }
 
     # Sort pokeballs in specific order
-    if types.include?('pokeball')
-      pokeball_order = ['pokeball', 'great_ball', 'ultra_ball', 'master_ball']
+    if types.include?("pokeball")
+      pokeball_order = [ "pokeball", "great_ball", "ultra_ball", "master_ball" ]
       items.sort_by { |item_data| pokeball_order.index(item_data[:item].key) || Float::INFINITY }
     else
       items
@@ -236,7 +236,7 @@ class TrainersController < ApplicationController
                             .order(created_at: :desc)
                             .limit(25)
                             .map { |c| {
-                              type: 'caught',
+                              type: "caught",
                               trainer: c.trainer,
                               pokemon: c.pokemon,
                               timestamp: c.created_at,
@@ -250,7 +250,7 @@ class TrainersController < ApplicationController
                                .order(created_at: :desc)
                                .limit(25)
                                .map { |c| {
-                                 type: 'evolved',
+                                 type: "evolved",
                                  trainer: c.trainer,
                                  pokemon: c.pokemon,
                                  timestamp: c.created_at,

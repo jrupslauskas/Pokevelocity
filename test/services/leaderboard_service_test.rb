@@ -16,9 +16,9 @@ class LeaderboardServiceTest < ActiveSupport::TestCase
     service = LeaderboardService.new(trainers(:ash).id)
     slots = service.slots
 
-    expected_names = ["Red", "Blue", "Lance", "Agatha", "Bruno", "Lorelei",
+    expected_names = [ "Red", "Blue", "Lance", "Agatha", "Bruno", "Lorelei",
                       "Giovanni", "Blaine", "Sabrina", "Koga", "Erika",
-                      "Lt Surge", "Misty", "Brock"]
+                      "Lt Surge", "Misty", "Brock" ]
 
     slots.each_with_index do |slot, index|
       assert_equal expected_names[index], slot[:title]

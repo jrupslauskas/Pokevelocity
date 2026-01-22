@@ -355,6 +355,6 @@ class RouteTest < ActiveSupport::TestCase
 
     # This will select across all types - testing that it works
     encounter = @route.random_encounter
-    assert_includes [pokemons(:pidgey), pokemons(:magikarp), pokemons(:tentacool)], encounter
+    assert_includes [ pokemons(:pidgey), pokemons(:magikarp), pokemons(:tentacool) ], encounter
   end
 end

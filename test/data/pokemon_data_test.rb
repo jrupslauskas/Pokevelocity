@@ -113,7 +113,7 @@ class PokemonDataTest < ActiveSupport::TestCase
 
   test "legendary Pokemon should have difficulty 5" do
     # Known legendary Pokemon from Gen I
-    legendary_names = ["Articuno", "Zapdos", "Moltres", "Mewtwo", "Mew"]
+    legendary_names = [ "Articuno", "Zapdos", "Moltres", "Mewtwo", "Mew" ]
 
     legendary_names.each do |name|
       pokemon = @pokemon_data.find { |p| p["name"] == name }
@@ -128,12 +128,12 @@ class PokemonDataTest < ActiveSupport::TestCase
   # ================================================================================
 
   test "starter Pokemon should have reasonable difficulty (2-3)" do
-    starter_names = ["Bulbasaur", "Charmander", "Squirtle"]
+    starter_names = [ "Bulbasaur", "Charmander", "Squirtle" ]
 
     starter_names.each do |name|
       pokemon = @pokemon_data.find { |p| p["name"] == name }
       assert_not_nil pokemon, "Starter Pokemon '#{name}' not found in pokemon.yml"
-      assert [2, 3].include?(pokemon["difficulty"]),
+      assert [ 2, 3 ].include?(pokemon["difficulty"]),
                    "Starter Pokemon '#{name}' should have difficulty 2 or 3, got #{pokemon["difficulty"]}"
     end
   end
@@ -145,11 +145,11 @@ class PokemonDataTest < ActiveSupport::TestCase
   test "evolved forms should generally have higher difficulty than base forms" do
     # Sample evolution chains to check
     evolution_chains = [
-      ["Bulbasaur", "Ivysaur", "Venusaur"],
-      ["Charmander", "Charmeleon", "Charizard"],
-      ["Squirtle", "Wartortle", "Blastoise"],
-      ["Pidgey", "Pidgeotto", "Pidgeot"],
-      ["Rattata", "Raticate"]
+      [ "Bulbasaur", "Ivysaur", "Venusaur" ],
+      [ "Charmander", "Charmeleon", "Charizard" ],
+      [ "Squirtle", "Wartortle", "Blastoise" ],
+      [ "Pidgey", "Pidgeotto", "Pidgeot" ],
+      [ "Rattata", "Raticate" ]
     ]
 
     issues = []
@@ -157,7 +157,7 @@ class PokemonDataTest < ActiveSupport::TestCase
     evolution_chains.each do |chain|
       difficulties = chain.map do |name|
         pokemon = @pokemon_data.find { |p| p["name"] == name }
-        [name, pokemon&.dig("difficulty")]
+        [ name, pokemon&.dig("difficulty") ]
       end
 
       # Check if difficulties increase along the chain

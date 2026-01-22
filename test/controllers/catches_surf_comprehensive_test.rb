@@ -178,13 +178,13 @@ class CatchesSurfComprehensiveTest < ActionDispatch::IntegrationTest
       post adventure_path(route), params: { encounter_type: "surf" }
 
       # Extract Pokemon ID from redirect location
-      pokemon_id = @response.location.split('/').last.to_i
+      pokemon_id = @response.location.split("/").last.to_i
       encountered_pokemon << pokemon_id
     end
 
     # All encounters should be one of the surf Pokemon
     encountered_pokemon.each do |pokemon_id|
-      assert_includes [common_surf.id, rare_surf.id], pokemon_id
+      assert_includes [ common_surf.id, rare_surf.id ], pokemon_id
     end
   end
 

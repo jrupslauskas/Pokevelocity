@@ -23,7 +23,6 @@ class PotionConfirmationTest < ApplicationSystemTestCase
   end
 
   test "should show confirmation modal when using potion" do
-
     # Click Use Potion button
     click_button "Use Potion (2)"
 

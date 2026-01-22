@@ -8,8 +8,8 @@ class Pokemon < ApplicationRecord
   has_many :routes, through: :route_encounters
 
   # Evolution associations
-  has_many :evolutions_from, class_name: 'Evolution', foreign_key: 'from_pokemon_id', dependent: :destroy
-  has_many :evolutions_to, class_name: 'Evolution', foreign_key: 'to_pokemon_id', dependent: :destroy
+  has_many :evolutions_from, class_name: "Evolution", foreign_key: "from_pokemon_id", dependent: :destroy
+  has_many :evolutions_to, class_name: "Evolution", foreign_key: "to_pokemon_id", dependent: :destroy
   has_many :evolution_options, through: :evolutions_from, source: :to_pokemon
 
   validates :pokedex_number, presence: true, uniqueness: true,

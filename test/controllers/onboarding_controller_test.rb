@@ -257,7 +257,7 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
 
     trainer.reload
     capture = trainer.captures.first
-    assert_equal 'pokeball', capture.ball_type
+    assert_equal "pokeball", capture.ball_type
   end
 
   test "starter should not be marked as evolved" do
@@ -358,7 +358,7 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "all three starters should work in the complete flow" do
-    [1, 4, 7].each_with_index do |pokedex_number, index|
+    [ 1, 4, 7 ].each_with_index do |pokedex_number, index|
       trainer = Trainer.create!(
         username: "starter_test_#{index}_#{rand(10000)}",
         password: "password",

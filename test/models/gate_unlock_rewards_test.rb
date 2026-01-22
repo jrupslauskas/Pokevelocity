@@ -25,7 +25,7 @@ class GateUnlockRewardsTest < ActiveSupport::TestCase
       end
       # Skip if already captured (avoid duplicate error)
       next if @trainer.captured_pokemon.exists?(id: pokemon.id)
-      @trainer.captures.create!(pokemon: pokemon, ball_type: 'pokeball')
+      @trainer.captures.create!(pokemon: pokemon, ball_type: "pokeball")
     end
   end
 
@@ -326,7 +326,7 @@ class GateUnlockRewardsTest < ActiveSupport::TestCase
     Item.find_or_create_by(key: "potion", item_type: "potion")
 
     # Ensure gates aren't already unlocked
-    @trainer.gate_unlocks.where(gate: [gate_1, gate_2, gate_3]).destroy_all
+    @trainer.gate_unlocks.where(gate: [ gate_1, gate_2, gate_3 ]).destroy_all
 
     initial_pokeballs = @trainer.item_quantity(:pokeball)
     initial_stones = @trainer.item_quantity(:evolution_stone)

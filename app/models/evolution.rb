@@ -1,6 +1,6 @@
 class Evolution < ApplicationRecord
-  belongs_to :from_pokemon, class_name: 'Pokemon', foreign_key: 'from_pokemon_id'
-  belongs_to :to_pokemon, class_name: 'Pokemon', foreign_key: 'to_pokemon_id'
+  belongs_to :from_pokemon, class_name: "Pokemon", foreign_key: "from_pokemon_id"
+  belongs_to :to_pokemon, class_name: "Pokemon", foreign_key: "to_pokemon_id"
 
   validates :from_pokemon_id, presence: true
   validates :to_pokemon_id, presence: true

@@ -103,7 +103,7 @@ class FishingWorkflowTest < ActiveSupport::TestCase
 
     assert_equal 2, available_encounters.length
     pokemon_names = available_encounters.map { |e| e.pokemon.name }.sort
-    assert_equal ["Goldeen", "Magikarp"], pokemon_names
+    assert_equal [ "Goldeen", "Magikarp" ], pokemon_names
   end
 
   test "trainer with super rod can fish all encounters" do
@@ -116,7 +116,7 @@ class FishingWorkflowTest < ActiveSupport::TestCase
 
     assert_equal 3, available_encounters.length
     pokemon_names = available_encounters.map { |e| e.pokemon.name }.sort
-    assert_equal ["Goldeen", "Gyarados", "Magikarp"], pokemon_names
+    assert_equal [ "Goldeen", "Gyarados", "Magikarp" ], pokemon_names
   end
 
   # ================================================================================
@@ -345,7 +345,7 @@ class FishingWorkflowTest < ActiveSupport::TestCase
     # Without any rods, random_encounter should return nil or handle gracefully
     # (depending on implementation - let's test it returns something from all encounters)
     encounter = fishing_route.random_encounter
-    assert_includes [@old_rod_pokemon, @super_rod_pokemon], encounter
+    assert_includes [ @old_rod_pokemon, @super_rod_pokemon ], encounter
 
     # The actual filtering by available_for? would happen in the controller/service layer
   end

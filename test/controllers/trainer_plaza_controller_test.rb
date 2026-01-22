@@ -271,7 +271,7 @@ class TrainerPlazaControllerTest < ActionDispatch::IntegrationTest
     evolved_pokemon = Pokemon.find_or_create_by!(pokedex_number: 130) { |p| p.name = "Gyarados"; p.difficulty = 5 }
     trainer.captures.create!(
       pokemon: evolved_pokemon,
-      ball_type: 'pokeball',
+      ball_type: "pokeball",
       captured_at: Time.current,
       evolved: true
     )
@@ -297,7 +297,7 @@ class TrainerPlazaControllerTest < ActionDispatch::IntegrationTest
     caught_pokemon = Pokemon.find_or_create_by!(pokedex_number: 131) { |p| p.name = "Lapras"; p.difficulty = 3 }
     trainer.captures.create!(
       pokemon: caught_pokemon,
-      ball_type: 'great_ball',
+      ball_type: "great_ball",
       captured_at: Time.current,
       evolved: false
     )
@@ -325,14 +325,14 @@ class TrainerPlazaControllerTest < ActionDispatch::IntegrationTest
 
     trainer.captures.create!(
       pokemon: caught_pokemon,
-      ball_type: 'ultra_ball',
+      ball_type: "ultra_ball",
       captured_at: Time.current,
       evolved: false
     )
 
     trainer.captures.create!(
       pokemon: evolved_pokemon,
-      ball_type: 'pokeball',
+      ball_type: "pokeball",
       captured_at: Time.current,
       evolved: true
     )

@@ -16,6 +16,6 @@ class TrainerPlazaController < ApplicationController
                                      .select(:pokemon_id)
                                      .group(:pokemon_id)
                                      .distinct
-                                     .count('DISTINCT trainer_id')
+                                     .count("DISTINCT trainer_id")
   end
 end

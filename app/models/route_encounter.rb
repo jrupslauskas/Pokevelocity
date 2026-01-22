@@ -9,7 +9,7 @@ class RouteEncounter < ApplicationRecord
   validates :spawn_rate, presence: true,
             numericality: { only_integer: true, greater_than: 0 }
   validates :encounter_type, presence: true
-  validates :pokemon_id, uniqueness: { scope: [:route_id, :encounter_type, :required_item_key],
+  validates :pokemon_id, uniqueness: { scope: [ :route_id, :encounter_type, :required_item_key ],
             message: "already exists on this route for this encounter type and item requirement" }
   validates :required_gate_number,
             numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 10, allow_nil: true }
@@ -22,7 +22,7 @@ class RouteEncounter < ApplicationRecord
 
       if alternative_required_pokemon_id.present?
         has_alternative = trainer.captured_pokemon.exists?(id: alternative_required_pokemon_id)
-        return false unless (has_required || has_alternative)
+        return false unless has_required || has_alternative
       else
         return false unless has_required
       end
@@ -38,11 +38,11 @@ class RouteEncounter < ApplicationRecord
     if required_item_key.present?
       # Handle fishing rod hierarchy: better rods can catch lower-tier Pokemon
       case required_item_key
-      when 'old_rod'
-        return false unless (trainer.has_item?(:old_rod) || trainer.has_item?(:good_rod) || trainer.has_item?(:super_rod))
-      when 'good_rod'
-        return false unless (trainer.has_item?(:good_rod) || trainer.has_item?(:super_rod))
-      when 'super_rod'
+      when "old_rod"
+        return false unless trainer.has_item?(:old_rod) || trainer.has_item?(:good_rod) || trainer.has_item?(:super_rod)
+      when "good_rod"
+        return false unless trainer.has_item?(:good_rod) || trainer.has_item?(:super_rod)
+      when "super_rod"
         return false unless trainer.has_item?(:super_rod)
       else
         # For other items (like hm_surf), require exact match
