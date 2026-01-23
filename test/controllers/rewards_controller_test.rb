@@ -263,10 +263,10 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     post buy_item_rewards_path, params: { item_key: "master_ball" }
 
     assert_redirected_to rewards_path
-    assert_match "Successfully purchased Master Ball for 700 Pokedollars!", flash[:notice]
+    assert_match "Successfully purchased Master Ball for 600 Pokedollars!", flash[:notice]
 
     trainer.reload
-    assert_equal initial_currency - 700, trainer.currency
+    assert_equal initial_currency - 600, trainer.currency
     assert_equal initial_master_balls + 1, trainer.item_quantity(:master_ball)
   end
 
@@ -310,10 +310,10 @@ class RewardsControllerTest < ActionDispatch::IntegrationTest
     trainer.reload
     assert_equal initial_currency - 900, trainer.currency
 
-    # Buy master ball (500)
+    # Buy master ball (600)
     post buy_item_rewards_path, params: { item_key: "master_ball" }
     trainer.reload
-    assert_equal initial_currency - 1600, trainer.currency
+    assert_equal initial_currency - 1500, trainer.currency
   end
 
   test "should not buy non-existent item" do
