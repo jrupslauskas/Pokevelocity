@@ -13,4 +13,10 @@ module ApplicationHelper
       trainer.username
     end
   end
+
+  # Get the application version
+  # @return [String] the current version (e.g., "1.0.0")
+  def app_version
+    @app_version ||= File.read(Rails.root.join("VERSION")).strip
+  end
 end
