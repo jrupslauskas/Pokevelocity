@@ -362,11 +362,20 @@ class TrainerTest < ActiveSupport::TestCase
     assert_equal 5, trainer.adventures_remaining
   end
 
-  test "available_adventures_to_claim should return 5 when never initialized" do
+  test "available_adventures_to_claim should return 5 when never initialized and trainer has 5 adventures" do
     trainer = trainers(:ash)
-    trainer.update!(adventures_allocated_at: nil)
+    trainer.update!(adventures_remaining: 5, adventures_allocated_at: nil)
 
+    # Should be able to claim 5 more (5 + 5 = 10 max)
     assert_equal 5, trainer.available_adventures_to_claim
+  end
+
+  test "available_adventures_to_claim should cap at 10 when never initialized" do
+    trainer = trainers(:ash)
+    trainer.update!(adventures_remaining: 8, adventures_allocated_at: nil)
+
+    # Should only be able to claim 2 more (8 + 5 would be 13, capped at 10)
+    assert_equal 2, trainer.available_adventures_to_claim
   end
 
   test "available_adventures_to_claim should return 0 if less than 24 hours have passed" do
@@ -428,9 +437,45 @@ class TrainerTest < ActiveSupport::TestCase
     result = trainer.claim_adventures
 
     assert_not_nil trainer.adventures_allocated_at
-    assert_equal 5, trainer.adventures_remaining
+    assert_equal 10, trainer.adventures_remaining
     assert_equal 5, result[:claimed]
-    assert_equal 5, result[:new_total]
+    assert_equal 10, result[:new_total]
+  end
+
+  test "claim_adventures should add 5 adventures for new user starting with 5" do
+    trainer = trainers(:ash)
+    trainer.update!(adventures_remaining: 5, adventures_allocated_at: nil)
+
+    result = trainer.claim_adventures
+
+    assert_not_nil trainer.adventures_allocated_at
+    assert_equal 10, trainer.adventures_remaining
+    assert_equal 5, result[:claimed]
+    assert_equal 10, result[:new_total]
+  end
+
+  test "claim_adventures should add 5 adventures for user with 4 adventures" do
+    trainer = trainers(:ash)
+    trainer.update!(adventures_remaining: 4, adventures_allocated_at: nil)
+
+    result = trainer.claim_adventures
+
+    assert_not_nil trainer.adventures_allocated_at
+    assert_equal 9, trainer.adventures_remaining
+    assert_equal 5, result[:claimed]
+    assert_equal 9, result[:new_total]
+  end
+
+  test "claim_adventures should cap at 10 for user with 7 adventures claiming first time" do
+    trainer = trainers(:ash)
+    trainer.update!(adventures_remaining: 7, adventures_allocated_at: nil)
+
+    result = trainer.claim_adventures
+
+    assert_not_nil trainer.adventures_allocated_at
+    assert_equal 10, trainer.adventures_remaining
+    assert_equal 3, result[:claimed]
+    assert_equal 10, result[:new_total]
   end
 
   test "claim_adventures should not replenish if less than 24 hours have passed" do

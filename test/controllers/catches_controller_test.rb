@@ -2012,10 +2012,10 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
 
     trainer.reload
     assert_not_nil trainer.adventures_allocated_at
-    assert_equal 5, trainer.adventures_remaining
+    assert_equal 10, trainer.adventures_remaining
     assert_redirected_to catches_path
-    # First time should claim initial 5
-    assert_match /Restored \+5 adventure/, flash[:notice]
+    # First time should add 5 adventures (5 + 5 = 10)
+    assert_match /Restored \+5 adventures/, flash[:notice]
   end
 
   # ================================================================================

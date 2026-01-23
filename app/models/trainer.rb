@@ -193,7 +193,10 @@ class Trainer < ApplicationRecord
   # @return [Integer] number of adventures that can be claimed (0 if none available)
   def available_adventures_to_claim
     # Initialize if never allocated
-    return 5 if adventures_allocated_at.nil?
+    if adventures_allocated_at.nil?
+      potential_total = adventures_remaining + 5
+      return potential_total > 10 ? (10 - adventures_remaining) : 5
+    end
 
     # Already at max, nothing to claim
     return 0 if adventures_remaining >= 10
@@ -222,8 +225,10 @@ class Trainer < ApplicationRecord
   def claim_adventures
     # Initialize if never allocated
     if adventures_allocated_at.nil?
-      update!(adventures_remaining: 5, adventures_allocated_at: Time.current)
-      return { claimed: 5, new_total: 5 }
+      old_count = adventures_remaining
+      new_count = [ adventures_remaining + 5, 10 ].min
+      update!(adventures_remaining: new_count, adventures_allocated_at: Time.current)
+      return { claimed: new_count - old_count, new_total: new_count }
     end
 
     # Already at max, nothing to claim
