@@ -11,6 +11,8 @@ velocity tracking.
 Upon spin up, the user activation code will be PALLET but you're encouraged to change that to a different 6 character string immediately
 This can be done in the `validation_codes` table.
 
+<img src="app/assets/images/screenshots/dashboard.png" width="250">
+
 ## Running the App
 
 ### Option 1: Docker Compose (Recommended for Easy Setup)
