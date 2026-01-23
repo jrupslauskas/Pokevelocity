@@ -12,6 +12,8 @@ Upon spin up, the user activation code will be PALLET but you're encouraged to c
 This can be done in the `validation_codes` table.
 
 <img src="app/assets/images/screenshots/dashboard.png" width="250">
+<img src="app/assets/images/screenshots/pokedex.png" width="250">
+<img src="app/assets/images/screenshots/routes.png" width="250">
 
 ## Running the App
 
