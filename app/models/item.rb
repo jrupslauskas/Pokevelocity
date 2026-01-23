@@ -48,7 +48,7 @@ class Item < ApplicationRecord
       description: "The best Poké Ball with the ultimate level of performance. It will catch any wild Pokémon without fail.",
       item_type: TYPES[:pokeball],
       sprite: "masterball.png",
-      buy_price: 700,
+      buy_price: 600,
       sell_price: 500
     },
     fire_stone: {
