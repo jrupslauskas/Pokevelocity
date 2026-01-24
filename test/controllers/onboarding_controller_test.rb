@@ -175,6 +175,33 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
     assert_match /valid starter/i, flash[:alert]
   end
 
+  test "should prevent selecting multiple starters during onboarding" do
+    trainer = create_trainer_without_onboarding
+    log_in_as(trainer)
+
+    # Select first starter
+    bulbasaur = Pokemon.find_by(pokedex_number: 1)
+    post onboarding_create_starter_path, params: { pokemon_id: bulbasaur.id }
+    assert_redirected_to onboarding_sendoff_path
+
+    trainer.reload
+    assert_equal 1, trainer.captures.count
+
+    # Try to select another starter before completing onboarding
+    charmander = Pokemon.find_by(pokedex_number: 4)
+    assert_no_difference "trainer.captures.count" do
+      post onboarding_create_starter_path, params: { pokemon_id: charmander.id }
+    end
+
+    assert_redirected_to onboarding_sendoff_path
+    assert_match /already have a starter/i, flash[:alert]
+
+    # Should still only have the first starter
+    trainer.reload
+    assert_equal 1, trainer.captures.count
+    assert_equal bulbasaur, trainer.captured_pokemon.first
+  end
+
   # ================================================================================
   # ONBOARDING COMPLETION TESTS
   # ================================================================================

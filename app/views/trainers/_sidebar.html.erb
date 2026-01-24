@@ -1,47 +1,87 @@
 <aside class="sidebar">
   <div class="sidebar-header">
-    <%= link_to dashboard_path, class: "sidebar-logo" do %>
-      <span class="sidebar-logo-icon"><%= image_tag "icons/pokevelocity_logo.png", alt: "Pokevelocity Logo", class: "sidebar-logo-image" %></span>
-      <span>Pokévelocity</span>
+    <% if current_trainer.onboarding_completed %>
+      <%= link_to dashboard_path, class: "sidebar-logo" do %>
+        <span class="sidebar-logo-icon"><%= image_tag "icons/pokevelocity_logo.png", alt: "Pokevelocity Logo", class: "sidebar-logo-image" %></span>
+        <span>Pokévelocity</span>
+      <% end %>
+    <% else %>
+      <div class="sidebar-logo" style="cursor: default;">
+        <span class="sidebar-logo-icon"><%= image_tag "icons/pokevelocity_logo.png", alt: "Pokevelocity Logo", class: "sidebar-logo-image" %></span>
+        <span>Pokévelocity</span>
+      </div>
     <% end %>
   </div>
 
-  <nav class="sidebar-nav">
-    <%= link_to dashboard_path, class: "sidebar-nav-item #{current_page?(dashboard_path) ? 'active' : ''}" do %>
-      <span class="sidebar-nav-icon"><%= image_tag "icons/house.png", alt: "House", class: "sidebar-icon-image" %></span>
-      <span>Dashboard</span>
-    <% end %>
+  <% if current_trainer.onboarding_completed %>
+    <nav class="sidebar-nav">
+      <%= link_to dashboard_path, class: "sidebar-nav-item #{current_page?(dashboard_path) ? 'active' : ''}" do %>
+        <span class="sidebar-nav-icon"><%= image_tag "icons/house.png", alt: "House", class: "sidebar-icon-image" %></span>
+        <span>Dashboard</span>
+      <% end %>
 
-    <%= link_to pokedex_path, class: "sidebar-nav-item #{current_page?(pokedex_path) ? 'active' : ''}" do %>
-      <span class="sidebar-nav-icon"><%= image_tag "icons/pokedex.png", alt: "Pokedex", class: "sidebar-icon-image" %></span>
-      <span>Pokédex</span>
-    <% end %>
+      <%= link_to pokedex_path, class: "sidebar-nav-item #{current_page?(pokedex_path) ? 'active' : ''}" do %>
+        <span class="sidebar-nav-icon"><%= image_tag "icons/pokedex.png", alt: "Pokedex", class: "sidebar-icon-image" %></span>
+        <span>Pokédex</span>
+      <% end %>
 
-    <%= link_to catches_path, class: "sidebar-nav-item #{current_page?(catches_path) ? 'active' : ''}" do %>
-      <span class="sidebar-nav-icon"><%= image_tag "icons/pokeball.png", alt: "Pokeball", class: "sidebar-icon-image" %></span>
-      <span>Catch</span>
-    <% end %>
+      <%= link_to catches_path, class: "sidebar-nav-item #{current_page?(catches_path) ? 'active' : ''}" do %>
+        <span class="sidebar-nav-icon"><%= image_tag "icons/pokeball.png", alt: "Pokeball", class: "sidebar-icon-image" %></span>
+        <span>Catch</span>
+      <% end %>
 
-    <%= link_to evolution_lab_path, class: "sidebar-nav-item #{current_page?(evolution_lab_path) ? 'active' : ''}" do %>
-      <span class="sidebar-nav-icon"><%= image_tag "icons/evolution_machine.png", alt: "Evolution Machine", class: "sidebar-icon-image" %></span>
-      <span>Evolution Lab</span>
-    <% end %>
+      <%= link_to evolution_lab_path, class: "sidebar-nav-item #{current_page?(evolution_lab_path) ? 'active' : ''}" do %>
+        <span class="sidebar-nav-icon"><%= image_tag "icons/evolution_machine.png", alt: "Evolution Machine", class: "sidebar-icon-image" %></span>
+        <span>Evolution Lab</span>
+      <% end %>
 
-    <%= link_to rewards_path, class: "sidebar-nav-item #{current_page?(rewards_path) ? 'active' : ''}" do %>
-      <span class="sidebar-nav-icon"><%= image_tag "icons/shop.png", alt: "Shop", class: "sidebar-icon-image" %></span>
-      <span>Shop</span>
-    <% end %>
+      <%= link_to rewards_path, class: "sidebar-nav-item #{current_page?(rewards_path) ? 'active' : ''}" do %>
+        <span class="sidebar-nav-icon"><%= image_tag "icons/shop.png", alt: "Shop", class: "sidebar-icon-image" %></span>
+        <span>Shop</span>
+      <% end %>
 
-    <%= link_to trainer_plaza_path, class: "sidebar-nav-item #{current_page?(trainer_plaza_path) ? 'active' : ''}" do %>
-      <span class="sidebar-nav-icon"><%= image_tag "trainerSprites/young-couple.png", alt: "Shop", class: "sidebar-icon-image" %></span>
-      <span>Trainer Plaza</span>
-    <% end %>
+      <%= link_to trainer_plaza_path, class: "sidebar-nav-item #{current_page?(trainer_plaza_path) ? 'active' : ''}" do %>
+        <span class="sidebar-nav-icon"><%= image_tag "trainerSprites/young-couple.png", alt: "Shop", class: "sidebar-icon-image" %></span>
+        <span>Trainer Plaza</span>
+      <% end %>
 
-    <%= link_to leaderboard_path, class: "sidebar-nav-item #{current_page?(leaderboard_path) ? 'active' : ''}" do %>
-      <span class="sidebar-nav-icon">🏆</span>
-      <span>Indigo Plateau</span>
-    <% end %>
-  </nav>
+      <%= link_to leaderboard_path, class: "sidebar-nav-item #{current_page?(leaderboard_path) ? 'active' : ''}" do %>
+        <span class="sidebar-nav-icon">🏆</span>
+        <span>Indigo Plateau</span>
+      <% end %>
+    </nav>
+  <% else %>
+    <nav class="sidebar-nav">
+      <div class="sidebar-nav-item" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;">
+        <span class="sidebar-nav-icon"><%= image_tag "icons/house.png", alt: "House", class: "sidebar-icon-image" %></span>
+        <span>Dashboard</span>
+      </div>
+      <div class="sidebar-nav-item" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;">
+        <span class="sidebar-nav-icon"><%= image_tag "icons/pokedex.png", alt: "Pokedex", class: "sidebar-icon-image" %></span>
+        <span>Pokédex</span>
+      </div>
+      <div class="sidebar-nav-item" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;">
+        <span class="sidebar-nav-icon"><%= image_tag "icons/pokeball.png", alt: "Pokeball", class: "sidebar-icon-image" %></span>
+        <span>Catch</span>
+      </div>
+      <div class="sidebar-nav-item" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;">
+        <span class="sidebar-nav-icon"><%= image_tag "icons/evolution_machine.png", alt: "Evolution Machine", class: "sidebar-icon-image" %></span>
+        <span>Evolution Lab</span>
+      </div>
+      <div class="sidebar-nav-item" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;">
+        <span class="sidebar-nav-icon"><%= image_tag "icons/shop.png", alt: "Shop", class: "sidebar-icon-image" %></span>
+        <span>Shop</span>
+      </div>
+      <div class="sidebar-nav-item" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;">
+        <span class="sidebar-nav-icon"><%= image_tag "trainerSprites/young-couple.png", alt: "Shop", class: "sidebar-icon-image" %></span>
+        <span>Trainer Plaza</span>
+      </div>
+      <div class="sidebar-nav-item" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;">
+        <span class="sidebar-nav-icon">🏆</span>
+        <span>Indigo Plateau</span>
+      </div>
+    </nav>
+  <% end %>
 
   <div class="sidebar-footer">
     <div class="sidebar-user">
@@ -65,8 +105,14 @@
       <% end %>
       <div style="display: flex; align-items: center; gap: 8px;">
         <span class="sidebar-username"><%= display_trainer_name(current_trainer) %></span>
-        <%= link_to edit_settings_path, class: "sidebar-settings-link", title: "Settings" do %>
-          ⚙️
+        <% if current_trainer.onboarding_completed %>
+          <%= link_to edit_settings_path, class: "sidebar-settings-link", title: "Settings" do %>
+            ⚙️
+          <% end %>
+        <% else %>
+          <span class="sidebar-settings-link" style="opacity: 0.5; cursor: not-allowed;" title="Complete onboarding first">
+            ⚙️
+          </span>
         <% end %>
       </div>
     </div>

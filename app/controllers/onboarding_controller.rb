@@ -21,6 +21,15 @@ class OnboardingController < ApplicationController
       return
     end
 
+    # Prevent multiple starters (unless they're an Elite Trainer restarting)
+    unless @trainer.onboarding_completed
+      starter_pokemon_ids = Pokemon.where(pokedex_number: [ 1, 4, 7 ]).pluck(:id)
+      if @trainer.captures.where(pokemon_id: starter_pokemon_ids).exists?
+        redirect_to onboarding_sendoff_path, alert: "You already have a starter Pokémon!"
+        return
+      end
+    end
+
     # Give them their starter
     @trainer.captures.create!(
       pokemon: pokemon,
