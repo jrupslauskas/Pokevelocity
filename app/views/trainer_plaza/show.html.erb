@@ -54,6 +54,7 @@
               </div>
               <p class="pokemon-number">#<%= pokemon.pokedex_number.to_s.rjust(3, '0') %></p>
               <h3 class="pokemon-name"><%= pokemon.name %></h3>
+              <%= render "shared/difficulty_stars", pokemon: pokemon %>
               <div class="pokemon-meta">
                 <% if capture.evolved %>
                   <span class="pokemon-capture-info">Evolved on <%= capture.captured_at.strftime("%m/%d/%y") %></span>

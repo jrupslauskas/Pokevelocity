@@ -1,0 +1,8 @@
+<div class="difficulty-stars" style="justify-content: center; margin-top: 8px;">
+  <% pokemon.difficulty.times do %>
+    <span class="star-filled" style="font-size: 12px;">★</span>
+  <% end %>
+  <% (5 - pokemon.difficulty).times do %>
+    <span class="star-empty" style="font-size: 12px;">★</span>
+  <% end %>
+</div>

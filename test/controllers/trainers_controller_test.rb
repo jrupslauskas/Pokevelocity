@@ -2854,6 +2854,74 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
   end
 
   # ================================================================================
+  # POKEDEX - DIFFICULTY STARS TESTS
+  # ================================================================================
+
+  test "should display difficulty stars on pokedex" do
+    trainer = trainers(:gary)
+    log_in_as(trainer)
+    get pokedex_path
+    # Should contain star characters
+    assert_match "★", response.body
+    # Should contain difficulty-stars class
+    assert_select "div.difficulty-stars"
+  end
+
+  test "should display correct number of filled stars for difficulty 1 pokemon" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+    # Bulbasaur has difficulty 1
+    Capture.create!(trainer: trainer, pokemon: pokemons(:bulbasaur), ball_type: "pokeball")
+    get pokedex_path
+    assert_select "span.star-filled", count: 1
+    assert_select "span.star-empty", count: 4
+  end
+
+  test "should display correct number of filled stars for difficulty 2 pokemon" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+    # Pikachu has difficulty 2
+    Capture.create!(trainer: trainer, pokemon: pokemons(:pikachu), ball_type: "pokeball")
+    get pokedex_path
+    assert_select "span.star-filled", count: 2
+    assert_select "span.star-empty", count: 3
+  end
+
+  test "should display correct number of filled stars for difficulty 3 pokemon" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+    # Raichu has difficulty 3
+    Capture.create!(trainer: trainer, pokemon: pokemons(:raichu), ball_type: "pokeball")
+    get pokedex_path
+    assert_select "span.star-filled", count: 3
+    assert_select "span.star-empty", count: 2
+  end
+
+  test "should display correct number of filled stars for difficulty 5 pokemon" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+    # Mewtwo has difficulty 5
+    Capture.create!(trainer: trainer, pokemon: pokemons(:mewtwo), ball_type: "pokeball")
+    get pokedex_path
+    assert_select "span.star-filled", count: 5
+    assert_select "span.star-empty", count: 0
+  end
+
+  test "should display difficulty stars for multiple pokemon with different difficulties" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+    # Bulbasaur (difficulty 1), Pikachu (difficulty 2), Mewtwo (difficulty 5)
+    Capture.create!(trainer: trainer, pokemon: pokemons(:bulbasaur), ball_type: "pokeball")
+    Capture.create!(trainer: trainer, pokemon: pokemons(:pikachu), ball_type: "pokeball")
+    Capture.create!(trainer: trainer, pokemon: pokemons(:mewtwo), ball_type: "pokeball")
+    get pokedex_path
+    # Total: 1 + 2 + 5 = 8 filled stars
+    # Total: 4 + 3 + 0 = 7 empty stars
+    assert_select "span.star-filled", count: 8
+    assert_select "span.star-empty", count: 7
+  end
+
+  # ================================================================================
   # EVOLUTION LAB - PAGE ACCESS AND AUTHENTICATION TESTS
   # ================================================================================
 
@@ -3396,6 +3464,86 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     trainer.reload
     raichu_capture = Capture.find_by(trainer: trainer, pokemon: pokemons(:raichu))
     assert_equal "master_ball", raichu_capture.ball_type
+  end
+
+  # ================================================================================
+  # EVOLUTION LAB - DIFFICULTY STARS TESTS
+  # ================================================================================
+
+  test "should display difficulty stars on evolution lab cards" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+    # Give trainer Pikachu
+    Capture.create!(trainer: trainer, pokemon: pokemons(:pikachu), ball_type: "pokeball")
+    get evolution_lab_path
+    # Should contain star characters
+    assert_match "★", response.body
+    # Should contain difficulty-stars class
+    assert_select "div.difficulty-stars"
+  end
+
+  test "should display difficulty stars for before evolution pokemon" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+    # Pikachu has difficulty 2
+    Capture.create!(trainer: trainer, pokemon: pokemons(:pikachu), ball_type: "pokeball")
+    get evolution_lab_path
+    # Pikachu (difficulty 2) and Raichu (difficulty 3)
+    # Total: 2 + 3 = 5 filled stars
+    # Total: 3 + 2 = 5 empty stars
+    assert_select "span.star-filled", count: 5
+    assert_select "span.star-empty", count: 5
+  end
+
+  test "should display difficulty stars for after evolution pokemon" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+    # Pikachu has difficulty 2, Raichu has difficulty 3
+    Capture.create!(trainer: trainer, pokemon: pokemons(:pikachu), ball_type: "pokeball")
+    get evolution_lab_path
+    # Should display stars for both Pikachu and Raichu
+    assert_response :success
+    assert_select "span.star-filled", count: 5
+    assert_select "span.star-empty", count: 5
+  end
+
+  test "should display correct stars for difficulty 1 pre-evolution pokemon" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+    # Squirtle has difficulty 1, Wartortle has difficulty 3
+    Capture.create!(trainer: trainer, pokemon: pokemons(:squirtle), ball_type: "pokeball")
+    get evolution_lab_path
+    # Total: 1 + 3 = 4 filled stars
+    # Total: 4 + 2 = 6 empty stars
+    assert_select "span.star-filled", count: 4
+    assert_select "span.star-empty", count: 6
+  end
+
+  test "should display stars for multiple evolution options" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+    # Eevee has difficulty 2, and can evolve to both Vaporeon and Jolteon (both difficulty 3)
+    Capture.create!(trainer: trainer, pokemon: pokemons(:eevee), ball_type: "pokeball")
+    get evolution_lab_path
+    # Eevee (2) -> Vaporeon (3): 2 + 3 = 5 filled, 5 empty
+    # Eevee (2) -> Jolteon (3): 2 + 3 = 5 filled, 5 empty
+    # Total: 10 filled, 10 empty
+    assert_select "span.star-filled", count: 10
+    assert_select "span.star-empty", count: 10
+  end
+
+  test "should display stars for multi-stage evolution chain" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+    # Squirtle (1) -> Wartortle (3)
+    Capture.create!(trainer: trainer, pokemon: pokemons(:squirtle), ball_type: "pokeball")
+    trainer.add_item(:evolution_stone, 2)
+    get evolution_lab_path
+    # Should show Squirtle (1) -> Wartortle (3)
+    # Total: 1 + 3 = 4 filled stars
+    # Total: 4 + 2 = 6 empty stars
+    assert_select "span.star-filled", count: 4
+    assert_select "span.star-empty", count: 6
   end
 
   # ================================================================================

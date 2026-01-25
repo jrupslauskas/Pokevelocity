@@ -27,6 +27,7 @@
                   </div>
                   <p class="pokemon-number">#<%= evo_data[:from_pokemon].pokedex_number.to_s.rjust(3, '0') %></p>
                   <h3 class="pokemon-name"><%= evo_data[:from_pokemon].name %></h3>
+                  <%= render "shared/difficulty_stars", pokemon: evo_data[:from_pokemon] %>
                 </div>
 
                 <div class="evolution-arrow">→</div>
@@ -44,6 +45,7 @@
                   </div>
                   <p class="pokemon-number">#<%= evo_data[:to_pokemon].pokedex_number.to_s.rjust(3, '0') %></p>
                   <h3 class="pokemon-name"><%= evo_data[:to_pokemon].name %></h3>
+                  <%= render "shared/difficulty_stars", pokemon: evo_data[:to_pokemon] %>
                 </div>
               </div>
 

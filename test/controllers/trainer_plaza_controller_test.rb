@@ -419,6 +419,83 @@ class TrainerPlazaControllerTest < ActionDispatch::IntegrationTest
   end
 
   # ================================================================================
+  # SHOW PAGE - DIFFICULTY STARS TESTS
+  # ================================================================================
+
+  test "should display difficulty stars on trainer plaza pokedex" do
+    log_in_as(trainers(:ash))
+    trainer = trainers(:gary)
+    get trainer_path(trainer)
+    # Should contain star characters
+    assert_match "★", response.body
+    # Should contain difficulty-stars class
+    assert_select "div.difficulty-stars"
+  end
+
+  test "should display correct number of stars for difficulty 1 pokemon on trainer plaza" do
+    log_in_as(trainers(:ash))
+    trainer = Trainer.create!(
+      username: "testtrainer_#{rand(10000)}",
+      password: "password",
+      icon_pokemon_id: pokemons(:pikachu).id,
+      onboarding_completed: true
+    )
+    # Charmander has difficulty 1
+    Capture.create!(trainer: trainer, pokemon: pokemons(:charmander), ball_type: "pokeball")
+    get trainer_path(trainer)
+    assert_select "span.star-filled", count: 1
+    assert_select "span.star-empty", count: 4
+  end
+
+  test "should display correct number of stars for difficulty 3 pokemon on trainer plaza" do
+    log_in_as(trainers(:ash))
+    trainer = Trainer.create!(
+      username: "testtrainer_#{rand(10000)}",
+      password: "password",
+      icon_pokemon_id: pokemons(:pikachu).id,
+      onboarding_completed: true
+    )
+    # Raichu has difficulty 3
+    Capture.create!(trainer: trainer, pokemon: pokemons(:raichu), ball_type: "pokeball")
+    get trainer_path(trainer)
+    assert_select "span.star-filled", count: 3
+    assert_select "span.star-empty", count: 2
+  end
+
+  test "should display correct number of stars for difficulty 5 pokemon on trainer plaza" do
+    log_in_as(trainers(:ash))
+    trainer = Trainer.create!(
+      username: "testtrainer_#{rand(10000)}",
+      password: "password",
+      icon_pokemon_id: pokemons(:pikachu).id,
+      onboarding_completed: true
+    )
+    # Mewtwo has difficulty 5
+    Capture.create!(trainer: trainer, pokemon: pokemons(:mewtwo), ball_type: "pokeball")
+    get trainer_path(trainer)
+    assert_select "span.star-filled", count: 5
+    assert_select "span.star-empty", count: 0
+  end
+
+  test "should display difficulty stars for all pokemon when viewing another trainer" do
+    log_in_as(trainers(:ash))
+    trainer = Trainer.create!(
+      username: "testtrainer_#{rand(10000)}",
+      password: "password",
+      icon_pokemon_id: pokemons(:pikachu).id,
+      onboarding_completed: true
+    )
+    # Bulbasaur (difficulty 1), Raichu (difficulty 3)
+    Capture.create!(trainer: trainer, pokemon: pokemons(:bulbasaur), ball_type: "pokeball")
+    Capture.create!(trainer: trainer, pokemon: pokemons(:raichu), ball_type: "pokeball")
+    get trainer_path(trainer)
+    # Total: 1 + 3 = 4 filled stars
+    # Total: 4 + 2 = 6 empty stars
+    assert_select "span.star-filled", count: 4
+    assert_select "span.star-empty", count: 6
+  end
+
+  # ================================================================================
   # SHOW PAGE - EMPTY STATE TESTS
   # ================================================================================
 
