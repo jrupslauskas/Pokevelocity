@@ -1551,6 +1551,28 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     assert_match "Pokédex Progress", response.body
   end
 
+  test "should display difficulty score on dashboard" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+    # Give trainer some pokemon with different difficulties
+    Capture.create!(trainer: trainer, pokemon: pokemons(:pikachu), ball_type: "pokeball") # difficulty 2
+    Capture.create!(trainer: trainer, pokemon: pokemons(:mewtwo), ball_type: "pokeball") # difficulty 5
+    get dashboard_path
+    # Should display difficulty score (2 + 5 = 7)
+    expected_score = trainer.difficulty_score
+    assert_match "#{expected_score}★", response.body
+    assert_match "Difficulty Score", response.body
+  end
+
+  test "should display difficulty score even when trainer has no captures" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+    get dashboard_path
+    # Should display 0★
+    assert_match "0★", response.body
+    assert_match "Difficulty Score", response.body
+  end
+
   test "should maintain session across dashboard visits" do
     trainer = trainers(:ash)
     log_in_as(trainer)

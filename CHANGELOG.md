@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.4] - 2026-01-24
+### Added
+- Add difficulty score ranking to dashboard
+
 ## [1.0.3] - 2026-01-24
 ### Added
 - Add difficulty stars to pokedex of user and other trainers as well as evo lab

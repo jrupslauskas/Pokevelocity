@@ -195,6 +195,11 @@
         </div>
 
         <div class="pokedex-stats">
+          <p class="pokedex-count"><%= @trainer.difficulty_score %>★</p>
+          <p class="pokedex-label">Difficulty Score</p>
+
+          <div style="border-bottom: 1px solid #E8DCC8; margin-top: 24px; margin-bottom: 16px;"></div>
+
           <p class="pokedex-count"><%= @trainer.captures.count %></p>
           <p class="pokedex-label">Pokémon Captured</p>
 
