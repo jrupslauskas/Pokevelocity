@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.5] - 2026-01-28
+### Added
+- Update how captured pokemon are displayed in routes
+
 ## [1.0.4] - 2026-01-24
 ### Added
 - Add difficulty score ranking to dashboard

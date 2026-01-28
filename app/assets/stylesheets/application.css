@@ -2263,13 +2263,25 @@ body > div:not(.app-layout) {
 }
 
 .route-pokemon-item.caught {
-  opacity: 0.5;
-  border-color: #C8C8C8;
+  position: relative;
 }
 
-.route-pokemon-item.caught .route-pokemon-name {
-  text-decoration: line-through;
-  color: #999;
+.pokeball-indicator {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  padding: 2px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.pokeball-indicator img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .route-pokemon-sprite {

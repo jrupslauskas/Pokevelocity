@@ -150,6 +150,11 @@
              data-route-id="<%= route.id %>"
              <% if encounter.required_item_key.present? %>data-required-item="<%= encounter.required_item_key %>"<% end %>
              style="<%= initial_display_style %>">
+          <% if is_caught %>
+            <div class="pokeball-indicator">
+              <%= image_tag "icons/pokeball.png", alt: "Caught" %>
+            </div>
+          <% end %>
           <%= image_tag "pokemonSprites/#{pokemon.pokedex_number.to_s.rjust(3, '0')}.png",
               alt: pokemon.name,
               class: "route-pokemon-sprite",
