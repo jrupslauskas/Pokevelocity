@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.1.1] - 2026-01-28
+### Added
+- Update favicon
+
 ## [1.1.0] - 2026-01-28
 ### Added
 - Add high contrast UI mode for accessibility
