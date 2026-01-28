@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_20_014406) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_28_142004) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -145,6 +145,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_20_014406) do
     t.datetime "created_at", null: false
     t.integer "currency", default: 0, null: false
     t.integer "elite_trainer_level", default: 0, null: false
+    t.boolean "high_contrast_mode", default: false, null: false
     t.integer "icon_pokemon_id"
     t.string "icon_trainer_sprite"
     t.boolean "onboarding_completed", default: false, null: false

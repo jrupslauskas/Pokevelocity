@@ -67,7 +67,7 @@
               <span class="card-dashboard-icon">💳</span>
               <h2 class="card-dashboard-title">Buy and Sell</h2>
             </div>
-            <span style="background: #FFF4E6; color: #2C5F2D; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 16px;">
+            <span class="currency-display">
               💰 Pokedollars: <%= @trainer.currency %>
             </span>
           </div>
@@ -102,12 +102,12 @@
               <div style="display: flex; align-items: center; gap: 12px;">
                 <%= image_tag "icons/#{item.sprite}", alt: item.name, class: "shop-item-icon" %>
                 <div>
-                  <div style="font-weight: 600; color: #2C5F2D;"><%= item.name %></div>
-                  <div style="font-size: 14px; color: #6B5537;"><%= item.description %></div>
+                  <div class="shop-item-name"><%= item.name %></div>
+                  <div class="shop-item-description"><%= item.description %></div>
                 </div>
               </div>
               <div style="display: flex; align-items: center; gap: 12px;">
-                <span style="font-weight: 600; color: #2C5F2D;">💰 <%= item.buy_price %></span>
+                <span class="shop-item-price">💰 <%= item.buy_price %></span>
                 <%= form_with url: buy_item_rewards_path, method: :post, local: true do |f| %>
                   <%= hidden_field_tag :item_key, item.key %>
                   <%= submit_tag "Buy", class: "btn-primary-small" %>
@@ -131,12 +131,12 @@
                 <div style="display: flex; align-items: center; gap: 12px;">
                   <%= image_tag "icons/#{item.sprite}", alt: item.name, class: "shop-item-icon" %>
                   <div>
-                    <div style="font-weight: 600; color: #2C5F2D;"><%= item.name %></div>
-                    <div style="font-size: 14px; color: #6B5537;">Owned: <%= quantity %></div>
+                    <div class="shop-item-name"><%= item.name %></div>
+                    <div class="shop-item-description">Owned: <%= quantity %></div>
                   </div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 12px;">
-                  <span style="font-weight: 600; color: #2C5F2D;">💰 <%= item.sell_price %></span>
+                  <span class="shop-item-price">💰 <%= item.sell_price %></span>
                   <%= form_with url: sell_item_rewards_path, method: :post, local: true do |f| %>
                     <%= hidden_field_tag :item_key, item.key %>
                     <%= submit_tag "Sell", class: "btn-primary-small" %>

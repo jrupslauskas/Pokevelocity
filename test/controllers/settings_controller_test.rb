@@ -365,4 +365,143 @@ class SettingsControllerTest < ActionDispatch::IntegrationTest
     assert_equal new_pokemon.id, trainer.icon_pokemon_id
     assert_equal true, trainer.show_encounter_animation
   end
+
+  # ================================================================================
+  # HIGH CONTRAST MODE TESTS
+  # ================================================================================
+
+  test "new trainers should have high contrast mode disabled by default" do
+    trainer = Trainer.create!(
+      username: "newtrainer2",
+      password: "password",
+      icon_pokemon_id: pokemons(:pikachu).id
+    )
+    assert_equal false, trainer.high_contrast_mode
+  end
+
+  test "should display high contrast mode checkbox in gameplay tab" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    get edit_settings_path
+    assert_response :success
+    assert_select "input#high_contrast_mode[type='checkbox']"
+    assert_select "label[for='high_contrast_mode']", text: "Enable High Contrast Mode"
+  end
+
+  test "high contrast mode checkbox should be unchecked when preference is false" do
+    trainer = trainers(:ash)
+    trainer.update!(high_contrast_mode: false)
+    log_in_as(trainer)
+
+    get edit_settings_path
+    assert_response :success
+    assert_select "input#high_contrast_mode[checked]", count: 0
+  end
+
+  test "high contrast mode checkbox should be checked when preference is true" do
+    trainer = trainers(:ash)
+    trainer.update!(high_contrast_mode: true)
+    log_in_as(trainer)
+
+    get edit_settings_path
+    assert_response :success
+    assert_select "input#high_contrast_mode[checked='checked']"
+  end
+
+  test "should enable high contrast mode when checkbox is checked" do
+    trainer = trainers(:ash)
+    trainer.update!(high_contrast_mode: false)
+    log_in_as(trainer)
+
+    patch update_settings_path, params: { high_contrast_mode: "1" }
+
+    assert_redirected_to edit_settings_path
+    assert_equal "Settings updated successfully!", flash[:notice]
+
+    trainer.reload
+    assert_equal true, trainer.high_contrast_mode
+  end
+
+  test "should disable high contrast mode when checkbox is unchecked" do
+    trainer = trainers(:ash)
+    trainer.update!(high_contrast_mode: true)
+    log_in_as(trainer)
+
+    patch update_settings_path, params: { high_contrast_mode: "0" }
+
+    trainer.reload
+    assert_equal false, trainer.high_contrast_mode
+  end
+
+  test "should not modify high contrast mode preference when updating other settings" do
+    trainer = trainers(:ash)
+    trainer.update!(high_contrast_mode: true)
+    log_in_as(trainer)
+
+    new_pokemon = pokemons(:bulbasaur)
+    patch update_settings_path, params: { icon_pokemon_id: new_pokemon.id }
+
+    trainer.reload
+    assert_equal new_pokemon.id, trainer.icon_pokemon_id
+    # High contrast preference should remain unchanged
+    assert_equal true, trainer.high_contrast_mode
+  end
+
+  test "should update both icon and high contrast mode in same request" do
+    trainer = trainers(:ash)
+    trainer.update!(high_contrast_mode: false)
+    log_in_as(trainer)
+
+    new_pokemon = pokemons(:bulbasaur)
+    patch update_settings_path, params: {
+      icon_pokemon_id: new_pokemon.id,
+      high_contrast_mode: "1"
+    }
+
+    trainer.reload
+    assert_equal new_pokemon.id, trainer.icon_pokemon_id
+    assert_equal true, trainer.high_contrast_mode
+  end
+
+  test "should update all gameplay preferences together" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      show_encounter_animation: false,
+      play_pokecenter_audio: false,
+      high_contrast_mode: false
+    )
+    log_in_as(trainer)
+
+    patch update_settings_path, params: {
+      show_encounter_animation: "1",
+      play_pokecenter_audio: "1",
+      high_contrast_mode: "1"
+    }
+
+    trainer.reload
+    assert_equal true, trainer.show_encounter_animation
+    assert_equal true, trainer.play_pokecenter_audio
+    assert_equal true, trainer.high_contrast_mode
+  end
+
+  test "body should have high contrast data attribute when enabled" do
+    trainer = trainers(:ash)
+    trainer.update!(high_contrast_mode: true)
+    log_in_as(trainer)
+
+    get dashboard_path
+    assert_response :success
+    assert_select "body[data-high-contrast='true']"
+  end
+
+  test "body should not have high contrast data attribute when disabled" do
+    trainer = trainers(:ash)
+    trainer.update!(high_contrast_mode: false)
+    log_in_as(trainer)
+
+    get dashboard_path
+    assert_response :success
+    assert_select "body[data-high-contrast]", count: 0
+  end
 end

@@ -69,11 +69,11 @@
     </div>
 
     <% if @already_caught %>
-      <div style="max-width: 600px; margin: 24px auto; padding: 16px; background: linear-gradient(135deg, #FFF4E6 0%, #FFE8CC 100%); border: 2px solid #F4A460; border-radius: 12px; text-align: center;">
-        <p style="margin: 0; color: #8B4513; font-size: 16px; font-weight: 600;">
+      <div class="already-caught-notice" style="max-width: 600px; margin: 24px auto; padding: 16px; background: linear-gradient(135deg, #FFF4E6 0%, #FFE8CC 100%); border: 2px solid #F4A460; border-radius: 12px; text-align: center;">
+        <p class="already-caught-title" style="margin: 0; color: #8B4513; font-size: 16px; font-weight: 600;">
           ✓ Already in your Pokédex!
         </p>
-        <p style="margin: 8px 0 0 0; color: #6B5537; font-size: 14px;">
+        <p class="already-caught-text" style="margin: 8px 0 0 0; color: #6B5537; font-size: 14px;">
           Catching <%= @pokemon.name %> again will reward you with an Evolution Stone.
         </p>
       </div>

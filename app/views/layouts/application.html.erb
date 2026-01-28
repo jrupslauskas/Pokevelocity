@@ -23,7 +23,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
+  <body<% if defined?(current_trainer) && current_trainer && current_trainer.high_contrast_mode %> data-high-contrast="true"<% end %>>
     <%= render "layouts/flash_messages" if flash.any? %>
     <%= yield %>
     <canvas id="animation-overlay" class="hidden" />

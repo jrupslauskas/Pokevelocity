@@ -10,26 +10,33 @@ class SettingsController < ApplicationController
   def update
     @trainer = current_trainer
 
+    # Build update attributes hash
+    update_attrs = {}
+
     # Update icon based on whether pokemon or trainer sprite was selected
     if params[:icon_pokemon_id].present?
-      @trainer.icon_pokemon_id = params[:icon_pokemon_id]
-      @trainer.icon_trainer_sprite = nil
+      update_attrs[:icon_pokemon_id] = params[:icon_pokemon_id]
+      update_attrs[:icon_trainer_sprite] = nil
     elsif params[:icon_trainer_sprite].present?
-      @trainer.icon_trainer_sprite = params[:icon_trainer_sprite]
-      @trainer.icon_pokemon_id = nil
+      update_attrs[:icon_trainer_sprite] = params[:icon_trainer_sprite]
+      update_attrs[:icon_pokemon_id] = nil
     end
 
     # Update gameplay preferences
     # Note: The hidden field ensures this parameter is always sent when submitting from Gameplay tab
     if params.key?(:show_encounter_animation)
-      @trainer.show_encounter_animation = (params[:show_encounter_animation] == "1")
+      update_attrs[:show_encounter_animation] = (params[:show_encounter_animation] == "1")
     end
 
     if params.key?(:play_pokecenter_audio)
-      @trainer.play_pokecenter_audio = (params[:play_pokecenter_audio] == "1")
+      update_attrs[:play_pokecenter_audio] = (params[:play_pokecenter_audio] == "1")
     end
 
-    if @trainer.save
+    if params.key?(:high_contrast_mode)
+      update_attrs[:high_contrast_mode] = (params[:high_contrast_mode] == "1")
+    end
+
+    if @trainer.update(update_attrs)
       redirect_to edit_settings_path, notice: "Settings updated successfully!"
     else
       @all_pokemon = Pokemon.order(:pokedex_number).limit(151)

@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.1.0] - 2026-01-28
+### Added
+- Add high contrast UI mode for accessibility
+
 ## [1.0.5] - 2026-01-28
 ### Added
 - Update how captured pokemon are displayed in routes

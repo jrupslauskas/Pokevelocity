@@ -39,20 +39,20 @@
         </div>
 
         <!-- Current Icon Display -->
-        <div style="margin: 16px 0; padding: 16px; background: #FFF4E6; border-radius: 8px; display: flex; align-items: center; gap: 12px;">
-          <span style="color: #6B5537; font-weight: 500;">Current Icon:</span>
-          <div style="display: flex; align-items: center; gap: 8px; background: white; padding: 8px 12px; border-radius: 6px;">
+        <div class="current-icon-container">
+          <span class="current-icon-label">Current Icon:</span>
+          <div class="current-icon-display">
             <% if @trainer.icon_pokemon_id %>
               <% pokemon = Pokemon.find(@trainer.icon_pokemon_id) %>
               <%= image_tag "pokemonSprites/#{pokemon.pokedex_number.to_s.rjust(3, '0')}.png",
                   alt: pokemon.name,
-                  style: "width: 32px; height: 32px; image-rendering: pixelated;" %>
-              <span style="color: #2C5F2D; font-weight: 500;"><%= pokemon.name %></span>
+                  class: "current-icon-image" %>
+              <span class="current-icon-name"><%= pokemon.name %></span>
             <% elsif @trainer.icon_trainer_sprite %>
               <%= image_tag "trainerSprites/#{@trainer.icon_trainer_sprite}.png",
                   alt: "Trainer",
-                  style: "width: 32px; height: 32px; image-rendering: pixelated;" %>
-              <span style="color: #2C5F2D; font-weight: 500;"><%= @trainer.icon_trainer_sprite.split('-').map(&:capitalize).join(' ') %></span>
+                  class: "current-icon-image" %>
+              <span class="current-icon-name"><%= @trainer.icon_trainer_sprite.split('-').map(&:capitalize).join(' ') %></span>
             <% end %>
           </div>
         </div>
@@ -117,38 +117,51 @@
     <!-- Gameplay Tab Content -->
     <div id="gameplay-tab" class="settings-tab-content">
       <%= form_with url: update_settings_path, method: :patch, local: true do |f| %>
-        <div style="padding: 24px 0;">
-          <p style="color: #666; font-size: 15px; margin-bottom: 24px;">
+        <div class="gameplay-content">
+          <p class="gameplay-description">
             Customize your gameplay experience and preferences.
           </p>
 
           <div class="form-group">
-            <div style="display: flex; align-items: center; gap: 12px; padding: 16px; background: #F9F9F9; border-radius: 8px;">
+            <div class="gameplay-option-box">
               <%= hidden_field_tag :show_encounter_animation, "0" %>
               <%= check_box_tag :show_encounter_animation, "1", @trainer.show_encounter_animation,
                   class: "settings-checkbox",
                   id: "show_encounter_animation" %>
               <%= label_tag :show_encounter_animation, "Enable Retro Encounter Experience", class: "settings-checkbox-label" %>
             </div>
-            <p style="color: #888; font-size: 13px; margin-top: 8px; margin-left: 4px;">
+            <p class="gameplay-option-description">
               Play the classic stripe animation and encounter music when starting wild Pokémon adventures
             </p>
           </div>
 
-          <div class="form-group" style="margin-top: 16px;">
-            <div style="display: flex; align-items: center; gap: 12px; padding: 16px; background: #F9F9F9; border-radius: 8px;">
+          <div class="form-group gameplay-form-group">
+            <div class="gameplay-option-box">
               <%= hidden_field_tag :play_pokecenter_audio, "0" %>
               <%= check_box_tag :play_pokecenter_audio, "1", @trainer.play_pokecenter_audio,
                   class: "settings-checkbox",
                   id: "play_pokecenter_audio" %>
               <%= label_tag :play_pokecenter_audio, "Play Poké Center Audio", class: "settings-checkbox-label" %>
             </div>
-            <p style="color: #888; font-size: 13px; margin-top: 8px; margin-left: 4px;">
+            <p class="gameplay-option-description">
               Play the Poké Center music when visiting to restore adventures
             </p>
           </div>
 
-          <div style="margin-top: 24px;">
+          <div class="form-group gameplay-form-group">
+            <div class="gameplay-option-box">
+              <%= hidden_field_tag :high_contrast_mode, "0" %>
+              <%= check_box_tag :high_contrast_mode, "1", @trainer.high_contrast_mode,
+                  class: "settings-checkbox",
+                  id: "high_contrast_mode" %>
+              <%= label_tag :high_contrast_mode, "Enable High Contrast Mode", class: "settings-checkbox-label" %>
+            </div>
+            <p class="gameplay-option-description">
+              Increases contrast throughout the app for better visibility and accessibility (WCAG AAA compliant)
+            </p>
+          </div>
+
+          <div class="gameplay-submit">
             <%= submit_tag "Save Changes", class: "btn-primary" %>
           </div>
         </div>

@@ -42,6 +42,15 @@ class TrainerTest < ActiveSupport::TestCase
     assert_equal 0, trainer.currency
   end
 
+  test "should have high_contrast_mode false by default" do
+    trainer = Trainer.create!(
+      username: "new_trainer_#{rand(100000)}",
+      password: "password",
+      icon_pokemon_id: pokemons(:pikachu).id
+    )
+    assert_equal false, trainer.high_contrast_mode
+  end
+
   # ================================================================================
   # ASSOCIATION TESTS
   # ================================================================================
