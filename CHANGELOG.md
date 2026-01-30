@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.2.1] - 2026-01-29
+### Added
+- Update docker compose to use db:prepare instead of setup to prevent data loss
+
 ## [1.1.1] - 2026-01-28
 ### Added
 - Update favicon
