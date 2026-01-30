@@ -1,3 +1,6 @@
+# Docker Compose for local development
+# Database data persists in the postgres_data volume - your data won't be lost on restart!
+
 services:
   db:
     image: postgres:16
@@ -6,6 +9,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: pokevelocity_development
     volumes:
+      # Persistent storage - data survives container restarts
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
@@ -19,7 +23,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    command: bash -c "rm -f tmp/pids/server.pid && bundle install && ./bin/rails db:setup && ./bin/rails server -b 0.0.0.0"
+    command: bash -c "rm -f tmp/pids/server.pid && bundle install && ./bin/rails db:prepare && ./bin/rails server -b 0.0.0.0"
     volumes:
       - .:/rails
       - gem_cache:/usr/local/bundle
