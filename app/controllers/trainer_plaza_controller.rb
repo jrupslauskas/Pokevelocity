@@ -6,7 +6,7 @@ class TrainerPlazaController < ApplicationController
   end
 
   def show
-    @trainer = Trainer.find(params[:id])
+    @trainer = Trainer.includes(gate_unlocks: :gate).find(params[:id])
     @captured_pokemon = @trainer.captured_pokemon.order(:pokedex_number)
     @total_trainers = Trainer.count
 

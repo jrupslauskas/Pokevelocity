@@ -1,6 +1,10 @@
 # Changelog
 
-## [1.2.1] - 2026-01-29
+## [1.2.1] - 2026-01-30
+### Added
+- Add badge display to trainers pages in Trainer Plaza 
+
+## [1.2.0] - 2026-01-29
 ### Added
 - Update docker compose to use db:prepare instead of setup to prevent data loss
 

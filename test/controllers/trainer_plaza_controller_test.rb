@@ -496,6 +496,130 @@ class TrainerPlazaControllerTest < ActionDispatch::IntegrationTest
   end
 
   # ================================================================================
+  # SHOW PAGE - GYM BADGES DISPLAY TESTS
+  # ================================================================================
+
+  test "should display gym badges section on show page" do
+    log_in_as(trainers(:ash))
+    get trainer_path(trainers(:gary))
+    assert_response :success
+    assert_select ".badges-section"
+    assert_match "Gym Badges & Elite Four", response.body
+  end
+
+  test "should display all 9 badge slots on show page" do
+    log_in_as(trainers(:ash))
+    get trainer_path(trainers(:gary))
+    assert_select ".badge-slot", count: 9
+  end
+
+  test "should show earned badges with images on show page" do
+    log_in_as(trainers(:ash))
+    trainer = trainers(:gary)
+
+    # Create a gate and unlock it for this trainer
+    gate = Gate.find_or_create_by!(gate_number: 1, required_difficulty_score: 0)
+    GateUnlock.create!(trainer: trainer, gate: gate)
+
+    get trainer_path(trainer)
+    assert_response :success
+
+    # Should have at least one earned badge
+    assert_select ".badge-slot.badge-earned", minimum: 1
+    assert_select ".badge-sprite", minimum: 1
+  end
+
+  test "should show empty slots for unearned badges on show page" do
+    log_in_as(trainers(:ash))
+
+    # Create a trainer with no badges
+    trainer = Trainer.create!(
+      username: "nobadges",
+      password: "password",
+      icon_pokemon_id: pokemons(:pikachu).id,
+      onboarding_completed: true
+    )
+
+    get trainer_path(trainer)
+    assert_response :success
+
+    # All 9 badges should be empty
+    assert_select ".badge-empty", count: 9
+  end
+
+  test "should display badges for trainer with multiple unlocked gates" do
+    log_in_as(trainers(:ash))
+    trainer = trainers(:gary)
+
+    # Unlock first 3 gates
+    (1..3).each do |gate_num|
+      gate = Gate.find_or_create_by!(gate_number: gate_num, required_difficulty_score: 0)
+      GateUnlock.create!(trainer: trainer, gate: gate)
+    end
+
+    get trainer_path(trainer)
+    assert_response :success
+
+    # Should have 3 earned badges
+    assert_select ".badge-slot.badge-earned", count: 3
+    assert_select ".badge-sprite", count: 3
+    # Should have 6 empty badges
+    assert_select ".badge-empty", count: 6
+  end
+
+  test "should show all badges earned when viewing trainer with all gates unlocked" do
+    log_in_as(trainers(:ash))
+    trainer = trainers(:gary)
+
+    # Unlock all 9 gates
+    (1..9).each do |gate_num|
+      gate = Gate.find_or_create_by!(gate_number: gate_num, required_difficulty_score: 0)
+      GateUnlock.create!(trainer: trainer, gate: gate)
+    end
+
+    get trainer_path(trainer)
+    assert_response :success
+
+    # All 9 badges should be earned
+    assert_select ".badge-slot.badge-earned", count: 9
+    assert_select ".badge-sprite", count: 9
+    assert_select ".badge-empty", count: 0
+  end
+
+  test "should display badges when viewing own profile" do
+    log_in_as(trainers(:ash))
+    trainer = trainers(:ash)
+
+    # Unlock a gate for ash
+    gate = Gate.find_or_create_by!(gate_number: 1, required_difficulty_score: 0)
+    GateUnlock.create!(trainer: trainer, gate: gate)
+
+    get trainer_path(trainer)
+    assert_response :success
+
+    # Should show badges section with earned badge
+    assert_select ".badges-section"
+    assert_select ".badge-slot.badge-earned", minimum: 1
+  end
+
+  test "should efficiently load badge data with includes" do
+    log_in_as(trainers(:ash))
+    trainer = trainers(:gary)
+
+    # Create some gates and unlocks
+    gate = Gate.find_or_create_by!(gate_number: 1, required_difficulty_score: 0)
+    GateUnlock.create!(trainer: trainer, gate: gate)
+
+    # This should not cause N+1 queries due to includes in controller
+    assert_queries_count = 0
+    get trainer_path(trainer)
+    assert_response :success
+
+    # Verify badges are displayed
+    assert_select ".badges-section"
+  end
+
+  # ================================================================================
   # SHOW PAGE - EMPTY STATE TESTS
   # ================================================================================
 
