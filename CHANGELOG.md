@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.2.2] - 2026-02-01
+### Added
+- Add session timeout
+
 ## [1.2.1] - 2026-01-30
 ### Added
 - Add badge display to trainers pages in Trainer Plaza 

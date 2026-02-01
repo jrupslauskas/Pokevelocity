@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
   # Changes to the importmap will invalidate the etag for HTML responses
   stale_when_importmap_changes
 
+  before_action :check_session_timeout
   before_action :enforce_onboarding, if: :logged_in?
 
   helper_method :current_trainer, :logged_in?
@@ -33,5 +34,20 @@ class ApplicationController < ActionController::Base
     if current_trainer&.needs_onboarding?
       redirect_to onboarding_welcome_path
     end
+  end
+
+  def check_session_timeout
+    return unless session[:trainer_id] # Not logged in
+
+    if session[:last_activity_at].present?
+      inactive_time = Time.current - Time.parse(session[:last_activity_at])
+      if inactive_time > 15.minutes
+        reset_session
+        redirect_to login_path, alert: "Your session has expired due to inactivity."
+        return
+      end
+    end
+
+    session[:last_activity_at] = Time.current.to_s
   end
 end
