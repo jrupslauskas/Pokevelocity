@@ -3501,6 +3501,25 @@ body > div:not(.app-layout) {
   color: #2C5F2D;
 }
 
+.celebration-pokemon {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: linear-gradient(135deg, #FFF 0%, #F8F8F8 100%);
+  border: 2px solid #FFD700;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.celebration-pokemon-sprite {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+}
+
 .celebration-routes {
   margin-top: 16px;
   padding: 12px;

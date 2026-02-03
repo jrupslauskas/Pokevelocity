@@ -49,7 +49,7 @@
             Your difficulty score has reached <%= @trainer.difficulty_score %>★!
           </p>
 
-          <% if @awarded_items.any? || @awarded_currency > 0 %>
+          <% if @awarded_items.any? || @awarded_currency > 0 || @awarded_pokemon.any? %>
             <div class="celebration-items">
               <h3 class="celebration-items-title">Rewards:</h3>
               <ul class="celebration-items-list">
@@ -63,6 +63,15 @@
                   <li class="celebration-item">
                     <span class="celebration-item-icon">💰</span>
                     <span class="celebration-item-name"><%= @awarded_currency %> Pokedollars</span>
+                  </li>
+                <% end %>
+                <% @awarded_pokemon.each do |pokemon| %>
+                  <li class="celebration-item celebration-pokemon">
+                    <%= image_tag "pokemonSprites/#{pokemon.pokedex_number.to_s.rjust(3, '0')}.png",
+                                  alt: pokemon.name,
+                                  class: "celebration-pokemon-sprite",
+                                  title: pokemon.name %>
+                    <span class="celebration-item-name"><%= pokemon.name %></span>
                   </li>
                 <% end %>
               </ul>

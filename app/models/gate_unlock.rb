@@ -31,6 +31,9 @@ class GateUnlock < ApplicationRecord
       items: [
         { key: :great_ball, quantity: 1, name: "Great Ball" },
         { key: :good_rod, quantity: 1, name: "Good Rod" }
+      ],
+      pokemon: [
+        { pokedex_number: 133, ball_type: "pokeball" } # Eevee
       ]
     },
     5 => {
@@ -38,6 +41,9 @@ class GateUnlock < ApplicationRecord
       items: [
         { key: :hm_surf, quantity: 1, name: "HM03 Surf" },
         { key: :super_potion, quantity: 1, name: "Super Potion" }
+      ],
+      pokemon: [
+        { pokedex_number: 131, ball_type: "pokeball" } # Lapras
       ]
     },
     6 => {
@@ -91,6 +97,27 @@ class GateUnlock < ApplicationRecord
           end
         else
           Rails.logger.error "Item #{item_reward[:key]} not found when trying to award for gate #{gate.gate_number}"
+        end
+      end
+    end
+
+    # Award pokemon if specified
+    if rewards[:pokemon]
+      rewards[:pokemon].each do |pokemon_reward|
+        pokemon = Pokemon.find_by(pokedex_number: pokemon_reward[:pokedex_number])
+        if pokemon
+          # Check if trainer already has this pokemon
+          unless trainer.captured_pokemon.exists?(id: pokemon.id)
+            trainer.captures.create!(
+              pokemon: pokemon,
+              ball_type: pokemon_reward[:ball_type] || "pokeball"
+            )
+            Rails.logger.info "Awarded #{pokemon.name} to trainer #{trainer.username} for unlocking gate #{gate.gate_number}"
+          else
+            Rails.logger.info "Trainer #{trainer.username} already has #{pokemon.name}, skipping duplicate"
+          end
+        else
+          Rails.logger.error "Pokemon ##{pokemon_reward[:pokedex_number]} not found when trying to award for gate #{gate.gate_number}"
         end
       end
     end

@@ -159,6 +159,63 @@ class GateUnlockRewardsTest < ActiveSupport::TestCase
     assert @trainer.has_item?(:good_rod)
   end
 
+  test "Gate 4 should award Eevee" do
+    gate_4 = create_gate(4, 32)
+    eevee = Pokemon.find_or_create_by!(pokedex_number: 133) do |p|
+      p.name = "Eevee"
+      p.difficulty = 2
+    end
+
+    assert_not @trainer.captured_pokemon.exists?(id: eevee.id)
+
+    reach_difficulty_score(gate_4.required_difficulty_score)
+    @trainer.unlock_gate!(gate_4)
+
+    assert @trainer.captured_pokemon.exists?(id: eevee.id)
+    capture = @trainer.captures.find_by(pokemon: eevee)
+    assert_equal "pokeball", capture.ball_type
+  end
+
+  test "Gate 4 should not duplicate Eevee if already owned" do
+    gate_4 = create_gate(4, 32)
+    eevee = Pokemon.find_or_create_by!(pokedex_number: 133) do |p|
+      p.name = "Eevee"
+      p.difficulty = 2
+    end
+
+    # Give trainer Eevee first
+    @trainer.captures.create!(pokemon: eevee, ball_type: "great_ball")
+
+    reach_difficulty_score(gate_4.required_difficulty_score)
+
+    # Count before unlocking gate (after reaching difficulty score)
+    count_before_unlock = @trainer.captured_pokemon.count
+
+    @trainer.unlock_gate!(gate_4)
+
+    # Should still have same count (not duplicated)
+    assert_equal count_before_unlock, @trainer.captured_pokemon.count
+  end
+
+  test "Gate 4 should award all rewards including Eevee" do
+    gate_4 = create_gate(4, 32)
+    Item.find_or_create_by(key: "great_ball", item_type: "pokeball")
+    Item.find_or_create_by(key: "good_rod", item_type: "key_item")
+    eevee = Pokemon.find_or_create_by!(pokedex_number: 133) do |p|
+      p.name = "Eevee"
+      p.difficulty = 2
+    end
+    initial_great_balls = @trainer.item_quantity(:great_ball)
+
+    reach_difficulty_score(gate_4.required_difficulty_score)
+    @trainer.unlock_gate!(gate_4)
+
+    # Check all rewards
+    assert_equal initial_great_balls + 1, @trainer.item_quantity(:great_ball)
+    assert @trainer.has_item?(:good_rod)
+    assert @trainer.captured_pokemon.exists?(id: eevee.id)
+  end
+
   # ================================================================================
   # GATE 5: 200 Currency + HM Surf + Super Potion
   # ================================================================================
@@ -211,6 +268,66 @@ class GateUnlockRewardsTest < ActiveSupport::TestCase
     assert_equal initial_super_potions + 1, @trainer.item_quantity(:super_potion)
     @trainer.reload
     assert_equal initial_currency + 200, @trainer.currency
+  end
+
+  test "Gate 5 should award Lapras" do
+    gate_5 = create_gate(5, 40)
+    lapras = Pokemon.find_or_create_by!(pokedex_number: 131) do |p|
+      p.name = "Lapras"
+      p.difficulty = 3
+    end
+
+    assert_not @trainer.captured_pokemon.exists?(id: lapras.id)
+
+    reach_difficulty_score(gate_5.required_difficulty_score)
+    @trainer.unlock_gate!(gate_5)
+
+    assert @trainer.captured_pokemon.exists?(id: lapras.id)
+    capture = @trainer.captures.find_by(pokemon: lapras)
+    assert_equal "pokeball", capture.ball_type
+  end
+
+  test "Gate 5 should not duplicate Lapras if already owned" do
+    gate_5 = create_gate(5, 40)
+    lapras = Pokemon.find_or_create_by!(pokedex_number: 131) do |p|
+      p.name = "Lapras"
+      p.difficulty = 3
+    end
+
+    # Give trainer Lapras first
+    @trainer.captures.create!(pokemon: lapras, ball_type: "great_ball")
+
+    reach_difficulty_score(gate_5.required_difficulty_score)
+
+    # Count before unlocking gate (after reaching difficulty score)
+    count_before_unlock = @trainer.captured_pokemon.count
+
+    @trainer.unlock_gate!(gate_5)
+
+    # Should still have same count (not duplicated)
+    assert_equal count_before_unlock, @trainer.captured_pokemon.count
+  end
+
+  test "Gate 5 should award all rewards including Lapras" do
+    gate_5 = create_gate(5, 40)
+    Item.find_or_create_by(key: "hm_surf", item_type: "key_item")
+    Item.find_or_create_by(key: "super_potion", item_type: "potion")
+    lapras = Pokemon.find_or_create_by!(pokedex_number: 131) do |p|
+      p.name = "Lapras"
+      p.difficulty = 3
+    end
+    initial_currency = @trainer.currency
+    initial_super_potions = @trainer.item_quantity(:super_potion)
+
+    reach_difficulty_score(gate_5.required_difficulty_score)
+    @trainer.unlock_gate!(gate_5)
+
+    # Check all rewards
+    assert @trainer.has_item?(:hm_surf)
+    assert_equal initial_super_potions + 1, @trainer.item_quantity(:super_potion)
+    @trainer.reload
+    assert_equal initial_currency + 200, @trainer.currency
+    assert @trainer.captured_pokemon.exists?(id: lapras.id)
   end
 
   # ================================================================================
@@ -379,6 +496,16 @@ class GateUnlockRewardsTest < ActiveSupport::TestCase
     Item.find_or_create_by(key: "potion", item_type: "potion")
     Item.find_or_create_by(key: "super_potion", item_type: "potion")
 
+    # Create reward Pokemon
+    eevee = Pokemon.find_or_create_by!(pokedex_number: 133) do |p|
+      p.name = "Eevee"
+      p.difficulty = 2
+    end
+    lapras = Pokemon.find_or_create_by!(pokedex_number: 131) do |p|
+      p.name = "Lapras"
+      p.difficulty = 3
+    end
+
     # Ensure gates aren't already unlocked
     @trainer.gate_unlocks.destroy_all
 
@@ -404,8 +531,8 @@ class GateUnlockRewardsTest < ActiveSupport::TestCase
     # Gate 1: 1 pokeball
     # Gate 2: 100 currency + Old Rod + 1 Potion
     # Gate 3: 1 evolution stone
-    # Gate 4: 1 great ball + Good Rod
-    # Gate 5: 200 currency + HM Surf + 1 Super Potion
+    # Gate 4: 1 great ball + Good Rod + Eevee
+    # Gate 5: 200 currency + HM Surf + 1 Super Potion + Lapras
     # Gate 6: 2 evolution stones + Super Rod
     # Gate 7: 1 ultra ball
     # Gate 8: 500 currency
@@ -426,5 +553,7 @@ class GateUnlockRewardsTest < ActiveSupport::TestCase
     assert @trainer.has_item?(:good_rod)
     assert @trainer.has_item?(:super_rod)
     assert @trainer.has_item?(:hm_surf)
+    assert @trainer.captured_pokemon.exists?(id: eevee.id)
+    assert @trainer.captured_pokemon.exists?(id: lapras.id)
   end
 end

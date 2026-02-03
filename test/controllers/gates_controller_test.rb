@@ -164,4 +164,18 @@ class GatesControllerTest < ActionDispatch::IntegrationTest
     assert_includes view_file, "badge_map"
     assert_includes view_file, "Elite Four Trophy"
   end
+
+  # ================================================================================
+  # POKEMON REWARD DISPLAY TESTS
+  # ================================================================================
+
+  test "celebration view file contains pokemon sprite display logic" do
+    # Verify the celebration view template includes pokemon sprite display markup
+    view_file = File.read(Rails.root.join("app", "views", "gates", "celebration.html.erb"))
+
+    assert_includes view_file, "@awarded_pokemon"
+    assert_includes view_file, "celebration-pokemon"
+    assert_includes view_file, "celebration-pokemon-sprite"
+    assert_includes view_file, "pokemonSprites"
+  end
 end

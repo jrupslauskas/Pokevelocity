@@ -281,7 +281,7 @@
 # Exeggcute Line
 - from: 102 # Exeggcute
   to: 103   # Exeggutor
-  item: evolution_stone
+  item: leaf_stone
 
 # Cubone Line
 - from: 104 # Cubone
