@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.3.0] - 2026-02-01
+### Added
+- Add missing Lapras and correct incorrect evolution for Exeggcute
+
 ## [1.2.2] - 2026-02-01
 ### Added
 - Add session timeout

@@ -508,15 +508,15 @@
     - pokemon: Growlithe
       spawn_rate: 15
 
-- name: Celadon City - Game Corner and Mansion
-  description: A bustling city. Home to the Celadon City Game Corner as well as the Celadon Mansion
+- name: Celadon City - Game Corner
+  description: A brightly lit arcade tucked into the heart of Celadon City, buzzing with music and flashing lights. Trainers gather around slot machines, chasing lucky streaks while rumors swirl about a hidden basement beneath the noise and neon.
   gate_requirement: 3
   order: 22
   encounters:
     - pokemon: Abra
-      spawn_rate: 15
+      spawn_rate: 20
     - pokemon: Clefairy
-      spawn_rate: 15
+      spawn_rate: 20
     - pokemon: Dratini
       spawn_rate: 15
     - pokemon: Pinsir
@@ -525,8 +525,6 @@
       spawn_rate: 15
     - pokemon: Porygon
       spawn_rate: 15
-    - pokemon: Eevee
-      spawn_rate: 10
 
 ## Celadon Gym - Gate 4
 
@@ -706,7 +704,7 @@
   order: 29
   encounters:
     - pokemon: Nidoran♂
-      spawn_rate: 30
+      spawn_rate: 25
     - pokemon: Nidorino
       spawn_rate: 20
     - pokemon: Paras
@@ -716,7 +714,7 @@
     - pokemon: Doduo
       spawn_rate: 10
     - pokemon: Rhyhorn
-      spawn_rate: 5
+      spawn_rate: 10
     - pokemon: Chansey
       spawn_rate: 5
     - pokemon: Scyther
@@ -1256,15 +1254,13 @@
   order: 48
   encounters:
     - pokemon: Bulbasaur
-      spawn_rate: 20
+      spawn_rate: 25
     - pokemon: Squirtle
-      spawn_rate: 20
+      spawn_rate: 25
     - pokemon: Charmander
-      spawn_rate: 20
+      spawn_rate: 25
     - pokemon: Pikachu
-      spawn_rate: 20
-    - pokemon: Eevee
-      spawn_rate: 20
+      spawn_rate: 25
 
 - name: Forgotten Grotto
   description: A small, hidden cavern tucked away from well-traveled paths, as if the world simply forgot it was there. Footprints never seem to last, but those who visit swear something is watching—curious, playful, and just out of reach.
