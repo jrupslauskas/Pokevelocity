@@ -2724,8 +2724,8 @@ body > div:not(.app-layout) {
 
 .badges-section {
   max-width: 1200px;
-  margin: 32px auto;
-  padding: 24px;
+  margin: 20px auto;
+  padding: 16px;
   background: linear-gradient(135deg, #FFF4E6 0%, #FFE8CC 100%);
   border-radius: 12px;
   border: 2px solid #E8D5C4;
@@ -2736,20 +2736,20 @@ body > div:not(.app-layout) {
   color: #2C5F2D;
   font-size: 24px;
   font-weight: 700;
-  margin: 0 0 24px 0;
+  margin: 0 0 12px 0;
 }
 
 .badges-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
 .badge-slot {
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2770,15 +2770,15 @@ body > div:not(.app-layout) {
 }
 
 .badge-sprite {
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
   object-fit: contain;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 .badge-empty {
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
   background: linear-gradient(135deg, #F5F5F5 0%, #E8E8E8 100%);
   border-radius: 8px;
   opacity: 0.4;
@@ -2786,19 +2786,29 @@ body > div:not(.app-layout) {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+  .badges-section {
+    margin: 16px auto;
+    padding: 12px;
+  }
+
+  .badges-title {
+    font-size: 20px;
+    margin: 0 0 10px 0;
+  }
+
   .badges-container {
-    gap: 12px;
+    gap: 10px;
   }
 
   .badge-slot {
-    width: 70px;
-    height: 70px;
+    width: 60px;
+    height: 60px;
   }
 
   .badge-sprite,
   .badge-empty {
-    width: 56px;
-    height: 56px;
+    width: 48px;
+    height: 48px;
   }
 }
 

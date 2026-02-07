@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.3.6] - 2026-02-07
+### Added
+- Tweak badges-section sizing
+
 ## [1.3.5] - 2026-02-07
 ### Added
 - Add currency display to inventory
