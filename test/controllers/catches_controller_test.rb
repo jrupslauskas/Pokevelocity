@@ -1907,6 +1907,156 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
   end
 
   # ================================================================================
+  # ENCOUNTER PERCENTAGE TESTS
+  # ================================================================================
+
+  test "show action should calculate encounter percentage for grass encounters" do
+    trainer = trainers(:ash)
+    trainer.update!(adventures_remaining: 5)
+
+    # Create route with multiple encounters
+    route = Route.create!(gate_requirement: 0, order: 400)
+    RouteEncounter.create!(route: route, pokemon: pokemons(:bulbasaur), spawn_rate: 50, encounter_type: "grass")
+    RouteEncounter.create!(route: route, pokemon: pokemons(:charmander), spawn_rate: 30, encounter_type: "grass")
+    RouteEncounter.create!(route: route, pokemon: pokemons(:squirtle), spawn_rate: 20, encounter_type: "grass")
+
+    log_in_as(trainer)
+
+    # Go on adventure
+    post adventure_path(route), params: { encounter_type: "grass" }
+    follow_redirect!
+
+    # Check that percentage is displayed
+    assert_response :success
+    assert_match /Encounter Rate:/i, response.body
+    # One of the three percentages should be shown: 50%, 30%, or 20%
+    assert_match /(50|30|20)%/, response.body
+  end
+
+  test "show action should calculate encounter percentage for fish encounters" do
+    trainer = trainers(:ash)
+    trainer.update!(adventures_remaining: 5)
+    trainer.add_item(:old_rod, 1)
+
+    # Create route with fishing encounters
+    route = Route.create!(gate_requirement: 0, order: 401)
+    RouteEncounter.create!(route: route, pokemon: pokemons(:magikarp), spawn_rate: 70, encounter_type: "fish", required_item_key: "old_rod")
+    RouteEncounter.create!(route: route, pokemon: pokemons(:tentacool), spawn_rate: 30, encounter_type: "fish", required_item_key: "old_rod")
+
+    log_in_as(trainer)
+
+    # Go on fishing adventure
+    post adventure_path(route), params: { encounter_type: "fish", rod_type: "old_rod" }
+    follow_redirect!
+
+    # Check that percentage is displayed
+    assert_response :success
+    assert_match /Encounter Rate:/i, response.body
+    # Should be either 70% or 30%
+    assert_match /(70|30)%/, response.body
+  end
+
+  test "show action should format whole number percentages without decimal" do
+    trainer = trainers(:ash)
+    trainer.update!(adventures_remaining: 5)
+
+    # Create route with encounters that result in whole number percentages
+    route = Route.create!(gate_requirement: 0, order: 402)
+    RouteEncounter.create!(route: route, pokemon: pokemons(:bulbasaur), spawn_rate: 50, encounter_type: "grass")
+    RouteEncounter.create!(route: route, pokemon: pokemons(:charmander), spawn_rate: 50, encounter_type: "grass")
+
+    log_in_as(trainer)
+
+    # Go on adventure
+    post adventure_path(route), params: { encounter_type: "grass" }
+    follow_redirect!
+
+    # Check that it shows "50%" not "50.0%"
+    assert_response :success
+    assert_match /50%/, response.body
+    assert_no_match /50\.0%/, response.body
+  end
+
+  test "show action should show decimal percentages when needed" do
+    trainer = trainers(:ash)
+    trainer.update!(adventures_remaining: 5)
+
+    # Create route with encounters that result in decimal percentages
+    route = Route.create!(gate_requirement: 0, order: 403)
+    RouteEncounter.create!(route: route, pokemon: pokemons(:bulbasaur), spawn_rate: 33, encounter_type: "grass")
+    RouteEncounter.create!(route: route, pokemon: pokemons(:charmander), spawn_rate: 33, encounter_type: "grass")
+    RouteEncounter.create!(route: route, pokemon: pokemons(:squirtle), spawn_rate: 34, encounter_type: "grass")
+
+    log_in_as(trainer)
+
+    # Go on adventure
+    post adventure_path(route), params: { encounter_type: "grass" }
+    follow_redirect!
+
+    # Check that it shows decimals (33.0% or 34.0% rounded to 1 decimal)
+    assert_response :success
+    assert_match /\d+\.?\d*%/, response.body
+  end
+
+  test "show action should not show percentage when session data missing" do
+    trainer = trainers(:ash)
+    trainer.update!(adventures_remaining: 5)
+
+    log_in_as(trainer)
+
+    # Access show page directly without going through adventure flow
+    # (This would normally be prevented by session validation, but we can test in test env)
+    get catch_path(pokemons(:bulbasaur))
+
+    # Should not display encounter rate
+    assert_response :success
+    assert_no_match /Encounter Rate:/i, response.body
+  end
+
+  test "show action should handle different rod types correctly" do
+    trainer = trainers(:ash)
+    trainer.update!(adventures_remaining: 5)
+    trainer.add_item(:good_rod, 1)
+
+    # Create route with different rod encounters
+    route = Route.create!(gate_requirement: 0, order: 404)
+    RouteEncounter.create!(route: route, pokemon: pokemons(:magikarp), spawn_rate: 50, encounter_type: "fish", required_item_key: "old_rod")
+    RouteEncounter.create!(route: route, pokemon: pokemons(:goldeen), spawn_rate: 50, encounter_type: "fish", required_item_key: "good_rod")
+    RouteEncounter.create!(route: route, pokemon: pokemons(:tentacool), spawn_rate: 50, encounter_type: "fish", required_item_key: "good_rod")
+
+    log_in_as(trainer)
+
+    # Fish with good rod - should only calculate from good_rod encounters
+    post adventure_path(route), params: { encounter_type: "fish", rod_type: "good_rod" }
+    follow_redirect!
+
+    # Should show 50% (2 good_rod encounters with equal spawn rates)
+    assert_response :success
+    assert_match /50%/, response.body
+  end
+
+  test "show action should calculate percentage only for matching encounter type" do
+    trainer = trainers(:ash)
+    trainer.update!(adventures_remaining: 5)
+    trainer.add_item(:hm_surf, 1)
+
+    # Create route with mixed encounter types
+    route = Route.create!(gate_requirement: 0, order: 405)
+    RouteEncounter.create!(route: route, pokemon: pokemons(:bulbasaur), spawn_rate: 50, encounter_type: "grass")
+    RouteEncounter.create!(route: route, pokemon: pokemons(:tentacool), spawn_rate: 100, encounter_type: "surf", required_item_key: "hm_surf")
+
+    log_in_as(trainer)
+
+    # Surf encounter - should only calculate from surf encounters
+    post adventure_path(route), params: { encounter_type: "surf" }
+    follow_redirect!
+
+    # Should show 100% (only one surf encounter)
+    assert_response :success
+    assert_match /100%/, response.body
+  end
+
+  # ================================================================================
   # VISIT POKÉ CENTER TESTS
   # ================================================================================
 

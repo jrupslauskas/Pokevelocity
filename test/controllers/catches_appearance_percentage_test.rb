@@ -52,10 +52,10 @@ class CatchesAppearancePercentageTest < ActionDispatch::IntegrationTest
     get catches_path
     assert_response :success
 
-    # Check that percentages are displayed
-    assert_match /50\.0%/, response.body
-    assert_match /30\.0%/, response.body
-    assert_match /20\.0%/, response.body
+    # Check that percentages are displayed (whole numbers without .0)
+    assert_match /50%/, response.body
+    assert_match /30%/, response.body
+    assert_match /20%/, response.body
   end
 
   test "percentages should add up to 100% for same encounter type" do
@@ -101,7 +101,7 @@ class CatchesAppearancePercentageTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     # Should have both grass percentages (50%, 30%, 20%) and fish percentages (70%, 30%)
-    assert_match /70\.0%/, response.body
+    assert_match /70%/, response.body
   end
 
   test "should calculate separate percentages for different rod types" do
@@ -155,9 +155,9 @@ class CatchesAppearancePercentageTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     # Should have separate percentage calculations for each rod type
-    assert_match /100\.0%/, response.body  # Old rod
-    assert_match /60\.0%/, response.body   # Good rod
-    assert_match /40\.0%/, response.body   # Good rod
+    assert_match /100%/, response.body  # Old rod
+    assert_match /60%/, response.body   # Good rod
+    assert_match /40%/, response.body   # Good rod
   end
 
   test "should handle equal spawn rates correctly" do
@@ -193,7 +193,7 @@ class CatchesAppearancePercentageTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     # Both should be 50% (at least 2 Pokemon with this percentage)
-    assert_select ".route-pokemon-percentage", text: "50.0%", minimum: 2
+    assert_select ".route-pokemon-percentage", text: "50%", minimum: 2
   end
 
   test "should handle single Pokemon at 100%" do
@@ -215,7 +215,7 @@ class CatchesAppearancePercentageTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     # Should be 100%
-    assert_match /100\.0%/, response.body
+    assert_match /100%/, response.body
   end
 
   test "should not display percentage for locked Pokemon" do
@@ -297,9 +297,9 @@ class CatchesAppearancePercentageTest < ActionDispatch::IntegrationTest
     get catches_path
     assert_response :success
 
-    # Check that percentages are rounded to one decimal
+    # Check that percentages are rounded to one decimal (or shown as integers)
     assert_match /46\.7%/, response.body
     assert_match /33\.3%/, response.body
-    assert_match /20\.0%/, response.body
+    assert_match /20%/, response.body
   end
 end

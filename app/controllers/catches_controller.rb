@@ -194,6 +194,34 @@ class CatchesController < ApplicationController
     # Get last adventure parameters for "Adventure Again" button
     @last_adventure = session[:last_adventure]
 
+    # Calculate encounter percentage for this Pokemon
+    @encounter_percentage = nil
+    if @last_adventure.present?
+      route = Route.find_by(id: @last_adventure['route_id'])
+      if route
+        encounter_type = @last_adventure['encounter_type']
+        rod_type = @last_adventure['rod_type']
+
+        # Get all encounters for this encounter type (and rod type if fishing)
+        encounters = route.route_encounters.where(encounter_type: encounter_type)
+
+        # For fishing, filter by rod type
+        if encounter_type == 'fish' && rod_type.present?
+          encounters = encounters.where(required_item_key: rod_type)
+        end
+
+        # Calculate percentage
+        total_spawn_rate = encounters.sum(:spawn_rate)
+        if total_spawn_rate > 0
+          pokemon_encounter = encounters.find_by(pokemon_id: @pokemon.id)
+          if pokemon_encounter
+            percentage = ((pokemon_encounter.spawn_rate.to_f / total_spawn_rate) * 100).round(1)
+            @encounter_percentage = percentage % 1 == 0 ? percentage.to_i : percentage
+          end
+        end
+      end
+    end
+
     # Check if trainer has any pokeballs (show message but don't redirect)
     # Only show this message if there isn't already a flash message
     if @trainer.total_pokeballs == 0 && flash[:alert].nil?
