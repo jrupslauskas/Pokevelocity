@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.4.0] - 2026-02-06
+### Added
+- Pokecenter visit logic and functionality overhaul
+
 ## [1.3.0] - 2026-02-01
 ### Added
 - Add missing Lapras and correct incorrect evolution for Exeggcute

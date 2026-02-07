@@ -189,76 +189,61 @@ class Trainer < ApplicationRecord
   # ADVENTURE MANAGEMENT
   # ================================================================================
 
-  # Calculate how many adventures are available to claim
-  # @return [Integer] number of adventures that can be claimed (0 if none available)
-  def available_adventures_to_claim
-    # Initialize if never allocated
-    if adventures_allocated_at.nil?
-      potential_total = adventures_remaining + 5
-      return potential_total > 10 ? (10 - adventures_remaining) : 5
-    end
+  # Calculate how many pokecenter credits are available
+  # Credits accumulate at 1 per day, capped at 2 total
+  # @return [Integer] number of credits available (0-2)
+  def available_pokecenter_credits
+    # First time visitor - give them 1 free credit
+    return 1 if adventures_allocated_at.nil?
 
-    # Already at max, nothing to claim
-    return 0 if adventures_remaining >= 10
+    # Current banked credits
+    current_credits = pokecenter_credits
 
-    # Calculate how many full 24-hour periods have passed
-    time_elapsed = Time.current - adventures_allocated_at
-    full_periods_passed = (time_elapsed / 24.hours).floor
+    # Already at max
+    return 2 if current_credits >= 2
 
-    # No full periods = nothing to claim
-    return 0 if full_periods_passed == 0
+    # Calculate days elapsed since last visit
+    last_visit_date = adventures_allocated_at.to_date
+    today = Date.current
+    days_elapsed = (today - last_visit_date).to_i
 
-    # Calculate how many adventures would be granted (5 per period)
-    adventures_to_grant = full_periods_passed * 5
-
-    # Return the actual amount that would be added (respecting the cap of 10)
-    potential_total = adventures_remaining + adventures_to_grant
-    if potential_total > 10
-      10 - adventures_remaining  # Only claim up to max
-    else
-      adventures_to_grant
-    end
+    # Award 1 credit per day, cap at 2 total
+    [current_credits + days_elapsed, 2].min
   end
 
-  # Claim all available adventures (Visit Poké Center)
-  # @return [Hash] result with :claimed count and :new_total
+  # Visit Poké Center - uses 1 credit to restore 5 adventures
+  # @return [Hash] result with :success, :restored, :new_total, :credits_remaining
   def claim_adventures
-    # Initialize if never allocated
-    if adventures_allocated_at.nil?
-      old_count = adventures_remaining
-      new_count = [ adventures_remaining + 5, 10 ].min
-      update!(adventures_remaining: new_count, adventures_allocated_at: Time.current)
-      return { claimed: new_count - old_count, new_total: new_count }
+    available_credits = available_pokecenter_credits
+
+    # No credits available
+    if available_credits == 0
+      return {
+        success: false,
+        restored: 0,
+        new_total: adventures_remaining,
+        credits_remaining: 0
+      }
     end
 
-    # Already at max, nothing to claim
-    if adventures_remaining >= 10
-      return { claimed: 0, new_total: 10 }
-    end
-
-    # Calculate how many full 24-hour periods have passed
-    time_elapsed = Time.current - adventures_allocated_at
-    full_periods_passed = (time_elapsed / 24.hours).floor
-
-    # No full periods = nothing to claim
-    if full_periods_passed == 0
-      return { claimed: 0, new_total: adventures_remaining }
-    end
-
-    # Calculate how many adventures to grant
-    adventures_to_grant = full_periods_passed * 5
+    # Use 1 credit, restore 5 adventures
     old_count = adventures_remaining
-    new_adventure_count = [ adventures_remaining + adventures_to_grant, 10 ].min
+    new_count = [adventures_remaining + 5, 10].min
+    actual_restored = new_count - old_count
 
-    # Advance the allocation timestamp by the number of full periods
-    new_allocation_time = adventures_allocated_at + (full_periods_passed * 24.hours)
-
+    # Update: decrement credits, restore adventures, update timestamp
     update!(
-      adventures_remaining: new_adventure_count,
-      adventures_allocated_at: new_allocation_time
+      pokecenter_credits: available_credits - 1,
+      adventures_remaining: new_count,
+      adventures_allocated_at: Time.current
     )
 
-    { claimed: new_adventure_count - old_count, new_total: new_adventure_count }
+    {
+      success: true,
+      restored: actual_restored,
+      new_total: new_count,
+      credits_remaining: available_credits - 1
+    }
   end
 
   # Use one adventure (decrement counter)
@@ -324,12 +309,18 @@ class Trainer < ApplicationRecord
   end
 
   # Get the time remaining until next adventure is available to claim
-  # @return [Integer] seconds until next period (0 if already claimable)
+  # @return [Integer] seconds until midnight (0 if already claimable or never visited)
   def time_until_next_adventure
     return 0 if adventures_allocated_at.nil?
 
-    next_refresh = adventures_allocated_at + 24.hours
-    seconds = (next_refresh - Time.current).to_i
+    # Check if already claimable (last visit was not today)
+    last_visit_date = adventures_allocated_at.to_date
+    today = Date.current
+    return 0 if last_visit_date != today
+
+    # Calculate time until midnight (start of next day in configured timezone)
+    tomorrow_start = Time.zone.now.beginning_of_day + 1.day
+    seconds = (tomorrow_start - Time.current).to_i
     seconds > 0 ? seconds : 0
   end
 

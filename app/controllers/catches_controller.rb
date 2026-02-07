@@ -288,10 +288,11 @@ class CatchesController < ApplicationController
     @trainer = current_trainer
     result = @trainer.claim_adventures
 
-    if result[:claimed] > 0
-      redirect_to catches_path, notice: "Welcome to the Poké Center! Restored +#{result[:claimed]} adventure#{'s' if result[:claimed] != 1}. (#{result[:new_total]}/10)"
+    if result[:success]
+      credits_text = result[:credits_remaining] == 1 ? "1 credit" : "#{result[:credits_remaining]} credits"
+      redirect_to catches_path, notice: "Thank you for waiting. We've restored some of your adventures. We hope to see you again!"
     else
-      redirect_to catches_path, alert: "No adventures available to claim yet. Next adventure in #{@trainer.formatted_time_until_adventure}."
+      redirect_to catches_path, alert: "No Poké Center credits available. You'll earn a new credit tomorrow!"
     end
   end
 
