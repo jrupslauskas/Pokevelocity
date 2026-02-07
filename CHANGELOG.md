@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.3.2] - 2026-02-06
+### Added
+- Add link to trainers via newsfeed
+
 ## [1.3.1] - 2026-02-06
 ### Added
 - Encounter percentages UI tweaks

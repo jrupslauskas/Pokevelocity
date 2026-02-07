@@ -1808,6 +1808,27 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     assert_select ".news-feed"
   end
 
+  test "newsfeed entries should be clickable links to trainer pokedex" do
+    ash = trainers(:ash)
+    gary = trainers(:gary)
+
+    # Gary catches a Pikachu
+    pikachu = pokemons(:pikachu)
+    Capture.create!(
+      trainer: gary,
+      pokemon: pikachu,
+      ball_type: "pokeball",
+      created_at: 1.hour.ago
+    )
+
+    log_in_as(ash)
+    get dashboard_path
+
+    assert_response :success
+    # Should have a link to Gary's trainer page
+    assert_select "a.news-item-link[href=?]", trainer_path(gary)
+  end
+
   test "should show recent captures from other trainers" do
     ash = trainers(:ash)
     gary = trainers(:gary)
