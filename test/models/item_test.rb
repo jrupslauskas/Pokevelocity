@@ -235,6 +235,56 @@ class ItemTest < ActiveSupport::TestCase
     assert_equal 10, definition[:adventure_restore]
   end
 
+  # ================================================================================
+  # POKEBALL PRICE TESTS
+  # ================================================================================
+
+  test "pokeball should have correct prices" do
+    definition = Item::ITEMS[:pokeball]
+    assert_equal 150, definition[:buy_price]
+    assert_equal 100, definition[:sell_price]
+  end
+
+  test "great_ball should have correct prices" do
+    definition = Item::ITEMS[:great_ball]
+    assert_equal 250, definition[:buy_price]
+    assert_equal 200, definition[:sell_price]
+  end
+
+  test "ultra_ball should have correct prices" do
+    definition = Item::ITEMS[:ultra_ball]
+    assert_equal 350, definition[:buy_price]
+    assert_equal 300, definition[:sell_price]
+  end
+
+  test "master_ball should have correct prices" do
+    definition = Item::ITEMS[:master_ball]
+    assert_equal 500, definition[:buy_price]
+    assert_equal 400, definition[:sell_price]
+  end
+
+  # ================================================================================
+  # EVOLUTION STONE PRICE TESTS
+  # ================================================================================
+
+  test "fire_stone should have correct prices" do
+    definition = Item::ITEMS[:fire_stone]
+    assert_equal 250, definition[:buy_price]
+    assert_equal 200, definition[:sell_price]
+  end
+
+  test "water_stone should have correct prices" do
+    definition = Item::ITEMS[:water_stone]
+    assert_equal 250, definition[:buy_price]
+    assert_equal 200, definition[:sell_price]
+  end
+
+  test "evolution_stone should have correct prices" do
+    definition = Item::ITEMS[:evolution_stone]
+    assert_equal 100, definition[:buy_price]
+    assert_equal 100, definition[:sell_price]
+  end
+
   test "potion should have correct name" do
     item = Item.new(key: "potion", item_type: Item::TYPES[:potion])
     assert_equal "Potion", item.name
