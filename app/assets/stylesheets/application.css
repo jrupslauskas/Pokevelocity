@@ -2829,10 +2829,11 @@ body > div:not(.app-layout) {
 .currency-display {
   background: #FFF4E6;
   color: #2C5F2D;
-  padding: 8px 16px;
+  padding: 6px 12px;
   border-radius: 8px;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 14px;
+  white-space: nowrap;
 }
 
 .shop-item {

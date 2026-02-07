@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.3.5] - 2026-02-07
+### Added
+- Add currency display to inventory
+
 ## [1.3.4] - 2026-02-07
 ### Added
 - Add hype page for new catches and evolutions

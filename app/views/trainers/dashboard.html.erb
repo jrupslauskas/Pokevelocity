@@ -66,9 +66,14 @@
     <div class="dashboard-grid">
       <!-- Inventory Card -->
       <div class="card-dashboard">
-        <div class="card-dashboard-header">
-          <span class="card-dashboard-icon">🎒</span>
-          <h2 class="card-dashboard-title">Inventory</h2>
+        <div class="card-dashboard-header" style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span class="card-dashboard-icon">🎒</span>
+            <h2 class="card-dashboard-title">Inventory</h2>
+          </div>
+          <span class="currency-display">
+            💰 Pokedollars: <%= @trainer.currency %>
+          </span>
         </div>
 
         <!-- Pokéballs Section -->

@@ -4000,6 +4000,22 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     assert_select "#discardMessage", text: /Are you sure you want to throw away 1/
   end
 
+  test "dashboard should display currency in inventory header" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Set trainer currency to a known value
+    trainer.update!(currency: 12345)
+
+    get dashboard_path
+
+    assert_response :success
+    # Check that currency display exists in the page
+    assert_select ".currency-display", text: /💰 Pokedollars: 12345/
+    # Check that it's in the inventory card
+    assert_select ".card-dashboard .currency-display"
+  end
+
   private
 
   # Helper method to log in a trainer
