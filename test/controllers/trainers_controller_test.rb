@@ -931,7 +931,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     log_in_as(trainer)
     pokemon = pokemons(:bulbasaur)
 
-    # Unlock all gates so catch doesn't trigger celebration
+    # Unlock all gates so catch doesn't trigger gate celebration
     Gate.all.each do |gate|
       trainer.gate_unlocks.find_or_create_by(gate: gate)
     end
@@ -941,8 +941,8 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     # Master ball has 100% catch rate
     post catch_path(pokemon), params: { ball_type: "master_ball" }
 
-    assert_redirected_to pokedex_path
-    assert_match(/Success! You caught #{pokemon.name}/, flash[:notice])
+    # Should redirect to pokemon celebration page
+    assert_redirected_to pokemon_celebration_path
 
     trainer.reload
     assert_includes trainer.captured_pokemon, pokemon
@@ -1015,10 +1015,8 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
 
     post catch_path(pokemon), params: { ball_type: "master_ball" }
 
-    assert_redirected_to pokedex_path
-    follow_redirect!
-    assert_match "Evolution Stone", response.body
-    assert_match "already in your Pokédex", response.body
+    # Should redirect to pokemon celebration page
+    assert_redirected_to pokemon_celebration_path
 
     trainer.reload
     # Should not create new capture
@@ -3171,7 +3169,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
 
-    # Unlock all gates so evolution doesn't trigger celebration
+    # Unlock all gates so evolution doesn't trigger gate celebration
     Gate.all.each do |gate|
       trainer.gate_unlocks.find_or_create_by(gate: gate)
     end
@@ -3186,7 +3184,8 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
       post evolve_path(evolution), params: { id: evolution.id }
     end
 
-    assert_redirected_to pokedex_path
+    # Should redirect to pokemon celebration page
+    assert_redirected_to pokemon_celebration_path
     trainer.reload
     assert_includes trainer.captured_pokemon, pokemons(:raichu)
   end
@@ -3212,7 +3211,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
 
-    # Unlock all gates so evolution doesn't trigger celebration
+    # Unlock all gates so evolution doesn't trigger gate celebration
     Gate.all.each do |gate|
       trainer.gate_unlocks.find_or_create_by(gate: gate)
     end
@@ -3225,7 +3224,12 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
 
     post evolve_path(evolution), params: { id: evolution.id }
 
-    assert_match "Congratulations! Your Pikachu evolved into Raichu!", flash[:notice]
+    # Should redirect to celebration page
+    assert_redirected_to pokemon_celebration_path
+
+    # Verify evolution was successful
+    trainer.reload
+    assert_includes trainer.captured_pokemon, pokemons(:raichu)
   end
 
   test "should use same ball type as original capture for evolved pokemon" do

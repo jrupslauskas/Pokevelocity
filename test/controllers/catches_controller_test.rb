@@ -297,24 +297,21 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     # Second capture attempt with master ball (guaranteed success)
     post catch_path(pokemon), params: { ball_type: "master_ball" }
 
-    assert_redirected_to pokedex_path
-    follow_redirect!
+    # Should redirect to celebration page for duplicate catch
+    assert_redirected_to pokemon_celebration_path
 
     trainer.reload
     # Should not create new capture
     assert_equal initial_captures, trainer.captures.count
     # Should give evolution stone
     assert_equal initial_stones + 1, trainer.item_quantity(:evolution_stone)
-    # Should show appropriate message
-    assert_match "Evolution Stone", response.body
-    assert_match "already in your Pokédex", response.body
   end
 
   test "should show different message for duplicate capture vs new capture" do
     trainer = trainers(:ash)
     pokemon = pokemons(:bulbasaur)
 
-    # Unlock all gates so catch doesn't trigger celebration
+    # Unlock all gates so catch doesn't trigger gate celebration
     Gate.all.each do |gate|
       trainer.gate_unlocks.find_or_create_by(gate: gate)
     end
@@ -322,21 +319,31 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     # Give trainer master balls
     trainer.add_item(:master_ball, 5)
 
+    initial_captures = trainer.captures.count
+    initial_stones = trainer.item_quantity(:evolution_stone)
+
     # First capture - new pokemon
     log_in_as(trainer)
     set_encounter_session(pokemon)
     post catch_path(pokemon), params: { ball_type: "master_ball" }
-    follow_redirect!
-    first_message = response.body
-    assert_no_match "Evolution Stone", first_message
+    # Should redirect to celebration
+    assert_redirected_to pokemon_celebration_path
+
+    trainer.reload
+    assert_equal initial_captures + 1, trainer.captures.count
+    assert_equal initial_stones, trainer.item_quantity(:evolution_stone)
 
     # Second capture - duplicate
     set_encounter_session(pokemon)
     post catch_path(pokemon), params: { ball_type: "master_ball" }
-    follow_redirect!
-    second_message = response.body
-    assert_match "Evolution Stone", second_message
-    assert_match "already in your Pokédex", second_message
+    # Should still redirect to celebration
+    assert_redirected_to pokemon_celebration_path
+
+    trainer.reload
+    # Should not create another capture
+    assert_equal initial_captures + 1, trainer.captures.count
+    # Should give evolution stone for duplicate
+    assert_equal initial_stones + 1, trainer.item_quantity(:evolution_stone)
   end
 
   test "should deduct pokeball even for duplicate capture" do
@@ -531,7 +538,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     pokemon = pokemons(:bulbasaur)
 
-    # Unlock all gates so catch doesn't trigger celebration
+    # Unlock all gates so catch doesn't trigger gate celebration
     Gate.all.each do |gate|
       trainer.gate_unlocks.find_or_create_by(gate: gate)
     end
@@ -544,7 +551,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     # First capture
     set_encounter_session(pokemon)
     post catch_path(pokemon), params: { ball_type: "master_ball" }
-    assert_redirected_to pokedex_path
+    assert_redirected_to pokemon_celebration_path
 
     # Immediately encounter it again
     set_encounter_session(pokemon)
@@ -1521,11 +1528,11 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     assert_equal attempts, balls_used, "Should have used exactly #{attempts} balls for #{attempts} attempts"
   end
 
-  test "successful catch should still redirect to pokedex" do
+  test "successful catch should redirect to celebration page" do
     trainer = trainers(:ash)
     pokemon = pokemons(:bulbasaur) # Difficulty 1
 
-    # Unlock all gates so catch doesn't trigger celebration
+    # Unlock all gates so catch doesn't trigger gate celebration
     Gate.all.each do |gate|
       trainer.gate_unlocks.find_or_create_by(gate: gate)
     end
@@ -1538,13 +1545,8 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     set_encounter_session(pokemon)
     post catch_path(pokemon), params: { ball_type: "master_ball" }
 
-    # Should redirect to pokedex on success
-    assert_redirected_to pokedex_path
-    follow_redirect!
-
-    # Should show success message
-    assert_match "Success", response.body
-    assert_match pokemon.name, response.body
+    # Should redirect to pokemon celebration page on success
+    assert_redirected_to pokemon_celebration_path
 
     # Should create capture record
     trainer.reload

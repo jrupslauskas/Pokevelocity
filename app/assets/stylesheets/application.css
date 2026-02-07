@@ -3586,6 +3586,183 @@ body > div:not(.app-layout) {
 }
 
 /* ========================================
+   POKEMON CELEBRATION STYLES
+   ======================================== */
+
+.pokemon-celebration {
+  background: linear-gradient(135deg, #FFF9E6 0%, #FFE5B4 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 16px 0;
+}
+
+.pokemon-celebration .celebration-card {
+  max-width: 90%;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+@media (min-width: 768px) {
+  .pokemon-celebration .celebration-card {
+    max-width: 700px;
+  }
+}
+
+.pokemon-celebration-title-section {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.pokemon-celebration-header {
+  font-size: 28px;
+  color: #2C5F2D;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.pokemon-celebration-subtitle {
+  font-size: 18px;
+  color: #4A7C59;
+  font-weight: 600;
+  text-align: center;
+  margin: 0;
+}
+
+.pokemon-celebration-sprite-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 16px 0;
+}
+
+.pokemon-celebration-sprite {
+  width: 240px;
+  height: 240px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2));
+  animation: pokemonBounce 1s ease-out;
+}
+
+@keyframes pokemonBounce {
+  0% {
+    transform: scale(0) translateY(-100px);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.1) translateY(10px);
+  }
+  80% {
+    transform: scale(0.95) translateY(-5px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.pokemon-celebration-info {
+  text-align: center;
+  margin: 12px 0;
+}
+
+.pokemon-celebration-number {
+  font-size: 16px;
+  color: #6B8E23;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.pokemon-celebration-details {
+  margin: 16px 0;
+  padding: 12px;
+  background: linear-gradient(135deg, #F0F7F4 0%, #E8F5E9 100%);
+  border-radius: 8px;
+  border: 2px solid #81C784;
+}
+
+.pokemon-celebration-detail {
+  color: #2C5F2D;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 6px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.celebration-pokeball-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.pokemon-celebration-stats {
+  display: flex;
+  justify-content: space-around;
+  margin: 16px 0;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  border: 2px solid #E8D5C4;
+  gap: 12px;
+}
+
+.pokemon-celebration-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.pokemon-celebration-stat-label {
+  color: #6B8E23;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pokemon-celebration-stat-value {
+  color: #2C5F2D;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.pokemon-celebration-actions {
+  margin-top: 16px;
+}
+
+/* Responsive adjustments for Pokemon celebration */
+@media (max-width: 768px) {
+  .pokemon-celebration-sprite {
+    width: 200px;
+    height: 200px;
+  }
+
+  .pokemon-celebration-header {
+    font-size: 24px;
+  }
+
+  .pokemon-celebration-subtitle {
+    font-size: 16px;
+  }
+
+  .celebration-stats {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+/* ========================================
    HIGH CONTRAST MODE (WCAG AAA Compliant)
    Dark background with light text
    ======================================== */
