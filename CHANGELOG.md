@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.4.0] - 2026-02-08
+### Added
+- Add active party
+
 ## [1.3.7] - 2026-02-07
 ### Added
 - Add current user to news feed

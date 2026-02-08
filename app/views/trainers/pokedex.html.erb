@@ -7,12 +7,48 @@
       <p>Track and view all the Pokémon you've captured.</p>
     </header>
 
+    <!-- Party Section -->
+    <div class="party-section">
+      <div class="party-header">
+        <h2 class="party-title">Your Party</h2>
+        <button id="removePartyBtn" class="btn-remove-party" disabled>Remove</button>
+      </div>
+      <div class="party-container">
+        <%
+          # Create a hash of position => party_member for easy lookup
+          party_by_position = @party_members.index_by(&:position)
+        %>
+
+        <% (1..6).each do |position| %>
+          <% party_member = party_by_position[position] %>
+          <div class="party-slot <%= 'party-filled' if party_member %>"
+               data-position="<%= position %>"
+               data-pokemon-id="<%= party_member&.pokemon_id %>"
+               data-pokemon-name="<%= party_member&.pokemon&.name %>">
+            <% if party_member %>
+              <div class="party-slot-inner">
+                <%= image_tag "pokemonSprites/#{party_member.pokemon.pokedex_number.to_s.rjust(3, '0')}.png",
+                              alt: party_member.pokemon.name,
+                              class: "party-sprite",
+                              style: "image-rendering: pixelated;" %>
+                <span class="party-pokemon-name"><%= party_member.pokemon.name %></span>
+              </div>
+            <% else %>
+              <div class="party-empty">
+                <span class="party-position-number"><%= position %></span>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
     <% if @captured_pokemon.any? %>
       <div class="pokedex-container">
         <div class="pokedex-grid">
           <% @captured_pokemon.each do |pokemon| %>
             <% capture = @trainer.captures.find_by(pokemon: pokemon) %>
-            <div class="pokemon-card">
+            <div class="pokemon-card" data-pokemon-id="<%= pokemon.id %>">
               <div class="pokemon-image-container">
                 <% if pokemon.image.attached? %>
                   <%= image_tag pokemon.image, alt: pokemon.name, class: "pokemon-image" %>
@@ -50,5 +86,194 @@
         </div>
       </div>
     <% end %>
+
+    <script>
+      // Reset initialization flag before caching
+      document.addEventListener('turbo:before-cache', function() {
+        window.partyManagerInitialized = false;
+      });
+
+      // Party slot interaction functionality
+      document.addEventListener('turbo:load', function() {
+        // Prevent multiple initializations
+        if (window.partyManagerInitialized) {
+          return;
+        }
+        window.partyManagerInitialized = true;
+
+        let selectedSlot = null;
+
+        // Get all party slots
+        const partySlots = document.querySelectorAll('.party-slot');
+
+        // Get all pokemon cards in the Pokedex
+        const pokemonCards = document.querySelectorAll('.pokemon-card');
+
+        // Get the remove button
+        const removePartyBtn = document.getElementById('removePartyBtn');
+
+        // Helper function to get CSRF token
+        function getCsrfToken() {
+          return document.querySelector('meta[name="csrf-token"]').content;
+        }
+
+        // Helper function to update party slot UI
+        function updateSlotUI(slotElement, pokemon) {
+          // Clear existing content
+          slotElement.innerHTML = '';
+
+          if (pokemon) {
+            // Create elements programmatically to avoid template literal issues
+            const innerDiv = document.createElement('div');
+            innerDiv.className = 'party-slot-inner';
+
+            const img = document.createElement('img');
+            // Use the sprite URL provided by the server (handles asset fingerprinting correctly)
+            img.src = pokemon.sprite_url;
+            img.alt = pokemon.name;
+            img.className = 'party-sprite';
+            img.style.imageRendering = 'pixelated';
+
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'party-pokemon-name';
+            nameSpan.textContent = pokemon.name;
+
+            innerDiv.appendChild(img);
+            innerDiv.appendChild(nameSpan);
+            slotElement.appendChild(innerDiv);
+
+            slotElement.classList.add('party-filled');
+            slotElement.dataset.pokemonId = pokemon.id;
+            slotElement.dataset.pokemonName = pokemon.name;
+          } else {
+            // Clear the slot
+            const position = slotElement.dataset.position;
+
+            const emptyDiv = document.createElement('div');
+            emptyDiv.className = 'party-empty';
+
+            const positionSpan = document.createElement('span');
+            positionSpan.className = 'party-position-number';
+            positionSpan.textContent = position;
+
+            emptyDiv.appendChild(positionSpan);
+            slotElement.appendChild(emptyDiv);
+
+            slotElement.classList.remove('party-filled');
+            delete slotElement.dataset.pokemonId;
+          }
+        }
+
+        // Handle party slot clicks (for selecting any slot)
+        partySlots.forEach(slot => {
+          slot.addEventListener('click', function() {
+            // Toggle selection
+            if (selectedSlot) {
+              selectedSlot.classList.remove('selected');
+            }
+
+            // If clicking the same slot, deselect it
+            if (selectedSlot === this) {
+              selectedSlot = null;
+              removePartyBtn.disabled = true;
+            } else {
+              selectedSlot = this;
+              this.classList.add('selected');
+
+              // Enable remove button only if the selected slot is filled
+              const isFilled = this.classList.contains('party-filled');
+              removePartyBtn.disabled = !isFilled;
+            }
+          });
+        });
+
+        // Handle remove button clicks
+        removePartyBtn.addEventListener('click', function() {
+          if (selectedSlot && selectedSlot.classList.contains('party-filled')) {
+            const position = parseInt(selectedSlot.dataset.position);
+
+            fetch('<%= update_party_slot_path %>', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': getCsrfToken()
+              },
+              body: JSON.stringify({
+                position: position,
+                pokemon_id: null
+              })
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                updateSlotUI(selectedSlot, null);
+                // Deselect and disable remove button
+                selectedSlot.classList.remove('selected');
+                selectedSlot = null;
+                removePartyBtn.disabled = true;
+              } else {
+                alert(data.error || 'Failed to remove Pokémon');
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('An error occurred while removing the Pokémon');
+            });
+          }
+        });
+
+        // Handle pokemon card clicks
+        pokemonCards.forEach(card => {
+          card.addEventListener('click', function(e) {
+            // Only proceed if a slot is selected
+            if (!selectedSlot) {
+              return;
+            }
+
+            // Prevent event if clicking on meta info
+            if (e.target.closest('.pokemon-meta')) {
+              return;
+            }
+
+            // Get pokemon ID from data attribute
+            const pokemonId = this.dataset.pokemonId;
+            const position = parseInt(selectedSlot.dataset.position);
+
+            if (!pokemonId) {
+              console.error('Pokemon ID not found');
+              return;
+            }
+
+            // Make the API call to add pokemon to party
+            fetch('<%= update_party_slot_path %>', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': getCsrfToken()
+              },
+              body: JSON.stringify({
+                position: position,
+                pokemon_id: pokemonId
+              })
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                updateSlotUI(selectedSlot, data.pokemon);
+                selectedSlot.classList.remove('selected');
+                selectedSlot = null;
+                removePartyBtn.disabled = true; // Disable button after deselecting
+              } else {
+                alert(data.error || 'Failed to add Pokémon to party');
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('An error occurred while adding the Pokémon');
+            });
+          });
+        });
+      });
+    </script>
   </main>
 </div>

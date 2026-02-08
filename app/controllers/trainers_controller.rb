@@ -92,6 +92,9 @@ class TrainersController < ApplicationController
                                      .group(:pokemon_id)
                                      .distinct
                                      .count("DISTINCT trainer_id")
+
+    # Load party members for display (positions 1-6)
+    @party_members = @trainer.party_members.includes(:pokemon).order(:position)
   end
 
   def evolution_lab

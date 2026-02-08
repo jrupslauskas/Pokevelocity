@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_03_020919) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_08_173251) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -91,6 +91,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_03_020919) do
     t.index ["key"], name: "index_items_on_key", unique: true
   end
 
+  create_table "party_members", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "pokemon_id", null: false
+    t.integer "position", null: false
+    t.bigint "trainer_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["pokemon_id"], name: "index_party_members_on_pokemon_id"
+    t.index ["trainer_id", "pokemon_id"], name: "index_party_members_on_trainer_id_and_pokemon_id", unique: true
+    t.index ["trainer_id", "position"], name: "index_party_members_on_trainer_id_and_position", unique: true
+    t.index ["trainer_id"], name: "index_party_members_on_trainer_id"
+    t.check_constraint "\"position\" >= 1 AND \"position\" <= 6", name: "party_position_range"
+  end
+
   create_table "pokemons", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "difficulty", default: 3, null: false
@@ -151,6 +164,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_03_020919) do
     t.boolean "onboarding_completed", default: false, null: false
     t.string "password_digest", null: false
     t.boolean "play_pokecenter_audio", default: false, null: false
+    t.integer "pokecenter_credits", default: 0, null: false
     t.boolean "show_encounter_animation", default: false
     t.datetime "updated_at", null: false
     t.string "username", null: false
@@ -169,6 +183,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_03_020919) do
   add_foreign_key "captures", "trainers"
   add_foreign_key "gate_unlocks", "gates"
   add_foreign_key "gate_unlocks", "trainers"
+  add_foreign_key "party_members", "pokemons"
+  add_foreign_key "party_members", "trainers"
   add_foreign_key "route_encounters", "pokemons"
   add_foreign_key "route_encounters", "pokemons", column: "alternative_required_pokemon_id"
   add_foreign_key "route_encounters", "pokemons", column: "required_pokemon_id"
