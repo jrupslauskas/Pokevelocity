@@ -230,13 +230,12 @@ class TrainersController < ApplicationController
     end
   end
 
-  # Build news feed of recent captures and evolutions from other trainers
+  # Build news feed of recent captures and evolutions from all trainers (including current trainer)
   # @return [Array<Hash>] array of event hashes with :type, :trainer, :pokemon, :timestamp
   def build_news_feed
-    # Get recent captures (non-evolved) from other trainers
+    # Get recent captures (non-evolved) from all trainers
     recent_catches = Capture.includes(:trainer, :pokemon)
                             .where(evolved: false)
-                            .where.not(trainer_id: @trainer.id)
                             .order(created_at: :desc)
                             .limit(25)
                             .map { |c| {
@@ -247,10 +246,9 @@ class TrainersController < ApplicationController
                               ball_type: c.ball_type
                             }}
 
-    # Get recent evolutions from other trainers
+    # Get recent evolutions from all trainers
     recent_evolutions = Capture.includes(:trainer, :pokemon)
                                .where(evolved: true)
-                               .where.not(trainer_id: @trainer.id)
                                .order(created_at: :desc)
                                .limit(25)
                                .map { |c| {

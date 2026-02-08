@@ -227,14 +227,16 @@
         <div class="news-feed">
           <% if @news_feed.any? %>
             <% @news_feed.each do |event| %>
-              <%= link_to trainer_path(event[:trainer]), class: "news-item-link" do %>
+              <% is_current_trainer = event[:trainer].id == @trainer.id %>
+              <% link_path = is_current_trainer ? pokedex_path : trainer_path(event[:trainer]) %>
+              <%= link_to link_path, class: "news-item-link" do %>
                 <div class="news-item" data-event-type="<%= event[:type] %>">
                   <div class="news-item-content">
                     <%= image_tag "pokemonSprites/#{event[:pokemon].pokedex_number.to_s.rjust(3, '0')}.png",
                                   alt: event[:pokemon].name,
                                   class: "news-pokemon-sprite" %>
                     <div class="news-item-text">
-                      <span class="news-trainer"><%= event[:trainer].username %></span>
+                      <span class="news-trainer"><%= is_current_trainer ? "You" : event[:trainer].username %></span>
                       <% if event[:type] == 'caught' %>
                         caught a <span class="news-pokemon"><%= event[:pokemon].name %></span>!
                       <% else %>
@@ -247,7 +249,7 @@
               <% end %>
             <% end %>
           <% else %>
-            <p class="news-feed-empty">No recent activity from other trainers.</p>
+            <p class="news-feed-empty">No recent activity.</p>
           <% end %>
         </div>
       </div>

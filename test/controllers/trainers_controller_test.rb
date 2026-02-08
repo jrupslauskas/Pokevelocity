@@ -1878,7 +1878,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     assert_match "Ivysaur", response.body
   end
 
-  test "should not show current trainer in news feed" do
+  test "should show current trainer as 'You' in news feed" do
     ash = trainers(:ash)
 
     # Ash catches a Pikachu
@@ -1896,14 +1896,30 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     # News feed should exist
     assert_select ".news-feed"
-    # But should not contain Ash's own captures
-    # (unless there are other trainers' activities)
-    news_feed_section = css_select(".news-feed").first.to_s
-    # Check that if "ash" appears, it's not in a news-item context
-    if news_feed_section.include?("ash")
-      # It should only appear in the empty state or header, not in news items
-      assert_select ".news-item .news-trainer", text: "ash", count: 0
-    end
+    # Should display current trainer as "You"
+    assert_select ".news-item .news-trainer", text: "You"
+    # Should NOT display their username
+    assert_select ".news-item .news-trainer", text: "ash", count: 0
+  end
+
+  test "current trainer news feed item should link to pokedex" do
+    ash = trainers(:ash)
+
+    # Ash catches a Pikachu
+    pikachu = pokemons(:pikachu)
+    Capture.create!(
+      trainer: ash,
+      pokemon: pikachu,
+      ball_type: "pokeball",
+      created_at: 1.hour.ago
+    )
+
+    log_in_as(ash)
+    get dashboard_path
+
+    assert_response :success
+    # Link should point to pokedex_path for current trainer
+    assert_select "a.news-item-link[href='#{pokedex_path}']"
   end
 
   test "should show both captures and evolutions in chronological order" do
