@@ -361,7 +361,7 @@ body > div:not(.app-layout) {
   padding: 24px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   border: 2px solid #E8DCC8;
-  max-height: 1000px;
+  max-height: 800px;
   overflow-y: auto;
 }
 
