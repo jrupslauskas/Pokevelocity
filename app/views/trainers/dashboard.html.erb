@@ -63,6 +63,35 @@
       </div>
     </div>
 
+    <!-- Party Section -->
+    <div class="party-section-dashboard">
+      <h2 class="party-title-dashboard">Your Party</h2>
+      <div class="party-container-dashboard">
+        <%
+          # Create a hash of position => party_member for easy lookup
+          party_by_position = @party_members.index_by(&:position)
+        %>
+
+        <% (1..6).each do |position| %>
+          <% party_member = party_by_position[position] %>
+          <div class="party-slot-dashboard <%= 'party-filled-dashboard' if party_member %>">
+            <% if party_member %>
+              <div class="party-slot-inner-dashboard">
+                <%= image_tag "pokemonSprites/#{party_member.pokemon.pokedex_number.to_s.rjust(3, '0')}.png",
+                              alt: party_member.pokemon.name,
+                              class: "party-sprite-dashboard",
+                              style: "image-rendering: pixelated;" %>
+                <span class="party-pokemon-name-dashboard"><%= party_member.pokemon.name %></span>
+              </div>
+            <% else %>
+              <div class="party-empty-dashboard">
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
     <div class="dashboard-grid">
       <!-- Inventory Card -->
       <div class="card-dashboard">

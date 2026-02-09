@@ -8,6 +8,8 @@ class Trainer < ApplicationRecord
   has_many :unlocked_gates, through: :gate_unlocks, source: :gate
   has_many :trainer_items, dependent: :destroy
   has_many :items, through: :trainer_items
+  has_many :party_members, -> { order(:position) }, dependent: :destroy
+  has_many :party_pokemon, through: :party_members, source: :pokemon
 
   validates :username, presence: true, uniqueness: true
   validates :password, presence: true, length: { minimum: 1 }, if: :password_required?
