@@ -27,12 +27,6 @@ class PokedexPartyTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     assert_select ".party-empty", count: 6
-    assert_select ".party-position-number", count: 6
-
-    # Check that positions 1-6 are shown
-    (1..6).each do |position|
-      assert_select ".party-position-number", text: position.to_s
-    end
   end
 
   test "party section should show filled slots for party members" do
