@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.5.0] - 2026-02-08
+### Added
+- Updates to pokecenter functionality
+
 ## [1.4.0] - 2026-02-08
 ### Added
 - Add active party
