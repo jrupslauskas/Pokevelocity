@@ -2812,7 +2812,128 @@ body > div:not(.app-layout) {
   }
 }
 
-/* ==================== Party Styles ==================== */
+/* ==================== Party Styles (Dashboard - Read Only) ==================== */
+
+.party-section-dashboard {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 16px;
+  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+  border-radius: 12px;
+  border: 2px solid #A5D6A7;
+}
+
+.party-title-dashboard {
+  text-align: center;
+  color: #2C5F2D;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+}
+
+.party-container-dashboard {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.party-slot-dashboard {
+  width: 100px;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.7);
+  border: 3px solid #C8E6C9;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.party-slot-dashboard.party-filled-dashboard {
+  background: linear-gradient(135deg, #FFFEF5, #F1F8E9);
+  border-color: #7AC74C;
+}
+
+.party-slot-inner-dashboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.party-sprite-dashboard {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.party-pokemon-name-dashboard {
+  font-size: 11px;
+  font-weight: 600;
+  color: #2C5F2D;
+  text-align: center;
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.party-empty-dashboard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.party-position-number-dashboard {
+  font-size: 24px;
+  font-weight: 700;
+  color: #A5D6A7;
+  opacity: 0.5;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .party-section-dashboard {
+    margin: 16px auto;
+    padding: 12px;
+  }
+
+  .party-title-dashboard {
+    font-size: 20px;
+    margin: 0 0 10px 0;
+  }
+
+  .party-container-dashboard {
+    gap: 10px;
+  }
+
+  .party-slot-dashboard {
+    width: 85px;
+    height: 105px;
+  }
+
+  .party-sprite-dashboard {
+    width: 70px;
+    height: 70px;
+  }
+
+  .party-pokemon-name-dashboard {
+    font-size: 10px;
+    max-width: 75px;
+  }
+
+  .party-position-number-dashboard {
+    font-size: 20px;
+  }
+}
+
+/* ==================== Party Styles (Pokedex - Interactive) ==================== */
 
 .party-section {
   max-width: 1200px;
@@ -2916,8 +3037,8 @@ body > div:not(.app-layout) {
 }
 
 .party-sprite {
-  width: 64px;
-  height: 64px;
+  width: 80px;
+  height: 80px;
   object-fit: contain;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
@@ -2970,8 +3091,8 @@ body > div:not(.app-layout) {
   }
 
   .party-sprite {
-    width: 56px;
-    height: 56px;
+    width: 70px;
+    height: 70px;
   }
 
   .party-pokemon-name {

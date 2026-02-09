@@ -41,6 +41,9 @@ class TrainersController < ApplicationController
 
     # Fetch news feed: recent captures and evolutions from other trainers
     @news_feed = build_news_feed
+
+    # Load party members for display
+    @party_members = @trainer.party_members.includes(:pokemon).order(:position)
   end
 
   def discard_item
