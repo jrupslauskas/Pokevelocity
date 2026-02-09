@@ -1,5 +1,37 @@
 # Changelog
 
+## [1.4.0] - 2026-02-08
+### Added
+- Add active party
+
+## [1.3.7] - 2026-02-07
+### Added
+- Add current user to news feed
+
+## [1.3.6] - 2026-02-07
+### Added
+- Tweak badges-section sizing
+
+## [1.3.5] - 2026-02-07
+### Added
+- Add currency display to inventory
+
+## [1.3.4] - 2026-02-07
+### Added
+- Add hype page for new catches and evolutions
+
+## [1.3.3] - 2026-02-06
+### Added
+- Update item pricing
+
+## [1.3.2] - 2026-02-06
+### Added
+- Add link to trainers via newsfeed
+
+## [1.3.1] - 2026-02-06
+### Added
+- Encounter percentages UI tweaks
+
 ## [1.4.0] - 2026-02-06
 ### Added
 - Pokecenter visit logic and functionality overhaul

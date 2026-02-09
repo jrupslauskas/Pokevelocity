@@ -1,0 +1,104 @@
+<div class="app-layout">
+  <%= render "trainers/sidebar" %>
+
+  <main class="main-content">
+    <div class="celebration-container pokemon-celebration">
+      <div class="celebration-card">
+        <div class="pokemon-celebration-title-section">
+          <h1 class="pokemon-celebration-header">
+            <% if @event_type == 'caught' %>
+              Gotcha!
+            <% elsif @event_type == 'evolved' %>
+              Congratulations!
+            <% end %>
+          </h1>
+          <p class="pokemon-celebration-subtitle">
+            <% if @event_type == 'caught' %>
+              <%= @pokemon.name %> was caught!
+            <% elsif @event_type == 'evolved' %>
+              Your <%= @from_pokemon_name %> evolved into <%= @pokemon.name %>!
+            <% end %>
+          </p>
+        </div>
+
+        <div class="pokemon-celebration-sprite-container">
+          <% if @pokemon.image.attached? %>
+            <%= image_tag @pokemon.image,
+                          alt: @pokemon.name,
+                          class: "pokemon-celebration-sprite" %>
+          <% else %>
+            <%= image_tag "pokemonSprites/#{@pokemon.pokedex_number.to_s.rjust(3, '0')}.png",
+                          alt: @pokemon.name,
+                          class: "pokemon-celebration-sprite",
+                          style: "image-rendering: pixelated;" %>
+          <% end %>
+        </div>
+
+        <div class="pokemon-celebration-info">
+          <p class="pokemon-celebration-number">
+            #<%= @pokemon.pokedex_number.to_s.rjust(3, '0') %> <%= @pokemon.name.upcase %>
+          </p>
+        </div>
+
+        <% if @event_type == 'caught' %>
+          <div class="pokemon-celebration-details">
+            <% if @duplicate %>
+              <p class="pokemon-celebration-detail">
+                <span class="celebration-icon">🎁</span>
+                Received <strong>Evolution Stone</strong>
+              </p>
+            <% end %>
+            <p class="pokemon-celebration-detail">
+              <%
+                ball_image = case @ball_type
+                when "pokeball"
+                  "icons/pokeball.png"
+                when "great_ball"
+                  "icons/greatball.png"
+                when "ultra_ball"
+                  "icons/ultraball.jpg"
+                when "master_ball"
+                  "icons/masterball.png"
+                else
+                  "icons/pokeball.png"
+                end
+              %>
+              <%= image_tag ball_image, alt: @ball_type, class: "celebration-pokeball-icon" %>
+              Caught with <strong><%= @ball_type.titleize %></strong>
+            </p>
+          </div>
+        <% elsif @event_type == 'evolved' %>
+          <div class="pokemon-celebration-details">
+            <p class="pokemon-celebration-detail">
+              <span class="celebration-icon">🌟</span>
+              Evolved from <strong><%= @from_pokemon_name %></strong>
+            </p>
+          </div>
+        <% end %>
+
+        <div class="pokemon-celebration-stats">
+          <div class="pokemon-celebration-stat">
+            <span class="pokemon-celebration-stat-value">
+              <%= @trainer.captures.select(:pokemon_id).distinct.count %> / 151
+            </span>
+            <span class="pokemon-celebration-stat-label">Pokédex</span>
+          </div>
+          <div class="pokemon-celebration-stat">
+            <span class="pokemon-celebration-stat-value">
+              <%= @trainer.difficulty_score %>★
+            </span>
+            <span class="pokemon-celebration-stat-label">Score</span>
+          </div>
+        </div>
+
+        <div class="pokemon-celebration-actions">
+          <% if session[:newly_unlocked_gate_id].present? %>
+            <%= button_to "Continue", gates_celebration_path, method: :get, class: "btn-primary btn-celebration" %>
+          <% else %>
+            <%= button_to "View Pokédex", pokedex_path, method: :get, class: "btn-primary btn-celebration" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

@@ -172,7 +172,7 @@
                   <span class="difficulty-star empty">★</span>
                 <% end %>
               </div>
-              <span class="route-pokemon-percentage"><%= appearance_percentage %>%</span>
+              <span class="route-pokemon-percentage"><%= appearance_percentage % 1 == 0 ? appearance_percentage.to_i : appearance_percentage %>%</span>
             <% end %>
           </div>
         </div>

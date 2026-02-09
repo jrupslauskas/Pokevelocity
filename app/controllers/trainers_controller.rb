@@ -41,6 +41,9 @@ class TrainersController < ApplicationController
 
     # Fetch news feed: recent captures and evolutions from other trainers
     @news_feed = build_news_feed
+
+    # Load party members for display
+    @party_members = @trainer.party_members.includes(:pokemon).order(:position)
   end
 
   def discard_item
@@ -92,6 +95,9 @@ class TrainersController < ApplicationController
                                      .group(:pokemon_id)
                                      .distinct
                                      .count("DISTINCT trainer_id")
+
+    # Load party members for display (positions 1-6)
+    @party_members = @trainer.party_members.includes(:pokemon).order(:position)
   end
 
   def evolution_lab
@@ -165,15 +171,19 @@ class TrainersController < ApplicationController
     # Auto-unlock gates after evolution (difficulty score increased)
     newly_unlocked = @trainer.auto_unlock_gates!
 
-    # If gates were unlocked, redirect to celebration page
+    # Store celebration data in session (always show Pokemon celebration first)
+    session[:pokemon_celebration] = {
+      pokemon_id: evolution.to_pokemon_id,
+      event_type: 'evolved',
+      from_pokemon_name: evolution.from_pokemon.name
+    }
+
+    # If gates were unlocked, store for follow-up celebration
     if newly_unlocked.any?
-      # Store the first unlocked gate in session for celebration page
       session[:newly_unlocked_gate_id] = newly_unlocked.first.id
-      redirect_to gates_celebration_path and return
     end
 
-    # Redirect to pokedex with success message
-    redirect_to pokedex_path, notice: "Congratulations! Your #{evolution.from_pokemon.name} evolved into #{evolution.to_pokemon.name}!"
+    redirect_to pokemon_celebration_path
   end
 
   private
@@ -226,13 +236,12 @@ class TrainersController < ApplicationController
     end
   end
 
-  # Build news feed of recent captures and evolutions from other trainers
+  # Build news feed of recent captures and evolutions from all trainers (including current trainer)
   # @return [Array<Hash>] array of event hashes with :type, :trainer, :pokemon, :timestamp
   def build_news_feed
-    # Get recent captures (non-evolved) from other trainers
+    # Get recent captures (non-evolved) from all trainers
     recent_catches = Capture.includes(:trainer, :pokemon)
                             .where(evolved: false)
-                            .where.not(trainer_id: @trainer.id)
                             .order(created_at: :desc)
                             .limit(25)
                             .map { |c| {
@@ -243,10 +252,9 @@ class TrainersController < ApplicationController
                               ball_type: c.ball_type
                             }}
 
-    # Get recent evolutions from other trainers
+    # Get recent evolutions from all trainers
     recent_evolutions = Capture.includes(:trainer, :pokemon)
                                .where(evolved: true)
-                               .where.not(trainer_id: @trainer.id)
                                .order(created_at: :desc)
                                .limit(25)
                                .map { |c| {

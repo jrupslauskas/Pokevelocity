@@ -194,6 +194,34 @@ class CatchesController < ApplicationController
     # Get last adventure parameters for "Adventure Again" button
     @last_adventure = session[:last_adventure]
 
+    # Calculate encounter percentage for this Pokemon
+    @encounter_percentage = nil
+    if @last_adventure.present?
+      route = Route.find_by(id: @last_adventure['route_id'])
+      if route
+        encounter_type = @last_adventure['encounter_type']
+        rod_type = @last_adventure['rod_type']
+
+        # Get all encounters for this encounter type (and rod type if fishing)
+        encounters = route.route_encounters.where(encounter_type: encounter_type)
+
+        # For fishing, filter by rod type
+        if encounter_type == 'fish' && rod_type.present?
+          encounters = encounters.where(required_item_key: rod_type)
+        end
+
+        # Calculate percentage
+        total_spawn_rate = encounters.sum(:spawn_rate)
+        if total_spawn_rate > 0
+          pokemon_encounter = encounters.find_by(pokemon_id: @pokemon.id)
+          if pokemon_encounter
+            percentage = ((pokemon_encounter.spawn_rate.to_f / total_spawn_rate) * 100).round(1)
+            @encounter_percentage = percentage % 1 == 0 ? percentage.to_i : percentage
+          end
+        end
+      end
+    end
+
     # Check if trainer has any pokeballs (show message but don't redirect)
     # Only show this message if there isn't already a flash message
     if @trainer.total_pokeballs == 0 && flash[:alert].nil?
@@ -225,8 +253,14 @@ class CatchesController < ApplicationController
 
         if result[:duplicate]
           # Duplicate capture - gave Evolution Stone
-          message = "Success! You caught #{@pokemon.name} (##{@pokemon.pokedex_number}) with a #{result[:ball_type].humanize}! Since #{@pokemon.name} is already in your Pokédex, you received an Evolution Stone!"
-          redirect_to pokedex_path, notice: message
+          # Store celebration data in session
+          session[:pokemon_celebration] = {
+            pokemon_id: @pokemon.id,
+            event_type: 'caught',
+            ball_type: result[:ball_type],
+            duplicate: true
+          }
+          redirect_to pokemon_celebration_path
         else
           # New capture
           # Check if trainer has now caught all 151 Pokemon (distinct)
@@ -240,16 +274,20 @@ class CatchesController < ApplicationController
           # Auto-unlock gates after catching (difficulty score increased)
           newly_unlocked = @trainer.auto_unlock_gates!
 
-          # If gates were unlocked, redirect to celebration page
+          # Store celebration data in session (always show Pokemon celebration first)
+          session[:pokemon_celebration] = {
+            pokemon_id: @pokemon.id,
+            event_type: 'caught',
+            ball_type: result[:ball_type],
+            duplicate: false
+          }
+
+          # If gates were unlocked, store for follow-up celebration
           if newly_unlocked.any?
-            # Store the first unlocked gate in session for celebration page
             session[:newly_unlocked_gate_id] = newly_unlocked.first.id
-            redirect_to gates_celebration_path and return
           end
 
-          # Build success message
-          message = "Success! You caught #{@pokemon.name} (##{@pokemon.pokedex_number}) with a #{result[:ball_type].humanize}!"
-          redirect_to pokedex_path, notice: message
+          redirect_to pokemon_celebration_path
         end
       else
         # Pokemon broke free

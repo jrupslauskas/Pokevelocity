@@ -21,7 +21,7 @@ class Item < ApplicationRecord
       description: "A device for catching wild Pokémon. It is designed as a capsule system.",
       item_type: TYPES[:pokeball],
       sprite: "pokeball_shop.png",
-      buy_price: 200,
+      buy_price: 150,
       sell_price: 100
     },
     great_ball: {
@@ -30,7 +30,7 @@ class Item < ApplicationRecord
       description: "A good, high-performance Poké Ball that provides a higher Pokémon catch rate than a standard Poké Ball.",
       item_type: TYPES[:pokeball],
       sprite: "greatball.png",
-      buy_price: 300,
+      buy_price: 250,
       sell_price: 200
     },
     ultra_ball: {
@@ -39,7 +39,7 @@ class Item < ApplicationRecord
       description: "An ultra-high performance Poké Ball that provides a higher success rate for catching Pokémon than a Great Ball.",
       item_type: TYPES[:pokeball],
       sprite: "ultraball.jpg",
-      buy_price: 400,
+      buy_price: 350,
       sell_price: 300
     },
     master_ball: {
@@ -48,8 +48,8 @@ class Item < ApplicationRecord
       description: "The best Poké Ball with the ultimate level of performance. It will catch any wild Pokémon without fail.",
       item_type: TYPES[:pokeball],
       sprite: "masterball.png",
-      buy_price: 600,
-      sell_price: 500
+      buy_price: 500,
+      sell_price: 400
     },
     fire_stone: {
       key: "fire_stone",
@@ -57,7 +57,7 @@ class Item < ApplicationRecord
       description: "A peculiar stone that makes certain species of Pokémon evolve. It burns as red as the evening sun.",
       item_type: TYPES[:evolution_stone],
       sprite: "firestone.png",
-      buy_price: 300,
+      buy_price: 250,
       sell_price: 200
     },
     water_stone: {
@@ -66,7 +66,7 @@ class Item < ApplicationRecord
       description: "A peculiar stone that makes certain species of Pokémon evolve. It is a clear, light blue.",
       item_type: TYPES[:evolution_stone],
       sprite: "waterstone.png",
-      buy_price: 300,
+      buy_price: 250,
       sell_price: 200
     },
     thunder_stone: {
@@ -75,7 +75,7 @@ class Item < ApplicationRecord
       description: "A peculiar stone that makes certain species of Pokémon evolve. It has a thunderbolt pattern.",
       item_type: TYPES[:evolution_stone],
       sprite: "thunderstone.png",
-      buy_price: 300,
+      buy_price: 250,
       sell_price: 200
     },
     moon_stone: {
@@ -84,7 +84,7 @@ class Item < ApplicationRecord
       description: "A peculiar stone that makes certain species of Pokémon evolve. It is as black as the night sky.",
       item_type: TYPES[:evolution_stone],
       sprite: "moonstone.png",
-      buy_price: 300,
+      buy_price: 250,
       sell_price: 200
     },
     leaf_stone: {
@@ -93,7 +93,7 @@ class Item < ApplicationRecord
       description: "A peculiar stone that makes certain species of Pokémon evolve. It has a leaf pattern.",
       item_type: TYPES[:evolution_stone],
       sprite: "leafstone.png",
-      buy_price: 300,
+      buy_price: 250,
       sell_price: 200
     },
     transfer_cable: {
@@ -102,7 +102,7 @@ class Item < ApplicationRecord
       description: "A special cable that allows certain Pokémon to evolve by simulating a trade connection.",
       item_type: TYPES[:evolution_stone],
       sprite: "transfer_cable.png",
-      buy_price: 300,
+      buy_price: 250,
       sell_price: 200
     },
     evolution_stone: {

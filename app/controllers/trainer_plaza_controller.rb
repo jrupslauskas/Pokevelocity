@@ -17,5 +17,8 @@ class TrainerPlazaController < ApplicationController
                                      .group(:pokemon_id)
                                      .distinct
                                      .count("DISTINCT trainer_id")
+
+    # Load party members for display
+    @party_members = @trainer.party_members.includes(:pokemon).order(:position)
   end
 end

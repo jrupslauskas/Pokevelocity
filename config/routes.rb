@@ -45,6 +45,9 @@ Rails.application.routes.draw do
   # Pokedex
   get "/pokedex", to: "trainers#pokedex", as: :pokedex
 
+  # Party Management
+  post "/party/update-slot", to: "party#update_slot", as: :update_party_slot
+
   # Evolution Lab
   get "/evolution-lab", to: "trainers#evolution_lab", as: :evolution_lab
   post "/evolution-lab/evolve/:id", to: "trainers#evolve", as: :evolve
@@ -71,4 +74,7 @@ Rails.application.routes.draw do
   get "/catch/:id", to: "catches#show", as: :catch
   post "/catch/:id", to: "catches#create"
   post "/catch/:id/run", to: "catches#run", as: :run_from_catch
+
+  # Pokemon Celebration
+  get "/pokemon/celebration", to: "pokemon#celebration", as: :pokemon_celebration
 end

@@ -84,3 +84,8 @@ gyarados:
   pokedex_number: 130
   name: Gyarados
   difficulty: 5
+
+goldeen:
+  pokedex_number: 118
+  name: Goldeen
+  difficulty: 2

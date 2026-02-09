@@ -931,7 +931,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     log_in_as(trainer)
     pokemon = pokemons(:bulbasaur)
 
-    # Unlock all gates so catch doesn't trigger celebration
+    # Unlock all gates so catch doesn't trigger gate celebration
     Gate.all.each do |gate|
       trainer.gate_unlocks.find_or_create_by(gate: gate)
     end
@@ -941,8 +941,8 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     # Master ball has 100% catch rate
     post catch_path(pokemon), params: { ball_type: "master_ball" }
 
-    assert_redirected_to pokedex_path
-    assert_match(/Success! You caught #{pokemon.name}/, flash[:notice])
+    # Should redirect to pokemon celebration page
+    assert_redirected_to pokemon_celebration_path
 
     trainer.reload
     assert_includes trainer.captured_pokemon, pokemon
@@ -1015,10 +1015,8 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
 
     post catch_path(pokemon), params: { ball_type: "master_ball" }
 
-    assert_redirected_to pokedex_path
-    follow_redirect!
-    assert_match "Evolution Stone", response.body
-    assert_match "already in your Pokédex", response.body
+    # Should redirect to pokemon celebration page
+    assert_redirected_to pokemon_celebration_path
 
     trainer.reload
     # Should not create new capture
@@ -1808,6 +1806,27 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     assert_select ".news-feed"
   end
 
+  test "newsfeed entries should be clickable links to trainer pokedex" do
+    ash = trainers(:ash)
+    gary = trainers(:gary)
+
+    # Gary catches a Pikachu
+    pikachu = pokemons(:pikachu)
+    Capture.create!(
+      trainer: gary,
+      pokemon: pikachu,
+      ball_type: "pokeball",
+      created_at: 1.hour.ago
+    )
+
+    log_in_as(ash)
+    get dashboard_path
+
+    assert_response :success
+    # Should have a link to Gary's trainer page
+    assert_select "a.news-item-link[href=?]", trainer_path(gary)
+  end
+
   test "should show recent captures from other trainers" do
     ash = trainers(:ash)
     gary = trainers(:gary)
@@ -1859,7 +1878,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     assert_match "Ivysaur", response.body
   end
 
-  test "should not show current trainer in news feed" do
+  test "should show current trainer as 'You' in news feed" do
     ash = trainers(:ash)
 
     # Ash catches a Pikachu
@@ -1877,14 +1896,30 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     # News feed should exist
     assert_select ".news-feed"
-    # But should not contain Ash's own captures
-    # (unless there are other trainers' activities)
-    news_feed_section = css_select(".news-feed").first.to_s
-    # Check that if "ash" appears, it's not in a news-item context
-    if news_feed_section.include?("ash")
-      # It should only appear in the empty state or header, not in news items
-      assert_select ".news-item .news-trainer", text: "ash", count: 0
-    end
+    # Should display current trainer as "You"
+    assert_select ".news-item .news-trainer", text: "You"
+    # Should NOT display their username
+    assert_select ".news-item .news-trainer", text: "ash", count: 0
+  end
+
+  test "current trainer news feed item should link to pokedex" do
+    ash = trainers(:ash)
+
+    # Ash catches a Pikachu
+    pikachu = pokemons(:pikachu)
+    Capture.create!(
+      trainer: ash,
+      pokemon: pikachu,
+      ball_type: "pokeball",
+      created_at: 1.hour.ago
+    )
+
+    log_in_as(ash)
+    get dashboard_path
+
+    assert_response :success
+    # Link should point to pokedex_path for current trainer
+    assert_select "a.news-item-link[href='#{pokedex_path}']"
   end
 
   test "should show both captures and evolutions in chronological order" do
@@ -3150,7 +3185,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
 
-    # Unlock all gates so evolution doesn't trigger celebration
+    # Unlock all gates so evolution doesn't trigger gate celebration
     Gate.all.each do |gate|
       trainer.gate_unlocks.find_or_create_by(gate: gate)
     end
@@ -3165,7 +3200,8 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
       post evolve_path(evolution), params: { id: evolution.id }
     end
 
-    assert_redirected_to pokedex_path
+    # Should redirect to pokemon celebration page
+    assert_redirected_to pokemon_celebration_path
     trainer.reload
     assert_includes trainer.captured_pokemon, pokemons(:raichu)
   end
@@ -3191,7 +3227,7 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     log_in_as(trainer)
 
-    # Unlock all gates so evolution doesn't trigger celebration
+    # Unlock all gates so evolution doesn't trigger gate celebration
     Gate.all.each do |gate|
       trainer.gate_unlocks.find_or_create_by(gate: gate)
     end
@@ -3204,7 +3240,12 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
 
     post evolve_path(evolution), params: { id: evolution.id }
 
-    assert_match "Congratulations! Your Pikachu evolved into Raichu!", flash[:notice]
+    # Should redirect to celebration page
+    assert_redirected_to pokemon_celebration_path
+
+    # Verify evolution was successful
+    trainer.reload
+    assert_includes trainer.captured_pokemon, pokemons(:raichu)
   end
 
   test "should use same ball type as original capture for evolved pokemon" do
@@ -3973,6 +4014,22 @@ class TrainersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     # Check exact modal message format
     assert_select "#discardMessage", text: /Are you sure you want to throw away 1/
+  end
+
+  test "dashboard should display currency in inventory header" do
+    trainer = trainers(:ash)
+    log_in_as(trainer)
+
+    # Set trainer currency to a known value
+    trainer.update!(currency: 12345)
+
+    get dashboard_path
+
+    assert_response :success
+    # Check that currency display exists in the page
+    assert_select ".currency-display", text: /💰 Pokedollars: 12345/
+    # Check that it's in the inventory card
+    assert_select ".card-dashboard .currency-display"
   end
 
   private
