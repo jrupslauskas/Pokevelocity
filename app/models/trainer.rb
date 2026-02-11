@@ -205,7 +205,8 @@ class Trainer < ApplicationRecord
     return 2 if current_credits >= 2
 
     # Calculate days elapsed since last visit
-    last_visit_date = adventures_allocated_at.to_date
+    # Convert to app timezone (Eastern) before getting date to ensure correct date comparison
+    last_visit_date = adventures_allocated_at.in_time_zone(Time.zone).to_date
     today = Date.current
     days_elapsed = (today - last_visit_date).to_i
 
@@ -316,7 +317,8 @@ class Trainer < ApplicationRecord
     return 0 if adventures_allocated_at.nil?
 
     # Check if already claimable (last visit was not today)
-    last_visit_date = adventures_allocated_at.to_date
+    # Convert to app timezone (Eastern) before getting date to ensure correct date comparison
+    last_visit_date = adventures_allocated_at.in_time_zone(Time.zone).to_date
     today = Date.current
     return 0 if last_visit_date != today
 
