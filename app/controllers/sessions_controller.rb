@@ -8,7 +8,6 @@ class SessionsController < ApplicationController
 
     if trainer&.authenticate(params[:password])
       session[:trainer_id] = trainer.id
-      session[:last_activity_at] = Time.current.to_s
 
       if trainer.needs_onboarding?
         redirect_to onboarding_welcome_path
