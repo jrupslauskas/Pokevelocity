@@ -1858,7 +1858,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     # Check the encounter page shows depleted state
     assert_response :success
     assert_match /No More Adventures/i, response.body
-    assert_match /Replenishes in/i, response.body
+    assert_match /Visit again tomorrow/i, response.body
   end
 
   test "route cards should show disabled button when no adventures" do
@@ -2062,11 +2062,12 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
   # VISIT POKÉ CENTER TESTS
   # ================================================================================
 
-  test "visit_poke_center should claim adventures when available" do
+  test "visit_poke_center should claim adventures when credits available" do
     trainer = trainers(:ash)
     trainer.update!(
       adventures_remaining: 3,
-      adventures_allocated_at: 25.hours.ago
+      pokecenter_credits: 0,
+      adventures_allocated_at: 1.day.ago
     )
 
     log_in_as(trainer)
@@ -2074,32 +2075,37 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
 
     trainer.reload
     assert_equal 8, trainer.adventures_remaining
+    assert_equal 0, trainer.pokecenter_credits
     assert_redirected_to catches_path
-    assert_match /Restored \+5 adventure/, flash[:notice]
-    assert_match /8\/10/, flash[:notice]
+    assert_match /Thank you for waiting.*We've restored some of your adventures.*We hope to see you again/i, flash[:notice]
   end
 
-  test "visit_poke_center should show success message with count" do
+  test "visit_poke_center should show success message with credits remaining" do
     trainer = trainers(:ash)
     trainer.update!(
       adventures_remaining: 0,
-      adventures_allocated_at: 25.hours.ago
+      pokecenter_credits: 1,
+      adventures_allocated_at: 1.day.ago
     )
 
     log_in_as(trainer)
     post visit_poke_center_path
 
+    trainer.reload
+    assert_equal 5, trainer.adventures_remaining
+    assert_equal 1, trainer.pokecenter_credits
     assert_redirected_to catches_path
     follow_redirect!
 
-    assert_match /Welcome to the Poké Center/i, response.body
-    assert_match /Restored \+5 adventure/, response.body
+    # Check for the message with HTML entities (&#39; for apostrophe)
+    assert_match /Thank you for waiting.*restored some of your adventures.*hope to see you again/i, response.body
   end
 
-  test "visit_poke_center should not claim when none available" do
+  test "visit_poke_center should not claim when no credits available" do
     trainer = trainers(:ash)
     trainer.update!(
       adventures_remaining: 5,
+      pokecenter_credits: 0,
       adventures_allocated_at: 5.hours.ago
     )
 
@@ -2108,14 +2114,16 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
 
     trainer.reload
     assert_equal 5, trainer.adventures_remaining
+    assert_equal 0, trainer.pokecenter_credits
     assert_redirected_to catches_path
-    assert_match /No adventures available to claim yet/i, flash[:alert]
+    assert_match /No Poké Center credits available/i, flash[:alert]
   end
 
-  test "visit_poke_center should show error message when none available" do
+  test "visit_poke_center should show error message when no credits" do
     trainer = trainers(:ash)
     trainer.update!(
       adventures_remaining: 5,
+      pokecenter_credits: 0,
       adventures_allocated_at: 10.hours.ago
     )
 
@@ -2125,33 +2133,34 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to catches_path
     follow_redirect!
 
-    assert_match /No adventures available to claim yet/i, response.body
-    assert_match /Next adventure in/i, response.body
-    assert_match /\d+h \d+m/, response.body
+    assert_match /No Poké Center credits available/i, response.body
+    assert_match /earn a new credit tomorrow/i, response.body
   end
 
-  test "visit_poke_center should work with multiple periods" do
+  test "visit_poke_center should use banked credits" do
     trainer = trainers(:ash)
     trainer.update!(
       adventures_remaining: 0,
-      adventures_allocated_at: 50.hours.ago
+      pokecenter_credits: 2,
+      adventures_allocated_at: 5.hours.ago
     )
 
     log_in_as(trainer)
     post visit_poke_center_path
 
     trainer.reload
-    assert_equal 10, trainer.adventures_remaining
+    assert_equal 5, trainer.adventures_remaining
+    assert_equal 1, trainer.pokecenter_credits
     assert_redirected_to catches_path
-    assert_match /Restored \+10 adventures/, flash[:notice]
-    assert_match /10\/10/, flash[:notice]
+    assert_match /Thank you for waiting.*We've restored some of your adventures.*We hope to see you again/i, flash[:notice]
   end
 
   test "visit_poke_center should handle singular adventure correctly" do
     trainer = trainers(:ash)
     trainer.update!(
       adventures_remaining: 9,
-      adventures_allocated_at: 25.hours.ago
+      pokecenter_credits: 0,
+      adventures_allocated_at: 1.day.ago
     )
 
     log_in_as(trainer)
@@ -2160,27 +2169,25 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     trainer.reload
     assert_equal 10, trainer.adventures_remaining
     assert_redirected_to catches_path
-    # Should say "adventure" not "adventures" for count of 1
-    assert_match /Restored \+1 adventure[^s]/, flash[:notice]
-    assert_match /10\/10/, flash[:notice]
+    assert_match /Thank you for waiting.*We've restored some of your adventures.*We hope to see you again/i, flash[:notice]
   end
 
   test "visit_poke_center should cap at 10 adventures" do
     trainer = trainers(:ash)
     trainer.update!(
       adventures_remaining: 8,
-      adventures_allocated_at: 25.hours.ago
+      pokecenter_credits: 0,
+      adventures_allocated_at: 1.day.ago
     )
 
     log_in_as(trainer)
     post visit_poke_center_path
 
     trainer.reload
-    # Should cap at 10, not 13
+    # Should cap at 10, not 13 (8 + 5 = 13, capped)
     assert_equal 10, trainer.adventures_remaining
     assert_redirected_to catches_path
-    assert_match /Restored \+2 adventure/, flash[:notice]
-    assert_match /10\/10/, flash[:notice]
+    assert_match /Thank you for waiting.*We've restored some of your adventures.*We hope to see you again/i, flash[:notice]
   end
 
   test "visit_poke_center should require login" do
@@ -2192,6 +2199,7 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     trainer = trainers(:ash)
     trainer.update!(
       adventures_remaining: 5,
+      pokecenter_credits: 0,
       adventures_allocated_at: nil
     )
 
@@ -2201,9 +2209,28 @@ class CatchesControllerTest < ActionDispatch::IntegrationTest
     trainer.reload
     assert_not_nil trainer.adventures_allocated_at
     assert_equal 10, trainer.adventures_remaining
+    assert_equal 0, trainer.pokecenter_credits
     assert_redirected_to catches_path
-    # First time should add 5 adventures (5 + 5 = 10)
-    assert_match /Restored \+5 adventures/, flash[:notice]
+    assert_match /Thank you for waiting.*We've restored some of your adventures.*We hope to see you again/i, flash[:notice]
+  end
+
+  test "visit_poke_center should award multiple credits after multiple days" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 0,
+      pokecenter_credits: 0,
+      adventures_allocated_at: 2.days.ago
+    )
+
+    log_in_as(trainer)
+    post visit_poke_center_path
+
+    trainer.reload
+    # Should have earned 2 credits (capped), used 1, left with 1
+    assert_equal 5, trainer.adventures_remaining
+    assert_equal 1, trainer.pokecenter_credits
+    assert_redirected_to catches_path
+    assert_match /Thank you for waiting.*We've restored some of your adventures.*We hope to see you again/i, flash[:notice]
   end
 
   # ================================================================================

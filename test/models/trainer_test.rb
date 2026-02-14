@@ -371,287 +371,289 @@ class TrainerTest < ActiveSupport::TestCase
     assert_equal 5, trainer.adventures_remaining
   end
 
-  test "available_adventures_to_claim should return 5 when never initialized and trainer has 5 adventures" do
-    trainer = trainers(:ash)
-    trainer.update!(adventures_remaining: 5, adventures_allocated_at: nil)
-
-    # Should be able to claim 5 more (5 + 5 = 10 max)
-    assert_equal 5, trainer.available_adventures_to_claim
+  test "should have pokecenter_credits default to 0" do
+    trainer = Trainer.create!(
+      username: "new_trainer_#{rand(100000)}",
+      password: "password",
+      icon_pokemon_id: pokemons(:pikachu).id
+    )
+    assert_equal 0, trainer.pokecenter_credits
   end
 
-  test "available_adventures_to_claim should cap at 10 when never initialized" do
-    trainer = trainers(:ash)
-    trainer.update!(adventures_remaining: 8, adventures_allocated_at: nil)
+  # ================================================================================
+  # POKECENTER CREDIT TESTS
+  # ================================================================================
 
-    # Should only be able to claim 2 more (8 + 5 would be 13, capped at 10)
-    assert_equal 2, trainer.available_adventures_to_claim
+  test "available_pokecenter_credits should return 1 for first time visitor" do
+    trainer = trainers(:ash)
+    trainer.update!(pokecenter_credits: 0, adventures_allocated_at: nil)
+
+    assert_equal 1, trainer.available_pokecenter_credits
   end
 
-  test "available_adventures_to_claim should return 0 if less than 24 hours have passed" do
+  test "available_pokecenter_credits should use banked credits if visited same day" do
     trainer = trainers(:ash)
     trainer.update!(
-      adventures_remaining: 2,
-      adventures_allocated_at: 12.hours.ago
+      pokecenter_credits: 1,
+      adventures_allocated_at: 12.hours.ago # Still today
     )
 
-    assert_equal 0, trainer.available_adventures_to_claim
+    # Should have the 1 banked credit, no new credits added
+    assert_equal 1, trainer.available_pokecenter_credits
   end
 
-  test "available_adventures_to_claim should return 5 after 24 hours" do
+  test "available_pokecenter_credits should return 0 when no banked credits and visited same day" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      pokecenter_credits: 0,
+      adventures_allocated_at: 12.hours.ago # Still today
+    )
+
+    assert_equal 0, trainer.available_pokecenter_credits
+  end
+
+  test "available_pokecenter_credits should add 1 credit after 1 day" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      pokecenter_credits: 0,
+      adventures_allocated_at: 1.day.ago
+    )
+
+    assert_equal 1, trainer.available_pokecenter_credits
+  end
+
+  test "available_pokecenter_credits should add credits up to max of 2" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      pokecenter_credits: 0,
+      adventures_allocated_at: 2.days.ago
+    )
+
+    # 0 banked + 2 days elapsed = 2 credits (capped)
+    assert_equal 2, trainer.available_pokecenter_credits
+  end
+
+  test "available_pokecenter_credits should cap at 2 even after many days" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      pokecenter_credits: 0,
+      adventures_allocated_at: 5.days.ago
+    )
+
+    # 0 banked + 5 days = would be 5, but capped at 2
+    assert_equal 2, trainer.available_pokecenter_credits
+  end
+
+  test "available_pokecenter_credits should remain at 2 when already at max" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      pokecenter_credits: 2,
+      adventures_allocated_at: 3.days.ago
+    )
+
+    # Already at max, should stay at 2
+    assert_equal 2, trainer.available_pokecenter_credits
+  end
+
+  test "available_pokecenter_credits should add to existing banked credits" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      pokecenter_credits: 1,
+      adventures_allocated_at: 1.day.ago
+    )
+
+    # 1 banked + 1 day elapsed = 2 credits
+    assert_equal 2, trainer.available_pokecenter_credits
+  end
+
+  test "available_pokecenter_credits should not exceed 2 when adding to banked credits" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      pokecenter_credits: 1,
+      adventures_allocated_at: 3.days.ago
+    )
+
+    # 1 banked + 3 days = would be 4, but capped at 2
+    assert_equal 2, trainer.available_pokecenter_credits
+  end
+
+  # ================================================================================
+  # CLAIM ADVENTURES (VISIT POKECENTER) TESTS
+  # ================================================================================
+
+  test "claim_adventures should work for first time visitor" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 5,
+      pokecenter_credits: 0,
+      adventures_allocated_at: nil
+    )
+
+    result = trainer.claim_adventures
+
+    assert result[:success]
+    assert_equal 5, result[:restored]
+    assert_equal 10, result[:new_total]
+    assert_equal 0, result[:credits_remaining]
+    assert_equal 10, trainer.reload.adventures_remaining
+    assert_equal 0, trainer.pokecenter_credits
+    assert_not_nil trainer.adventures_allocated_at
+  end
+
+  test "claim_adventures should fail when no credits available" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 5,
+      pokecenter_credits: 0,
+      adventures_allocated_at: 12.hours.ago # Same day
+    )
+
+    result = trainer.claim_adventures
+
+    assert_not result[:success]
+    assert_equal 0, result[:restored]
+    assert_equal 5, result[:new_total]
+    assert_equal 0, result[:credits_remaining]
+    assert_equal 5, trainer.reload.adventures_remaining
+  end
+
+  test "claim_adventures should use 1 credit and restore 5 adventures" do
     trainer = trainers(:ash)
     trainer.update!(
       adventures_remaining: 3,
-      adventures_allocated_at: 25.hours.ago
+      pokecenter_credits: 0,
+      adventures_allocated_at: 1.day.ago
     )
 
-    assert_equal 5, trainer.available_adventures_to_claim
+    result = trainer.claim_adventures
+
+    assert result[:success]
+    assert_equal 5, result[:restored]
+    assert_equal 8, result[:new_total]
+    assert_equal 0, result[:credits_remaining]
+    assert_equal 8, trainer.reload.adventures_remaining
+    assert_equal 0, trainer.pokecenter_credits
   end
 
-  test "available_adventures_to_claim should respect cap of 10" do
+  test "claim_adventures should cap adventures at 10" do
     trainer = trainers(:ash)
     trainer.update!(
       adventures_remaining: 8,
-      adventures_allocated_at: 25.hours.ago
+      pokecenter_credits: 0,
+      adventures_allocated_at: 1.day.ago
     )
 
-    # Would grant 5, but 8 + 5 = 13, so only 2 can be claimed to reach max of 10
-    assert_equal 2, trainer.available_adventures_to_claim
+    result = trainer.claim_adventures
+
+    assert result[:success]
+    assert_equal 2, result[:restored]  # 8 + 5 = 13, but capped at 10, so only +2
+    assert_equal 10, result[:new_total]
+    assert_equal 0, result[:credits_remaining]
+    assert_equal 10, trainer.reload.adventures_remaining
   end
 
-  test "available_adventures_to_claim should calculate multiple periods" do
+  test "claim_adventures should preserve banked credits" do
+    trainer = trainers(:ash)
+    trainer.update!(
+      adventures_remaining: 5,
+      pokecenter_credits: 1,
+      adventures_allocated_at: 1.day.ago
+    )
+
+    result = trainer.claim_adventures
+
+    assert result[:success]
+    assert_equal 5, result[:restored]
+    assert_equal 10, result[:new_total]
+    assert_equal 1, result[:credits_remaining]  # 1 banked + 1 day = 2, used 1 = 1 left
+    assert_equal 10, trainer.reload.adventures_remaining
+    assert_equal 1, trainer.pokecenter_credits
+  end
+
+  test "claim_adventures should update timestamp" do
+    trainer = trainers(:ash)
+    old_time = 2.days.ago
+    trainer.update!(
+      adventures_remaining: 2,
+      pokecenter_credits: 0,
+      adventures_allocated_at: old_time
+    )
+
+    result = trainer.claim_adventures
+
+    assert result[:success]
+    assert_in_delta Time.current.to_i, trainer.reload.adventures_allocated_at.to_i, 2
+  end
+
+  test "claim_adventures can be used twice on consecutive days" do
+    trainer = trainers(:ash)
+
+    # Day 1: First visit
+    trainer.update!(
+      adventures_remaining: 5,
+      pokecenter_credits: 0,
+      adventures_allocated_at: nil
+    )
+    result1 = trainer.claim_adventures
+
+    assert result1[:success]
+    assert_equal 10, trainer.reload.adventures_remaining
+    assert_equal 0, trainer.pokecenter_credits
+
+    # Use some adventures
+    trainer.update!(adventures_remaining: 3)
+
+    # Day 2: Visit again (1 day later)
+    trainer.update!(adventures_allocated_at: 1.day.ago)
+    result2 = trainer.claim_adventures
+
+    assert result2[:success]
+    assert_equal 5, result2[:restored]
+    assert_equal 8, result2[:new_total]
+    assert_equal 8, trainer.reload.adventures_remaining
+  end
+
+  test "claim_adventures can store up to 2 credits" do
     trainer = trainers(:ash)
     trainer.update!(
       adventures_remaining: 0,
-      adventures_allocated_at: 50.hours.ago
+      pokecenter_credits: 0,
+      adventures_allocated_at: 2.days.ago
     )
 
-    # 50 hours = 2 full periods, so 2 * 5 = 10 adventures
-    assert_equal 10, trainer.available_adventures_to_claim
+    # First visit - should have 2 credits available
+    result1 = trainer.claim_adventures
+
+    assert result1[:success]
+    assert_equal 5, result1[:restored]
+    assert_equal 5, result1[:new_total]
+    assert_equal 1, result1[:credits_remaining]  # Used 1 of 2
+    assert_equal 1, trainer.reload.pokecenter_credits
+
+    # Second visit immediately - should still have 1 credit
+    result2 = trainer.claim_adventures
+
+    assert result2[:success]
+    assert_equal 5, result2[:restored]
+    assert_equal 10, result2[:new_total]
+    assert_equal 0, result2[:credits_remaining]  # Used last credit
+    assert_equal 0, trainer.reload.pokecenter_credits
   end
 
-  test "available_adventures_to_claim should return 0 when already at max" do
-    trainer = trainers(:ash)
-    trainer.update!(
-      adventures_remaining: 10,
-      adventures_allocated_at: 25.hours.ago
-    )
-
-    assert_equal 0, trainer.available_adventures_to_claim
-  end
-
-  test "claim_adventures should initialize adventures_allocated_at if nil" do
-    trainer = trainers(:ash)
-    trainer.update!(adventures_allocated_at: nil)
-
-    result = trainer.claim_adventures
-
-    assert_not_nil trainer.adventures_allocated_at
-    assert_equal 10, trainer.adventures_remaining
-    assert_equal 5, result[:claimed]
-    assert_equal 10, result[:new_total]
-  end
-
-  test "claim_adventures should add 5 adventures for new user starting with 5" do
-    trainer = trainers(:ash)
-    trainer.update!(adventures_remaining: 5, adventures_allocated_at: nil)
-
-    result = trainer.claim_adventures
-
-    assert_not_nil trainer.adventures_allocated_at
-    assert_equal 10, trainer.adventures_remaining
-    assert_equal 5, result[:claimed]
-    assert_equal 10, result[:new_total]
-  end
-
-  test "claim_adventures should add 5 adventures for user with 4 adventures" do
-    trainer = trainers(:ash)
-    trainer.update!(adventures_remaining: 4, adventures_allocated_at: nil)
-
-    result = trainer.claim_adventures
-
-    assert_not_nil trainer.adventures_allocated_at
-    assert_equal 9, trainer.adventures_remaining
-    assert_equal 5, result[:claimed]
-    assert_equal 9, result[:new_total]
-  end
-
-  test "claim_adventures should cap at 10 for user with 7 adventures claiming first time" do
-    trainer = trainers(:ash)
-    trainer.update!(adventures_remaining: 7, adventures_allocated_at: nil)
-
-    result = trainer.claim_adventures
-
-    assert_not_nil trainer.adventures_allocated_at
-    assert_equal 10, trainer.adventures_remaining
-    assert_equal 3, result[:claimed]
-    assert_equal 10, result[:new_total]
-  end
-
-  test "claim_adventures should not replenish if less than 24 hours have passed" do
-    trainer = trainers(:ash)
-    trainer.update!(
-      adventures_remaining: 2,
-      adventures_allocated_at: 12.hours.ago
-    )
-
-    result = trainer.claim_adventures
-
-    assert_equal 2, trainer.adventures_remaining
-    assert_equal 0, result[:claimed]
-    assert_equal 2, result[:new_total]
-    assert_in_delta 12.hours.ago.to_i, trainer.adventures_allocated_at.to_i, 5
-  end
-
-  test "claim_adventures should add 5 adventures after 24 hours" do
-    trainer = trainers(:ash)
-    trainer.update!(
-      adventures_remaining: 3,
-      adventures_allocated_at: 25.hours.ago
-    )
-
-    result = trainer.claim_adventures
-
-    assert_equal 8, trainer.adventures_remaining
-    assert_equal 5, result[:claimed]
-    assert_equal 8, result[:new_total]
-  end
-
-  test "claim_adventures should cap at 10 adventures" do
-    trainer = trainers(:ash)
-    trainer.update!(
-      adventures_remaining: 8,
-      adventures_allocated_at: 25.hours.ago
-    )
-
-    result = trainer.claim_adventures
-
-    # Should be 8 + 5 = 13, but capped at 10
-    assert_equal 10, trainer.adventures_remaining
-    assert_equal 2, result[:claimed]
-    assert_equal 10, result[:new_total]
-  end
-
-  test "claim_adventures should grant multiple periods worth of adventures" do
-    trainer = trainers(:ash)
-    trainer.update!(
-      adventures_remaining: 0,
-      adventures_allocated_at: 50.hours.ago
-    )
-
-    result = trainer.claim_adventures
-
-    # 50 hours = 2 full periods, so 0 + 5 + 5 = 10
-    assert_equal 10, trainer.adventures_remaining
-    assert_equal 10, result[:claimed]
-    assert_equal 10, result[:new_total]
-  end
-
-  test "claim_adventures should advance timestamp by full periods only" do
-    trainer = trainers(:ash)
-    allocation_time = 50.hours.ago
-    trainer.update!(
-      adventures_remaining: 2,
-      adventures_allocated_at: allocation_time
-    )
-
-    result = trainer.claim_adventures
-
-    # Should advance by 48 hours (2 full periods), leaving 2 hours remaining
-    # Starting with 2, adding 2 periods (10 adventures) should reach cap of 10
-    expected_time = allocation_time + 48.hours
-    assert_in_delta expected_time.to_i, trainer.adventures_allocated_at.to_i, 5
-    assert_equal 8, result[:claimed]  # Can only add 8 to reach cap of 10
-    assert_equal 10, result[:new_total]
-  end
-
-  test "claim_adventures should not replenish when already at 10" do
-    trainer = trainers(:ash)
-    trainer.update!(
-      adventures_remaining: 10,
-      adventures_allocated_at: 25.hours.ago
-    )
-
-    result = trainer.claim_adventures
-
-    assert_equal 10, trainer.adventures_remaining
-    assert_equal 0, result[:claimed]
-    assert_equal 10, result[:new_total]
-  end
-
-  test "claim_adventures should not advance timestamp when at max" do
-    trainer = trainers(:ash)
-    allocation_time = 50.hours.ago
-    trainer.update!(
-      adventures_remaining: 10,
-      adventures_allocated_at: allocation_time
-    )
-
-    result = trainer.claim_adventures
-
-    # When already at max, no claiming happens and timestamp stays the same
-    assert_equal allocation_time.to_i, trainer.adventures_allocated_at.to_i
-    assert_equal 10, trainer.adventures_remaining
-    assert_equal 0, result[:claimed]
-    assert_equal 10, result[:new_total]
-  end
-
-  test "claim_adventures with 3 adventures after 24h should have 8" do
-    trainer = trainers(:ash)
-    trainer.update!(
-      adventures_remaining: 3,
-      adventures_allocated_at: 24.hours.ago
-    )
-
-    result = trainer.claim_adventures
-
-    assert_equal 8, trainer.adventures_remaining
-    assert_equal 5, result[:claimed]
-    assert_equal 8, result[:new_total]
-  end
-
-  test "claim_adventures with 8 adventures after 24h should have 10" do
-    trainer = trainers(:ash)
-    trainer.update!(
-      adventures_remaining: 8,
-      adventures_allocated_at: 24.hours.ago
-    )
-
-    result = trainer.claim_adventures
-
-    # 8 + 5 = 13, capped at 10
-    assert_equal 10, trainer.adventures_remaining
-    assert_equal 2, result[:claimed]
-    assert_equal 10, result[:new_total]
-  end
-
-  test "claim_adventures with 7 adventures after 24h should cap at 10" do
+  test "claim_adventures from 7 adventures should cap at 10" do
     trainer = trainers(:ash)
     trainer.update!(
       adventures_remaining: 7,
-      adventures_allocated_at: 24.hours.ago
+      pokecenter_credits: 0,
+      adventures_allocated_at: 1.day.ago
     )
 
     result = trainer.claim_adventures
 
-    # 7 + 5 = 12, but capped at 10
-    assert_equal 10, trainer.adventures_remaining
-    assert_equal 3, result[:claimed]  # Only grants +3 to reach cap
+    assert result[:success]
+    assert_equal 3, result[:restored]  # 7 + 5 = 12, capped at 10, so only +3
     assert_equal 10, result[:new_total]
-  end
-
-  test "claim_adventures with 0 adventures after 72h should cap at 10" do
-    trainer = trainers(:ash)
-    trainer.update!(
-      adventures_remaining: 0,
-      adventures_allocated_at: 72.hours.ago
-    )
-
-    result = trainer.claim_adventures
-
-    # 3 periods = 15 adventures, but capped at 10
-    assert_equal 10, trainer.adventures_remaining
-    assert_equal 10, result[:claimed]
-    assert_equal 10, result[:new_total]
+    assert_equal 10, trainer.reload.adventures_remaining
   end
 
   test "has_adventures? should return true when adventures_remaining > 0" do
@@ -705,64 +707,53 @@ class TrainerTest < ActiveSupport::TestCase
     assert_equal 0, trainer.time_until_next_adventure
   end
 
-  test "time_until_next_adventure should return positive seconds remaining" do
+  test "time_until_next_adventure should return time until midnight if visited today" do
     trainer = trainers(:ash)
-    trainer.update!(adventures_allocated_at: 20.hours.ago)
+    # Set to today at noon to ensure it's definitely "today"
+    today_noon = Date.current.to_time + 12.hours
+    trainer.update!(adventures_allocated_at: today_noon)
 
-    # Should have about 4 hours (14400 seconds) remaining
+    # Should have time remaining until midnight tomorrow
     time_remaining = trainer.time_until_next_adventure
 
-    assert time_remaining > 0
-    assert_in_delta 4.hours.to_i, time_remaining, 60 # Within 1 minute tolerance
+    assert_operator time_remaining, :>, 0
+    # Should be less than 24 hours (time until midnight)
+    assert_operator time_remaining, :<, 24.hours.to_i
   end
 
-  test "time_until_next_adventure should return 0 if refresh time has passed" do
+  test "time_until_next_adventure should return 0 if last visit was yesterday" do
     trainer = trainers(:ash)
-    trainer.update!(adventures_allocated_at: 25.hours.ago)
+    trainer.update!(adventures_allocated_at: 1.day.ago) # Yesterday
 
     assert_equal 0, trainer.time_until_next_adventure
   end
 
-  test "formatted_time_until_adventure should return 'now' when 0 seconds remaining" do
+  test "time_until_next_adventure should return 0 if last visit was 2+ days ago" do
     trainer = trainers(:ash)
-    trainer.update!(adventures_allocated_at: 25.hours.ago)
+    trainer.update!(adventures_allocated_at: 3.days.ago)
+
+    assert_equal 0, trainer.time_until_next_adventure
+  end
+
+  test "formatted_time_until_adventure should return 'now' when claimable" do
+    trainer = trainers(:ash)
+    trainer.update!(adventures_allocated_at: 1.day.ago) # Yesterday - claimable
 
     assert_equal "now", trainer.formatted_time_until_adventure
   end
 
-  test "formatted_time_until_adventure should format hours and minutes" do
+  test "formatted_time_until_adventure should format hours and minutes when visited today" do
     trainer = trainers(:ash)
-    # 5 hours and 30 minutes ago means 18.5 hours remaining
-    trainer.update!(adventures_allocated_at: 5.5.hours.ago)
+    # Set to today at noon to ensure it's definitely "today"
+    today_noon = Date.current.to_time + 12.hours
+    trainer.update!(adventures_allocated_at: today_noon)
 
     formatted = trainer.formatted_time_until_adventure
+    time_remaining = trainer.time_until_next_adventure
 
-    # Should be something like "18h 30m"
-    assert_match /\d+h \d+m/, formatted
-  end
-
-  test "formatted_time_until_adventure should format minutes only when less than 1 hour" do
-    trainer = trainers(:ash)
-    # 23 hours and 30 minutes ago means 30 minutes remaining
-    trainer.update!(adventures_allocated_at: 23.5.hours.ago)
-
-    formatted = trainer.formatted_time_until_adventure
-
-    # Should be something like "30m"
-    assert_match /\d+m/, formatted
-    assert_no_match /h/, formatted
-  end
-
-  test "formatted_time_until_adventure should format seconds only when less than 1 minute" do
-    trainer = trainers(:ash)
-    # 23 hours, 59 minutes, 45 seconds ago means 15 seconds remaining
-    trainer.update!(adventures_allocated_at: (24.hours - 15.seconds).ago)
-
-    formatted = trainer.formatted_time_until_adventure
-
-    # Should be something like "15s"
-    assert_match /\d+s/, formatted
-    assert_no_match /h|m/, formatted
+    # Should show time until midnight (hours and possibly minutes)
+    assert_operator time_remaining, :>, 0
+    assert_match /\d+/, formatted # Should contain numbers
   end
 
   # ================================================================================
@@ -894,5 +885,19 @@ class TrainerTest < ActiveSupport::TestCase
 
     assert result[:success]
     assert_equal 2, trainer.item_quantity(:potion)  # Should have 2 left
+  end
+
+  test "use_potion should not update adventures_allocated_at timestamp" do
+    trainer = trainers(:ash)
+    original_time = 2.days.ago
+    trainer.update!(adventures_remaining: 5, adventures_allocated_at: original_time)
+    trainer.add_item(:potion, 1)
+
+    result = trainer.use_potion(:potion)
+
+    assert result[:success]
+    # Timestamp should not change when using potion
+    assert_equal original_time.to_i, trainer.reload.adventures_allocated_at.to_i
+    assert_equal 8, trainer.adventures_remaining
   end
 end

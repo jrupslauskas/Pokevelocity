@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.5.0] - 2026-02-08
+### Added
+- Updates to pokecenter functionality
+
 ## [1.4.0] - 2026-02-08
 ### Added
 - Add active party
@@ -31,6 +35,10 @@
 ## [1.3.1] - 2026-02-06
 ### Added
 - Encounter percentages UI tweaks
+
+## [1.4.0] - 2026-02-06
+### Added
+- Pokecenter visit logic and functionality overhaul
 
 ## [1.3.0] - 2026-02-01
 ### Added

@@ -8,17 +8,8 @@
     </header>
 
     <!-- Adventures Panel -->
-    <% available = @trainer.available_adventures_to_claim %>
+    <% available_credits = @trainer.available_pokecenter_credits %>
     <%
-      # Calculate total adventures to restore (uncapped)
-      if @trainer.adventures_allocated_at.nil?
-        restore_amount = 5
-      else
-        time_elapsed = Time.current - @trainer.adventures_allocated_at
-        full_periods_passed = (time_elapsed / 24.hours).floor
-        restore_amount = full_periods_passed * 5
-      end
-
       potions = [
         { key: 'potion', name: 'Potion', restore: 3 },
         { key: 'super_potion', name: 'Super Potion', restore: 6 },
@@ -38,21 +29,30 @@
 
       <!-- Poké Center -->
       <div class="adventures-section pokecenter-section">
-        <%= form_with url: visit_poke_center_path, method: :post, local: true, id: 'poke-center-form' do |f| %>
-          <% if available > 0 %>
+        <%= form_with url: visit_poke_center_path, method: :post, local: true, id: 'poke-center-form', data: { current_adventures: @trainer.adventures_remaining } do |f| %>
+          <% if available_credits > 0 %>
             <button type="submit" class="btn-poke-center">
-              <%= image_tag "icons/pokecenter.png", alt: "Poké Center", class: "poke-center-icon" %>
+              <div style="position: relative; display: inline-block;">
+                <%= image_tag "icons/pokecenter.png", alt: "Poké Center", class: "poke-center-icon" %>
+                <span class="pokecenter-credit-badge" style="position: absolute; top: -8px; right: -8px; background-color: #e74c3c; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; border: 2px solid white;">
+                  <%= available_credits %>
+                </span>
+              </div>
               <span class="btn-text">
                 <span class="btn-primary-text">Poké Center</span>
-                <span class="btn-secondary-text">+<%= restore_amount %> Adventures</span>
               </span>
             </button>
           <% else %>
             <button type="submit" class="btn-poke-center-disabled" disabled>
-              <%= image_tag "icons/pokecenter.png", alt: "Poké Center", class: "poke-center-icon" %>
+              <div style="position: relative; display: inline-block;">
+                <%= image_tag "icons/pokecenter.png", alt: "Poké Center", class: "poke-center-icon" %>
+                <span class="pokecenter-credit-badge" style="position: absolute; top: -8px; right: -8px; background-color: #95a5a6; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; border: 2px solid white;">
+                  0
+                </span>
+              </div>
               <span class="btn-text">
                 <span class="btn-primary-text">Poké Center</span>
-                <span class="btn-secondary-text"><%= @trainer.formatted_time_until_adventure %></span>
+                <span class="btn-secondary-text">Visit again tomorrow!</span>
               </span>
             </button>
           <% end %>
@@ -95,6 +95,25 @@
         <div class="modal-actions">
           <button id="potionConfirmYes" class="btn-primary">Yes</button>
           <button id="potionConfirmNo" class="btn-secondary">No</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Poké Center Confirmation Modal -->
+    <div id="pokeCenterConfirmationModal" class="modal" style="display: none;">
+      <div class="modal-overlay"></div>
+      <div class="modal-content">
+        <h3 class="modal-title">Visit Poké Center</h3>
+        <p class="modal-message" id="pokeCenterConfirmationMessage">
+          Use 1 Poké Center credit to restore 5 adventures?
+          <br><br>
+          <span id="currentAdventuresText">You currently have <span id="currentAdventures">0</span> adventures.</span>
+          <br><br>
+          <strong>Any adventures restored beyond the maximum of 10 will be lost.</strong>
+        </p>
+        <div class="modal-actions">
+          <button id="pokeCenterConfirmYes" class="btn-primary">Yes</button>
+          <button id="pokeCenterConfirmNo" class="btn-secondary">No</button>
         </div>
       </div>
     </div>
@@ -518,72 +537,133 @@
     }
   });
 
-  // Poké Center audio
+  // Poké Center confirmation modal
   document.addEventListener('turbo:load', function() {
     const pokeCenterForm = document.getElementById('poke-center-form');
-    const pokeCenterAudio = document.getElementById('poke-center-audio');
-    let audioPlaying = false;
+    const modal = document.getElementById('pokeCenterConfirmationModal');
+    const confirmYes = document.getElementById('pokeCenterConfirmYes');
+    const confirmNo = document.getElementById('pokeCenterConfirmNo');
+    const currentAdventuresSpan = document.getElementById('currentAdventures');
+    let formSubmissionPending = false;
 
-    if (pokeCenterForm && pokeCenterAudio) {
+    if (pokeCenterForm && modal) {
+      // Intercept Poké Center form submission
       pokeCenterForm.addEventListener('submit', function(e) {
-        // Check if audio is enabled in user settings
-        const audioEnabled = pokeCenterAudio.dataset.enabled === 'true';
-
-        // Only play if button is enabled (not disabled)
+        // Only show modal if button is enabled (has credits)
         const submitButton = this.querySelector('button[type="submit"]:not(:disabled)');
 
-        if (submitButton && !audioPlaying && audioEnabled) {
-          e.preventDefault(); // Prevent form submission
-          audioPlaying = true;
+        if (submitButton && !formSubmissionPending) {
+          e.preventDefault();
 
-          // Change button to loading state
-          const originalHTML = submitButton.innerHTML;
-          submitButton.disabled = true;
-          submitButton.innerHTML = `
-            <svg class="spinner" style="width: 24px; height: 24px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10" opacity="0.25"></circle>
-              <path d="M12 2a10 10 0 0 1 10 10" opacity="0.75"></path>
-            </svg>
-            <span style="margin-left: 8px;">Restoring...</span>
-          `;
+          // Get current adventures from data attribute
+          const currentAdventures = this.dataset.currentAdventures || '0';
+          currentAdventuresSpan.textContent = currentAdventures;
 
-          // Add spinner animation
-          if (!document.getElementById('spinner-style')) {
-            const style = document.createElement('style');
-            style.id = 'spinner-style';
-            style.textContent = '@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }';
-            document.head.appendChild(style);
-          }
-
-          // Play the audio and wait for it to finish
-          pokeCenterAudio.currentTime = 0; // Reset to start
-
-          const submitFormAfterAudio = () => {
-            console.log('Audio finished, submitting form');
-            audioPlaying = false;
-            pokeCenterForm.submit();
-          };
-
-          // Listen for audio to finish
-          pokeCenterAudio.onended = submitFormAfterAudio;
-
-          // Start playing
-          pokeCenterAudio.play()
-            .then(() => {
-              console.log('✓ Poké Center audio playing');
-            })
-            .catch(err => {
-              console.error('✗ Audio playback failed:', err);
-              // Submit anyway if audio fails
-              audioPlaying = false;
-              submitButton.disabled = false;
-              submitButton.innerHTML = originalHTML;
-              pokeCenterForm.submit();
-            });
+          // Show modal
+          modal.style.display = 'flex';
         }
-        // If audio is disabled, form submits normally (no e.preventDefault())
       });
+
+      // Handle Yes button - play audio (if enabled) then submit
+      confirmYes.addEventListener('click', function() {
+        modal.style.display = 'none';
+        formSubmissionPending = true;
+
+        // Use the audio handler function if available, otherwise submit directly
+        if (typeof window.playPokeCenterAudioAndSubmit === 'function') {
+          window.playPokeCenterAudioAndSubmit(pokeCenterForm);
+        } else {
+          // Fallback if audio handler not loaded
+          const nativeForm = pokeCenterForm.cloneNode(true);
+          nativeForm.removeAttribute('data-turbo');
+          document.body.appendChild(nativeForm);
+          nativeForm.submit();
+        }
+      });
+
+      // Handle No button
+      confirmNo.addEventListener('click', function() {
+        modal.style.display = 'none';
+        formSubmissionPending = false;
+      });
+
+      // Close modal on overlay click
+      const overlay = modal.querySelector('.modal-overlay');
+      if (overlay) {
+        overlay.addEventListener('click', function() {
+          modal.style.display = 'none';
+          formSubmissionPending = false;
+        });
+      }
     }
+  });
+
+  // Poké Center audio (integrated with confirmation modal)
+  document.addEventListener('turbo:load', function() {
+    const pokeCenterAudio = document.getElementById('poke-center-audio');
+
+    // Function to play audio and submit form
+    window.playPokeCenterAudioAndSubmit = function(form) {
+      const audioEnabled = pokeCenterAudio && pokeCenterAudio.dataset.enabled === 'true';
+      const submitButton = form.querySelector('button[type="submit"]');
+
+      if (audioEnabled && submitButton) {
+        // Change button to loading state
+        const originalHTML = submitButton.innerHTML;
+        submitButton.disabled = true;
+        submitButton.innerHTML = `
+          <svg class="spinner" style="width: 24px; height: 24px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" opacity="0.25"></circle>
+            <path d="M12 2a10 10 0 0 1 10 10" opacity="0.75"></path>
+          </svg>
+          <span style="margin-left: 8px;">Restoring...</span>
+        `;
+
+        // Add spinner animation
+        if (!document.getElementById('spinner-style')) {
+          const style = document.createElement('style');
+          style.id = 'spinner-style';
+          style.textContent = '@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }';
+          document.head.appendChild(style);
+        }
+
+        // Play the audio and wait for it to finish
+        pokeCenterAudio.currentTime = 0; // Reset to start
+
+        const submitFormAfterAudio = () => {
+          console.log('Audio finished, submitting form');
+          const nativeForm = form.cloneNode(true);
+          nativeForm.removeAttribute('data-turbo');
+          document.body.appendChild(nativeForm);
+          nativeForm.submit();
+        };
+
+        // Listen for audio to finish
+        pokeCenterAudio.onended = submitFormAfterAudio;
+
+        // Start playing
+        pokeCenterAudio.play()
+          .then(() => {
+            console.log('✓ Poké Center audio playing');
+          })
+          .catch(err => {
+            console.error('✗ Audio playback failed:', err);
+            // Submit anyway if audio fails
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalHTML;
+            const nativeForm = form.cloneNode(true);
+            nativeForm.removeAttribute('data-turbo');
+            document.body.appendChild(nativeForm);
+            nativeForm.submit();
+          });
+      } else {
+        // No audio, submit directly
+        const nativeForm = form.cloneNode(true);
+        nativeForm.removeAttribute('data-turbo');
+        document.body.appendChild(nativeForm);
+        nativeForm.submit();
+      }
+    };
   });
 </script>
 
