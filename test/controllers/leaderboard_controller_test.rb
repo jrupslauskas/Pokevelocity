@@ -112,6 +112,70 @@ class LeaderboardControllerTest < ActionDispatch::IntegrationTest
     assert_select ".you-badge", text: "You"
   end
 
+  # ================================================================================
+  # PARTY TOOLTIP TESTS
+  # ================================================================================
+
+  test "should render party tooltip element for each trainer card" do
+    log_in_as(trainers(:gary))
+    get leaderboard_path
+
+    assert_response :success
+    assert_select ".party-tooltip"
+  end
+
+  test "should display Party label inside party tooltip" do
+    log_in_as(trainers(:gary))
+    get leaderboard_path
+
+    assert_response :success
+    assert_select ".party-tooltip-label", text: "Party"
+  end
+
+  test "should show pokemon sprites in party tooltip when trainer has party members" do
+    trainer = trainers(:gary)
+    # Gary has charmander and squirtle captured via fixtures
+    PartyMember.create!(trainer: trainer, pokemon: pokemons(:charmander), position: 1)
+    PartyMember.create!(trainer: trainer, pokemon: pokemons(:squirtle), position: 2)
+
+    log_in_as(trainer)
+    get leaderboard_path
+
+    assert_response :success
+    assert_select ".party-tooltip-pokemon-row"
+    assert_select ".party-tooltip-pokemon img[alt=?]", "Charmander"
+    assert_select ".party-tooltip-pokemon img[alt=?]", "Squirtle"
+  end
+
+  test "should show no party set message when trainer has no party members" do
+    # broke_trainer has no captures and no party members
+    log_in_as(trainers(:broke_trainer))
+    get leaderboard_path
+
+    assert_response :success
+    assert_select ".party-tooltip-empty", text: "No party set"
+  end
+
+  # ================================================================================
+  # PROFILE LINK TESTS
+  # ================================================================================
+
+  test "should link trainer card to their pokedex page" do
+    log_in_as(trainers(:ash))
+    get leaderboard_path
+
+    assert_response :success
+    assert_select "a.leaderboard-trainer[href=?]", trainer_path(trainers(:gary))
+  end
+
+  test "should link current user trainer card to own pokedex page" do
+    log_in_as(trainers(:gary))
+    get leaderboard_path
+
+    assert_response :success
+    assert_select "a.leaderboard-trainer[href=?]", pokedex_path
+  end
+
   private
 
   def log_in_as(trainer)

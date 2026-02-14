@@ -1,7 +1,7 @@
 # Pokevelocity!
 <img src="app/assets/images/icons/pokevelocity_logo.png" width="150">
 
-Current version: v1.5.1
+Current version: v1.5.2
 
 Pokévelocity is a gamified productivity app that turns software development into a Pokémon-catching adventure. Complete your dev tickets,
 earn Pokéballs based on story points, and use them to catch all 151 original Pokémon as you adventure through Kanto (Pokemon Red and Blue/Fire Red and Leaf Green). The harder your tickets and the faster your velocity, the more and better Pokéballs you'll earn

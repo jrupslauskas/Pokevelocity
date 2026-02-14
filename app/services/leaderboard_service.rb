@@ -32,7 +32,7 @@ class LeaderboardService
 
   def fetch_and_rank_trainers
     # Get all trainers with their captured Pokémon and calculate difficulty scores
-    trainers = Trainer.includes(:captured_pokemon, :icon_pokemon).all.map(&:leaderboard_score)
+    trainers = Trainer.includes(:captured_pokemon, :icon_pokemon, party_members: :pokemon).all.map(&:leaderboard_score)
 
     # Sort by difficulty score (descending), then by pokemon count (descending)
     trainers.sort_by { |t| [ -t[:difficulty_score], -t[:pokemon_count] ] }

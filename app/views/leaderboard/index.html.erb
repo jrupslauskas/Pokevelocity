@@ -33,7 +33,8 @@
           <div class="leaderboard-carousel-wrapper">
             <% if trainers %>
               <% trainers.each_with_index do |entry, index| %>
-                <div class="leaderboard-trainer carousel-item <%= 'carousel-active' if index == 0 %>" data-carousel-index="<%= index %>">
+                <% profile_path = entry[:trainer].id == current_trainer.id ? pokedex_path : trainer_path(entry[:trainer]) %>
+                <%= link_to profile_path, class: "leaderboard-trainer carousel-item #{'carousel-active' if index == 0}", data: { carousel_index: index } do %>
                   <% if entry[:trainer].icon_pokemon || entry[:trainer].icon_trainer_sprite %>
                     <div class="leaderboard-avatar">
                       <% if entry[:trainer].icon_pokemon %>
@@ -76,7 +77,25 @@
                       <span class="stat-value stat-score"><%= entry[:difficulty_score] %>★</span>
                     </div>
                   </div>
-                </div>
+
+                  <div class="party-tooltip">
+                    <div class="party-tooltip-label">Party</div>
+                    <% party = entry[:trainer].party_members %>
+                    <% if party.any? %>
+                      <div class="party-tooltip-pokemon-row">
+                        <% party.each do |member| %>
+                          <div class="party-tooltip-pokemon">
+                            <%= image_tag "pokemonSprites/#{member.pokemon.pokedex_number.to_s.rjust(3, '0')}.png",
+                                alt: member.pokemon.name,
+                                title: member.pokemon.name %>
+                          </div>
+                        <% end %>
+                      </div>
+                    <% else %>
+                      <span class="party-tooltip-empty">No party set</span>
+                    <% end %>
+                  </div>
+                <% end %>
               <% end %>
 
               <% if trainers.length > 1 %>
