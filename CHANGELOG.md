@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.5.3] - 2026-02-14
+### Added
+- Add party update reminder on evolution
+
 ## [1.5.2] - 2026-02-14
 ### Added
 - Add party display on-hover to leaderboard and pokedex routing

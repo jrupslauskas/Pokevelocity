@@ -15,11 +15,15 @@ class PokemonController < ApplicationController
     @ball_type = celebration_data['ball_type'] || celebration_data[:ball_type] # for catches
     @duplicate = celebration_data['duplicate'] || celebration_data[:duplicate] # for duplicate catches
     @from_pokemon_name = celebration_data['from_pokemon_name'] || celebration_data[:from_pokemon_name] # for evolutions
+    from_pokemon_id = celebration_data['from_pokemon_id'] || celebration_data[:from_pokemon_id]
     @trainer = current_trainer
 
     unless @pokemon
       redirect_to pokedex_path and return
     end
+
+    @from_pokemon_in_party = @event_type == 'evolved' && from_pokemon_id.present? &&
+                             @trainer.party_members.exists?(pokemon_id: from_pokemon_id)
 
     # Clear session data after successfully loading
     session.delete(:pokemon_celebration)

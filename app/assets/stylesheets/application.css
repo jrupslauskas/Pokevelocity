@@ -4019,6 +4019,13 @@ body > div:not(.app-layout) {
   margin: 0;
 }
 
+.pokemon-celebration-party-reminder {
+  font-size: 14px;
+  color: #4A7C59;
+  text-align: center;
+  margin: 6px 0 0;
+}
+
 .pokemon-celebration-sprite-container {
   display: flex;
   justify-content: center;

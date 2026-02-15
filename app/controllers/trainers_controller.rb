@@ -175,7 +175,8 @@ class TrainersController < ApplicationController
     session[:pokemon_celebration] = {
       pokemon_id: evolution.to_pokemon_id,
       event_type: 'evolved',
-      from_pokemon_name: evolution.from_pokemon.name
+      from_pokemon_name: evolution.from_pokemon.name,
+      from_pokemon_id: evolution.from_pokemon_id
     }
 
     # If gates were unlocked, store for follow-up celebration

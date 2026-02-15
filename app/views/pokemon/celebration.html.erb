@@ -19,6 +19,9 @@
               Your <%= @from_pokemon_name %> evolved into <%= @pokemon.name %>!
             <% end %>
           </p>
+          <% if @from_pokemon_in_party %>
+            <p class="pokemon-celebration-party-reminder">Don't forget to update your party!</p>
+          <% end %>
         </div>
 
         <div class="pokemon-celebration-sprite-container">
